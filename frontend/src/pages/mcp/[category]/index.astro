@@ -2,15 +2,14 @@
 import { 
   getAllMcpCategories, 
   getMcpCategory,
-  getTotalMcpCount
-} from '../../../../db/mcp/mcp-utils';
+  getOverview
+} from 'db/mcp/mcp-utils';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Mcp from '../_Mcp.astro';
 
 export const prerender = false;
 
 const { category } = Astro.params;
-const urlPath = Astro.url.pathname;
 
 if (!category) {
   return new Response(null, { status: 404 });
@@ -25,19 +24,21 @@ let redirectUrl = '';
 if (/^\d+$/.test(category)) {
   const currentPage = parseInt(category, 10);
 
-  // Fetch categories data directly (SSR mode)
-  const allCategories = await getAllMcpCategories();
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+  // Calculate totals
+  const { totalMcpCount: totalServers, totalCategoryCount } = await getOverview();
+  const totalTools = 0; // We don't track tool count separately in DB yet
+  const totalClients = 0;
+  
+  const totalPages = Math.ceil(totalCategoryCount / itemsPerPage);
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
     return new Response(null, { status: 404 });
   }
 
-  // Get categories for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
+  // Fetch categories data directly
+  const allCategories = await getAllMcpCategories(currentPage, itemsPerPage);
   
   // Map DB categories to the format expected by the component
   const mappedCategories = allCategories.map(cat => ({
@@ -49,12 +50,7 @@ if (/^\d+$/.test(category)) {
     url: `/freedevtools/mcp/${cat.slug}/1/`
   }));
 
-  const currentPageCategories = mappedCategories.slice(startIndex, endIndex);
-
-  // Calculate totals
-  const totalServers = await getTotalMcpCount();
-  const totalTools = 0; // We don't track tool count separately in DB yet
-  const totalClients = 0;
+  const currentPageCategories = mappedCategories;
 
   // SEO data
   const title = `Awesome MCP Servers Directory – Discover ${allCategories.length} Model Context Protocol Tools & Categories (Page ${currentPage} of ${totalPages}) | Free DevTools by Hexmos`;
@@ -78,11 +74,10 @@ if (/^\d+$/.test(category)) {
     { label: 'Free DevTools', href: '/freedevtools/' },
     { label: 'MCP Directory', href: '/freedevtools/mcp/1/' },
   ];
-
   paginationData = {
     currentPage,
     totalPages,
-    totalCategories: allCategories.length,
+    totalCategories: totalCategoryCount,
     categories: currentPageCategories,
     totalServers,
     totalTools,

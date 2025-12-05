@@ -110,7 +110,8 @@ def build_db():
     cur.execute("""
         CREATE TABLE overview (
             id INTEGER PRIMARY KEY CHECK(id = 1),
-            total_count INTEGER NOT NULL DEFAULT 0
+            total_count INTEGER NOT NULL DEFAULT 0,
+            total_category_count INTEGER NOT NULL DEFAULT 0
         );
     """)
     
@@ -245,7 +246,11 @@ def build_db():
                 print(f"Error inserting {mcp_key}: {e}")
                 
     # 3. Update Overview
-    cur.execute("INSERT INTO overview (id, total_count) VALUES (1, ?)", (total_mcp_count,))
+    # Count total categories
+    cur.execute("SELECT COUNT(*) FROM category")
+    total_category_count = cur.fetchone()[0]
+    
+    cur.execute("INSERT INTO overview (id, total_count, total_category_count) VALUES (1, ?, ?)", (total_mcp_count, total_category_count))
     
     conn.commit()
     conn.close()

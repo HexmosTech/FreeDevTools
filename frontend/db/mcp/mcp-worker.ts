@@ -40,10 +40,10 @@ setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
 const statements = {
-    allCategories: db.prepare('SELECT * FROM category ORDER BY name'),
-    categoryBySlug: db.prepare('SELECT * FROM category WHERE slug = ?'),
+    allCategories: db.prepare('SELECT * FROM category ORDER BY name LIMIT ? OFFSET ?'),
+    categoryBySlug: db.prepare('SELECT name, description, count FROM category WHERE slug = ?'),
     mcpPagesByCategory: db.prepare(`
-    SELECT hash_id, category, key, name, description, owner, stars, forks, language, license, updated_at, image_url, npm_downloads
+    SELECT key, name, description, owner, stars, forks, license, updated_at, image_url, npm_downloads
     FROM mcp_pages 
     WHERE category = ? 
     ORDER BY stars DESC, name ASC 
@@ -55,8 +55,7 @@ const statements = {
         FROM mcp_pages
         WHERE hash_id = ?
     `),
-    totalMcpCount: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
-    totalCategoryCount: db.prepare('SELECT COUNT(*) as count FROM category'),
+    getOverview: db.prepare('SELECT total_count, total_category_count FROM overview WHERE id = 1'),
 };
 
 // Signal ready
@@ -91,7 +90,9 @@ parentPort?.on('message', (message: QueryMessage) => {
 
         switch (type) {
             case 'getAllMcpCategories': {
-                result = statements.allCategories.all();
+                const { page = 1, limit = 30 } = params;
+                const offset = (page - 1) * limit;
+                result = statements.allCategories.all(limit, offset);
                 break;
             }
 
@@ -136,15 +137,12 @@ parentPort?.on('message', (message: QueryMessage) => {
                 break;
             }
 
-            case 'getTotalMcpCount': {
-                const row = statements.totalMcpCount.get() as { total_count: number } | undefined;
-                result = row?.total_count || 0;
-                break;
-            }
-
-            case 'getTotalCategoryCount': {
-                const row = statements.totalCategoryCount.get() as { count: number } | undefined;
-                result = row?.count || 0;
+            case 'getOverview': {
+                const row = statements.getOverview.get() as { total_count: number; total_category_count: number } | undefined;
+                result = {
+                    totalMcpCount: row?.total_count || 0,
+                    totalCategoryCount: row?.total_category_count || 0
+                };
                 break;
             }
 

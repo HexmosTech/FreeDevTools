@@ -239,15 +239,14 @@ export function cleanupWorkers(): Promise<void> {
 
 // Export query functions
 export const query = {
-    getAllMcpCategories: () => executeQuery('getAllMcpCategories', {}),
+    getAllMcpCategories: (page: number = 1, limit: number = 30) => executeQuery('getAllMcpCategories', { page, limit }),
     getMcpCategory: (slug: string) => executeQuery('getMcpCategory', { slug }),
     getMcpPagesByCategory: (categorySlug: string, page: number, limit: number) =>
         executeQuery('getMcpPagesByCategory', { categorySlug, page, limit }),
     getTotalMcpPagesByCategory: (categorySlug: string) =>
         executeQuery('getTotalMcpPagesByCategory', { categorySlug }),
     getMcpPage: (hashId: bigint) => executeQuery('getMcpPage', { hashId }),
-    getTotalMcpCount: () => executeQuery('getTotalMcpCount', {}),
-    getTotalCategoryCount: () => executeQuery('getTotalCategoryCount', {}),
+    getOverview: () => executeQuery('getOverview', {}),
     hashUrlToKey: (categorySlug: string, mcpKey: string) =>
         executeQuery('hashUrlToKey', { categorySlug, mcpKey }),
 };

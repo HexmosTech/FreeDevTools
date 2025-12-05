@@ -112,10 +112,17 @@ test-mcp-req-pmd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -n 5 -c 5 -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/blockchain-and-crypto/armorwallet--armor-crypto-mcp/
+	hey -n 5 -c 5 -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/apis-and-http-requests/1/
 	@sleep 2
-	@echo "⬇️  Requesting MCP page -----------"
-	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/apis-and-http-requests/1/
+	@echo "⬇️  Requesting MCP index -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/1/
+
+	@echo "⬇️  Requesting MCP category -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/data-analytics/1/
+
+	@echo "⬇️  Requesting MCP end page -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/data-analytics/24mlight--a-share-mcp-is-just-i-need/
+
 	@echo "⬇️  Showing logs -----------"
 # 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
 # 	if [ -n "$$LOG_FILES" ]; then \
