@@ -70,5 +70,13 @@ for dir in _*/; do
 done
 
 echo ""
+echo "📝 Step 4: Updating robots.txt for staging..."
+
+ROBOTS_FILE="$BUILD_DIR/robots.txt"
+echo "User-agent: *" > "$ROBOTS_FILE"
+echo "Disallow: /" >> "$ROBOTS_FILE"
+echo "✅ robots.txt updated at $ROBOTS_FILE to block all crawling."
+
+echo ""
 echo "🎉 Partial build for installerpedia completed!"
 echo "📦 Output available at: $BUILD_DIR"
