@@ -50,13 +50,11 @@ const statements = {
      FROM cluster WHERE hash_name = ?`
   ),
   pagesByCluster: db.prepare(
-    `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, html_content, path
+    `SELECT url_hash, url, cluster, name, platform, title, description, features, path
      FROM pages WHERE cluster = ? ORDER BY name`
   ),
   pageByUrlHash: db.prepare(
-    `SELECT url_hash, url, cluster, name, platform, title, description,
-     more_info_url, keywords, features, examples, html_content, path
+    `SELECT title, description, keywords, html_content
      FROM pages WHERE url_hash = ?`
   ),
 
@@ -120,9 +118,7 @@ parentPort?.on('message', (message: QueryMessage) => {
         const rows = statements.pagesByCluster.all(cluster) as any[];
         result = rows.map((row) => ({
           ...row,
-          keywords: JSON.parse(row.keywords || '[]'),
           features: JSON.parse(row.features || '[]'),
-          examples: JSON.parse(row.examples || '[]'),
         }));
         break;
       }

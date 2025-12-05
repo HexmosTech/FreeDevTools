@@ -39,11 +39,8 @@ type Page struct {
 	Platform    string
 	Title       string
 	Description string
-	MoreInfoUrl string
 	Keywords    string // JSON
 	Features    string // JSON
-	Examples    string // JSON
-	RawContent  string
 	HtmlContent string
 	Path        string
 }
@@ -146,8 +143,6 @@ func parseTldrFile(path string) (*Page, error) {
 
 	// Parse Markdown Body for metadata
 	descriptionLines := []string{}
-	moreInfoUrl := ""
-	examples := []Example{}
 
 	// Re-split for processing examples/description (using the stripped body)
 	lines = strings.Split(markdownBody, "\n")
@@ -156,32 +151,9 @@ func parseTldrFile(path string) (*Page, error) {
 		if strings.HasPrefix(line, ">") {
 			cleanLine := strings.TrimSpace(strings.TrimPrefix(line, ">"))
 			if strings.HasPrefix(cleanLine, "More information:") {
-				re := regexp.MustCompile(`<(.*?)>`)
-				match := re.FindStringSubmatch(cleanLine)
-				if len(match) > 1 {
-					moreInfoUrl = match[1]
-				}
+				// Skip more info
 			} else {
 				descriptionLines = append(descriptionLines, cleanLine)
-			}
-		} else if strings.HasPrefix(line, "- ") {
-			exampleDesc := strings.TrimSpace(strings.TrimPrefix(line, "- "))
-			cmd := ""
-			// Look ahead
-			for j := i + 1; j < len(lines); j++ {
-				nextLine := strings.TrimSpace(lines[j])
-				if strings.HasPrefix(nextLine, "`") && strings.HasSuffix(nextLine, "`") {
-					cmd = strings.Trim(nextLine, "`")
-					i = j
-					break
-				} else if nextLine == "" {
-					continue
-				} else {
-					break
-				}
-			}
-			if cmd != "" {
-				examples = append(examples, Example{Description: exampleDesc, Cmd: cmd})
 			}
 		}
 	}
@@ -208,7 +180,6 @@ func parseTldrFile(path string) (*Page, error) {
 	// JSON fields
 	keywordsJson, _ := json.Marshal(fm.Keywords)
 	featuresJson, _ := json.Marshal(fm.Features)
-	examplesJson, _ := json.Marshal(examples)
 
 	pathUrl := fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, name)
 
@@ -220,11 +191,8 @@ func parseTldrFile(path string) (*Page, error) {
 		Platform:    fm.Category,
 		Title:       title,
 		Description: description,
-		MoreInfoUrl: moreInfoUrl,
 		Keywords:    string(keywordsJson),
 		Features:    string(featuresJson),
-		Examples:    string(examplesJson),
-		RawContent:  content,
 		HtmlContent: htmlContent,
 		Path:        pathUrl,
 	}, nil
@@ -243,11 +211,8 @@ func ensureSchema(db *sql.DB) error {
 			platform TEXT DEFAULT '',
 			title TEXT DEFAULT '',
 			description TEXT DEFAULT '',
-			more_info_url TEXT DEFAULT '',
 			keywords TEXT DEFAULT '[]',
 			features TEXT DEFAULT '[]',
-			examples TEXT DEFAULT '[]',
-			raw_content TEXT DEFAULT '',
 			html_content TEXT DEFAULT '',
 			path TEXT DEFAULT ''
 		) WITHOUT ROWID;
@@ -337,9 +302,9 @@ func main() {
 	// Prepare Insert
 	insertSQL := `
 		INSERT OR REPLACE INTO pages (
-			url_hash, url, cluster, name, platform, title, description, more_info_url,
-			keywords, features, examples, raw_content, html_content, path
-		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+			url_hash, url, cluster, name, platform, title, description,
+			keywords, features, html_content, path
+		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`
 	tx, err := db.Begin()
 	if err != nil {
@@ -374,8 +339,8 @@ func main() {
 
 			_, err = stmt.Exec(
 				page.UrlHash, page.Url, page.Cluster, page.Name, page.Platform,
-				page.Title, page.Description, page.MoreInfoUrl, page.Keywords,
-				page.Features, page.Examples, page.RawContent, page.HtmlContent, page.Path,
+				page.Title, page.Description, page.Keywords,
+				page.Features, page.HtmlContent, page.Path,
 			)
 			if err != nil {
 				log.Printf("Error inserting %s: %v", page.Name, err)

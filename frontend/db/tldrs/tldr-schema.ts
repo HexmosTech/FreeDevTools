@@ -10,12 +10,12 @@ export interface Page {
   platform: string;
   title: string;
   description: string;
-  more_info_url: string;
-  keywords: string[]; // JSON array
+  more_info_url?: string;
+  keywords?: string[]; // JSON array
   features: string[]; // JSON array
-  examples: Example[]; // JSON array of {description, cmd}
-  raw_content: string;
-  html_content: string;
+  examples?: Example[]; // JSON array of {description, cmd}
+  raw_content?: string;
+  html_content?: string;
   path: string;
 }
 

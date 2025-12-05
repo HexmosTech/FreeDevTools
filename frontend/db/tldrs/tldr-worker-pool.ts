@@ -90,23 +90,23 @@ async function initWorkers(): Promise<void> {
     // Priority: dist (built) > source (dev) > relative (fallback)
     let workerPath: string | null = null;
 
-    // Check dist directory first (production build)
-    if (existsSync(`${distWorkerPath}.js`)) {
+    // Check source directory (development) - Priority 1
+    if (existsSync(`${sourceWorkerPath}.ts`)) {
+      workerPath = `${sourceWorkerPath}.ts`;
+    } else if (existsSync(`${sourceWorkerPath}.js`)) {
+      workerPath = `${sourceWorkerPath}.js`;
+    }
+    // Check dist directory (production build) - Priority 2
+    else if (existsSync(`${distWorkerPath}.js`)) {
       workerPath = `${distWorkerPath}.js`;
     } else if (existsSync(`${distWorkerPath}.ts`)) {
       workerPath = `${distWorkerPath}.ts`;
     }
-    // Check source directory (development)
-    else if (existsSync(`${sourceWorkerPath}.js`)) {
-      workerPath = `${sourceWorkerPath}.js`;
-    } else if (existsSync(`${sourceWorkerPath}.ts`)) {
-      workerPath = `${sourceWorkerPath}.ts`;
-    }
     // Fallback: try relative to current file location
-    else if (existsSync(`${relativeWorkerPath}.js`)) {
-      workerPath = `${relativeWorkerPath}.js`;
-    } else if (existsSync(`${relativeWorkerPath}.ts`)) {
+    else if (existsSync(`${relativeWorkerPath}.ts`)) {
       workerPath = `${relativeWorkerPath}.ts`;
+    } else if (existsSync(`${relativeWorkerPath}.js`)) {
+      workerPath = `${relativeWorkerPath}.js`;
     }
 
     if (!workerPath) {
