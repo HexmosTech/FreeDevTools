@@ -1,8 +1,9 @@
+
 import type { APIRoute } from 'astro';
 import {
     getAllTldrPlatforms,
     getTldrPlatformCommandsPaginated,
-} from '../../lib/tldr-utils';
+} from '../../../db/tldrs/tldr-utils';
 
 async function getAllData() {
   const platforms: any[] = [];
@@ -57,54 +58,54 @@ export const GET: APIRoute = async ({ site }) => {
   
   // Category landing
   urls.push(
-    `  <url>\n    <loc>${site}/tldr/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
+    `  <url>\n < loc > ${ site } /tldr/ < /loc>\n    <lastmod>${now}</lastmod >\n < changefreq > daily < /changefreq>\n    <priority>0.9</priority >\n </url>`
   );
 
-  // Platform pages
-  for (const platform of platforms) {
+// Platform pages
+for (const platform of platforms) {
+  urls.push(
+    `  <url>\n    <loc>${site}/tldr/${platform.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+  );
+}
+
+// Main TLDR pagination pages
+for (let i = 2; i <= totalIndexPages; i++) {
+  urls.push(
+    `  <url>\n    <loc>${site}/tldr/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+  );
+}
+
+// Platform pagination pages
+for (const [platformName, totalPages] of Object.entries(platformPaginationCounts)) {
+  for (let i = 2; i <= totalPages; i++) {
     urls.push(
-      `  <url>\n    <loc>${site}/tldr/${platform.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${site}/tldr/${platformName}/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
+}
 
-  // Main TLDR pagination pages
-  for (let i = 2; i <= totalIndexPages; i++) {
+// Individual command pages
+for (const [platformName, commands] of Object.entries(commandsByPlatform)) {
+  for (const cmd of commands) {
     urls.push(
-      `  <url>\n    <loc>${site}/tldr/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${site}/tldr/${platformName}/${cmd.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
+}
 
-  // Platform pagination pages
-  for (const [platformName, totalPages] of Object.entries(platformPaginationCounts)) {
-    for (let i = 2; i <= totalPages; i++) {
-      urls.push(
-        `  <url>\n    <loc>${site}/tldr/${platformName}/${i}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
-      );
-    }
-  }
+// Sort URLs
+urls.sort((a, b) => {
+  const urlA = a.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
+  const urlB = b.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
+  return urlA.localeCompare(urlB);
+});
 
-  // Individual command pages
-  for (const [platformName, commands] of Object.entries(commandsByPlatform)) {
-    for (const cmd of commands) {
-      urls.push(
-        `  <url>\n    <loc>${site}/tldr/${platformName}/${cmd.name}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
-      );
-    }
-  }
+const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
 
-  // Sort URLs
-  urls.sort((a, b) => {
-    const urlA = a.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
-    const urlB = b.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
-    return urlA.localeCompare(urlB);
-  });
-
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
-
-  return new Response(xml, {
-    headers: {
-      'Content-Type': 'application/xml',
-      'Cache-Control': 'public, max-age=3600',
-    },
-  });
+return new Response(xml, {
+  headers: {
+    'Content-Type': 'application/xml',
+    'Cache-Control': 'public, max-age=3600',
+  },
+});
 };

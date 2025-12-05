@@ -112,10 +112,10 @@ async function initWorkers(): Promise<void> {
     if (!workerPath) {
       const error = new Error(
         `Worker file not found. Checked:\n` +
-          `  - ${distWorkerPath}.js (production)\n` +
-          `  - ${sourceWorkerPath}.ts (development)\n` +
-          `  - ${relativeWorkerPath}.ts (fallback)\n` +
-          `Make sure the db/tldrs/tldr-worker.ts file exists and is copied during build.`
+        `  - ${distWorkerPath}.js (production)\n` +
+        `  - ${sourceWorkerPath}.ts (development)\n` +
+        `  - ${relativeWorkerPath}.ts (fallback)\n` +
+        `Make sure the db/tldrs/tldr-worker.ts file exists and is copied during build.`
       );
       reject(error);
       return;
@@ -198,8 +198,7 @@ async function executeQuery(type: string, params: any): Promise<any> {
         } else {
           const endTime = new Date();
           console.log(
-            `[TLDR_DB][${endTime.toISOString()}] ${type} completed in ${
-              endTime.getTime() - startTime.getTime()
+            `[TLDR_DB][${endTime.toISOString()}] ${type} completed in ${endTime.getTime() - startTime.getTime()
             }ms`
           );
           resolve(response.result);
@@ -240,8 +239,8 @@ export function cleanupWorkers(): Promise<void> {
 // Export query functions
 export const query = {
   getOverview: () => executeQuery('getOverview', {}),
-  getMainPage: (hash: string) => executeQuery('getMainPage', { hash }),
-  getPage: (hash: string) => executeQuery('getPage', { hash }),
+  getMainPage: (platform: string, page: number) => executeQuery('getMainPage', { platform, page }),
+  getPage: (platform: string, slug: string) => executeQuery('getPage', { platform, slug }),
 };
 
 void initWorkers().catch((err) => {

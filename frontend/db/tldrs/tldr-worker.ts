@@ -7,6 +7,7 @@ import { Database } from 'bun:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parentPort, workerData } from 'worker_threads';
+import { hashUrlToKey } from '../../src/lib/hash-utils';
 
 const logColors = {
   reset: '\u001b[0m',
@@ -40,7 +41,7 @@ setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
 const statements = {
   getOverview: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
-  
+
   getMainPage: db.prepare(
     `SELECT data, total_count FROM main_pages WHERE hash = ?`
   ),
@@ -82,7 +83,9 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getMainPage': {
-        const { hash } = params;
+        const { platform, page } = params;
+        const hashKey = `${platform}/${page}`;
+        const hash = hashUrlToKey(hashKey);
         const row = statements.getMainPage.get(hash) as { data: string; total_count: number } | undefined;
         if (row) {
           result = {
@@ -96,7 +99,9 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getPage': {
-        const { hash } = params;
+        const { platform, slug } = params;
+        const hashKey = `${platform}/${slug}`;
+        const hash = hashUrlToKey(hashKey);
         const row = statements.getPage.get(hash) as { html_content: string; metadata: string } | undefined;
         if (row) {
           result = {
@@ -121,8 +126,7 @@ parentPort?.on('message', (message: QueryMessage) => {
     const endTimestamp = highlight(`[${endTime.toISOString()}]`, logColors.timestamp);
     const endDbLabel = highlight('[TLDR_DB]', logColors.dbLabel);
     console.log(
-      `${endTimestamp} ${endDbLabel} Worker ${workerId} END ${type} finished in ${
-        endTime.getTime() - startTime.getTime()
+      `${endTimestamp} ${endDbLabel} Worker ${workerId} END ${type} finished in ${endTime.getTime() - startTime.getTime()
       }ms`
     );
   } catch (error: any) {
