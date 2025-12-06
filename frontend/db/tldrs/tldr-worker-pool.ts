@@ -241,8 +241,6 @@ export const query = {
   getOverview: () => executeQuery('getOverview', {}),
   getMainPage: (platform: string, page: number) => executeQuery('getMainPage', { platform, page }),
   getPage: (platform: string, slug: string) => executeQuery('getPage', { platform, slug }),
-  getTldrContent: (platform: string, slug: string) => executeQuery('getTldrContent', { platform, slug }),
-  getTldrIndex: (page: number) => executeQuery('getTldrIndex', { page }),
 };
 
 void initWorkers().catch((err) => {
