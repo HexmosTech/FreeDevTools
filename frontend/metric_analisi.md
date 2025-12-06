@@ -1,31 +1,3 @@
-# Overview
-
-Currently I want to find avg of db response time for tldr pages 
-
-Already have a script serve/pmd_logs.py which was used to calculate avg response time for pmd pages.
-
-
-now modify this script for identifying avg response time for tldr pages.
-
-
-```
-[TLDR_DB] Initializing worker pool with 2 workers...
-[TLDR_DB] Worker pool initialized in 128ms
-[Auth Middleware] ENABLE_SIGNIN env value: "undefined", enabled: false, Path: /freedevtools/tldr/common/pgmtost4
-[Auth Middleware] Signin disabled, skipping auth check
-[TLDR_DB][2025-12-06T14:09:57.606Z] Dispatching getPage params={"platform":"common","slug":"pgmtost4"}
-[2025-12-06T14:09:57.608Z] [TLDR_DB] Worker 0 START getPage params={"platform":"common","slug":"pgmtost4"}
-[2025-12-06T14:09:57.616Z] [TLDR_DB] Worker 0 END getPage finished in 8ms
-[TLDR_DB][2025-12-06T14:09:57.616Z] getPage completed in 10ms
-[BASE_LAYOUT] Start rendering Convert PGM to ST-4 - Format Images | Online Free DevTools by Hexmos at 2025-12-06T14:09:57.640Z
-19:39:57 [200] /tldr/common/pgmtost4 7948ms
-
-```
-Current logs are from tldr pages.
-
-
-
-
 ## After Removing Body
 
 25-12-06T14:54:57.563548Z  INFO pmdaemon::process: Process astro-4321 started with PID: 51698
@@ -453,3 +425,407 @@ Status code distribution:
 
 ## After Adding Body
 
+./pmd-pin.sh
+Pinning PID 64886 (astro-4321) to CPU 0
+pid 64886's current affinity list: 0-3
+pid 64886's new affinity list: 0
+Pinning PID 64887 (astro-4322) to CPU 1
+pid 64887's current affinity list: 0-3
+pid 64887's new affinity list: 1
+./pmd-verifypin.sh
+Checking CPU pinning for PMDaemon apps: astro-4321 astro-4322
+--------------------------------------
+App: astro-4321
+  PID: 64886 | pid 64886's current affinity list: 0
+
+App: astro-4322
+  PID: 64887 | pid 64887's current affinity list: 1
+
+--------------------------------------
+Done.
+⬇️  Server up -----------
+⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------
+hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb/adb
+
+Summary:
+  Total:	10.4520 secs
+  Slowest:	1.7567 secs
+  Fastest:	0.1498 secs
+  Average:	0.6029 secs
+  Requests/sec:	80.7500
+  
+
+Response time histogram:
+  0.150 [1]	|
+  0.311 [51]	|■■■■■■■■
+  0.471 [268]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.632 [218]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.793 [148]	|■■■■■■■■■■■■■■■■■■■■■■
+  0.953 [67]	|■■■■■■■■■■
+  1.114 [37]	|■■■■■■
+  1.275 [26]	|■■■■
+  1.435 [17]	|■■■
+  1.596 [5]	|■
+  1.757 [6]	|■
+
+
+Latency distribution:
+  10% in 0.3486 secs
+  25% in 0.4049 secs
+  50% in 0.5324 secs
+  75% in 0.7229 secs
+  90% in 0.9819 secs
+  95% in 1.1733 secs
+  99% in 1.5549 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0009 secs, 0.1498 secs, 1.7567 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0005 secs, 0.0000 secs, 0.0371 secs
+  resp wait:	0.5955 secs, 0.1480 secs, 1.6928 secs
+  resp read:	0.0049 secs, 0.0015 secs, 0.0367 secs
+
+Status code distribution:
+  [200]	844 responses
+
+
+
+Peeking at 4 log files in /home/gk/.pmdaemon/logs...
+
+Request count table:
++------------+------------+--------------+---------------+----------+
+| Process    |   Requests |   Dispatches |   Worker Logs |   Errors |
++============+============+==============+===============+==========+
+| astro-4321 |          0 |          437 |           874 |        0 |
++------------+------------+--------------+---------------+----------+
+| astro-4322 |          0 |          407 |           814 |        0 |
++------------+------------+--------------+---------------+----------+
+
+Total aggregated:
+  total lines: 5914
+  requests:    0
+  dispatches:  844
+  worker logs: 1688
+  errors:      0
+
+Dispatches represent each time the worker pool received a query and handed it off to a worker thread (logged via [SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB] Dispatching <queryName>).
+
+Query Count Details process wise:
++------------+-----------+--------------------------------------------------+
+| Process    |   getPage |   getPage params={"platform":"adb","slug":"adb"} |
++============+===========+==================================================+
+| astro-4321 |       437 |                                              437 |
++------------+-----------+--------------------------------------------------+
+| astro-4322 |       407 |                                              407 |
++------------+-----------+--------------------------------------------------+
+
+Query Duration Details process wise:
++---------+---------+----------+----------+-----------+
+| Query   |   Count |   Avg ms |   Max ms |   Sum min |
++=========+=========+==========+==========+===========+
+| getPage |     843 |    255.6 |     1373 |      3.59 |
++---------+---------+----------+----------+-----------+
+
+Overall window: 2025-12-06T15:30:44.519000+00:00 → 2025-12-06T15:30:54.588000+00:00
+Total coverage: 0:00:10.069000
+⬇️ Requesting tldr 10sec
+hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb
+
+Summary:
+  Total:	10.4763 secs
+  Slowest:	0.7539 secs
+  Fastest:	0.0799 secs
+  Average:	0.4250 secs
+  Requests/sec:	114.5440
+  
+
+Response time histogram:
+  0.080 [1]	|
+  0.147 [17]	|■■
+  0.215 [21]	|■■
+  0.282 [46]	|■■■■■
+  0.350 [159]	|■■■■■■■■■■■■■■■■■■
+  0.417 [351]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.484 [294]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.552 [162]	|■■■■■■■■■■■■■■■■■■
+  0.619 [101]	|■■■■■■■■■■■■
+  0.687 [36]	|■■■■
+  0.754 [12]	|■
+
+
+Latency distribution:
+  10% in 0.3083 secs
+  25% in 0.3618 secs
+  50% in 0.4180 secs
+  75% in 0.4872 secs
+  90% in 0.5651 secs
+  95% in 0.6098 secs
+  99% in 0.6914 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0002 secs, 0.0799 secs, 0.7539 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0002 secs, 0.0000 secs, 0.0060 secs
+  resp wait:	0.4201 secs, 0.0757 secs, 0.7521 secs
+  resp read:	0.0045 secs, 0.0016 secs, 0.0319 secs
+
+Status code distribution:
+  [200]	1200 responses
+
+
+
+Peeking at 4 log files in /home/gk/.pmdaemon/logs...
+
+Request count table:
++------------+------------+--------------+---------------+----------+
+| Process    |   Requests |   Dispatches |   Worker Logs |   Errors |
++============+============+==============+===============+==========+
+| astro-4321 |          0 |         1032 |          2064 |        0 |
++------------+------------+--------------+---------------+----------+
+| astro-4322 |          0 |         1012 |          2024 |        0 |
++------------+------------+--------------+---------------+----------+
+
+Total aggregated:
+  total lines: 14314
+  requests:    0
+  dispatches:  2044
+  worker logs: 4088
+  errors:      0
+
+Dispatches represent each time the worker pool received a query and handed it off to a worker thread (logged via [SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB] Dispatching <queryName>).
+
+Query Count Details process wise:
++------------+---------------+--------------------------------------------------+-----------+--------------------------------------------------+
+| Process    |   getMainPage |   getMainPage params={"platform":"adb","page":1} |   getPage |   getPage params={"platform":"adb","slug":"adb"} |
++============+===============+==================================================+===========+==================================================+
+| astro-4321 |           595 |                                              595 |       437 |                                              437 |
++------------+---------------+--------------------------------------------------+-----------+--------------------------------------------------+
+| astro-4322 |           605 |                                              605 |       407 |                                              407 |
++------------+---------------+--------------------------------------------------+-----------+--------------------------------------------------+
+
+Query Duration Details process wise:
++-------------+---------+----------+----------+-----------+
+| Query       |   Count |   Avg ms |   Max ms |   Sum min |
++=============+=========+==========+==========+===========+
+| getPage     |     843 |    255.6 |     1373 |      3.59 |
++-------------+---------+----------+----------+-----------+
+| getMainPage |    1200 |    167.2 |      493 |      3.34 |
++-------------+---------+----------+----------+-----------+
+
+Overall window: 2025-12-06T15:30:44.519000+00:00 → 2025-12-06T15:31:07.329000+00:00
+Total coverage: 0:00:22.810000
+10s Requesting tldr main
+hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr
+
+Summary:
+  Total:	10.4226 secs
+  Slowest:	1.0527 secs
+  Fastest:	0.0418 secs
+  Average:	0.4193 secs
+  Requests/sec:	116.8619
+  
+
+Response time histogram:
+  0.042 [1]	|
+  0.143 [29]	|■■■
+  0.244 [73]	|■■■■■■■■
+  0.345 [351]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.446 [357]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.547 [180]	|■■■■■■■■■■■■■■■■■■■■
+  0.648 [108]	|■■■■■■■■■■■■
+  0.749 [54]	|■■■■■■
+  0.851 [23]	|■■■
+  0.952 [23]	|■■■
+  1.053 [19]	|■■
+
+
+Latency distribution:
+  10% in 0.2592 secs
+  25% in 0.3152 secs
+  50% in 0.3743 secs
+  75% in 0.5005 secs
+  90% in 0.6468 secs
+  95% in 0.7638 secs
+  99% in 0.9848 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0002 secs, 0.0418 secs, 1.0527 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0001 secs, 0.0000 secs, 0.0155 secs
+  resp wait:	0.4140 secs, 0.0365 secs, 1.0500 secs
+  resp read:	0.0048 secs, 0.0018 secs, 0.0322 secs
+
+Status code distribution:
+  [200]	1218 responses
+
+
+
+Peeking at 4 log files in /home/gk/.pmdaemon/logs...
+
+Request count table:
++------------+------------+--------------+---------------+----------+
+| Process    |   Requests |   Dispatches |   Worker Logs |   Errors |
++============+============+==============+===============+==========+
+| astro-4321 |          0 |         1653 |          3306 |        0 |
++------------+------------+--------------+---------------+----------+
+| astro-4322 |          0 |         1609 |          3218 |        0 |
++------------+------------+--------------+---------------+----------+
+
+Total aggregated:
+  total lines: 21622
+  requests:    0
+  dispatches:  3262
+  worker logs: 6524
+  errors:      0
+
+Dispatches represent each time the worker pool received a query and handed it off to a worker thread (logged via [SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB] Dispatching <queryName>).
+
+Query Count Details process wise:
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+
+| Process    |   getMainPage |   getMainPage params={"platform":"adb","page":1} |   getMainPage params={"platform":"index","page":1} |   getPage |   getPage params={"platform":"adb","slug":"adb"} |
++============+===============+==================================================+====================================================+===========+==================================================+
+| astro-4321 |          1216 |                                              595 |                                                621 |       437 |                                              437 |
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+
+| astro-4322 |          1202 |                                              605 |                                                597 |       407 |                                              407 |
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+
+
+Query Duration Details process wise:
++-------------+---------+----------+----------+-----------+
+| Query       |   Count |   Avg ms |   Max ms |   Sum min |
++=============+=========+==========+==========+===========+
+| getPage     |     843 |    255.6 |     1373 |      3.59 |
++-------------+---------+----------+----------+-----------+
+| getMainPage |    2418 |    162.6 |      639 |      6.55 |
++-------------+---------+----------+----------+-----------+
+
+Overall window: 2025-12-06T15:30:44.519000+00:00 → 2025-12-06T15:31:20.147000+00:00
+Total coverage: 0:00:35.628000
+1min Requesting tldr 1min
+hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+
+Summary:
+  Total:	60.2830 secs
+  Slowest:	0.9633 secs
+  Fastest:	0.0354 secs
+  Average:	0.2889 secs
+  Requests/sec:	172.6026
+  
+
+Response time histogram:
+  0.035 [1]	|
+  0.128 [157]	|■
+  0.221 [1498]	|■■■■■■■■■■■
+  0.314 [5651]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.407 [2383]	|■■■■■■■■■■■■■■■■■
+  0.499 [491]	|■■■
+  0.592 [113]	|■
+  0.685 [52]	|
+  0.778 [26]	|
+  0.871 [24]	|
+  0.963 [9]	|
+
+
+Latency distribution:
+  10% in 0.2043 secs
+  25% in 0.2374 secs
+  50% in 0.2784 secs
+  75% in 0.3256 secs
+  90% in 0.3830 secs
+  95% in 0.4294 secs
+  99% in 0.5985 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0354 secs, 0.9633 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0001 secs, 0.0000 secs, 0.0173 secs
+  resp wait:	0.2850 secs, 0.0299 secs, 0.9565 secs
+  resp read:	0.0037 secs, 0.0012 secs, 0.0668 secs
+
+Status code distribution:
+  [200]	10405 responses
+
+
+
+Peeking at 4 log files in /home/gk/.pmdaemon/logs...
+
+Request count table:
++------------+------------+--------------+---------------+----------+
+| Process    |   Requests |   Dispatches |   Worker Logs |   Errors |
++============+============+==============+===============+==========+
+| astro-4321 |          0 |         6865 |         13730 |        0 |
++------------+------------+--------------+---------------+----------+
+| astro-4322 |          0 |         6802 |         13604 |        0 |
++------------+------------+--------------+---------------+----------+
+
+Total aggregated:
+  total lines: 94457
+  requests:    0
+  dispatches:  13667
+  worker logs: 27334
+  errors:      0
+
+Dispatches represent each time the worker pool received a query and handed it off to a worker thread (logged via [SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB] Dispatching <queryName>).
+
+Query Count Details process wise:
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+-------------------------------------------------------+
+| Process    |   getMainPage |   getMainPage params={"platform":"adb","page":1} |   getMainPage params={"platform":"index","page":1} |   getPage |   getPage params={"platform":"adb","slug":"adb"} |   getPage params={"platform":"npm","slug":"npm-fund"} |
++============+===============+==================================================+====================================================+===========+==================================================+=======================================================+
+| astro-4321 |          1216 |                                              595 |                                                621 |      5649 |                                              437 |                                                  5212 |
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+-------------------------------------------------------+
+| astro-4322 |          1202 |                                              605 |                                                597 |      5600 |                                              407 |                                                  5193 |
++------------+---------------+--------------------------------------------------+----------------------------------------------------+-----------+--------------------------------------------------+-------------------------------------------------------+
+
+Query Duration Details process wise:
++-------------+---------+----------+----------+-----------+
+| Query       |   Count |   Avg ms |   Max ms |   Sum min |
++=============+=========+==========+==========+===========+
+| getPage     |   11242 |    126.7 |     1373 |     23.75 |
++-------------+---------+----------+----------+-----------+
+| getMainPage |    2418 |    162.6 |      639 |      6.55 |
++-------------+---------+----------+----------+-----------+
+
+Overall window: 2025-12-06T15:30:44.519000+00:00 → 2025-12-06T15:32:22.965000+00:00
+Total coverage: 0:01:38.446000
+5min Requesting tldr 5min
+hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+^C
+Summary:
+  Total:	162.4016 secs
+  Slowest:	2.0663 secs
+  Fastest:	0.0312 secs
+  Average:	0.4522 secs
+  Requests/sec:	110.4484
+  
+
+Response time histogram:
+  0.031 [1]	|
+  0.235 [3399]	|■■■■■■■■■■■■■■■■■■
+  0.438 [7598]	|■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
+  0.642 [3444]	|■■■■■■■■■■■■■■■■■■
+  0.845 [1814]	|■■■■■■■■■■
+  1.049 [913]	|■■■■■
+  1.252 [454]	|■■
+  1.456 [197]	|■
+  1.659 [81]	|
+  1.863 [26]	|
+  2.066 [10]	|
+
+
+Latency distribution:
+  10% in 0.2039 secs
+  25% in 0.2577 secs
+  50% in 0.3705 secs
+  75% in 0.5644 secs
+  90% in 0.8283 secs
+  95% in 1.0118 secs
+  99% in 1.3745 secs
+
+Details (average, fastest, slowest):
+  DNS+dialup:	0.0000 secs, 0.0312 secs, 2.0663 secs
+  DNS-lookup:	0.0000 secs, 0.0000 secs, 0.0000 secs
+  req write:	0.0001 secs, 0.0000 secs, 0.0647 secs
+  resp wait:	0.4477 secs, 0.0230 secs, 2.0513 secs
+  resp read:	0.0042 secs, 0.0012 secs, 0.1001 secs
+
+Status code distribution:
+  [200]	17937 responses
