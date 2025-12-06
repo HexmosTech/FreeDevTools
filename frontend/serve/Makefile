@@ -114,18 +114,23 @@ test-tldr-req-pmd:
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
 	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb/adb
+	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "⬇️ Requesting tldr 10sec"
 	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb
+	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "10s Requesting tldr main"
 	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr
+	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "1min Requesting tldr 1min"
 	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "5min Requesting tldr 5min"
 	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 # 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
