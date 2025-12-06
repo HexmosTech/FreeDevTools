@@ -153,7 +153,7 @@ const pngIconsMetadata = defineCollection({
 
 export const collections = {
   tldr,
-  // mcpMetadata,
-  // mcpCategoryData,
-  // pngIconsMetadata,
+  mcpMetadata,
+  mcpCategoryData,
+  pngIconsMetadata,
 };
