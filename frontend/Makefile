@@ -20,7 +20,7 @@ serve:
 	bun run serve-ssr
 
 serve-prod:
-	cd serve && pmdaemon --config pmd.config.json start && bash serve/pmd-pin.sh
+	cd serve && pmdaemon --config pmd.config.json start && bash pmd-pin.sh
 
 
 stop-prod:
