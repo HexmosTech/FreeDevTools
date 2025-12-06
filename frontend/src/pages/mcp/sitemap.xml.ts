@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { getAllMcpCategories } from '../../../db/mcp/mcp-utils';
+import { getAllMcpCategories } from 'db/mcp/mcp-utils';
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();

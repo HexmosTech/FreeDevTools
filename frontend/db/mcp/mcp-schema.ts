@@ -7,7 +7,7 @@ export interface McpCategory {
 
 export interface McpPage {
     hash_id: bigint;
-    category: string;
+    category_id: bigint;
     key: string;
     name: string;
     description: string;

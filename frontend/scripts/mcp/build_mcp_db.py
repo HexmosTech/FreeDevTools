@@ -24,6 +24,14 @@ BASE_DIR = Path(__file__).parent.parent.parent
 INPUT_DIR = BASE_DIR / "public" / "mcp" / "input"
 DB_PATH = BASE_DIR / "db" / "all_dbs" / "mcp-db.db"
 
+def generate_category_hash(category_slug: str) -> int:
+    """
+    Generate a 64-bit signed integer hash from category_slug.
+    """
+    hash_bytes = hashlib.sha256(category_slug.encode('utf-8')).digest()
+    # Take first 8 bytes, interpret as big-endian signed integer
+    return int.from_bytes(hash_bytes[:8], byteorder='big', signed=True)
+
 def generate_hash_id(category_slug: str, mcp_key: str) -> int:
     """
     Generate a 64-bit signed integer hash from category_slug and mcp_key.
@@ -104,6 +112,77 @@ def build_db():
     conn = sqlite3.connect(DB_PATH)
     cur = conn.cursor()
     
+import multiprocessing
+from functools import partial
+
+def process_json_file(json_file):
+    """
+    Process a single JSON file and return data for insertion.
+    Returns a tuple: (category_data, mcp_pages_data, error_msg)
+    """
+    try:
+        with open(json_file, 'r', encoding='utf-8') as f:
+            data = json.load(f)
+            
+        category_slug = data.get('category', '')
+        category_name = data.get('categoryDisplay', '')
+        category_desc = data.get('description', '')
+        repositories = data.get('repositories', {})
+        
+        if not category_slug:
+            return None, None, f"Skipping {Path(json_file).name}: No category slug found."
+            
+        repo_count = len(repositories)
+        category_hash_id = generate_category_hash(category_slug)
+        
+        category_data = (category_slug, category_name, category_desc, repo_count)
+        
+        mcp_pages_data = []
+        for mcp_key, repo_data in repositories.items():
+            hash_id = generate_hash_id(category_slug, mcp_key)
+            
+            name = repo_data.get('name', '')
+            description = repo_data.get('description', '')
+            owner = repo_data.get('owner', '')
+            stars = repo_data.get('stars', 0)
+            forks = repo_data.get('forks', 0)
+            language = repo_data.get('language', '')
+            license_name = repo_data.get('license', '')
+            updated_at = repo_data.get('updated_at', '')
+            
+            raw_readme = repo_data.get('readme_content', '')
+            readme_content = process_readme_content(raw_readme)
+            
+            url = repo_data.get('url', '')
+            image_url = repo_data.get('imageUrl', '')
+            npm_url = repo_data.get('npm_url', '')
+            npm_downloads = repo_data.get('npm_downloads', 0)
+            keywords = json.dumps(repo_data.get('keywords', []))
+            
+            mcp_pages_data.append((
+                hash_id, category_hash_id, mcp_key, name, description,
+                owner, stars, forks, language, license_name, updated_at,
+                readme_content, url, image_url, npm_url, npm_downloads, keywords
+            ))
+            
+        return category_data, mcp_pages_data, None
+        
+    except Exception as e:
+        return None, None, f"Error processing {json_file}: {e}"
+
+def build_db():
+    # Ensure DB directory exists
+    DB_PATH.parent.mkdir(parents=True, exist_ok=True)
+    
+    # Remove existing DB if it exists
+    if DB_PATH.exists():
+        DB_PATH.unlink()
+        
+    print(f"Building MCP DB at {DB_PATH}...")
+    
+    conn = sqlite3.connect(DB_PATH)
+    cur = conn.cursor()
+    
     # 1. Create Tables
     
     # Overview Table
@@ -129,7 +208,7 @@ def build_db():
     cur.execute("""
         CREATE TABLE mcp_pages (
             hash_id INTEGER PRIMARY KEY,
-            category TEXT NOT NULL,
+            category_id INTEGER NOT NULL,
             key TEXT NOT NULL,
             name TEXT NOT NULL,
             description TEXT DEFAULT '',
@@ -149,103 +228,58 @@ def build_db():
     """)
     
     # Create Indexes
-    cur.execute("CREATE INDEX idx_mcp_pages_category ON mcp_pages(category);")
-    cur.execute("CREATE INDEX idx_mcp_category_stars_name ON mcp_pages(category, stars DESC, name ASC);")
+    cur.execute("CREATE INDEX idx_mcp_pages_category_id ON mcp_pages(category_id);")
+    cur.execute("CREATE INDEX idx_mcp_category_stars_name ON mcp_pages(category_id, stars DESC, name ASC);")
     
     # 2. Process JSON Files
     
     json_files = glob.glob(str(INPUT_DIR / "*.json"))
     total_mcp_count = 0
     
-    # Limit for testing (set to None for full build)
-    LIMIT = None
-    processed_count = 0
+    print(f"Processing {len(json_files)} files using {multiprocessing.cpu_count()} cores...")
     
-    for json_file in json_files:
-        if LIMIT and processed_count >= LIMIT:
-            break
-            
-        print(f"Processing {Path(json_file).name}...")
-        with open(json_file, 'r', encoding='utf-8') as f:
-            try:
-                data = json.load(f)
-            except json.JSONDecodeError as e:
-                print(f"Error decoding {json_file}: {e}")
-                continue
-                
-        category_slug = data.get('category', '')
-        category_name = data.get('categoryDisplay', '')
-        category_desc = data.get('description', '')
-        repositories = data.get('repositories', {})
+    with multiprocessing.Pool() as pool:
+        results = pool.map(process_json_file, json_files)
         
-        if not category_slug:
-            print(f"Skipping {json_file}: No category slug found.")
+    # 3. Insert Data
+    print("Inserting data into database...")
+    
+    for category_data, mcp_pages_data, error in results:
+        if error:
+            print(error)
             continue
             
-        repo_count = len(repositories)
-        
+        if not category_data:
+            continue
+            
         # Insert Category
         try:
             cur.execute(
                 "INSERT INTO category (slug, name, description, count) VALUES (?, ?, ?, ?)",
-                (category_slug, category_name, category_desc, repo_count)
+                category_data
             )
         except sqlite3.IntegrityError:
-            print(f"Category {category_slug} already exists, updating count...")
+            print(f"Category {category_data[0]} already exists, updating count...")
             cur.execute(
                 "UPDATE category SET count = count + ? WHERE slug = ?",
-                (repo_count, category_slug)
+                (category_data[3], category_data[0])
             )
             
         # Insert MCP Pages
-        for mcp_key, repo_data in repositories.items():
-            if LIMIT and processed_count >= LIMIT:
-                break
+        if mcp_pages_data:
+            cur.executemany(
+                """
+                INSERT INTO mcp_pages (
+                    hash_id, category_id, key, name, description, 
+                    owner, stars, forks, language, license, updated_at, 
+                    readme_content, url, image_url, npm_url, npm_downloads, keywords
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                mcp_pages_data
+            )
+            total_mcp_count += len(mcp_pages_data)
                 
-            hash_id = generate_hash_id(category_slug, mcp_key)
-            
-            name = repo_data.get('name', '')
-            description = repo_data.get('description', '')
-            owner = repo_data.get('owner', '')
-            stars = repo_data.get('stars', 0)
-            forks = repo_data.get('forks', 0)
-            language = repo_data.get('language', '')
-            license_name = repo_data.get('license', '')
-            updated_at = repo_data.get('updated_at', '')
-            
-            raw_readme = repo_data.get('readme_content', '')
-            readme_content = process_readme_content(raw_readme)
-            
-            url = repo_data.get('url', '')
-            image_url = repo_data.get('imageUrl', '')
-            npm_url = repo_data.get('npm_url', '')
-            npm_downloads = repo_data.get('npm_downloads', 0)
-            keywords = json.dumps(repo_data.get('keywords', []))
-            
-            # Store full JSON data
-            full_data = json.dumps(repo_data)
-            
-            try:
-                cur.execute(
-                    """
-                    INSERT INTO mcp_pages (
-                        hash_id, category, key, name, description, 
-                        owner, stars, forks, language, license, updated_at, 
-                        readme_content, url, image_url, npm_url, npm_downloads, keywords
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    """,
-                    (
-                        hash_id, category_slug, mcp_key, name, description,
-                        owner, stars, forks, language, license_name, updated_at,
-                        readme_content, url, image_url, npm_url, npm_downloads, keywords
-                    )
-                )
-                processed_count += 1
-                total_mcp_count += 1
-            except sqlite3.IntegrityError as e:
-                print(f"Error inserting {mcp_key}: {e}")
-                
-    # 3. Update Overview
+    # 4. Update Overview
     # Count total categories
     cur.execute("SELECT COUNT(*) FROM category")
     total_category_count = cur.fetchone()[0]

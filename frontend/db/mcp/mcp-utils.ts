@@ -17,8 +17,8 @@ export async function getMcpPagesByCategory(
     return query.getMcpPagesByCategory(categorySlug, page, limit);
 }
 
-export async function getTotalMcpPagesByCategory(categorySlug: string): Promise<number> {
-    return query.getTotalMcpPagesByCategory(categorySlug);
+export async function getAllMcpPageKeysByCategory(category: string): Promise<string[]> {
+    return query.getAllMcpPageKeysByCategory(category);
 }
 
 export async function getMcpPage(hashId: bigint): Promise<ParsedMcpPage | undefined> {

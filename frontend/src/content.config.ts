@@ -36,75 +36,6 @@ const tldr = defineCollection({
   }),
 });
 
-// Define the MCP metadata collection
-const mcpMetadata = defineCollection({
-  loader: file('public/mcp/meta_data.json', {
-    parser: (fileContent) => {
-      const data = JSON.parse(fileContent);
-      return {
-        'mcp-metadata': data,
-      };
-    },
-  }),
-  schema: z.object({
-    totalCategories: z.number(),
-    totalRepositories: z.number(),
-    processing_started: z.string(),
-    processing_completed: z.string(),
-    categories: z.record(
-      z.string(),
-      z.object({
-        categoryDisplay: z.string(),
-        totalRepositories: z.number(),
-        totalStars: z.number(),
-        totalForks: z.number(),
-        npmPackages: z.number(),
-        npmDownloads: z.number(),
-      })
-    ),
-    summary: z.object({
-      totalStars: z.number(),
-      totalForks: z.number(),
-      npmPackages: z.number(),
-      npmDownloads: z.number(),
-    }),
-  }),
-});
-
-// Define the MCP category data collection using glob loader
-const mcpCategoryData = defineCollection({
-  loader: glob({
-    pattern: '**/*.json',
-    base: './public/mcp/input',
-  }),
-  schema: z.object({
-    category: z.string(),
-    categoryDisplay: z.string(),
-    description: z.string(),
-    totalRepositories: z.number(),
-    repositories: z.record(
-      z.string(),
-      z.object({
-        owner: z.string(),
-        name: z.string(),
-        url: z.string().url(),
-        imageUrl: z.string().optional(),
-        description: z.string().optional(),
-        stars: z.number(),
-        forks: z.number(),
-        license: z.string(),
-        language: z.string(),
-        updated_at: z.string(),
-        readme_content: z.string().optional(),
-        npm_url: z.string(),
-        npm_downloads: z.number(),
-        keywords: z.array(z.string()).optional(),
-        category: z.string(), // Add category field to repository schema
-      })
-    ),
-  }),
-});
-
 // Define the PNG icons metadata collection
 const pngIconsMetadata = defineCollection({
   loader: file('data/cluster_png.json', {
@@ -153,7 +84,5 @@ const pngIconsMetadata = defineCollection({
 
 export const collections = {
   tldr,
-  mcpMetadata,
-  mcpCategoryData,
   pngIconsMetadata,
 };

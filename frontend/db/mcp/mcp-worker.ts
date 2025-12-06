@@ -45,17 +45,23 @@ const statements = {
     mcpPagesByCategory: db.prepare(`
     SELECT key, name, description, owner, stars, forks, license, updated_at, image_url, npm_downloads
     FROM mcp_pages 
-    WHERE category = ? 
+    WHERE category_id = ? 
     ORDER BY stars DESC, name ASC 
     LIMIT ? OFFSET ?
   `),
-    totalMcpPagesByCategory: db.prepare('SELECT COUNT(*) as count FROM mcp_pages WHERE category = ?'),
     mcpPageByHashId: db.prepare(`
         SELECT *
         FROM mcp_pages
         WHERE hash_id = ?
     `),
     getOverview: db.prepare('SELECT total_count, total_category_count FROM overview WHERE id = 1'),
+
+    // for category wise sitemap fetching
+    getAllMcpPageKeysByCategory: db.prepare(`
+    SELECT key
+    FROM mcp_pages 
+    WHERE category_id = ? 
+  `),
 };
 
 // Signal ready
@@ -65,6 +71,12 @@ interface QueryMessage {
     id: string;
     type: string;
     params: any;
+}
+
+// Helper to generate category hash
+function generateCategoryHash(categorySlug: string): bigint {
+    const hash = crypto.createHash('sha256').update(categorySlug).digest();
+    return hash.subarray(0, 8).readBigInt64BE(0);
 }
 
 // Helper to generate hash ID
@@ -105,7 +117,8 @@ parentPort?.on('message', (message: QueryMessage) => {
             case 'getMcpPagesByCategory': {
                 const { categorySlug, page, limit } = params;
                 const offset = (page - 1) * limit;
-                const rows = statements.mcpPagesByCategory.all(categorySlug, limit, offset) as Array<any>;
+                const categoryHashId = generateCategoryHash(categorySlug);
+                const rows = statements.mcpPagesByCategory.all(categoryHashId, limit, offset) as Array<any>;
                 result = rows.map((row) => ({
                     ...row,
 
@@ -113,13 +126,13 @@ parentPort?.on('message', (message: QueryMessage) => {
                 break;
             }
 
-            case 'getTotalMcpPagesByCategory': {
-                const { categorySlug } = params;
-                const row = statements.totalMcpPagesByCategory.get(categorySlug) as { count: number } | undefined;
-                result = row?.count || 0;
+            case 'getAllMcpPageKeysByCategory': {
+                const { category } = params;
+                const categoryHashId = generateCategoryHash(category);
+                const rows = statements.getAllMcpPageKeysByCategory.all(categoryHashId) as Array<{ key: string }>;
+                result = rows.map(r => r.key);
                 break;
             }
-
             case 'getMcpPage': {
                 const { hashId } = params;
                 // Ensure hashId is treated as string for query if needed, or BigInt if bun supports it directly

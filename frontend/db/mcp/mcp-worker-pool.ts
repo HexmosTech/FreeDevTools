@@ -243,9 +243,9 @@ export const query = {
     getMcpCategory: (slug: string) => executeQuery('getMcpCategory', { slug }),
     getMcpPagesByCategory: (categorySlug: string, page: number, limit: number) =>
         executeQuery('getMcpPagesByCategory', { categorySlug, page, limit }),
-    getTotalMcpPagesByCategory: (categorySlug: string) =>
-        executeQuery('getTotalMcpPagesByCategory', { categorySlug }),
     getMcpPage: (hashId: bigint) => executeQuery('getMcpPage', { hashId }),
+    getAllMcpPageKeysByCategory: (category: string) =>
+        executeQuery('getAllMcpPageKeysByCategory', { category }),
     getOverview: () => executeQuery('getOverview', {}),
     hashUrlToKey: (categorySlug: string, mcpKey: string) =>
         executeQuery('hashUrlToKey', { categorySlug, mcpKey }),
