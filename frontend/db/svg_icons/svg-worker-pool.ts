@@ -31,6 +31,8 @@ const WORKER_COUNT = 2;
 let workers: Worker[] = [];
 let workerIndex = 0;
 let initPromise: Promise<void> | null = null;
+// Map to track pending queries per worker (worker index -> Map<queryId, PendingQuery>)
+const pendingQueries = new Map<number, Map<string, PendingQuery>>();
 
 interface QueryMessage {
   id: string;
@@ -42,6 +44,14 @@ interface QueryResponse {
   id: string;
   result?: any;
   error?: string;
+}
+
+interface PendingQuery {
+  resolve: (value: any) => void;
+  reject: (error: Error) => void;
+  timeout: NodeJS.Timeout;
+  type: string;
+  startTime: Date;
 }
 
 function getDbPath(): string {
@@ -134,11 +144,13 @@ async function initWorkers(): Promise<void> {
         },
       });
 
-      // Increase max listeners to prevent memory leak warnings with concurrent queries
-      worker.setMaxListeners(100);
+      // Initialize pending queries map for this worker
+      pendingQueries.set(i, new Map<string, PendingQuery>());
 
-      worker.on('message', (msg) => {
-        if (msg.ready) {
+      // Single message handler for all queries on this worker
+      worker.on('message', (msg: QueryResponse | { ready: boolean }) => {
+        // Handle worker initialization
+        if ('ready' in msg && msg.ready) {
           initializedCount++;
           if (initializedCount === WORKER_COUNT) {
             workers = pendingWorkers;
@@ -149,6 +161,37 @@ async function initWorkers(): Promise<void> {
             initPromise = null;
             resolve();
           }
+          return;
+        }
+
+        // Handle query responses
+        const response = msg as QueryResponse;
+        const workerPendingQueries = pendingQueries.get(i);
+        if (!workerPendingQueries) {
+          console.error(`[SVG_ICONS_DB] No pending queries map found for worker ${i}`);
+          return;
+        }
+
+        const pendingQuery = workerPendingQueries.get(response.id);
+        if (!pendingQuery) {
+          // Response for a query that was already handled or timed out
+          return;
+        }
+
+        // Remove from pending map
+        workerPendingQueries.delete(response.id);
+        clearTimeout(pendingQuery.timeout);
+
+        if (response.error) {
+          pendingQuery.reject(new Error(response.error));
+        } else {
+          const endTime = new Date();
+          console.log(
+            `[SVG_ICONS_DB][${endTime.toISOString()}] ${pendingQuery.type} completed in ${
+              endTime.getTime() - pendingQuery.startTime.getTime()
+            }ms`
+          );
+          pendingQuery.resolve(response.result);
         }
       });
 
@@ -178,36 +221,37 @@ async function executeQuery(type: string, params: any): Promise<any> {
   await initWorkers();
 
   // Round-robin worker selection
-  const worker = workers[workerIndex % workers.length];
+  const selectedWorkerIndex = workerIndex % workers.length;
   workerIndex = (workerIndex + 1) % workers.length;
+  const worker = workers[selectedWorkerIndex];
 
   const startTime = new Date();
   console.log(`[SVG_ICONS_DB][${startTime.toISOString()}] Dispatching ${type}`);
   return new Promise((resolve, reject) => {
     const queryId = `${Date.now()}-${Math.random()}`;
     const timeout = setTimeout(() => {
+      const workerPendingQueries = pendingQueries.get(selectedWorkerIndex);
+      if (workerPendingQueries) {
+        workerPendingQueries.delete(queryId);
+      }
       reject(new Error(`Query timeout: ${type}`));
     }, 30000); // 30 second timeout
 
-    const messageHandler = (response: QueryResponse) => {
-      if (response.id === queryId) {
-        clearTimeout(timeout);
-        worker.off('message', messageHandler);
-        if (response.error) {
-          reject(new Error(response.error));
-        } else {
-          const endTime = new Date();
-          console.log(
-            `[SVG_ICONS_DB][${endTime.toISOString()}] ${type} completed in ${
-              endTime.getTime() - startTime.getTime()
-            }ms`
-          );
-          resolve(response.result);
-        }
-      }
-    };
+    // Register query in pending map
+    const workerPendingQueries = pendingQueries.get(selectedWorkerIndex);
+    if (!workerPendingQueries) {
+      clearTimeout(timeout);
+      reject(new Error(`Worker ${selectedWorkerIndex} not initialized`));
+      return;
+    }
 
-    worker.on('message', messageHandler);
+    workerPendingQueries.set(queryId, {
+      resolve,
+      reject,
+      timeout,
+      type,
+      startTime,
+    });
 
     const message: QueryMessage = {
       id: queryId,
@@ -223,6 +267,16 @@ async function executeQuery(type: string, params: any): Promise<any> {
  * Cleanup workers (for graceful shutdown)
  */
 export function cleanupWorkers(): Promise<void> {
+  // Clear all pending queries and reject them
+  for (const [workerIdx, workerPendingQueries] of pendingQueries.entries()) {
+    for (const [queryId, pendingQuery] of workerPendingQueries.entries()) {
+      clearTimeout(pendingQuery.timeout);
+      pendingQuery.reject(new Error('Worker pool shutting down'));
+    }
+    workerPendingQueries.clear();
+  }
+  pendingQueries.clear();
+
   return Promise.all(
     workers.map(
       (worker) =>
