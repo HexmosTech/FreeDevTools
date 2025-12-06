@@ -30,6 +30,21 @@ export function copyWorkerFile() {
             dist: path.join(distDir, 'server', 'chunks', 'db', 'emojis', 'emoji-worker.js'),
             name: 'EMOJI',
           },
+          {
+            source: path.join(projectRoot, 'db', 'cheatsheets', 'cheatsheets-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'cheatsheets', 'cheatsheets-worker.js'),
+            name: 'CHEATSHEETS',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'man_pages', 'man-pages-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'man_pages', 'man-pages-worker.js'),
+            name: 'MAN_PAGES',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'mcp', 'mcp-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'mcp', 'mcp-worker.js'),
+            name: 'MCP',
+          },
         ];
 
         // Try to use esbuild (available through Vite)

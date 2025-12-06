@@ -70,10 +70,10 @@ test-svg-req-pmd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	hey -z 10s http://localhost:4321/freedevtools/mcp/blockchain-and-crypto/armorwallet--armor-crypto-mcp/
 	@sleep 2
 	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m -host hexmos.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
+	hey -z 1m  http://localhost:4321/freedevtools/mcp/blockchain-and-crypto/armorwallet--armor-crypto-mcp/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
@@ -92,6 +92,157 @@ test-svg-req-pmd:
 	pmdaemon stop all
 	pmdaemon delete all --force 2>/dev/null || true
 	bash kill-ports.sh
+
+test-mcp-req-pmd:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pmdaemon delete all --force 2>/dev/null || true
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	pmdaemon --config pmd.config.json start
+	@sleep 2
+	pmdaemon list
+	./pmd-pin.sh
+	./pmd-verifypin.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -n 5 -c 5 -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/apis-and-http-requests/1/
+	@sleep 2
+	@echo "⬇️  Requesting MCP index -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/1/
+	@sleep 2
+	@echo "⬇️  Requesting MCP category -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/data-analytics/1/
+	@sleep 2
+	@echo "⬇️  Requesting MCP end page -----------"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/data-analytics/24mlight--a-share-mcp-is-just-i-need/
+
+	@echo "⬇️  Showing logs -----------"
+# 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+# 	if [ -n "$$LOG_FILES" ]; then \
+# 		for LOG_FILE in $$LOG_FILES; do \
+# 			echo "=== $$(basename $$LOG_FILE) ==="; \
+# 			cat "$$LOG_FILE"; \
+# 			echo ""; \
+# 		done; \
+# 	else \
+# 		echo "No astro-out log yet."; \
+# 	fi
+	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
+	make pmdlogs LABEL=test-mcp-req-pmd
+	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
+
+
+test-cheatsheets-req-pmd:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pmdaemon delete all --force 2>/dev/null || true
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	pmdaemon --config pmd.config.json start
+	@sleep 2
+	pmdaemon list
+	./pmd-pin.sh
+	./pmd-verifypin.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -n 5 -c 5 -host hexmos-local.com http://127.0.0.1/freedevtools/c/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet index -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/c/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet category -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/c/security/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet end page -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/c/security/medusa/
+	@sleep 2
+
+	@echo "⬇️  Showing logs -----------"
+# 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+# 	if [ -n "$$LOG_FILES" ]; then \
+# 		for LOG_FILE in $$LOG_FILES; do \
+# 			echo "=== $$(basename $$LOG_FILE) ==="; \
+# 			cat "$$LOG_FILE"; \
+# 			echo ""; \
+# 		done; \
+# 	else \
+# 		echo "No astro-out log yet."; \
+# 	fi
+	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
+	make pmdlogs LABEL=test-mcp-req-pmd
+	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
+
+test-man-pages-req-pmd:
+	clear
+	# npm run build
+	clear
+	rm -rf logs/*
+	pmdaemon delete all --force 2>/dev/null || true
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	bash kill-ports.sh
+	@sleep 2
+	pmdaemon --config pmd.config.json start
+	@sleep 2
+	pmdaemon list
+	./pmd-pin.sh
+	./pmd-verifypin.sh
+	@echo "⬇️  Server up -----------"
+	@sleep 2
+	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
+	hey -n 5 -c 5 -host hexmos-local.com http://127.0.0.1/freedevtools/man-pages/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet index -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/man-pages/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet category -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/man-pages/library-functions/
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet end page -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/man-pages/library-functions/cryptography/
+
+	@sleep 2
+	@echo "⬇️  Requesting Cheatsheet end page -----------"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/man-pages/library-functions/computer-science/pcmax1/
+
+	@echo "⬇️  Showing logs -----------"
+# 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
+# 	if [ -n "$$LOG_FILES" ]; then \
+# 		for LOG_FILE in $$LOG_FILES; do \
+# 			echo "=== $$(basename $$LOG_FILE) ==="; \
+# 			cat "$$LOG_FILE"; \
+# 			echo ""; \
+# 		done; \
+# 	else \
+# 		echo "No astro-out log yet."; \
+# 	fi
+	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
+	make pmdlogs LABEL=test-mcp-req-pmd
+	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
+
 
 curl-all-kind-of-page:
 	@echo "SVG Icon (localhost:4321):"

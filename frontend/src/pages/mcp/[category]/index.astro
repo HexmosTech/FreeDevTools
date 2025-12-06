@@ -1,13 +1,15 @@
 ---
-import { getAllMcpCategoryIds } from '@/lib/mcp-utils';
-import { getAllMcpCategories, getMcpMetadata } from '@/lib/mcp-utils';
+import { 
+  getAllMcpCategories, 
+  getMcpCategory,
+  getOverview
+} from 'db/mcp/mcp-utils';
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Mcp from '../_Mcp.astro';
 
 export const prerender = false;
 
 const { category } = Astro.params;
-const urlPath = Astro.url.pathname;
 
 if (!category) {
   return new Response(null, { status: 404 });
@@ -22,35 +24,33 @@ let redirectUrl = '';
 if (/^\d+$/.test(category)) {
   const currentPage = parseInt(category, 10);
 
-  // Fetch categories data directly (SSR mode)
-  const allCategories = await getAllMcpCategories();
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+  // Calculate totals
+  const { totalMcpCount: totalServers, totalCategoryCount } = await getOverview();
+  const totalTools = 0; // We don't track tool count separately in DB yet
+  const totalClients = 0;
+  
+  const totalPages = Math.ceil(totalCategoryCount / itemsPerPage);
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
     return new Response(null, { status: 404 });
   }
 
-  // Get categories for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageCategories = allCategories.slice(startIndex, endIndex);
+  // Fetch categories data directly
+  const allCategories = await getAllMcpCategories(currentPage, itemsPerPage);
+  
+  // Map DB categories to the format expected by the component
+  const mappedCategories = allCategories.map(cat => ({
+    id: cat.slug,
+    name: cat.name,
+    description: cat.description,
+    icon: cat.slug,
+    serverCount: cat.count,
+    url: `/freedevtools/mcp/${cat.slug}/1/`
+  }));
 
-  // Load MCP metadata
-  const metadata = await getMcpMetadata();
-
-  if (!metadata) {
-    throw new Error('MCP metadata not found');
-  }
-
-  // Calculate totals
-  const totalServers = metadata.totalRepositories;
-  const totalTools = Object.values(metadata.categories).reduce(
-    (sum, cat) => sum + cat.npmPackages,
-    0
-  );
-  const totalClients = 0;
+  const currentPageCategories = mappedCategories;
 
   // SEO data
   const title = `Awesome MCP Servers Directory – Discover ${allCategories.length} Model Context Protocol Tools & Categories (Page ${currentPage} of ${totalPages}) | Free DevTools by Hexmos`;
@@ -74,11 +74,10 @@ if (/^\d+$/.test(category)) {
     { label: 'Free DevTools', href: '/freedevtools/' },
     { label: 'MCP Directory', href: '/freedevtools/mcp/1/' },
   ];
-
   paginationData = {
     currentPage,
     totalPages,
-    totalCategories: allCategories.length,
+    totalCategories: totalCategoryCount,
     categories: currentPageCategories,
     totalServers,
     totalTools,
@@ -90,8 +89,8 @@ if (/^\d+$/.test(category)) {
   };
 } else {
   // Validate category exists
-  const allCategoryIds = await getAllMcpCategoryIds();
-  if (!allCategoryIds.includes(category)) {
+  const categoryData = await getMcpCategory(category);
+  if (!categoryData) {
     return new Response(null, { status: 404 });
   }
 

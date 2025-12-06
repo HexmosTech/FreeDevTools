@@ -1,39 +1,22 @@
 import type { APIRoute } from 'astro';
-import { getCollection } from 'astro:content';
+import { getOverview, getAllMcpCategories } from 'db/mcp/mcp-utils';
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
 
-  // Get all categories from the metadata
-  const metadataEntries = await getCollection('mcpMetadata' as any);
-  const metadata = (metadataEntries[0] as any)?.data;
+  // Get overview for main pagination
+  const { totalCategoryCount } = await getOverview();
 
-  if (!metadata) {
-    return new Response('Metadata not found', { status: 500 });
-  }
-
-  // Get all categories from the metadata
-  const categories = Object.keys(metadata.categories);
-
-  // Calculate total pages for MCP directory pagination
-  const totalCategories = categories.length;
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(totalCategories / itemsPerPage);
+  // Get all categories for category pagination
+  const categories = await getAllMcpCategories(1, 100);
 
   const urls: string[] = [];
+  const itemsPerPage = 30;
 
-  // Root MCP page
-  urls.push(
-    `  <url>
-      <loc>${site}/mcp/</loc>
-      <lastmod>${now}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>`
-  );
+  // 1. Main MCP Directory Pagination (/mcp/1/, /mcp/2/, etc.)
+  const totalMainPages = Math.ceil(totalCategoryCount / itemsPerPage);
 
-  // Pagination pages
-  for (let i = 1; i <= totalPages; i++) {
+  for (let i = 1; i <= totalMainPages; i++) {
     urls.push(
       `  <url>
         <loc>${site}/mcp/${i}/</loc>
@@ -42,6 +25,22 @@ export const GET: APIRoute = async ({ site }) => {
         <priority>0.8</priority>
       </url>`
     );
+  }
+
+  // 2. Category Pagination (/mcp/[category]/1/, /mcp/[category]/2/, etc.)
+  for (const category of categories) {
+    const totalCategoryPages = Math.ceil(category.count / itemsPerPage);
+
+    for (let i = 1; i <= totalCategoryPages; i++) {
+      urls.push(
+        `  <url>
+          <loc>${site}/mcp/${category.slug}/${i}/</loc>
+          <lastmod>${now}</lastmod>
+          <changefreq>daily</changefreq>
+          <priority>0.8</priority>
+        </url>`
+      );
+    }
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

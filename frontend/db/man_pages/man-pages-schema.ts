@@ -1,5 +1,5 @@
 export interface ManPage {
-  id: number;
+  hash_id: bigint;
   main_category: string;
   sub_category: string;
   title: string;
@@ -7,6 +7,13 @@ export interface ManPage {
   filename: string;
   content: ManPageContent; // JSON object with dynamic sections
 }
+
+export interface ManPageCategory {
+  category: string;
+  count: number;
+  description: string;
+}
+
 
 export interface ManPageContent {
   NAME?: string;
@@ -38,6 +45,8 @@ export interface Category {
 }
 
 export interface SubCategory {
+  hash_id: bigint;
+  main_category: string;
   name: string;
   count: number;
   description: string;
@@ -52,7 +61,7 @@ export interface Overview {
 
 // Raw database row types (before JSON parsing)
 export interface RawManPageRow {
-  id: number;
+  hash_id: bigint;
   main_category: string;
   sub_category: string;
   title: string;
@@ -70,6 +79,8 @@ export interface RawCategoryRow {
 }
 
 export interface RawSubCategoryRow {
+  hash_id: bigint;
+  main_category: string;
   name: string;
   count: number;
   description: string;
