@@ -32,15 +32,6 @@ export const GET: APIRoute = async ({ site, params }) => {
       </url>`;
   });
 
-  // Add the category page itself
-  urls.unshift(`
-    <url>
-      <loc>${site}/mcp/${category}/1/</loc>
-      <lastmod>${now}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>`);
-
   // Split URLs into chunks if needed
   const sitemapChunks: string[][] = [];
   for (let i = 0; i < urls.length; i += MAX_URLS) {
@@ -55,10 +46,10 @@ export const GET: APIRoute = async ({ site, params }) => {
     if (!chunk) return new Response('Not Found', { status: 404 });
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
-    <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${chunk.join('\n')}
-</urlset>`;
+                <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
+                <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                ${chunk.join('\n')}
+                </urlset>`;
 
     return new Response(xml, {
       headers: {
@@ -71,15 +62,15 @@ export const GET: APIRoute = async ({ site, params }) => {
   // If we have multiple chunks, serve sitemap index
   if (sitemapChunks.length > 1) {
     const indexXml = `<?xml version="1.0" encoding="UTF-8"?>
-      <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
-<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${sitemapChunks
+                <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
+                <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+                ${sitemapChunks
         .map(
           (_, i) => `
     <sitemap>
       <loc>${site}/mcp/${category}/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
-    </sitemap>`
+    </sitemap>` 
         )
         .join('\n')}
 </sitemapindex>`;

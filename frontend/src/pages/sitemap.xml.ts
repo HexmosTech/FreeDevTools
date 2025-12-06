@@ -19,6 +19,10 @@ export const GET: APIRoute = async ({ site }) => {
     <lastmod>${now}</lastmod>
   </sitemap>
   <sitemap>
+    <loc>${site}/c_pages/sitemap.xml</loc>
+    <lastmod>${now}</lastmod>
+  </sitemap>
+  <sitemap>
     <loc>${site}/svg_icons/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
@@ -43,7 +47,7 @@ export const GET: APIRoute = async ({ site }) => {
     <lastmod>${now}</lastmod>
   </sitemap>
 </sitemapindex>`;
-  
+
   return new Response(sitemapIndex, {
     headers: {
       'Content-Type': 'application/xml',

@@ -2,7 +2,6 @@ import {
   getAllCategories,
   getCheatsheetsByCategory,
   getTotalCategories,
-  getTotalCheatsheets,
 } from 'db/cheatsheets/cheatsheets-utils';
 import type { APIRoute } from 'astro';
 
@@ -12,10 +11,6 @@ export const GET: APIRoute = async ({ site }) => {
   // Fetch all categories (assuming < 1000 for now, or we can loop)
   const totalCats = await getTotalCategories();
   const cheatsheetCategories = await getAllCategories(1, totalCats);
-
-  const itemsPerPage = 30;
-  const totalCheatsheets = await getTotalCheatsheets();
-  const totalPages = Math.ceil(totalCheatsheets / itemsPerPage);
 
   const urls: string[] = [];
 
@@ -29,17 +24,6 @@ export const GET: APIRoute = async ({ site }) => {
     </url>`
   );
 
-  // Main cheatsheet pagination pages (c/1/, c/2/, etc.)
-  for (let i = 2; i <= totalPages; i++) {
-    urls.push(
-      `  <url>
-        <loc>${site}/c/${i}/</loc>
-        <lastmod>${now}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-      </url>`
-    );
-  }
 
   // Category pages and their pagination
   for (const category of cheatsheetCategories) {
@@ -52,21 +36,6 @@ export const GET: APIRoute = async ({ site }) => {
         <priority>0.6</priority>
       </url>`
     );
-
-    // Category pagination
-    const catCheatsheetCount = category.cheatsheetCount;
-    const catTotalPages = Math.ceil(catCheatsheetCount / itemsPerPage);
-
-    for (let i = 2; i <= catTotalPages; i++) {
-      urls.push(
-        `  <url>
-          <loc>${site}/c/${category.slug}/${i}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.8</priority>
-        </url>`
-      );
-    }
 
     // Individual cheatsheets
     // We need to fetch all cheatsheets for this category to get their slugs
