@@ -60,22 +60,19 @@ type ProcessedPage struct {
 }
 
 type PageMetadata struct {
-	Url         string   `json:"url"`
-	Cluster     string   `json:"cluster"`
-	Name        string   `json:"name"`
-	Platform    string   `json:"platform"`
 	Title       string   `json:"title"`
 	Description string   `json:"description"`
 	Keywords    []string `json:"keywords"`
-	Features    []string `json:"features"` // Kept in metadata but removed from table
+	Features    []string `json:"features"`
 }
 
 type Frontmatter struct {
-	Title    string   `yaml:"title"`
-	Category string   `yaml:"category"`
-	Path     string   `yaml:"path"`
-	Keywords []string `yaml:"keywords"`
-	Features []string `yaml:"features"`
+	Title       string   `yaml:"title"`
+	Description string   `yaml:"description"`
+	Category    string   `yaml:"category"`
+	Path        string   `yaml:"path"`
+	Keywords    []string `yaml:"keywords"`
+	Features    []string `yaml:"features"`
 }
 
 // --- Hashing Functions ---
@@ -139,20 +136,8 @@ func parseTldrFile(path string) (*ProcessedPage, error) {
 		return nil, nil
 	}
 
-	title := strings.Split(fm.Title, " | ")[0]
-	descriptionLines := []string{}
-	
-	lines = strings.Split(markdownBody, "\n")
-	for i := 0; i < len(lines); i++ {
-		line := strings.TrimSpace(lines[i])
-		if strings.HasPrefix(line, ">") {
-			cleanLine := strings.TrimSpace(strings.TrimPrefix(line, ">"))
-			if !strings.HasPrefix(cleanLine, "More information:") {
-				descriptionLines = append(descriptionLines, cleanLine)
-			}
-		}
-	}
-	description := strings.Join(descriptionLines, " ")
+	title := fm.Title
+	description := fm.Description
 
 	extensions := parser.CommonExtensions | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock
 	p := parser.NewWithExtensions(extensions)
@@ -168,11 +153,14 @@ func parseTldrFile(path string) (*ProcessedPage, error) {
 	name := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	fullHash := createFullHash(cluster, name)
 	urlHash := get8Bytes(fullHash)
-	pathUrl := fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, name)
+	pathUrl := strings.TrimSuffix(fm.Path, "/")
+	if pathUrl == "" {
+		pathUrl = fmt.Sprintf("/freedevtools/tldr/%s/%s", cluster, name)
+	}
 
 	return &ProcessedPage{
 		UrlHash:     urlHash,
-		Url:         fmt.Sprintf("%s/%s", cluster, name),
+		Url:         pathUrl,
 		Cluster:     cluster,
 		Name:        name,
 		Platform:    fm.Category,
@@ -279,10 +267,6 @@ func main() {
 
 	for _, p := range allPages {
 		meta := PageMetadata{
-			Url:         p.Url,
-			Cluster:     p.Cluster,
-			Name:        p.Name,
-			Platform:    p.Platform,
 			Title:       p.Title,
 			Description: p.Description,
 			Keywords:    p.Keywords,
