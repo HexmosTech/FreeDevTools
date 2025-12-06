@@ -3,7 +3,7 @@ import {
   getCheatsheetsByCategory,
   getTotalCategories,
   getTotalCheatsheets,
-} from '../../../db/cheatsheets/cheatsheets-utils';
+} from 'db/cheatsheets/cheatsheets-utils';
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site }) => {
