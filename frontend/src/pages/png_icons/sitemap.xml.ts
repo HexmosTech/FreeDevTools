@@ -1,38 +1,36 @@
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site, params }) => {
-  const { glob } = await import('glob');
-  const path = await import('path');
-
   const now = new Date().toISOString();
   const MAX_URLS = 5000;
 
-  // Get all SVG files
-  const svgFiles = await glob('**/*.svg', { cwd: './public/svg_icons' });
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
 
-  // Map files to sitemap URLs with image info
-  const urls = svgFiles.map((file) => {
-    const parts = file.split(path.sep);
-    const name = parts.pop()!.replace('.svg', '');
-    const category = parts.pop() || 'general';
+  // Get all icons from database instead of globbing files
+  const { query } = await import('db/png_icons/png-worker-pool');
+  const icons = await query.getSitemapIcons();
+
+  // Map icons to sitemap URLs (no image tag for PNG)
+  const urls = icons.map((icon) => {
+    const category = icon.category || icon.cluster;
+    const name = icon.name;
 
     return `
       <url>
-        <loc>${site}/png_icons/${category}/${name}/</loc>
+        <loc>${siteUrl}/png_icons/${category}/${name}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
-        <image:image xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
-          <image:loc>${site}/svg_icons/${category}/${name}.svg</image:loc>
-          <image:title>Free ${name} PNG Icon Download</image:title>
-        </image:image>
       </url>`;
   });
 
   // Include the landing page
   urls.unshift(`
     <url>
-      <loc>${site}/png_icons/</loc>
+      <loc>${siteUrl}/png_icons/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>daily</changefreq>
       <priority>0.9</priority>
@@ -53,8 +51,7 @@ export const GET: APIRoute = async ({ site, params }) => {
 
     const xml = `<?xml version="1.0" encoding="UTF-8"?>
     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
-        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${chunk.join('\n')}
 </urlset>`;
 
@@ -71,14 +68,14 @@ export const GET: APIRoute = async ({ site, params }) => {
 
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>${site}/png_icons_pages/sitemap.xml</loc>
+    <loc>${siteUrl}/png_icons_pages/sitemap.xml</loc>
     <lastmod>${now}</lastmod>
   </sitemap>
   ${sitemapChunks
     .map(
       (_, i) => `
     <sitemap>
-      <loc>${site}/png_icons/sitemap-${i + 1}.xml</loc>
+      <loc>${siteUrl}/png_icons/sitemap-${i + 1}.xml</loc>
       <lastmod>${now}</lastmod>
     </sitemap>`
     )

@@ -1,9 +1,18 @@
-import Database from 'better-sqlite3';
+import { Database } from 'bun:sqlite';
 import path from 'path';
-import type { ManPage, Category, SubCategory, RawManPageRow, RawCategoryRow, RawSubCategoryRow } from '../../db/man_pages/man-pages-schema';
+import type {
+  Category,
+  ManPage,
+  Overview,
+  RawCategoryRow,
+  RawManPageRow,
+  RawOverviewRow,
+  RawSubCategoryRow,
+  SubCategory,
+} from '../../db/man_pages/man-pages-schema';
 
 // DB queries
-let dbInstance: any = null;
+let dbInstance: Database | null = null;
 
 function getDbPath(): string {
   return path.resolve(process.cwd(), 'db/all_dbs/man-pages-db.db');
@@ -14,8 +23,8 @@ export function getDb() {
   const dbPath = getDbPath();
   dbInstance = new Database(dbPath, { readonly: true });
   // Improve read performance for build-time queries
-  dbInstance.pragma('journal_mode = OFF');
-  dbInstance.pragma('synchronous = OFF');
+  dbInstance.run('PRAGMA journal_mode = OFF');
+  dbInstance.run('PRAGMA synchronous = OFF');
   return dbInstance;
 }
 
@@ -28,23 +37,23 @@ export interface ManPageCategory {
 // Get all man page categories with their descriptions
 export function getManPageCategories(): ManPageCategory[] {
   const db = getDb();
-  
+
   const stmt = db.prepare(`
     SELECT name, count, description
     FROM category 
     ORDER BY name
   `);
-  
+
   const results = stmt.all() as Array<{
     name: string;
     count: number;
     description: string;
   }>;
-  
-  return results.map(row => ({
+
+  return results.map((row) => ({
     category: row.name,
     count: row.count,
-    description: row.description
+    description: row.description,
   }));
 }
 
@@ -57,7 +66,7 @@ export function getCategories(): Category[] {
     FROM category 
     ORDER BY name
   `);
-  
+
   const results = stmt.all() as RawCategoryRow[];
   return results.map((row) => ({
     ...row,
@@ -74,7 +83,7 @@ export function getSubCategories(): SubCategory[] {
     FROM sub_category 
     ORDER BY name
   `);
-  
+
   const results = stmt.all() as RawSubCategoryRow[];
   return results.map((row) => ({
     ...row,
@@ -90,30 +99,48 @@ export function getOverview(): Overview | null {
     FROM overview 
     WHERE id = 1
   `);
-  
+
   const result = stmt.get() as RawOverviewRow | undefined;
   if (!result) return null;
-  
+
   return {
     id: result.id,
     total_count: result.total_count,
   } as Overview;
 }
-export function getSubCategoriesByMainCategory(mainCategory: string): SubCategory[] {
+export function getSubCategoriesByMainCategory(
+  mainCategory: string
+): SubCategory[] {
   const db = getDb();
+  // Query directly from man_pages table to get all subcategories for this main category
+  // This ensures we get all subcategories that exist in man_pages, even if they're not in sub_category table
   const stmt = db.prepare(`
-    SELECT DISTINCT sc.name, sc.count, sc.description, 
-           json(sc.keywords) as keywords, sc.path
-    FROM sub_category sc
-    INNER JOIN man_pages mp ON mp.sub_category = sc.name
-    WHERE mp.main_category = ?
-    ORDER BY sc.name
+    SELECT 
+      sub_category as name,
+      COUNT(*) as count,
+      'Subcategory for ' || sub_category as description,
+      json_array(sub_category) as keywords,
+      '/' || sub_category as path
+    FROM man_pages 
+    WHERE main_category = ?
+    GROUP BY sub_category
+    ORDER BY sub_category
   `);
-  
-  const results = stmt.all(mainCategory) as RawSubCategoryRow[];
+
+  const results = stmt.all(mainCategory) as Array<{
+    name: string;
+    count: number;
+    description: string;
+    keywords: string;
+    path: string;
+  }>;
+
   return results.map((row) => ({
-    ...row,
+    name: row.name,
+    count: row.count,
+    description: row.description,
     keywords: JSON.parse(row.keywords || '[]'),
+    path: row.path,
   })) as SubCategory[];
 }
 
@@ -127,7 +154,7 @@ export function getManPagesByCategory(category: string): ManPage[] {
     WHERE main_category = ?
     ORDER BY title
   `);
-  
+
   const results = stmt.all(category) as RawManPageRow[];
   return results.map((row) => ({
     ...row,
@@ -136,7 +163,10 @@ export function getManPagesByCategory(category: string): ManPage[] {
 }
 
 // Get man pages by category and subcategory
-export function getManPagesBySubcategory(category: string, subcategory: string): ManPage[] {
+export function getManPagesBySubcategory(
+  category: string,
+  subcategory: string
+): ManPage[] {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT id, main_category, sub_category, title, slug, filename, 
@@ -145,7 +175,7 @@ export function getManPagesBySubcategory(category: string, subcategory: string):
     WHERE main_category = ? AND sub_category = ?
     ORDER BY title
   `);
-  
+
   const results = stmt.all(category, subcategory) as RawManPageRow[];
   return results.map((row) => ({
     ...row,
@@ -162,10 +192,10 @@ export function getManPageById(id: string | number): ManPage | null {
     FROM man_pages 
     WHERE id = ?
   `);
-  
+
   const result = stmt.get(id) as RawManPageRow | undefined;
   if (!result) return null;
-  
+
   return {
     ...result,
     content: JSON.parse(result.content || '{}'),
@@ -179,19 +209,19 @@ export function generateManPageStaticPaths() {
     SELECT id, main_category, sub_category 
     FROM man_pages
   `);
-  
+
   const rows = stmt.all() as Array<{
     id: number;
     main_category: string;
     sub_category: string;
   }>;
-  
-  return rows.map(row => ({
+
+  return rows.map((row) => ({
     params: {
       category: row.main_category,
       subcategory: row.sub_category,
-      page: row.id.toString()
-    }
+      page: row.id.toString(),
+    },
   }));
 }
 
@@ -202,39 +232,43 @@ export function generateCategoryStaticPaths() {
     SELECT name 
     FROM category
   `);
-  
+
   const rows = stmt.all() as Array<{ name: string }>;
-  
-  return rows.map(row => ({
+
+  return rows.map((row) => ({
     params: {
-      category: row.name
-    }
+      category: row.name,
+    },
   }));
 }
 
-// Generate static paths for subcategories  
+// Generate static paths for subcategories
 export function generateSubcategoryStaticPaths() {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT DISTINCT mp.main_category, mp.sub_category 
     FROM man_pages mp
   `);
-  
+
   const rows = stmt.all() as Array<{
     main_category: string;
     sub_category: string;
   }>;
-  
-  return rows.map(row => ({
+
+  return rows.map((row) => ({
     params: {
       category: row.main_category,
-      subcategory: row.sub_category
-    }
+      subcategory: row.sub_category,
+    },
   }));
 }
 
 // Get man page by category, subcategory and filename
-export function getManPageByPath(category: string, subcategory: string, filename: string): ManPage | null {
+export function getManPageByPath(
+  category: string,
+  subcategory: string,
+  filename: string
+): ManPage | null {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT id, main_category, sub_category, title, filename, 
@@ -242,10 +276,15 @@ export function getManPageByPath(category: string, subcategory: string, filename
     FROM man_pages 
     WHERE main_category = ? AND sub_category = ? AND (filename = ? OR id = ?)
   `);
-  
-  const result = stmt.get(category, subcategory, filename, parseInt(filename) || 0) as RawManPageRow | undefined;
+
+  const result = stmt.get(
+    category,
+    subcategory,
+    filename,
+    parseInt(filename) || 0
+  ) as RawManPageRow | undefined;
   if (!result) return null;
-  
+
   return {
     ...result,
     content: JSON.parse(result.content || '{}'),
@@ -253,7 +292,11 @@ export function getManPageByPath(category: string, subcategory: string, filename
 }
 
 // Get man page by command name (first part of title)
-export function getManPageByCommandName(category: string, subcategory: string, commandName: string): ManPage | null {
+export function getManPageByCommandName(
+  category: string,
+  subcategory: string,
+  commandName: string
+): ManPage | null {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT id, main_category, sub_category, title, slug, filename, 
@@ -261,10 +304,12 @@ export function getManPageByCommandName(category: string, subcategory: string, c
     FROM man_pages 
     WHERE main_category = ? AND sub_category = ? AND slug = ?
   `);
-  
-  const result = stmt.get(category, subcategory, commandName) as RawManPageRow | undefined;
+
+  const result = stmt.get(category, subcategory, commandName) as
+    | RawManPageRow
+    | undefined;
   if (!result) return null;
-  
+
   return {
     ...result,
     content: JSON.parse(result.content || '{}'),
@@ -272,63 +317,75 @@ export function getManPageByCommandName(category: string, subcategory: string, c
 }
 
 // Alias for better naming - get man page by slug
-export function getManPageBySlug(category: string, subcategory: string, slug: string): ManPage | null {
+export function getManPageBySlug(
+  category: string,
+  subcategory: string,
+  slug: string
+): ManPage | null {
   return getManPageByCommandName(category, subcategory, slug);
 }
 
 // Generate static paths for individual man pages using command parameter
-export function generateCommandStaticPaths(): Array<{ params: { category: string; subcategory: string; slug: string } }> {
+export function generateCommandStaticPaths(): Array<{
+  params: { category: string; subcategory: string; slug: string };
+}> {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT main_category, sub_category, slug
     FROM man_pages
     ORDER BY main_category, sub_category, slug
   `);
-  
+
   const manPages = stmt.all() as Array<{
     main_category: string;
     sub_category: string;
     slug: string;
   }>;
-  
+
   console.log(`📊 Found ${manPages.length} total man pages in database`);
-  
-  const paths = manPages.map(manPage => ({
+
+  const paths = manPages.map((manPage) => ({
     params: {
       category: manPage.main_category,
-      subcategory: manPage.sub_category, 
-      slug: manPage.slug
-    }
+      subcategory: manPage.sub_category,
+      slug: manPage.slug,
+    },
   }));
-  
+
   // Log some examples
   if (paths.length > 0) {
     console.log('🔍 Sample generated paths:', paths.slice(0, 5));
   }
-  
+
   return paths;
 }
 
 // Efficient paginated queries for better performance
 
-export function getSubCategoriesCountByMainCategory(mainCategory: string): number {
+export function getSubCategoriesCountByMainCategory(
+  mainCategory: string
+): number {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT COUNT(DISTINCT sub_category) as count
     FROM man_pages 
     WHERE main_category = ?
   `);
-  
+
   const result = stmt.get(mainCategory) as { count: number } | undefined;
   return result?.count || 0;
 }
 
 export function getSubCategoriesByMainCategoryPaginated(
-  mainCategory: string, 
-  limit: number, 
+  mainCategory: string,
+  limit: number,
   offset: number
 ): SubCategory[] {
   const db = getDb();
+  // Ensure limit and offset are integers
+  const limitInt = Math.floor(limit);
+  const offsetInt = Math.floor(offset);
+
   const stmt = db.prepare(`
     SELECT 
       sub_category as name,
@@ -342,29 +399,35 @@ export function getSubCategoriesByMainCategoryPaginated(
     ORDER BY sub_category
     LIMIT ? OFFSET ?
   `);
-  
-  return stmt.all(mainCategory, limit, offset) as SubCategory[];
+
+  return stmt.all(mainCategory, limitInt, offsetInt) as SubCategory[];
 }
 
-export function getTotalManPagesCountByMainCategory(mainCategory: string): number {
+export function getTotalManPagesCountByMainCategory(
+  mainCategory: string
+): number {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT COUNT(*) as count
     FROM man_pages 
     WHERE main_category = ?
   `);
-  
+
   const result = stmt.get(mainCategory) as { count: number } | undefined;
   return result?.count || 0;
 }
 
 export function getManPagesBySubcategoryPaginated(
   mainCategory: string,
-  subCategory: string, 
-  limit: number, 
+  subCategory: string,
+  limit: number,
   offset: number
 ): ManPage[] {
   const db = getDb();
+  // Ensure limit and offset are integers
+  const limitInt = Math.floor(limit);
+  const offsetInt = Math.floor(offset);
+
   const stmt = db.prepare(`
     SELECT id, main_category, sub_category, title, slug, filename, content
     FROM man_pages 
@@ -372,8 +435,13 @@ export function getManPagesBySubcategoryPaginated(
     ORDER BY title
     LIMIT ? OFFSET ?
   `);
-  
-  const rows = stmt.all(mainCategory, subCategory, limit, offset) as Array<{
+
+  const rows = stmt.all(
+    mainCategory,
+    subCategory,
+    limitInt,
+    offsetInt
+  ) as Array<{
     id: number;
     main_category: string;
     sub_category: string;
@@ -382,29 +450,38 @@ export function getManPagesBySubcategoryPaginated(
     filename: string;
     content: string;
   }>;
-  
-  return rows.map(row => ({
+
+  return rows.map((row) => ({
     id: row.id,
     main_category: row.main_category,
     sub_category: row.sub_category,
     title: row.title,
     slug: row.slug,
     filename: row.filename,
-    content: JSON.parse(row.content)
+    content: JSON.parse(row.content),
   }));
 }
 
-export function getManPagesCountBySubcategory(mainCategory: string, subCategory: string): number {
+export function getManPagesCountBySubcategory(
+  mainCategory: string,
+  subCategory: string
+): number {
   const db = getDb();
   const stmt = db.prepare(`
     SELECT COUNT(*) as count
     FROM man_pages 
     WHERE main_category = ? AND sub_category = ?
   `);
-  
-  const result = stmt.get(mainCategory, subCategory) as { count: number } | undefined;
+
+  const result = stmt.get(mainCategory, subCategory) as
+    | { count: number }
+    | undefined;
   return result?.count || 0;
 }
 
 // Re-export types for convenience
-export type { ManPage, Category, SubCategory } from '../../db/man_pages/man-pages-schema';
+export type {
+  Category,
+  ManPage,
+  SubCategory,
+} from '../../db/man_pages/man-pages-schema';

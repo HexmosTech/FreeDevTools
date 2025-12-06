@@ -209,8 +209,8 @@ func generatePDF(results []UrlResult, filename string, comparison *SitemapCompar
 
 	err := pdf.OutputFileAndClose(filename)
 	if err != nil {
-		fmt.Println("Error saving PDF:", err)
+		logPrintln("Error saving PDF:", err)
 	} else {
-		fmt.Println("✅ PDF report saved as", filename)
+		logPrintln("✅ PDF report saved as", filename)
 	}
 }

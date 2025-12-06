@@ -52,13 +52,13 @@ const pagesDir = path.join(projectRoot, 'src', 'pages');
 function excludeUnchangedSections() {
   logStep(
     'Excluding unchanged sections from build',
-    'Building only Icons sections...'
+    'Building only SVG Icons section...'
   );
 
-  const changedSections = ['svg_icons', 'png_icons']; // Only build Icons
+  const changedSections = ['svg_icons']; // Only build SVG Icons
   logInfo(`Building strategy: ${changedSections.join(' ')}`);
 
-  logInfo('🎯 Selective build mode - Icons only');
+  logInfo('🎯 Selective build mode - SVG Icons only');
 
   // Get all directories in pages folder
   const dirs = fs
@@ -113,7 +113,10 @@ function restoreOriginalStructure() {
 }
 
 function buildProject() {
-  logStep('Building project', 'Running Astro build for Icons sections only...');
+  logStep(
+    'Building project',
+    'Running Astro build for SVG Icons section only...'
+  );
 
   try {
     execSync('npx astro build', {
@@ -134,10 +137,10 @@ function buildProject() {
 }
 
 function showBuildInfo() {
-  log('\n📦 Icons Build Script', 'magenta');
-  log('====================', 'magenta');
+  log('\n📦 SVG Icons Build Script', 'magenta');
+  log('========================', 'magenta');
   log(
-    'This script will build only the Icons sections (SVG & PNG) by excluding all other page directories.',
+    'This script will build only the SVG Icons section by excluding all other page directories.',
     'white'
   );
   log(
@@ -163,7 +166,7 @@ async function main() {
     // Step 2: Build project
     buildProject();
 
-    logSuccess('\n🎉 Icons build completed successfully!');
+    logSuccess('\n🎉 SVG Icons build completed successfully!');
     logInfo('The build output is in the dist/ directory');
   } catch (error) {
     logError(`\n💥 Build failed: ${error.message}`);

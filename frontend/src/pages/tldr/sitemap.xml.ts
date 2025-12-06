@@ -16,7 +16,7 @@ async function getCommandsByPlatform() {
     const name = fileName.replace(/\.md$/i, '');
     if (!byPlatform[platform]) byPlatform[platform] = [];
     byPlatform[platform].push({
-      url: entry.data.path || `/freedevtools/tldr/${platform}/${name}`,
+      url: entry.data.path || `/freedevtools/tldr/${platform}/$s{name}`,
     });
   }
   return byPlatform;
@@ -60,7 +60,7 @@ export const GET: APIRoute = async ({ site }) => {
     );
   }
   // Individual command pages
-  for (const [platform, commands] of Object.entries(byPlatform)) {
+  for (const [_platform, commands] of Object.entries(byPlatform)) {
     for (const cmd of commands) {
       // Remove /freedevtools prefix and ensure proper URL construction
       const cleanUrl = cmd.url.replace('/freedevtools', '');
@@ -74,6 +74,13 @@ export const GET: APIRoute = async ({ site }) => {
       );
     }
   }
+
+  // Sort URLs in ascending order by extracting the <loc> value
+  urls.sort((a, b) => {
+    const urlA = a.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
+    const urlB = b.match(/<loc>(.*?)<\/loc>/)?.[1] || '';
+    return urlA.localeCompare(urlB);
+  });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`;
 
