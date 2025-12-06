@@ -1,8 +1,4 @@
 export interface PageMetadata {
-  url: string;
-  cluster: string;
-  name: string;
-  platform: string;
   title: string;
   description: string;
   keywords: string[];
@@ -10,7 +6,6 @@ export interface PageMetadata {
 }
 
 export interface Page {
-  url_hash: number;
   html_content: string;
   metadata: PageMetadata;
 }

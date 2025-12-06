@@ -20,10 +20,7 @@ export async function getTldrPage(platform: string, slug: string) {
 
   if (!page) return null;
 
-  return {
-    ...page,
-    ...page.metadata,
-  };
+  return page;
 }
 
 export async function getTldrOverview() {

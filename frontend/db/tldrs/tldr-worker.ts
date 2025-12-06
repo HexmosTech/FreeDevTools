@@ -106,7 +106,7 @@ parentPort?.on('message', (message: QueryMessage) => {
         if (row) {
           result = {
             html_content: row.html_content,
-            ...JSON.parse(row.metadata)
+            metadata: JSON.parse(row.metadata)
           };
         } else {
           result = null;
