@@ -211,6 +211,17 @@ func ensureSchema(db *sql.DB) error {
 			data TEXT DEFAULT '[]' -- JSON list of URLs
 		) WITHOUT ROWID;
 	`)
+	if err != nil {
+		return err
+	}
+
+	// Overview table
+	_, err = db.Exec(`
+		CREATE TABLE IF NOT EXISTS overview (
+			id INTEGER PRIMARY KEY CHECK(id = 1),
+			total_count INTEGER NOT NULL
+		);
+	`)
 	return err
 }
 
@@ -505,6 +516,11 @@ func main() {
 	}
 	
 	tx.Commit()
+
+	// 6. Overview
+	if _, err := db.Exec("INSERT INTO overview (id, total_count) VALUES (1, ?)", len(allPages)); err != nil {
+		log.Fatal(err)
+	}
 
 	elapsed := time.Since(start)
 	fmt.Printf("Finished! Processed %d pages and %d URLs in %s.\n", len(allPages), len(allUrls), elapsed)
