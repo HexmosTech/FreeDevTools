@@ -65,26 +65,20 @@ const statements = {
     `SELECT name, count, preview_commands_json FROM cluster ORDER BY name`
   ),
 
-  // Sitemap query: Union of all URLs
-  getSitemapUrls: db.prepare(
-    `SELECT url FROM (
-       SELECT '/freedevtools/tldr/' as url
-       UNION ALL
-       SELECT '/freedevtools/tldr/' || name || '/' as url FROM cluster
-       UNION ALL
-       SELECT url FROM pages
-     ) ORDER BY url LIMIT ? OFFSET ?`
+  // Optimized sitemap queries
+  getClusterCount: db.prepare('SELECT COUNT(*) as count FROM cluster'),
+  
+  getClustersPaginated: db.prepare(
+    'SELECT name FROM cluster ORDER BY name LIMIT ? OFFSET ?'
+  ),
+
+  getPagesPaginated: db.prepare(
+    'SELECT url FROM pages ORDER BY url_hash LIMIT ? OFFSET ?'
   ),
   
-  // Count total URLs for sitemap index
+  // Count total URLs for sitemap index (1 for root + clusters + pages)
   getSitemapCount: db.prepare(
-    `SELECT COUNT(*) as count FROM (
-       SELECT '/freedevtools/tldr/' as url
-       UNION ALL
-       SELECT name FROM cluster
-       UNION ALL
-       SELECT url FROM pages
-     )`
+    `SELECT (SELECT COUNT(*) FROM cluster) + (SELECT COUNT(*) FROM pages) + 1 as count`
   ),
 };
 
@@ -183,8 +177,47 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getSitemapUrls': {
         const { limit, offset } = params;
-        const rows = statements.getSitemapUrls.all(limit, offset) as { url: string }[];
-        result = rows.map(row => row.url);
+        const urls: string[] = [];
+        let currentOffset = offset;
+        let remainingLimit = limit;
+
+        // 1. Root URL
+        if (currentOffset === 0 && remainingLimit > 0) {
+          urls.push('/freedevtools/tldr/');
+          remainingLimit--;
+        } else if (currentOffset > 0) {
+          currentOffset--; // Consumed by root
+        }
+
+        // 2. Cluster URLs
+        if (remainingLimit > 0) {
+          const clusterCountRow = statements.getClusterCount.get() as { count: number };
+          const clusterCount = clusterCountRow.count;
+
+          if (currentOffset < clusterCount) {
+            const fetchCount = Math.min(remainingLimit, clusterCount - currentOffset);
+            const rows = statements.getClustersPaginated.all(fetchCount, currentOffset) as { name: string }[];
+            
+            for (const row of rows) {
+              urls.push(`/freedevtools/tldr/${row.name}/`);
+            }
+            
+            remainingLimit -= rows.length;
+            currentOffset = 0; // Reset offset for next section
+          } else {
+            currentOffset -= clusterCount; // Skip all clusters
+          }
+        }
+
+        // 3. Page URLs
+        if (remainingLimit > 0) {
+          const rows = statements.getPagesPaginated.all(remainingLimit, currentOffset) as { url: string }[];
+          for (const row of rows) {
+            urls.push(row.url);
+          }
+        }
+
+        result = urls;
         break;
       }
 

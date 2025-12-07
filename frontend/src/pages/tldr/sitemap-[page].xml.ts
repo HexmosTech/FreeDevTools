@@ -26,29 +26,28 @@ export const GET: APIRoute = async ({ params, site }) => {
   const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
   
   const urlEntries = urls.map(url => {
-    // Ensure URL starts with /freedevtools if not already (it should be from DB)
-    // But DB stores relative paths like /freedevtools/tldr/...
-    // We need to prepend siteUrl (which might include /freedevtools if configured that way, but usually is domain)
-    // siteUrl in this context is usually http://localhost:4321/freedevtools
-    
-    // If DB url starts with /freedevtools, and siteUrl ends with /freedevtools, we might double up.
-    // Let's assume siteUrl is the base domain + base path.
-    // Actually, siteUrl constructed above includes /freedevtools.
-    // And DB urls start with /freedevtools.
-    // So we should strip /freedevtools from one of them or handle it carefully.
-    
     // DB URL: /freedevtools/tldr/common/tar/
     // Site URL: http://localhost:4321/freedevtools
     // Result should be: http://localhost:4321/freedevtools/tldr/common/tar/
     
-    // Let's strip /freedevtools from the start of DB URL if present
+    // Strip /freedevtools from the start of DB URL if present
     const relativeUrl = url.startsWith('/freedevtools') ? url.substring(13) : url;
     const fullUrl = `${siteUrl}${relativeUrl}`;
     
-    return `  <url>\n    <loc>${fullUrl}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`;
+    // Determine priority based on URL depth/type
+    let priority = '0.8';
+    if (relativeUrl === '/tldr/') {
+      priority = '0.9'; // Landing page
+    } else if (relativeUrl.split('/').filter(Boolean).length === 2) {
+      priority = '0.8'; // Cluster page (e.g. /tldr/common/)
+    } else {
+      priority = '0.8'; // Command page
+    }
+
+    return `  <url>\n    <loc>${fullUrl}</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>${priority}</priority>\n  </url>`;
   });
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries.join(
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urlEntries.join(
     "\n"
   )}\n</urlset>`;
 
