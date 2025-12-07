@@ -218,35 +218,21 @@ export function cleanupWorkers(): Promise<void> {
 // Export query functions
 export const query = {
     getManPageCategories: () => executeQuery('getManPageCategories', {}),
-    getCategories: () => executeQuery('getCategories', {}),
-    getSubCategories: () => executeQuery('getSubCategories', {}),
     getOverview: () => executeQuery('getOverview', {}),
-    getSubCategoriesByMainCategory: (mainCategory: string) =>
-        executeQuery('getSubCategoriesByMainCategory', { mainCategory }),
-    getManPagesByCategory: (category: string) =>
-        executeQuery('getManPagesByCategory', { category }),
-    getManPagesBySubcategory: (category: string, subcategory: string) =>
-        executeQuery('getManPagesBySubcategory', { category, subcategory }),
     getManPageByHashId: (hashId: bigint | string) =>
         executeQuery('getManPageByHashId', { hashId }),
-    generateManPageStaticPaths: () => executeQuery('generateManPageStaticPaths', {}),
-    generateCategoryStaticPaths: () => executeQuery('generateCategoryStaticPaths', {}),
-    generateSubcategoryStaticPaths: () => executeQuery('generateSubcategoryStaticPaths', {}),
-    getManPageByPath: (category: string, subcategory: string, filename: string) =>
-        executeQuery('getManPageByPath', { category, subcategory, filename }),
     getManPageByCommandName: (category: string, subcategory: string, commandName: string) =>
         executeQuery('getManPageByCommandName', { category, subcategory, commandName }),
-    generateCommandStaticPaths: () => executeQuery('generateCommandStaticPaths', {}),
-    getSubCategoriesCountByMainCategory: (mainCategory: string) =>
-        executeQuery('getSubCategoriesCountByMainCategory', { mainCategory }),
     getSubCategoriesByMainCategoryPaginated: (mainCategory: string, limit: number, offset: number) =>
         executeQuery('getSubCategoriesByMainCategoryPaginated', { mainCategory, limit, offset }),
-    getTotalManPagesCountByMainCategory: (mainCategory: string) =>
-        executeQuery('getTotalManPagesCountByMainCategory', { mainCategory }),
-    getManPagesBySubcategoryPaginated: (mainCategory: string, subCategory: string, limit: number, offset: number) =>
-        executeQuery('getManPagesBySubcategoryPaginated', { mainCategory, subCategory, limit, offset }),
-    getManPagesCountBySubcategory: (mainCategory: string, subCategory: string) =>
-        executeQuery('getManPagesCountBySubcategory', { mainCategory, subCategory }),
+    getTotalSubCategoriesManPagesCount: (mainCategory: string) =>
+        executeQuery('getTotalSubCategoriesManPagesCount', { mainCategory }),
+    getManPagesList: (mainCategory: string, subCategory: string, limit: number, offset: number) =>
+        executeQuery('getManPagesList', { mainCategory, subCategory, limit, offset }),
+    getManPagesCountInSubCategory: (mainCategory: string, subCategory: string) =>
+        executeQuery('getManPagesCountInSubCategory', { mainCategory, subCategory }),
+    getAllManPagesPaginated: (limit: number, offset: number) =>
+        executeQuery('getAllManPagesPaginated', { limit, offset }),
 };
 
 void initWorkers().catch((err) => {

@@ -6,20 +6,21 @@ Source: db/all_dbs/man-pages-db.db
 Destination: db/all_dbs/man-pages-new-db.db
 
 Changes:
-- man_pages table:
-  - Remove 'id' (AUTOINCREMENT)
-  - Add 'hash_id' (INTEGER PRIMARY KEY) generated from main_category + sub_category + slug
-  - Enable WITHOUT ROWID
+1. Create new schema with hash_id for man_pages and sub_category.
+2. man_pages table uses main_category_hash and sub_category_hash (integers) instead of text.
+3. Migrate data from old DB to new DB.
+4. Add 'sub_category_count' to 'category' table and populate it.
+5. Add 'category_hash_id' to 'sub_category' and 'hash_id' to 'category' tables.
+6. Populate hash IDs.
 """
 
 import sqlite3
 import hashlib
-import shutil
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent.parent
-OLD_DB_PATH = BASE_DIR / "db" / "all_dbs" / "man-pages-db.db"
-NEW_DB_PATH = BASE_DIR / "db" / "all_dbs" / "man-pages-new-db-1.db"
+OLD_DB_PATH = BASE_DIR / "db" / "all_dbs" / "man-pages-db_old.db"
+NEW_DB_PATH = BASE_DIR / "db" / "all_dbs" / "man-pages-db.db"
 
 def generate_hash_id(main_category: str, sub_category: str, slug: str) -> int:
     """
@@ -27,15 +28,23 @@ def generate_hash_id(main_category: str, sub_category: str, slug: str) -> int:
     """
     combined = f"{main_category}{sub_category}{slug}"
     hash_bytes = hashlib.sha256(combined.encode('utf-8')).digest()
-    # Take first 8 bytes, interpret as big-endian signed integer
     return int.from_bytes(hash_bytes[:8], byteorder='big', signed=True)
 
-def generate_subcategory_hash_id(main_category: str, sub_category: str) -> int:
+def generate_subcategory_pk_hash(main_category: str, sub_category: str) -> int:
     """
     Generate a 64-bit signed integer hash from main_category and sub_category.
+    Used for sub_category table Primary Key.
     """
     combined = f"{main_category}{sub_category}"
     hash_bytes = hashlib.sha256(combined.encode('utf-8')).digest()
+    return int.from_bytes(hash_bytes[:8], byteorder='big', signed=True)
+
+def generate_simple_hash(text: str) -> int:
+    """
+    Generate a 64-bit signed integer hash from a single string.
+    Used for main_category_hash and sub_category_hash columns.
+    """
+    hash_bytes = hashlib.sha256(text.encode('utf-8')).digest()
     return int.from_bytes(hash_bytes[:8], byteorder='big', signed=True)
 
 def migrate_db():
@@ -53,7 +62,7 @@ def migrate_db():
         old_cur = old_conn.cursor()
         new_cur = new_conn.cursor()
         
-        # 1. Setup New Schema
+        # --- 1. Setup New Schema ---
         # Performance PRAGMAs
         new_cur.execute("PRAGMA journal_mode = WAL;")
         new_cur.execute("PRAGMA synchronous = OFF;")
@@ -61,11 +70,12 @@ def migrate_db():
         new_cur.execute("PRAGMA temp_store = MEMORY;")
         new_cur.execute("PRAGMA mmap_size = 536870912;")
         
-        # Create 'man_pages' table with hash_id
+        # Create 'man_pages' table with hash_id and hashed categories
         new_cur.execute(
             """
             CREATE TABLE man_pages (
                 hash_id INTEGER PRIMARY KEY,
+                category_hash INTEGER NOT NULL,
                 main_category TEXT NOT NULL,
                 sub_category TEXT NOT NULL,
                 title TEXT NOT NULL,
@@ -76,35 +86,37 @@ def migrate_db():
             """
         )
         
-        # Create 'category' table (Copy schema)
+        # Create 'category' table
         new_cur.execute(
             """
             CREATE TABLE category (
-                name TEXT PRIMARY KEY,
+                name TEXT,
                 count INTEGER NOT NULL DEFAULT 0,
                 description TEXT DEFAULT '',
                 keywords TEXT DEFAULT '[]',
-                path TEXT DEFAULT ''
-            );
-            """
-        )
-        
-        # Create 'sub_category' table with hash_id
-        new_cur.execute(
-            """
-            CREATE TABLE sub_category (
-                hash_id INTEGER PRIMARY KEY,
-                main_category TEXT NOT NULL,
-                name TEXT NOT NULL,
-                count INTEGER NOT NULL DEFAULT 0,
-                description TEXT DEFAULT '',
-                keywords TEXT DEFAULT '[]',
-                path TEXT DEFAULT ''
+                path TEXT DEFAULT '',
+                sub_category_count INTEGER DEFAULT 0,
+                hash_id INTEGER PRIMARY KEY
             ) WITHOUT ROWID;
             """
         )
         
-        # Create 'overview' table (Copy schema)
+        # Create 'sub_category' table
+        new_cur.execute(
+            """
+            CREATE TABLE sub_category (
+                hash_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL,
+                count INTEGER NOT NULL DEFAULT 0,
+                description TEXT DEFAULT '',
+                keywords TEXT DEFAULT '[]',
+                path TEXT DEFAULT '',
+                main_category_hash INTEGER
+            ) WITHOUT ROWID;
+            """
+        )
+        
+        # Create 'overview' table
         new_cur.execute(
             """
             CREATE TABLE overview (
@@ -114,18 +126,11 @@ def migrate_db():
             """
         )
 
-        # Create Indexes for Performance
-        print("Creating indexes...")
-        # Index for fetching man pages by subcategory (e.g. /man-pages/linux/commands/)
-        new_cur.execute("CREATE INDEX idx_man_pages_main_sub_cat ON man_pages(main_category, sub_category);")
-        # Index for fetching subcategories by main category (e.g. /man-pages/linux/)
-        new_cur.execute("CREATE INDEX idx_sub_category_main_cat ON sub_category(main_category);")
-        
-        # 2. Migrate Data
+
+        # --- 2. Migrate Data ---
         
         # Migrate 'man_pages'
-        # Migrate 'man_pages'
-        print("Migrating man_pages (LIMIT 100)...")
+        print("Migrating man_pages...")
         old_cur.execute("SELECT main_category, sub_category, title, slug, filename, content FROM man_pages")
         rows = old_cur.fetchall()
         
@@ -133,14 +138,16 @@ def migrate_db():
         for row in rows:
             main_cat, sub_cat, title, slug, filename, content = row
             hash_id = generate_hash_id(main_cat, sub_cat, slug)
+            # category_hash in man_pages corresponds to hash_id in sub_category (main + sub)
+            category_hash = generate_subcategory_pk_hash(main_cat, sub_cat)
             
             try:
                 new_cur.execute(
                     """
-                    INSERT INTO man_pages (hash_id, main_category, sub_category, title, slug, filename, content)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO man_pages (hash_id, category_hash, main_category, sub_category, title, slug, filename, content)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (hash_id, main_cat, sub_cat, title, slug, filename, content)
+                    (hash_id, category_hash, main_cat, sub_cat, title, slug, filename, content)
                 )
                 inserted_count += 1
             except sqlite3.IntegrityError as e:
@@ -150,14 +157,36 @@ def migrate_db():
         
         # Migrate 'category'
         print("Migrating category...")
-        old_cur.execute("SELECT * FROM category")
+        old_cur.execute("SELECT name, count, description, keywords, path FROM category")
         categories = old_cur.fetchall()
-        new_cur.executemany("INSERT INTO category VALUES (?, ?, ?, ?, ?)", categories)
-        print(f"Migrated {len(categories)} categories.")
+        
+        print("Calculating sub_category counts...")
+        old_cur.execute("""
+            SELECT main_category, COUNT(DISTINCT sub_category) 
+            FROM man_pages 
+            GROUP BY main_category
+        """)
+        cat_counts = dict(old_cur.fetchall())
+        
+        cat_inserted = 0
+        for row in categories:
+            name, count, description, keywords, path = row
+            sub_cat_count = cat_counts.get(name, 0)
+            hash_id = generate_simple_hash(name)
+            
+            new_cur.execute(
+                """
+                INSERT INTO category (name, count, description, keywords, path, sub_category_count, hash_id)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+                """,
+                (name, count, description, keywords, path, sub_cat_count, hash_id)
+            )
+            cat_inserted += 1
+            
+        print(f"Migrated {cat_inserted} categories.")
         
         # Migrate 'sub_category'
         print("Migrating sub_category...")
-        # Calculate count dynamically from man_pages and join with old sub_category table for metadata
         old_cur.execute("""
             SELECT 
                 m.main_category, 
@@ -175,21 +204,21 @@ def migrate_db():
         sub_cat_inserted = 0
         for row in sub_categories:
             main_cat, sub_cat_name, count, description, keywords, path = row
-            # Handle nulls from left join if any
             count = count or 0
             description = description or ''
             keywords = keywords or '[]'
             path = path or ''
             
-            hash_id = generate_subcategory_hash_id(main_cat, sub_cat_name)
+            hash_id = generate_subcategory_pk_hash(main_cat, sub_cat_name)
+            category_hash_id = generate_simple_hash(main_cat)
             
             try:
                 new_cur.execute(
                     """
-                    INSERT INTO sub_category (hash_id, main_category, name, count, description, keywords, path)
+                    INSERT INTO sub_category (hash_id, name, count, description, keywords, path, main_category_hash)
                     VALUES (?, ?, ?, ?, ?, ?, ?)
                     """,
-                    (hash_id, main_cat, sub_cat_name, count, description, keywords, path)
+                    (hash_id, sub_cat_name, count, description, keywords, path, category_hash_id)
                 )
                 sub_cat_inserted += 1
             except sqlite3.IntegrityError as e:

@@ -40,107 +40,66 @@ setPragma('PRAGMA query_only = ON'); // Read-only mode
 setPragma('PRAGMA page_size = 4096'); // Optimal page size
 
 const statements = {
+    // get all categories under man page
+    // url: /man-pages/
     manPageCategories: db.prepare(`
-    SELECT name, count, description
+    SELECT name, count, description, path
     FROM category 
     ORDER BY name
   `),
-    categories: db.prepare(`
-    SELECT name, count, description, 
-           json(keywords) as keywords, path
-    FROM category 
-    ORDER BY name
-  `),
-    subCategories: db.prepare(`
-    SELECT hash_id, main_category, name, count, description, 
-           json(keywords) as keywords, path
-    FROM sub_category 
-    ORDER BY name
-  `),
+    // get total manpage count
+    // url: /man-pages/
     overview: db.prepare(`
     SELECT id, total_count
     FROM overview 
     WHERE id = 1
-  `),
-    subCategoriesByMain: db.prepare(`
-    SELECT hash_id, main_category, name, count, description, 
-           json(keywords) as keywords, path
-    FROM sub_category 
-    WHERE main_category = ?
-    ORDER BY name
-  `),
-    manPagesByCategory: db.prepare(`
-    SELECT hash_id, main_category, sub_category, title, slug, filename, 
-           json(content) as content
-    FROM man_pages 
-    WHERE main_category = ?
-    ORDER BY title
-  `),
-    manPagesBySubcategory: db.prepare(`
-    SELECT hash_id, main_category, sub_category, title, slug, filename, 
-           json(content) as content
-    FROM man_pages 
-    WHERE main_category = ? AND sub_category = ?
-    ORDER BY title
-  `),
+    `),
+    // get man page by hash id
+    // url: /man-pages/[category]/[subcategory]/[command]
     manPageByHashId: db.prepare(`
-    SELECT hash_id, main_category, sub_category, title, slug, filename, 
+    SELECT title, slug, filename, 
            json(content) as content
     FROM man_pages 
     WHERE hash_id = ?
   `),
-    manPageStaticPaths: db.prepare(`
-    SELECT hash_id, main_category, sub_category 
-    FROM man_pages
-  `),
-    categoryStaticPaths: db.prepare(`
-    SELECT name 
-    FROM category
-  `),
-    subcategoryStaticPaths: db.prepare(`
-    SELECT main_category, name as sub_category 
-    FROM sub_category
-  `),
-    manPageByPath: db.prepare(`
-    SELECT hash_id, main_category, sub_category, title, filename, 
-           json(content) as content
-    FROM man_pages 
-    WHERE main_category = ? AND sub_category = ? AND filename = ?
-  `),
-    commandStaticPaths: db.prepare(`
-    SELECT main_category, sub_category, slug
-    FROM man_pages
-    ORDER BY main_category, sub_category, slug
-  `),
-    subCategoriesCountByMain: db.prepare(`
-    SELECT COUNT(*) as count
-    FROM sub_category 
-    WHERE main_category = ?
-  `),
+    //   for fetching sub categories
+    //   for page man-pages/[category]/2
     subCategoriesByMainPaginated: db.prepare(`
-    SELECT hash_id, main_category, name, count, description, 
-           json(keywords) as keywords, path
+    SELECT name, description, count
     FROM sub_category 
-    WHERE main_category = ?
+    WHERE main_category_hash = ?
     ORDER BY name
     LIMIT ? OFFSET ?
   `),
-    totalManPagesCountByMain: db.prepare(`
-    SELECT COUNT(*) as count
-    FROM man_pages 
-    WHERE main_category = ?
+    //   for fetching total man pages, sub categories count
+    //   for page man-pages/[category]/[subcategory]/
+    totalSubCategoriesManPagesCount: db.prepare(`
+    SELECT count,sub_category_count
+    FROM category 
+    WHERE hash_id = ?
   `),
+
+    // for fetching man pages by subcategory
+    //   used in page: [category]/[subcategory]/index.astro
     manPagesBySubcategoryPaginated: db.prepare(`
-    SELECT hash_id, main_category, sub_category, title, slug, filename, content
+    SELECT  title, slug
     FROM man_pages 
-    WHERE main_category = ? AND sub_category = ?
-    ORDER BY title
+    WHERE category_hash = ?
     LIMIT ? OFFSET ?
   `),
+    // for fetching total man pages count by subcategory
+    //   used in page: [category]/[subcategory]/index.astro
     manPagesCountBySubcategory: db.prepare(`
-    SELECT COUNT(*) as count
-    FROM man_pages 
-    WHERE main_category = ? AND sub_category = ?
+    SELECT count from sub_category 
+    WHERE hash_id = ?
+  `),
+    // for fetching all man pages paginated
+    // used in sitemap generation
+    getAllManPagesPaginated: db.prepare(`
+    SELECT main_category, sub_category, slug
+    FROM man_pages
+    ORDER BY hash_id
+    LIMIT ? OFFSET ?
   `),
 };
 
@@ -177,46 +136,12 @@ parentPort?.on('message', (message: QueryMessage) => {
                     name: string;
                     count: number;
                     description: string;
+                    path: string;
                 }>;
-                result = rows.map((row) => ({
-                    category: row.name,
-                    count: row.count,
-                    description: row.description,
-                }));
+                result = rows;
                 break;
             }
 
-            case 'getCategories': {
-                const rows = statements.categories.all() as Array<{
-                    name: string;
-                    count: number;
-                    description: string;
-                    keywords: string;
-                    path: string;
-                }>;
-                result = rows.map((row) => ({
-                    ...row,
-                    keywords: JSON.parse(row.keywords || '[]'),
-                }));
-                break;
-            }
-
-            case 'getSubCategories': {
-                const rows = statements.subCategories.all() as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    name: string;
-                    count: number;
-                    description: string;
-                    keywords: string;
-                    path: string;
-                }>;
-                result = rows.map((row) => ({
-                    ...row,
-                    keywords: JSON.parse(row.keywords || '[]'),
-                }));
-                break;
-            }
 
             case 'getOverview': {
                 const row = statements.overview.get() as { id: number; total_count: number } | undefined;
@@ -231,62 +156,7 @@ parentPort?.on('message', (message: QueryMessage) => {
                 break;
             }
 
-            case 'getSubCategoriesByMainCategory': {
-                const { mainCategory } = params;
-                const rows = statements.subCategoriesByMain.all(mainCategory) as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    name: string;
-                    count: number;
-                    description: string;
-                    keywords: string;
-                    path: string;
-                }>;
-                result = rows.map((row) => ({
-                    name: row.name,
-                    count: row.count,
-                    description: row.description,
-                    keywords: JSON.parse(row.keywords || '[]'),
-                    path: row.path,
-                }));
-                break;
-            }
 
-            case 'getManPagesByCategory': {
-                const { category } = params;
-                const rows = statements.manPagesByCategory.all(category) as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    sub_category: string;
-                    title: string;
-                    slug: string;
-                    filename: string;
-                    content: string;
-                }>;
-                result = rows.map((row) => ({
-                    ...row,
-                    content: JSON.parse(row.content || '{}'),
-                }));
-                break;
-            }
-
-            case 'getManPagesBySubcategory': {
-                const { category, subcategory } = params;
-                const rows = statements.manPagesBySubcategory.all(category, subcategory) as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    sub_category: string;
-                    title: string;
-                    slug: string;
-                    filename: string;
-                    content: string;
-                }>;
-                result = rows.map((row) => ({
-                    ...row,
-                    content: JSON.parse(row.content || '{}'),
-                }));
-                break;
-            }
 
             case 'getManPageByHashId': {
                 const { hashId } = params;
@@ -296,68 +166,6 @@ parentPort?.on('message', (message: QueryMessage) => {
                     sub_category: string;
                     title: string;
                     slug: string;
-                    filename: string;
-                    content: string;
-                } | undefined;
-
-                if (!row) {
-                    result = null;
-                } else {
-                    result = {
-                        ...row,
-                        content: JSON.parse(row.content || '{}'),
-                    };
-                }
-                break;
-            }
-
-            case 'generateManPageStaticPaths': {
-                const rows = statements.manPageStaticPaths.all() as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    sub_category: string;
-                }>;
-                result = rows.map((row) => ({
-                    params: {
-                        category: row.main_category,
-                        subcategory: row.sub_category,
-                        page: row.hash_id.toString(),
-                    },
-                }));
-                break;
-            }
-
-            case 'generateCategoryStaticPaths': {
-                const rows = statements.categoryStaticPaths.all() as Array<{ name: string }>;
-                result = rows.map((row) => ({
-                    params: {
-                        category: row.name,
-                    },
-                }));
-                break;
-            }
-
-            case 'generateSubcategoryStaticPaths': {
-                const rows = statements.subcategoryStaticPaths.all() as Array<{
-                    main_category: string;
-                    sub_category: string;
-                }>;
-                result = rows.map((row) => ({
-                    params: {
-                        category: row.main_category,
-                        subcategory: row.sub_category,
-                    },
-                }));
-                break;
-            }
-
-            case 'getManPageByPath': {
-                const { category, subcategory, filename } = params;
-                const row = statements.manPageByPath.get(category, subcategory, filename) as {
-                    hash_id: bigint;
-                    main_category: string;
-                    sub_category: string;
-                    title: string;
                     filename: string;
                     content: string;
                 } | undefined;
@@ -397,89 +205,62 @@ parentPort?.on('message', (message: QueryMessage) => {
                 break;
             }
 
-            case 'generateCommandStaticPaths': {
-                const rows = statements.commandStaticPaths.all() as Array<{
-                    main_category: string;
-                    sub_category: string;
-                    slug: string;
-                }>;
-                console.log(`📊 Found ${rows.length} total man pages in database`);
-                result = rows.map((manPage) => ({
-                    params: {
-                        category: manPage.main_category,
-                        subcategory: manPage.sub_category,
-                        slug: manPage.slug,
-                    },
-                }));
-                if (result.length > 0) {
-                    console.log('🔍 Sample generated paths:', result.slice(0, 5));
-                }
-                break;
-            }
-
-            case 'getSubCategoriesCountByMainCategory': {
-                const { mainCategory } = params;
-                const row = statements.subCategoriesCountByMain.get(mainCategory) as { count: number } | undefined;
-                result = row?.count || 0;
-                break;
-            }
-
             case 'getSubCategoriesByMainCategoryPaginated': {
                 const { mainCategory, limit, offset } = params;
+                const categoryHashId = hashUrlToKey(mainCategory, '', '');
                 const limitInt = Math.floor(limit);
                 const offsetInt = Math.floor(offset);
-                const rows = statements.subCategoriesByMainPaginated.all(mainCategory, limitInt, offsetInt) as Array<{
-                    hash_id: bigint;
-                    main_category: string;
+                const rows = statements.subCategoriesByMainPaginated.all(categoryHashId, limitInt, offsetInt) as Array<{
                     name: string;
-                    count: number;
                     description: string;
-                    keywords: string;
-                    path: string;
+                    count: number;
                 }>;
-                result = rows.map((row) => ({
-                    ...row,
-                    keywords: JSON.parse(row.keywords || '[]'),
-                }));
+                result = rows;
                 break;
             }
 
-            case 'getTotalManPagesCountByMainCategory': {
+            case 'getTotalSubCategoriesManPagesCount': {
                 const { mainCategory } = params;
-                const row = statements.totalManPagesCountByMain.get(mainCategory) as { count: number } | undefined;
-                result = row?.count || 0;
+                const categoryHashId = hashUrlToKey(mainCategory, '', '');
+                const row = statements.totalSubCategoriesManPagesCount.get(categoryHashId) as { count: number, sub_category_count: number } | undefined;
+                result = { man_pages_count: row?.count || 0, sub_category_count: row?.sub_category_count || 0 };
                 break;
             }
 
-            case 'getManPagesBySubcategoryPaginated': {
+            case 'getManPagesList': {
                 const { mainCategory, subCategory, limit, offset } = params;
+                const categoryHashId = hashUrlToKey(mainCategory, subCategory, '');
                 const limitInt = Math.floor(limit);
                 const offsetInt = Math.floor(offset);
-                const rows = statements.manPagesBySubcategoryPaginated.all(mainCategory, subCategory, limitInt, offsetInt) as Array<{
-                    hash_id: bigint;
-                    main_category: string;
-                    sub_category: string;
+                const rows = statements.manPagesBySubcategoryPaginated.all(categoryHashId, limitInt, offsetInt) as Array<{
                     title: string;
                     slug: string;
-                    filename: string;
-                    content: string;
                 }>;
                 result = rows.map((row) => ({
-                    hash_id: row.hash_id,
-                    main_category: row.main_category,
-                    sub_category: row.sub_category,
                     title: row.title,
                     slug: row.slug,
-                    filename: row.filename,
-                    content: JSON.parse(row.content),
                 }));
                 break;
             }
 
-            case 'getManPagesCountBySubcategory': {
+            case 'getManPagesCountInSubCategory': {
                 const { mainCategory, subCategory } = params;
-                const row = statements.manPagesCountBySubcategory.get(mainCategory, subCategory) as { count: number } | undefined;
+                const categoryHashId = hashUrlToKey(mainCategory, subCategory, '');
+                const row = statements.manPagesCountBySubcategory.get(categoryHashId) as { count: number } | undefined;
                 result = row?.count || 0;
+                break;
+            }
+
+            case 'getAllManPagesPaginated': {
+                const { limit, offset } = params;
+                const limitInt = Math.floor(limit);
+                const offsetInt = Math.floor(offset);
+                const rows = statements.getAllManPagesPaginated.all(limitInt, offsetInt) as Array<{
+                    main_category: string;
+                    sub_category: string;
+                    slug: string;
+                }>;
+                result = rows;
                 break;
             }
 

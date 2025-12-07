@@ -9,9 +9,10 @@ export interface ManPage {
 }
 
 export interface ManPageCategory {
-  category: string;
+  name: string;
   count: number;
   description: string;
+  path: string;
 }
 
 
