@@ -1,5 +1,13 @@
-import { buildIconUrl, hashNameToKey, hashUrlToKey } from '../../src/lib/hash-utils';
-import type { Cluster, ClusterWithPreviewIcons, Icon } from './svg-icons-schema';
+import {
+  buildIconUrl,
+  hashNameToKey,
+  hashUrlToKey,
+} from '../../src/lib/hash-utils';
+import type {
+  Cluster,
+  ClusterWithPreviewIcons,
+  Icon,
+} from './svg-icons-schema';
 import { query } from './svg-worker-pool';
 
 // In-memory cache with TTL
@@ -27,12 +35,12 @@ function getCacheKey(type: string, params?: any): string {
 function getCached<T>(key: string): T | null {
   const entry = cache.get(key);
   if (!entry) return null;
-  
+
   if (Date.now() > entry.expiresAt) {
     cache.delete(key);
     return null;
   }
-  
+
   return entry.data as T;
 }
 
@@ -43,23 +51,13 @@ function setCache<T>(key: string, data: T, ttl: number): void {
   });
 }
 
-// Clean up expired entries periodically (every 5 minutes)
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of cache.entries()) {
-    if (now > entry.expiresAt) {
-      cache.delete(key);
-    }
-  }
-}, 5 * 60 * 1000);
-
 export async function getTotalIcons(): Promise<number> {
   const cacheKey = getCacheKey('getTotalIcons');
   const cached = getCached<number>(cacheKey);
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getTotalIcons();
   setCache(cacheKey, result, CACHE_TTL.TOTAL_ICONS);
   return result;
@@ -71,7 +69,7 @@ export async function getTotalClusters(): Promise<number> {
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getTotalClusters();
   setCache(cacheKey, result, CACHE_TTL.TOTAL_CLUSTERS);
   return result;
@@ -93,7 +91,12 @@ export interface ClusterTransformed {
   url: string;
   keywords: string[];
   features: string[];
-  previewIcons: Array<{ id: number; name: string; base64: string; img_alt: string }>;
+  previewIcons: Array<{
+    id: number;
+    name: string;
+    base64: string;
+    img_alt: string;
+  }>;
 }
 
 export async function getIconsByCluster(
@@ -105,7 +108,7 @@ export async function getIconsByCluster(
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getIconsByCluster(cluster, categoryName);
   setCache(cacheKey, result, CACHE_TTL.ICONS_BY_CLUSTER);
   return result;
@@ -123,11 +126,13 @@ export async function getClustersWithPreviewIcons(
     previewIconsPerCluster,
     transform,
   });
-  const cached = getCached<ClusterWithPreviewIcons[] | ClusterTransformed[]>(cacheKey);
+  const cached = getCached<ClusterWithPreviewIcons[] | ClusterTransformed[]>(
+    cacheKey
+  );
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getClustersWithPreviewIcons(
     page,
     itemsPerPage,
@@ -145,7 +150,7 @@ export async function getClusterByName(name: string): Promise<Cluster | null> {
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getClusterByName(hashName);
   setCache(cacheKey, result, CACHE_TTL.CLUSTER_BY_NAME);
   return result;
@@ -157,7 +162,7 @@ export async function getClusters(): Promise<Cluster[]> {
   if (cached !== null) {
     return cached;
   }
-  
+
   const result = await query.getClusters();
   setCache(cacheKey, result, CACHE_TTL.CLUSTERS);
   return result;
