@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"io/fs"
 	"log"
-	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -193,25 +192,13 @@ func ensureSchema(db *sql.DB) error {
 		return err
 	}
 
-	// MainPages table - Pre-calculated lists
+	// Cluster table - Cluster Metadata (similar to emojis category)
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS main_pages (
+		CREATE TABLE IF NOT EXISTS cluster (
 			hash INTEGER PRIMARY KEY,
-			url TEXT NOT NULL,
-			data TEXT DEFAULT '{}', -- JSON
-			total_count INTEGER NOT NULL
-		) WITHOUT ROWID;
-	`)
-	if err != nil {
-		return err
-	}
-
-	// Sitemap table
-	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS sitemap (
-			hash INTEGER PRIMARY KEY,
-			url TEXT NOT NULL,
-			data TEXT DEFAULT '[]' -- JSON list of URLs
+			name TEXT NOT NULL,
+			count INTEGER NOT NULL,
+			preview_commands_json TEXT DEFAULT '[]' -- JSON list of preview commands
 		) WITHOUT ROWID;
 	`)
 	if err != nil {
@@ -300,8 +287,8 @@ func main() {
 	}
 	tx.Commit()
 
-	// 3. Generate MainPages (Cluster Lists)
-	fmt.Println("Generating cluster lists...")
+	// 3. Generate Cluster (Cluster Metadata)
+	fmt.Println("Generating cluster metadata...")
 	pagesByCluster := make(map[string][]*ProcessedPage)
 	for _, p := range allPages {
 		pagesByCluster[p.Cluster] = append(pagesByCluster[p.Cluster], p)
@@ -311,15 +298,10 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	stmt, err = tx.Prepare("INSERT INTO main_pages (hash, url, data, total_count) VALUES (?, ?, ?, ?)")
+	stmt, err = tx.Prepare("INSERT INTO cluster (hash, name, count, preview_commands_json) VALUES (?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	itemsPerPage := 30
-
-	// For Index Page (List of Platforms)
-	var platforms []map[string]interface{}
 
 	for cluster, pages := range pagesByCluster {
 		// Sort pages by name
@@ -328,9 +310,7 @@ func main() {
 		})
 
 		totalCount := len(pages)
-		totalPages := int(math.Ceil(float64(totalCount) / float64(itemsPerPage)))
 
-		// Add to platforms list for index
 		// Get top 5 commands for preview
 		var commandPreviews []map[string]string
 		previewCount := 5
@@ -343,184 +323,19 @@ func main() {
 				"url":  fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, pages[k].Name),
 			})
 		}
+		previewJson, _ := json.Marshal(commandPreviews)
 
-		clusterUrl := fmt.Sprintf("/freedevtools/tldr/%s/", cluster)
-		platformData := map[string]interface{}{
-			"name":     cluster,
-			"count":    totalCount,
-			"url":      clusterUrl,
-			"commands": commandPreviews,
-		}
-		platforms = append(platforms, platformData)
-		allUrls = append(allUrls, clusterUrl)
+		// Hash: cluster (e.g., common)
+		hash := get8Bytes(hashString(cluster))
 
-		// Generate paginated lists for this cluster
-		for i := 0; i < totalPages; i++ {
-			pageNum := i + 1
-			startIdx := i * itemsPerPage
-			endIdx := startIdx + itemsPerPage
-			if endIdx > totalCount {
-				endIdx = totalCount
-			}
-
-			chunk := pages[startIdx:endIdx]
-			var commands []map[string]interface{}
-			for _, p := range chunk {
-				commands = append(commands, map[string]interface{}{
-					"name":        p.Name,
-					"url":         p.Path,
-					"description": p.Description,
-					"category":    p.Platform,
-					"features":    p.Features,
-				})
-			}
-
-			data := map[string]interface{}{
-				"commands":    commands,
-				"total":       totalCount,
-				"page":        pageNum,
-				"total_pages": totalPages,
-			}
-			dataJson, _ := json.Marshal(data)
-
-			// Hash: cluster/page (e.g., common/1)
-			hashKey := fmt.Sprintf("%s/%d", cluster, pageNum)
-			hash := get8Bytes(hashString(hashKey))
-			
-			// Construct URL for this page
-			var pageUrl string
-			if pageNum == 1 {
-				pageUrl = fmt.Sprintf("/freedevtools/tldr/%s/", cluster)
-			} else {
-				pageUrl = fmt.Sprintf("/freedevtools/tldr/%s/%d/", cluster, pageNum)
-				allUrls = append(allUrls, pageUrl)
-			}
-
-			_, err = stmt.Exec(hash, pageUrl, string(dataJson), totalCount)
-			if err != nil {
-				log.Printf("Error inserting cluster page %s: %v", hashKey, err)
-			}
-		}
-	}
-
-	// 4. Generate MainPages (Index)
-	fmt.Println("Generating index...")
-	sort.Slice(platforms, func(i, j int) bool {
-		return platforms[i]["name"].(string) < platforms[j]["name"].(string)
-	})
-
-	totalPlatforms := len(platforms)
-	totalIndexPages := int(math.Ceil(float64(totalPlatforms) / float64(itemsPerPage)))
-
-	for i := 0; i < totalIndexPages; i++ {
-		pageNum := i + 1
-		startIdx := i * itemsPerPage
-		endIdx := startIdx + itemsPerPage
-		if endIdx > totalPlatforms {
-			endIdx = totalPlatforms
-		}
-
-		chunk := platforms[startIdx:endIdx]
-		data := map[string]interface{}{
-			"platforms":      chunk,
-			"total":          totalPlatforms,
-			"page":           pageNum,
-			"total_pages":    totalIndexPages,
-			"total_commands": len(allPages),
-		}
-		dataJson, _ := json.Marshal(data)
-
-		// Hash: index/page (e.g., index/1)
-		hashKey := fmt.Sprintf("index/%d", pageNum)
-		hash := get8Bytes(hashString(hashKey))
-
-		// Construct URL for this page
-		var pageUrl string
-		if pageNum == 1 {
-			pageUrl = "/freedevtools/tldr/"
-			allUrls = append(allUrls, pageUrl)
-		} else {
-			pageUrl = fmt.Sprintf("/freedevtools/tldr/%d/", pageNum)
-			allUrls = append(allUrls, pageUrl)
-		}
-
-		_, err = stmt.Exec(hash, pageUrl, string(dataJson), totalPlatforms)
+		_, err = stmt.Exec(hash, cluster, totalCount, string(previewJson))
 		if err != nil {
-			log.Printf("Error inserting index page %s: %v", hashKey, err)
+			log.Printf("Error inserting cluster %s: %v", cluster, err)
 		}
 	}
 	tx.Commit()
 
-	// 5. Generate Sitemap
-	fmt.Println("Generating sitemap...")
-	tx, err = db.Begin()
-	if err != nil {
-		log.Fatal(err)
-	}
-	stmt, err = tx.Prepare("INSERT INTO sitemap (hash, url, data) VALUES (?, ?, ?)")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer stmt.Close()
-
-	// Sort all URLs to ensure deterministic output
-	sort.Strings(allUrls)
-	
-	// Filter out duplicates if any
-	uniqueUrls := make([]string, 0, len(allUrls))
-	seenUrls := make(map[string]bool)
-	for _, u := range allUrls {
-		if !seenUrls[u] {
-			seenUrls[u] = true
-			uniqueUrls = append(uniqueUrls, u)
-		}
-	}
-	allUrls = uniqueUrls
-
-	sitemapChunkSize := 5000
-	totalSitemapChunks := int(math.Ceil(float64(len(allUrls)) / float64(sitemapChunkSize)))
-	var sitemapIndexUrls []string
-
-	for i := 0; i < totalSitemapChunks; i++ {
-		chunkNum := i + 1
-		startIdx := i * sitemapChunkSize
-		endIdx := startIdx + sitemapChunkSize
-		if endIdx > len(allUrls) {
-			endIdx = len(allUrls)
-		}
-
-		chunkUrls := allUrls[startIdx:endIdx]
-		chunkJson, _ := json.Marshal(chunkUrls)
-		
-		sitemapName := fmt.Sprintf("sitemap-%d.xml", chunkNum)
-		sitemapUrl := fmt.Sprintf("/freedevtools/tldr/%s", sitemapName)
-		sitemapIndexUrls = append(sitemapIndexUrls, sitemapUrl)
-
-		// Hash: sitemap/sitemap-N.xml
-		hashKey := fmt.Sprintf("sitemap/%s", sitemapName)
-		hash := get8Bytes(hashString(hashKey))
-
-		_, err = stmt.Exec(hash, sitemapName, string(chunkJson))
-		if err != nil {
-			log.Printf("Error inserting sitemap chunk %s: %v", sitemapName, err)
-		}
-	}
-
-	// Insert Sitemap Index
-	indexJson, _ := json.Marshal(sitemapIndexUrls)
-	indexName := "sitemap.xml"
-	// Hash: sitemap/sitemap.xml
-	hashKey := fmt.Sprintf("sitemap/%s", indexName)
-	hash := get8Bytes(hashString(hashKey))
-	
-	_, err = stmt.Exec(hash, indexName, string(indexJson))
-	if err != nil {
-		log.Printf("Error inserting sitemap index: %v", err)
-	}
-	
-	tx.Commit()
-
-	// 6. Overview
+	// 4. Overview
 	if _, err := db.Exec("INSERT INTO overview (id, total_count) VALUES (1, ?)", len(allPages)); err != nil {
 		log.Fatal(err)
 	}

@@ -43,15 +43,46 @@ const statements = {
   getOverview: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
 
   getMainPage: db.prepare(
-    `SELECT data, total_count FROM main_pages WHERE hash = ?`
+    `SELECT name, count, preview_commands_json FROM cluster WHERE hash = ?`
   ),
 
   getPage: db.prepare(
     `SELECT html_content, metadata FROM pages WHERE url_hash = ?`
   ),
 
-  getSitemap: db.prepare(
-    `SELECT data FROM sitemap WHERE hash = ?`
+  // New query for paginated commands in a cluster
+  getCommandsByClusterPaginated: db.prepare(
+    `SELECT url, metadata FROM pages 
+     WHERE url LIKE ? 
+     ORDER BY url 
+     LIMIT ? OFFSET ?`
+  ),
+
+  // New query for all clusters (for index)
+  getAllClusters: db.prepare(
+    `SELECT name, count, preview_commands_json FROM cluster ORDER BY name`
+  ),
+
+  // Sitemap query: Union of all URLs
+  getSitemapUrls: db.prepare(
+    `SELECT url FROM (
+       SELECT '/freedevtools/tldr/' as url
+       UNION ALL
+       SELECT '/freedevtools/tldr/' || name || '/' as url FROM cluster
+       UNION ALL
+       SELECT url FROM pages
+     ) ORDER BY url LIMIT ? OFFSET ?`
+  ),
+  
+  // Count total URLs for sitemap index
+  getSitemapCount: db.prepare(
+    `SELECT COUNT(*) as count FROM (
+       SELECT '/freedevtools/tldr/' as url
+       UNION ALL
+       SELECT name FROM cluster
+       UNION ALL
+       SELECT url FROM pages
+     )`
   ),
 };
 
@@ -87,14 +118,15 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getMainPage': {
-        const { platform, page } = params;
-        const hashKey = `${platform}/${page}`;
-        const hash = hashUrlToKey(hashKey);
-        const row = statements.getMainPage.get(hash) as { data: string; total_count: number } | undefined;
+        const { platform } = params;
+        // Hash of cluster name
+        const hash = hashUrlToKey(platform);
+        const row = statements.getMainPage.get(hash) as { name: string; count: number; preview_commands_json: string } | undefined;
         if (row) {
           result = {
-            ...JSON.parse(row.data),
-            total_count: row.total_count
+            name: row.name,
+            count: row.count,
+            preview_commands: JSON.parse(row.preview_commands_json)
           };
         } else {
           result = null;
@@ -118,16 +150,46 @@ parentPort?.on('message', (message: QueryMessage) => {
         break;
       }
 
-      case 'getSitemap': {
-        const { url } = params;
-        const hashKey = `sitemap/${url}`;
-        const hash = hashUrlToKey(hashKey);
-        const row = statements.getSitemap.get(hash) as { data: string } | undefined;
-        if (row) {
-          result = JSON.parse(row.data);
-        } else {
-          result = null;
-        }
+      case 'getCommandsByClusterPaginated': {
+        const { cluster, limit, offset } = params;
+        // URL pattern: /freedevtools/tldr/cluster/%
+        const urlPattern = `/freedevtools/tldr/${cluster}/%`;
+        const rows = statements.getCommandsByClusterPaginated.all(urlPattern, limit, offset) as { url: string; metadata: string }[];
+        
+        result = rows.map(row => {
+          const meta = JSON.parse(row.metadata);
+          // Extract name from URL or metadata
+          const name = row.url.split('/').filter(Boolean).pop() || '';
+          return {
+            name,
+            url: row.url,
+            description: meta.description,
+            features: meta.features
+          };
+        });
+        break;
+      }
+
+      case 'getAllClusters': {
+        const rows = statements.getAllClusters.all() as { name: string; count: number; preview_commands_json: string }[];
+        result = rows.map(row => ({
+          name: row.name,
+          count: row.count,
+          preview_commands: JSON.parse(row.preview_commands_json)
+        }));
+        break;
+      }
+
+      case 'getSitemapUrls': {
+        const { limit, offset } = params;
+        const rows = statements.getSitemapUrls.all(limit, offset) as { url: string }[];
+        result = rows.map(row => row.url);
+        break;
+      }
+
+      case 'getSitemapCount': {
+        const row = statements.getSitemapCount.get() as { count: number };
+        result = row.count;
         break;
       }
 
