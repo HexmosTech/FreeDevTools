@@ -49,6 +49,10 @@ const statements = {
   getPage: db.prepare(
     `SELECT html_content, metadata FROM pages WHERE url_hash = ?`
   ),
+
+  getSitemap: db.prepare(
+    `SELECT data FROM sitemap WHERE hash = ?`
+  ),
 };
 
 // clusterPreviews is taking 0.5 seconds need to improve db structure for this
@@ -108,6 +112,19 @@ parentPort?.on('message', (message: QueryMessage) => {
             html_content: row.html_content,
             metadata: JSON.parse(row.metadata)
           };
+        } else {
+          result = null;
+        }
+        break;
+      }
+
+      case 'getSitemap': {
+        const { url } = params;
+        const hashKey = `sitemap/${url}`;
+        const hash = hashUrlToKey(hashKey);
+        const row = statements.getSitemap.get(hash) as { data: string } | undefined;
+        if (row) {
+          result = JSON.parse(row.data);
         } else {
           result = null;
         }

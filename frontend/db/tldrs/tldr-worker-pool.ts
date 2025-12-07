@@ -241,6 +241,7 @@ export const query = {
   getOverview: () => executeQuery('getOverview', {}),
   getMainPage: (platform: string, page: number) => executeQuery('getMainPage', { platform, page }),
   getPage: (platform: string, slug: string) => executeQuery('getPage', { platform, slug }),
+  getSitemap: (url: string) => executeQuery('getSitemap', { url }),
 };
 
 void initWorkers().catch((err) => {

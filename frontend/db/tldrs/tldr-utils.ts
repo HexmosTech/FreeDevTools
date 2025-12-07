@@ -26,3 +26,7 @@ export async function getTldrPage(platform: string, slug: string) {
 export async function getTldrOverview() {
   return await query.getOverview();
 }
+
+export async function getTldrSitemap(url: string) {
+  return await query.getSitemap(url);
+}
