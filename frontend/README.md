@@ -115,7 +115,7 @@ To add or update a database (DB) file for a category:
 ### Step 1: local:
 
 ```
-
+make sync-db-to-local
 make run bulid:icons
 make deploy-staging-ssr
 ```
@@ -125,6 +125,7 @@ make deploy-staging-ssr
 ```
 cd FreeDevTools
 git pull
+make sync-db-to-local
 make stop-prod
 make start-prod
 ```
