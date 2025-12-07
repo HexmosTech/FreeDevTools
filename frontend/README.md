@@ -109,3 +109,23 @@ To add or update a database (DB) file for a category:
 4. **Referencing in Code**
    - Always reference database files in your code using the path:  
      `db/all_dbs/your-db.db`
+
+## Deploying to Staging
+
+### Step 1: local:
+
+```
+make sync-db-to-local
+make run bulid:icons
+make deploy-staging-ssr
+```
+
+### Step 2: nats03:
+
+```
+cd FreeDevTools
+git pull
+make sync-db-to-local
+make stop-prod
+make start-prod
+```
