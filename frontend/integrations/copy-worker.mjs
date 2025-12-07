@@ -30,6 +30,11 @@ export function copyWorkerFile() {
             dist: path.join(distDir, 'server', 'chunks', 'db', 'emojis', 'emoji-worker.js'),
             name: 'EMOJI',
           },
+          {
+            source: path.join(projectRoot, 'db', 'tldrs', 'tldr-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'tldrs', 'tldr-worker.js'),
+            name: 'TLDR',
+          },
         ];
 
         // Try to use esbuild (available through Vite)

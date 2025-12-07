@@ -3,23 +3,23 @@ set -e
 
 echo "🔧 Setting up development environment..."
 
-# Check if bun is installed
-if ! command -v bun &> /dev/null; then
-    echo "📦 bun is not installed. Installing bun..."
-    curl -fsSL https://bun.sh/install | bash
-    # Add Bun to PATH for the current session
-    export BUN_INSTALL="$HOME/.bun"
-    export PATH="$BUN_INSTALL/bin:$PATH"
-    # Add Bun to PATH in ~/.bashrc if not already present
-    if ! grep -q "BUN_INSTALL" ~/.bashrc; then
-        echo "export BUN_INSTALL=\"\$HOME/.bun\"" >> ~/.bashrc
-        echo "export PATH=\"\$BUN_INSTALL/bin:\$PATH\"" >> ~/.bashrc
-        echo "✅ Added bun to ~/.bashrc"
-    fi
-    echo "✅ bun has been installed"
-else
-    echo "✅ bun is already installed"
-fi
+# # Check if bun is installed
+# if ! command -v bun &> /dev/null; then
+#     echo "📦 bun is not installed. Installing bun..."
+#     curl -fsSL https://bun.sh/install | bash
+#     # Add Bun to PATH for the current session
+#     export BUN_INSTALL="$HOME/.bun"
+#     export PATH="$BUN_INSTALL/bin:$PATH"
+#     # Add Bun to PATH in ~/.bashrc if not already present
+#     if ! grep -q "BUN_INSTALL" ~/.bashrc; then
+#         echo "export BUN_INSTALL=\"\$HOME/.bun\"" >> ~/.bashrc
+#         echo "export PATH=\"\$BUN_INSTALL/bin:\$PATH\"" >> ~/.bashrc
+#         echo "✅ Added bun to ~/.bashrc"
+#     fi
+#     echo "✅ bun has been installed"
+# else
+#     echo "✅ bun is already installed"
+# fi
 
 # Update package list
 echo "📦 Updating package list..."

@@ -1,5 +1,5 @@
 ---
-import { getCollection, render, type CollectionEntry } from 'astro:content';
+import { getTldrPage, getTldrPlatformCommandsPaginated } from '../../../../db/tldrs/tldr-utils';
 import AdBanner from '../../../components/banner/AdBanner.astro';
 import Banner from '../../../components/banner/BannerIndex.astro';
 import CreditsButton from '../../../components/buttons/CreditsButton';
@@ -7,54 +7,45 @@ import SeeAlsoIndex from '../../../components/seealso/SeeAlsoIndex.astro';
 import ToolContainer from '../../../components/tool/ToolContainer';
 import ToolHead from '../../../components/tool/ToolHead';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getTldrPlatformCommands } from '../../../lib/tldr-utils';
 import TldrPlatform from '../_TldrPlatform.astro';
 
 export const prerender = false;
 
 const { platform, slug } = Astro.params;
+// console.log(`[TLDR_SLUG_PAGE] Start rendering ${platform}/${slug}`);
+const startRender = Date.now();
 
-// [slug] route should never match the index route, but if it does, return 404 immediately
-// This prevents any redirect loops
 if (!platform || !slug) {
   return new Response(null, { status: 404 });
 }
 
-// slug from [slug] route is a string (single segment)
-const slugValue = slug;
-
 // Check if slug is a page number (pagination) or a command name
-const isNumericPage = slugValue && /^\d+$/.test(slugValue);
-const pageNumber = isNumericPage ? parseInt(slugValue, 10) : null;
-const command = !isNumericPage ? slugValue : null;
+const isNumericPage = /^\d+$/.test(slug);
+const pageNumber = isNumericPage ? parseInt(slug, 10) : null;
+const command = !isNumericPage ? slug : null;
 
 let pageData: any = null;
 let commandData: any = null;
-let CommandContent: any = null;
+let htmlContent: string = '';
 
-// Handle pagination route: /tldr/[platform]/[page]
 if (pageNumber !== null) {
-  // Redirect page 1 to platform index
+  // Handle pagination route: /tldr/[platform]/[page]
   if (pageNumber === 1) {
     return Astro.redirect(`/freedevtools/tldr/${platform}/`);
   }
 
-  // Get all commands for this platform
-  const allCommands = await getTldrPlatformCommands(platform);
-  const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCommands.length / itemsPerPage);
-  const currentPage = pageNumber;
-  const totalCommands = allCommands.length;
+  const result = await getTldrPlatformCommandsPaginated(platform, pageNumber);
+  
+  if (!result) {
+    return Astro.redirect('/404');
+  }
+
+  const { commands: currentPageCommands, total: totalCommands, total_pages: totalPages, page: currentPage } = result;
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
     return Astro.redirect('/404');
   }
-
-  // Get commands for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentPageCommands = allCommands.slice(startIndex, endIndex);
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -94,27 +85,24 @@ if (pageNumber !== null) {
   };
 } else if (command) {
   // Handle command route: /tldr/[platform]/[command]
-  // Find the entry by platform and command
-  const tldrEntries: CollectionEntry<'tldr'>[] = await getCollection('tldr');
-  const entry = tldrEntries.find((entry) => {
-    const pathParts = entry.id.split('/');
-    const entryPlatform = pathParts[pathParts.length - 2];
-    const fileName = pathParts[pathParts.length - 1];
-    const entryCommand = fileName.replace('.md', '');
-    return entryPlatform === platform && entryCommand === command;
-  });
+  const startDb = Date.now();
+  const page = await getTldrPage(platform, command);
+  const duration = Date.now() - startDb;
+  console.log(`[TLDR_SLUG_PAGE] getTldrPage(${platform}, ${command}) finished in ${duration}ms`);
+  
+  if ((Astro.locals as any).timings) {
+    (Astro.locals as any).timings['db fetch'] = duration;
+  }
 
-  if (!entry) {
+  if (!page) {
     return Astro.redirect('/404');
   }
 
-  const { Content } = await render(entry);
-  CommandContent = Content;
-  const title = entry.data.title || command;
-  const description =
-    entry.data.description || `Documentation for ${command} command`;
+  htmlContent = page.html_content || '';
+  
+  const title = page.metadata.title || command;
+  const description = page.metadata.description || `Documentation for ${command} command`;
 
-  // Breadcrumb items
   const breadcrumbItems = [
     { label: 'Free DevTools', href: '/freedevtools/' },
     { label: 'TLDR', href: '/freedevtools/tldr/' },
@@ -123,7 +111,7 @@ if (pageNumber !== null) {
   ];
 
   commandData = {
-    entry,
+    page,
     title,
     description,
     breadcrumbItems,
@@ -131,6 +119,7 @@ if (pageNumber !== null) {
 } else {
   return Astro.redirect('/404');
 }
+
 ---
 
 {pageData ? (
@@ -172,7 +161,7 @@ if (pageNumber !== null) {
     description={commandData.description}
     canonical={`https://hexmos.com/freedevtools/tldr/${platform}/${command}/`}
     showHeader={true}
-    keywords={commandData.entry.data.keywords || ['free devtools', 'tldr', platform, command]}
+    keywords={commandData.page.metadata.keywords || ['free devtools', 'tldr', platform, command]}
   >
     <style>
       :global(.prose h1) {
@@ -202,47 +191,9 @@ if (pageNumber !== null) {
       <div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6 mt-6">
         <div
           class="prose prose-slate dark:prose-invert max-w-none prose-headings:text-slate-900 dark:prose-headings:text-slate-100 prose-p:text-slate-700 dark:prose-p:text-slate-300 prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:bg-slate-100 dark:prose-code:bg-slate-700 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-slate-100 dark:prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-200 dark:prose-pre:border-slate-600 prose-blockquote:border-l-blue-500 prose-blockquote:bg-slate-100 dark:prose-blockquote:bg-slate-700 prose-blockquote:px-4 prose-blockquote:py-2 prose-blockquote:rounded prose-ul:space-y-1 prose-li:text-slate-700 dark:prose-li:text-slate-300"
-        >
-          <CommandContent />
-        </div>
+          set:html={htmlContent}
+        />
       </div>
-      {
-        Array.isArray(commandData.entry.data.relatedTools) &&
-          commandData.entry.data.relatedTools.length > 0 && (
-            <section class="mt-10">
-              <h2 class="text-lg font-semibold mb-4 text-slate-900 dark:text-slate-100">
-                Related Free Online Tools
-              </h2>
-              <ul class="flex flex-wrap gap-3">
-                {commandData.entry.data.relatedTools.map((tool) => (
-                  <li>
-                    <a
-                      href={tool.url}
-                      class="inline-block px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/40 font-medium transition-colors"
-                      target={tool.url.startsWith('http') ? '_blank' : undefined}
-                      rel={
-                        tool.url.startsWith('http')
-                          ? 'noopener noreferrer'
-                          : undefined
-                      }
-                    >
-                      {tool.banner && (
-                        <img
-                          src={tool.banner}
-                          alt={`${tool.name} banner`}
-                          class="mb-2 w-full max-w-xs rounded"
-                          loading="lazy"
-                        />
-                      )}
-                      {tool.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )
-      }
-
       <div
         class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
       >
