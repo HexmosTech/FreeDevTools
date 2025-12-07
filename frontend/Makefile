@@ -1,4 +1,4 @@
-.PHONY: build deploy run clean install gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy serve prod-serve prod-stop
+.PHONY: build deploy run clean install gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy serve start-prod stop-prod deploy-staging-ssr
 
 # Run development server
 run:
@@ -19,14 +19,14 @@ build:
 serve:
 	bun run serve-ssr
 
-serve-prod:
+start-prod:
 	cd serve && pmdaemon --config pmd.config.json start && bash pmd-pin.sh
 
 
 stop-prod:
 	cd serve && pmdaemon delete all --force && bash kill-ports.sh && bash kill-ports.sh
 
-deploy-ssr:
+deploy-staging-ssr:
 	@echo "⬆️  Deploying SSR build to server..."
 
 	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
