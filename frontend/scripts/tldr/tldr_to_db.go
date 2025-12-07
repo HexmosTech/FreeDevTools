@@ -154,9 +154,12 @@ func parseTldrFile(path string) (*ProcessedPage, error) {
 	name := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
 	fullHash := createFullHash(cluster, name)
 	urlHash := get8Bytes(fullHash)
-	pathUrl := strings.TrimSuffix(fm.Path, "/")
+	pathUrl := fm.Path
 	if pathUrl == "" {
-		pathUrl = fmt.Sprintf("/freedevtools/tldr/%s/%s", cluster, name)
+		pathUrl = fmt.Sprintf("/freedevtools/tldr/%s/%s/", cluster, name)
+	}
+	if !strings.HasSuffix(pathUrl, "/") {
+		pathUrl += "/"
 	}
 
 	return &ProcessedPage{
