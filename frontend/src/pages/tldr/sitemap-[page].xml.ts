@@ -40,10 +40,4 @@ ${urls.map((url: string) => `  <url>
   });
 };
 
-export function getStaticPaths() {
-    // This is a dynamic route, but we don't know the paths at build time easily without querying DB.
-    // However, since we are using SSR (server: 'server' in astro config likely), we don't strictly need getStaticPaths 
-    // unless prerender is true.
-    // Assuming SSR mode for these dynamic sitemaps.
-    return [];
-}
+
