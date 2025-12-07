@@ -184,6 +184,7 @@ func ensureSchema(db *sql.DB) error {
 		CREATE TABLE IF NOT EXISTS pages (
 			url_hash INTEGER PRIMARY KEY,
 			url TEXT NOT NULL, -- Kept for reference
+			cluster_hash INTEGER NOT NULL,
 			html_content TEXT DEFAULT '',
 			metadata TEXT DEFAULT '{}' -- JSON
 		) WITHOUT ROWID;
@@ -264,7 +265,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	stmt, err := tx.Prepare("INSERT INTO pages (url_hash, url, html_content, metadata) VALUES (?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO pages (url_hash, url, cluster_hash, html_content, metadata) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -279,7 +280,10 @@ func main() {
 		}
 		metaJson, _ := json.Marshal(meta)
 
-		_, err = stmt.Exec(p.UrlHash, p.Url, p.HtmlContent, string(metaJson))
+		// Calculate cluster hash
+		clusterHash := get8Bytes(hashString(p.Cluster))
+
+		_, err = stmt.Exec(p.UrlHash, p.Url, clusterHash, p.HtmlContent, string(metaJson))
 		if err != nil {
 			log.Printf("Error inserting page %s: %v", p.Name, err)
 		}

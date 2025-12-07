@@ -7,7 +7,7 @@ import { Database } from 'bun:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parentPort, workerData } from 'worker_threads';
-import { hashUrlToKey } from '../../src/lib/hash-utils';
+import { hashNameToKey } from '../../src/lib/hash-utils';
 
 const logColors = {
   reset: '\u001b[0m',
@@ -20,6 +20,8 @@ const highlight = (text: string, color: string) => `${color}${text}${logColors.r
 const { dbPath, workerId } = workerData;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 // Open database connection with aggressive read optimizations
 const db = new Database(dbPath, { readonly: true });
@@ -53,7 +55,7 @@ const statements = {
   // New query for paginated commands in a cluster
   getCommandsByClusterPaginated: db.prepare(
     `SELECT url, metadata FROM pages 
-     WHERE url LIKE ? 
+     WHERE cluster_hash = ? 
      ORDER BY url 
      LIMIT ? OFFSET ?`
   ),
@@ -86,10 +88,6 @@ const statements = {
   ),
 };
 
-// clusterPreviews is taking 0.5 seconds need to improve db structure for this
-// pageByClusterAndName is taking 1 ms 
-
-
 // Signal ready
 parentPort?.postMessage({ ready: true });
 
@@ -120,7 +118,7 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getMainPage': {
         const { platform } = params;
         // Hash of cluster name
-        const hash = hashUrlToKey(platform);
+        const hash = hashNameToKey(platform);
         const row = statements.getMainPage.get(hash) as { name: string; count: number; preview_commands_json: string } | undefined;
         if (row) {
           result = {
@@ -137,7 +135,7 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getPage': {
         const { platform, slug } = params;
         const hashKey = `${platform}/${slug}`;
-        const hash = hashUrlToKey(hashKey);
+        const hash = hashNameToKey(hashKey);
         const row = statements.getPage.get(hash) as { html_content: string; metadata: string } | undefined;
         if (row) {
           result = {
@@ -152,9 +150,12 @@ parentPort?.on('message', (message: QueryMessage) => {
 
       case 'getCommandsByClusterPaginated': {
         const { cluster, limit, offset } = params;
-        // URL pattern: /freedevtools/tldr/cluster/%
-        const urlPattern = `/freedevtools/tldr/${cluster}/%`;
-        const rows = statements.getCommandsByClusterPaginated.all(urlPattern, limit, offset) as { url: string; metadata: string }[];
+        const clusterHash = hashNameToKey(cluster);
+        const rows = statements.getCommandsByClusterPaginated.all(
+          clusterHash,
+          limit,
+          offset
+        ) as { url: string; metadata: string }[];
         
         result = rows.map(row => {
           const meta = JSON.parse(row.metadata);
