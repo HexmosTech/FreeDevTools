@@ -16,6 +16,7 @@ export const GET: APIRoute = async ({ site }) => {
   }
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${sitemapUrls.map((url: string) => `  <sitemap>
     <loc>${siteUrl.replace(/\/freedevtools$/, '')}${url}</loc>
