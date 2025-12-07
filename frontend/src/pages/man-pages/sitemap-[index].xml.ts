@@ -43,13 +43,15 @@ export const GET: APIRoute = async ({ params, site }) => {
       <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/${escapedSlug}/</loc>
       <lastmod>${now}</lastmod>
       <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
     </url>`;
   });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
+     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   ${urls.join('\n')}
-</urlset>`;
+  </urlset>`;
 
   return new Response(xml, {
     headers: {

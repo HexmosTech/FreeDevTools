@@ -78,7 +78,5 @@ export async function getAllManPagesPaginated(
 
 // Re-export types for convenience
 export type {
-  Category,
   ManPage,
-  SubCategory,
 } from './man-pages-schema';

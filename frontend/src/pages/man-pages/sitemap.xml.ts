@@ -22,16 +22,16 @@ export const GET: APIRoute = async ({ site }) => {
                     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
                     <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
                       ${sitemapUrls
-                    .map(
-                      (url) => `
+      .map(
+        (url) => `
                         <sitemap>
                           <loc>${url}</loc>
                           <lastmod>${now}</lastmod>
                         </sitemap>`
-                    )
-                    .join('\n')}
+      )
+      .join('\n')}
                     </sitemapindex>`;
-                    
+
   return new Response(indexXml, {
     headers: {
       'Content-Type': 'application/xml',
