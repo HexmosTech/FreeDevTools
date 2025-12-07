@@ -34,12 +34,13 @@ const setPragma = (pragma: string) => {
   }
 };
 
-setPragma('PRAGMA cache_size = -64000'); // 64MB cache per connection
+setPragma('PRAGMA cache_size = -1048576'); // 1GB cache per connection
 setPragma('PRAGMA temp_store = MEMORY');
-setPragma('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
+setPragma('PRAGMA mmap_size = 1073741824'); // 1GB memory-mapped I/O
 setPragma('PRAGMA journal_mode = WAL'); // WAL mode for better concurrent read performance
 setPragma('PRAGMA query_only = ON'); // Read-only mode
-setPragma('PRAGMA page_size = 4096'); // Optimal page size
+setPragma('PRAGMA page_size = 8192'); // Optimal page size
+setPragma('PRAGMA synchronous = OFF'); // Disable synchronous writes for better performance
 
 const statements = {
   totalIcons: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
