@@ -33,8 +33,10 @@ const (
 type Page struct {
 	UrlHash     int64
 	Url         string // Kept for reference
+	Title       string
+	Description string
 	HtmlContent string
-	Metadata    string // JSON
+	Metadata    string // JSON (keywords, features)
 }
 
 type MainPage struct {
@@ -60,10 +62,8 @@ type ProcessedPage struct {
 }
 
 type PageMetadata struct {
-	Title       string   `json:"title"`
-	Description string   `json:"description"`
-	Keywords    []string `json:"keywords"`
-	Features    []string `json:"features"`
+	Keywords []string `json:"keywords"`
+	Features []string `json:"features"`
 }
 
 type Frontmatter struct {
@@ -179,23 +179,38 @@ func parseTldrFile(path string) (*ProcessedPage, error) {
 // --- Database ---
 
 func ensureSchema(db *sql.DB) error {
-	// Pages table - Simplified
-	_, err := db.Exec(`
-		CREATE TABLE IF NOT EXISTS pages (
-			url_hash INTEGER PRIMARY KEY,
-			url TEXT NOT NULL, -- Kept for reference
-			cluster_hash INTEGER NOT NULL,
-			html_content TEXT DEFAULT '',
-			metadata TEXT DEFAULT '{}' -- JSON
-		) WITHOUT ROWID;
-	`)
-	if err != nil {
+	// Drop tables if they exist to force schema update
+	if _, err := db.Exec("DROP TABLE IF EXISTS pages"); err != nil {
+		return err
+	}
+	if _, err := db.Exec("DROP TABLE IF EXISTS cluster"); err != nil {
+		return err
+	}
+	if _, err := db.Exec("DROP TABLE IF EXISTS overview"); err != nil {
 		return err
 	}
 
+	// Pages table - Simplified
+	fmt.Println("Creating pages table...")
+	_, err := db.Exec(`
+		CREATE TABLE pages (
+			url_hash INTEGER PRIMARY KEY,
+			url TEXT NOT NULL, -- Kept for reference
+			cluster_hash INTEGER NOT NULL,
+			title TEXT DEFAULT '',
+			description TEXT DEFAULT '',
+			html_content TEXT DEFAULT '',
+			metadata TEXT DEFAULT '{}' -- JSON (keywords, features)
+		) WITHOUT ROWID;
+	`)
+	if err != nil {
+		return fmt.Errorf("failed to create pages table: %w", err)
+	}
+
 	// Cluster table - Cluster Metadata (similar to emojis category)
+	fmt.Println("Creating cluster table...")
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS cluster (
+		CREATE TABLE cluster (
 			hash INTEGER PRIMARY KEY,
 			name TEXT NOT NULL,
 			count INTEGER NOT NULL,
@@ -203,12 +218,13 @@ func ensureSchema(db *sql.DB) error {
 		) WITHOUT ROWID;
 	`)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create cluster table: %w", err)
 	}
 
 	// Overview table
+	fmt.Println("Creating overview table...")
 	_, err = db.Exec(`
-		CREATE TABLE IF NOT EXISTS overview (
+		CREATE TABLE overview (
 			id INTEGER PRIMARY KEY CHECK(id = 1),
 			total_count INTEGER NOT NULL,
 			total_clusters INTEGER NOT NULL DEFAULT 0,
@@ -216,7 +232,7 @@ func ensureSchema(db *sql.DB) error {
 		);
 	`)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create overview table: %w", err)
 	}
 	return nil
 }
@@ -270,7 +286,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	stmt, err := tx.Prepare("INSERT INTO pages (url_hash, url, cluster_hash, html_content, metadata) VALUES (?, ?, ?, ?, ?)")
+	stmt, err := tx.Prepare("INSERT INTO pages (url_hash, url, cluster_hash, title, description, html_content, metadata) VALUES (?, ?, ?, ?, ?, ?, ?)")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -278,17 +294,15 @@ func main() {
 
 	for _, p := range allPages {
 		meta := PageMetadata{
-			Title:       p.Title,
-			Description: p.Description,
-			Keywords:    p.Keywords,
-			Features:    p.Features,
+			Keywords: p.Keywords,
+			Features: p.Features,
 		}
 		metaJson, _ := json.Marshal(meta)
 
 		// Calculate cluster hash
 		clusterHash := get8Bytes(hashString(p.Cluster))
 
-		_, err = stmt.Exec(p.UrlHash, p.Url, clusterHash, p.HtmlContent, string(metaJson))
+		_, err = stmt.Exec(p.UrlHash, p.Url, clusterHash, p.Title, p.Description, p.HtmlContent, string(metaJson))
 		if err != nil {
 			log.Printf("Error inserting page %s: %v", p.Name, err)
 		}

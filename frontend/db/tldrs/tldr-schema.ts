@@ -1,11 +1,11 @@
 export interface PageMetadata {
-  title: string;
-  description: string;
   keywords: string[];
   features: string[];
 }
 
 export interface Page {
+  title: string;
+  description: string;
   html_content: string;
   metadata: PageMetadata;
 }
@@ -36,6 +36,8 @@ export interface RawClusterRow {
 export interface RawPageRow {
   url_hash: number;
   url: string;
+  title: string;
+  description: string;
   html_content: string;
   metadata: string;
 }

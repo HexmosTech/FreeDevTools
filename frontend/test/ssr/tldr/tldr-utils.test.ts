@@ -84,8 +84,9 @@ describe('TLDR SSR Utils', () => {
     console.log(`getTldrPage('common', 'tar') took ${duration.toFixed(2)}ms`);
     expect(result).toBeDefined();
     expect(result?.html_content).toContain('tar');
+    expect(result?.title).toBeDefined();
+    expect(result?.description).toBeDefined();
     expect(result?.metadata).toBeDefined();
-    expect(result?.metadata.title).toBeDefined();
   });
 
   it('getTldrPage should return null for non-existent page', async () => {

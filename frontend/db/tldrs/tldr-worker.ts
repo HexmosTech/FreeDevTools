@@ -49,12 +49,12 @@ const statements = {
   ),
 
   getPage: db.prepare(
-    `SELECT html_content, metadata FROM pages WHERE url_hash = ?`
+    `SELECT title, description, html_content, metadata FROM pages WHERE url_hash = ?`
   ),
 
   // New query for paginated commands in a cluster
   getCommandsByClusterPaginated: db.prepare(
-    `SELECT url, metadata FROM pages 
+    `SELECT url, description, metadata FROM pages 
      WHERE cluster_hash = ? 
      ORDER BY url 
      LIMIT ? OFFSET ?`
@@ -130,9 +130,11 @@ parentPort?.on('message', (message: QueryMessage) => {
         const { platform, slug } = params;
         const hashKey = `${platform}/${slug}`;
         const hash = hashNameToKey(hashKey);
-        const row = statements.getPage.get(hash) as { html_content: string; metadata: string } | undefined;
+        const row = statements.getPage.get(hash) as { title: string; description: string; html_content: string; metadata: string } | undefined;
         if (row) {
           result = {
+            title: row.title,
+            description: row.description,
             html_content: row.html_content,
             metadata: JSON.parse(row.metadata)
           };
@@ -149,7 +151,7 @@ parentPort?.on('message', (message: QueryMessage) => {
           clusterHash,
           limit,
           offset
-        ) as { url: string; metadata: string }[];
+        ) as { url: string; description: string; metadata: string }[];
         
         result = rows.map(row => {
           const meta = JSON.parse(row.metadata);
@@ -158,7 +160,7 @@ parentPort?.on('message', (message: QueryMessage) => {
           return {
             name,
             url: row.url,
-            description: meta.description,
+            description: row.description, // Use column directly
             features: meta.features
           };
         });
