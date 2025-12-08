@@ -1,3 +1,4 @@
+```
 [stdout] [Auth Middleware] JWT found, allowing request to proceed
 [stdout] [2025-12-06T10:01:18.634Z] [EMOJI_DB] Worker 1 completed getCategoriesWithPreviewEmojis in 25ms
 [stdout] [2025-12-06T10:01:18.635Z] [EMOJI_DB] Worker 1 handling getTotalEmojis
@@ -72,6 +73,7 @@
 [stdout] [EMOJI_DB][2025-12-06T10:01:18.837Z] Dispatching getEmojiImages
 [stdout] [EMOJI_DB][2025-12-06T10:01:18.837Z] getEmojiBySlug completed in 631ms
 [stdout] [EMOJI_DB]2025-12-06T10:01:
+```
 
 once this max listner thing is hit
 DB query time is exploding

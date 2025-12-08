@@ -70,10 +70,10 @@ test-svg-req-pmd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s http://localhost:4321/freedevtools/mcp/blockchain-and-crypto/armorwallet--armor-crypto-mcp/
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Requesting SVG icon -----------"
-	hey -z 1m  http://localhost:4321/freedevtools/mcp/blockchain-and-crypto/armorwallet--armor-crypto-mcp/
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/svg_icons/8bit/sharp-solid-alien-8bit/
 	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
@@ -123,6 +123,25 @@ test-mcp-req-pmd:
 	@echo "⬇️  Requesting MCP end page -----------"
 	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/mcp/data-analytics/24mlight--a-share-mcp-is-just-i-need/
 
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb/adb
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "⬇️ Requesting tldr 10sec"
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "10s Requesting tldr main"
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "1min Requesting tldr 1min"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "5min Requesting tldr 5min"
+	hey -z 5m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
+	@sleep 2
 	@echo "⬇️  Showing logs -----------"
 # 	@LOG_FILES=$$(ls -1t ~/.pmdaemon/logs/astro-*-out.log 2>/dev/null | head -n2); \
 # 	if [ -n "$$LOG_FILES" ]; then \
@@ -242,6 +261,16 @@ test-man-pages-req-pmd:
 	pmdaemon stop all
 	pmdaemon delete all --force 2>/dev/null || true
 	bash kill-ports.sh
+# 	@echo ""
+	@echo "⬇️  Showing PMDaemon logs -----------"
+	make pmdlogs LABEL=test-svg-req-pmd
+# 	pmdaemon stop all
+	pmdaemon delete all --force 2>/dev/null || true
+	bash kill-ports.sh
+
+serve:
+	cd .. && bun run serve-ssr
+
 
 
 curl-all-kind-of-page:

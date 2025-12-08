@@ -24,22 +24,7 @@ const __dirname = path.dirname(__filename);
 // Open database connection with aggressive read optimizations
 const db = new Database(dbPath, { readonly: true });
 
-// Wrap all PRAGMAs in try-catch to avoid database locking issues with multiple processes
-// Even readonly databases can have locking conflicts when multiple processes set PRAGMAs simultaneously
-const setPragma = (pragma: string) => {
-  try {
-    db.run(pragma);
-  } catch (e) {
-    // Ignore PRAGMA errors - they're optimizations, not critical
-  }
-};
-
-setPragma('PRAGMA cache_size = -64000'); // 64MB cache per connection
-setPragma('PRAGMA temp_store = MEMORY');
-setPragma('PRAGMA mmap_size = 268435456'); // 256MB memory-mapped I/O
-setPragma('PRAGMA journal_mode = WAL'); // WAL mode for better concurrent read performance
-setPragma('PRAGMA query_only = ON'); // Read-only mode
-setPragma('PRAGMA page_size = 4096'); // Optimal page size
+ // Disable synchronous writes for better performance
 
 const statements = {
   totalIcons: db.prepare('SELECT total_count FROM overview WHERE id = 1'),

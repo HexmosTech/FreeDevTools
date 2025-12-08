@@ -79,9 +79,9 @@ def summarize_file(path):
         "dispatches": 0,
         "worker_events": 0,
     }
-    dispatch_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB)\]"
-    request_pattern = r"\[(SVG_ICONS|PNG_ICONS|EMOJI)\] Request reached|Request reached server:"
-    worker_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB)\]\["
+    dispatch_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB)\]"
+    request_pattern = r"\[(SVG_ICONS|PNG_ICONS|EMOJI|TLDR)\] Request reached|Request reached server:"
+    worker_pattern = r"\[(SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB)\]\["
     timestamp_re = re.compile(r"\[([0-9T:\-\.]+Z)\]")
     durations = {}
     timestamps = []
@@ -310,15 +310,16 @@ def main():
     parser = argparse.ArgumentParser(
         description="Copy PMDaemon astro logs into logs/<label> and summarize them."
     )
-    parser.add_argument("label", help="folder name under logs/")
+    parser.add_argument("label", nargs="?", help="folder name under logs/")
+    parser.add_argument("--peek", action="store_true", help="Analyze logs in place without moving/deleting them")
     args = parser.parse_args()
+
+    if not args.label and not args.peek:
+        parser.error("the following arguments are required: label (unless --peek is specified)")
 
     pmdaemon_dir = Path.home() / ".pmdaemon" / "logs"
     if not pmdaemon_dir.exists():
         raise SystemExit(f"PMDaemon log directory not found: {pmdaemon_dir}")
-
-    out_dir = Path("logs") / args.label
-    out_dir.mkdir(parents=True, exist_ok=True)
 
     # Find all astro log files (both out and error logs)
     log_files = sorted(pmdaemon_dir.glob("astro-*-out.log")) + sorted(
@@ -326,22 +327,33 @@ def main():
     )
 
     if not log_files:
+        if args.peek:
+             print("No astro logs found under ~/.pmdaemon/logs/ to peek.")
+             return
         raise SystemExit("No astro logs found under ~/.pmdaemon/logs/")
 
-    # Copy log files to output directory
-    copied_log_files = []
-    for log_path in log_files:
-        target = out_dir / log_path.name
-        shutil.copy2(log_path, target)
-        copied_log_files.append(target)
-        print(f"Copied {log_path.name} -> {target}")
-        try:
-            log_path.unlink()
-            print(f"Removed source log: {log_path.name}")
-        except OSError as exc:
-            print(f"Failed to remove {log_path.name}: {exc}")
+    if args.peek:
+        # Analyze in place
+        print(colorize(f"Peeking at {len(log_files)} log files in {pmdaemon_dir}...", Fore.YELLOW if Fore else None))
+        target_files = log_files
+    else:
+        out_dir = Path("logs") / args.label
+        out_dir.mkdir(parents=True, exist_ok=True)
 
-    log_files = copied_log_files
+        # Copy log files to output directory
+        copied_log_files = []
+        for log_path in log_files:
+            target = out_dir / log_path.name
+            shutil.copy2(log_path, target)
+            copied_log_files.append(target)
+            print(f"Copied {log_path.name} -> {target}")
+            try:
+                log_path.unlink()
+                print(f"Removed source log: {log_path.name}")
+            except OSError as exc:
+                print(f"Failed to remove {log_path.name}: {exc}")
+
+        target_files = copied_log_files
 
     aggregate = {
         "total_lines": 0,
@@ -355,15 +367,20 @@ def main():
     process_summaries = {}
     per_proc_queries = {}
 
-    for log_path in log_files:
+    for log_path in target_files:
         stats, durations, timestamps = summarize_file(log_path)
-        print(f"Processed {log_path.name}")
+        if not args.peek:
+            print(f"Processed {log_path.name}")
         
-        # Extract process name from filename (e.g., astro-4321-out.log -> astro-4321)
         # Extract process name from filename (e.g., astro-4321-out.log -> astro-4321)
         proc_match = re.search(r"(astro-\d+)", log_path.name)
         proc_key = proc_match.group(1) if proc_match else log_path.stem
-        process_summaries[proc_key] = stats
+        
+        if proc_key not in process_summaries:
+            process_summaries[proc_key] = stats.copy()
+        else:
+            for k in stats:
+                process_summaries[proc_key][k] += stats[k]
         for key in aggregate:
             aggregate[key] += stats[key]
 
@@ -405,7 +422,7 @@ def main():
     print(f"  errors:      {aggregate['errors']}")
     print("\nDispatches represent each time the worker pool received a query "
           "and handed it off to a worker thread (logged via "
-          "[SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB] Dispatching <queryName>).")
+          "[SVG_ICONS_DB|PNG_ICONS_DB|EMOJI_DB|TLDR_DB] Dispatching <queryName>).")
 
     if per_proc_queries:
         print(colorize("\nQuery Count Details process wise:", Fore.MAGENTA if Fore else None))
@@ -460,7 +477,7 @@ def main():
             print(f"Total coverage: {end - start}")
     
     # Analyze request times from log files
-    analyze_request_times(log_files)
+    analyze_request_times(target_files)
 
 
 if __name__ == "__main__":
