@@ -41,7 +41,7 @@ The queries are optimized for specific frontend use cases:
 *   **Goal**: Get a specific page of commands for a platform.
 *   **Query**:
     ```sql
-    SELECT url, metadata FROM pages
+    SELECT url, description, metadata FROM pages
     WHERE cluster_hash = ?
     ORDER BY url
     LIMIT ? OFFSET ?
@@ -51,10 +51,10 @@ The queries are optimized for specific frontend use cases:
 ### 3. Fetching a Single Page (`getTldrPage`)
 *   **Goal**: Get the content for a specific command.
 *   **Query**: Selects from `pages` by `url_hash`.
-*   **Returns**: Rendered HTML content and full metadata.
+*   **Returns**: Rendered HTML content, title, description, and metadata.
 
 ### 4. Sitemap Generation
-*   **`getTldrSitemapCount`**: Counts total URLs for the sitemap index (Root + Clusters + Pages).
+*   **`getTldrSitemapCount`**: Counts total URLs for the sitemap index (Root + Clusters + Pages) using pre-calculated counts from the `overview` table.
 *   **`getTldrSitemapUrls`**: Fetches a chunk of URLs for individual sitemap files using a logic-based approach in the worker (iterating through Root -> Clusters -> Pages) with `LIMIT` and `OFFSET`.
 
 ## Data Flow

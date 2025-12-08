@@ -60,8 +60,10 @@ The `tldr_to_db.go` script performs the following steps to transform raw markdow
     - `url_hash` (PK): Integer hash of the URL.
     - `url`: The full path (e.g., `/freedevtools/tldr/common/tar/`).
     - `cluster_hash`: Integer hash of the cluster name (FK).
+    - `title`: Title of the page.
+    - `description`: Description of the page.
     - `html_content`: Rendered HTML from markdown.
-    - `metadata`: JSON string containing title, description, keywords, etc.
+    - `metadata`: JSON string containing keywords and features.
   - **`cluster`**: Stores metadata for command groups (platforms like `common`, `linux`).
     - `hash` (PK): Integer hash of the cluster name.
     - `name`: Cluster name (e.g., `common`).
@@ -69,6 +71,8 @@ The `tldr_to_db.go` script performs the following steps to transform raw markdow
     - `preview_commands_json`: JSON array of the first 5 commands for preview.
   - **`overview`**: Stores global statistics.
     - `total_count`: Total number of commands across all platforms.
+    - `total_clusters`: Total number of clusters.
+    - `total_pages`: Total number of pages.
 
 ### 2. File Parsing
 
