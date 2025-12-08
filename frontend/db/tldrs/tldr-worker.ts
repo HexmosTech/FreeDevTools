@@ -66,7 +66,7 @@ const statements = {
   ),
 
   // Optimized sitemap queries
-  getClusterCount: db.prepare('SELECT COUNT(*) as count FROM cluster'),
+  getClusterCount: db.prepare('SELECT total_clusters as count FROM overview WHERE id = 1'),
   
   getClustersPaginated: db.prepare(
     'SELECT name FROM cluster ORDER BY name LIMIT ? OFFSET ?'
@@ -78,7 +78,7 @@ const statements = {
   
   // Count total URLs for sitemap index (1 for root + clusters + pages)
   getSitemapCount: db.prepare(
-    `SELECT (SELECT COUNT(*) FROM cluster) + (SELECT COUNT(*) FROM pages) + 1 as count`
+    `SELECT total_clusters + total_pages + 1 as count FROM overview WHERE id = 1`
   ),
 };
 

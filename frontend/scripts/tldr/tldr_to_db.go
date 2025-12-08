@@ -210,10 +210,15 @@ func ensureSchema(db *sql.DB) error {
 	_, err = db.Exec(`
 		CREATE TABLE IF NOT EXISTS overview (
 			id INTEGER PRIMARY KEY CHECK(id = 1),
-			total_count INTEGER NOT NULL
+			total_count INTEGER NOT NULL,
+			total_clusters INTEGER NOT NULL DEFAULT 0,
+			total_pages INTEGER NOT NULL DEFAULT 0
 		);
 	`)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func main() {
@@ -340,7 +345,9 @@ func main() {
 	tx.Commit()
 
 	// 4. Overview
-	if _, err := db.Exec("INSERT INTO overview (id, total_count) VALUES (1, ?)", len(allPages)); err != nil {
+	totalClusters := len(pagesByCluster)
+	totalPages := len(allPages)
+	if _, err := db.Exec("INSERT INTO overview (id, total_count, total_clusters, total_pages) VALUES (1, ?, ?, ?)", totalPages, totalClusters, totalPages); err != nil {
 		log.Fatal(err)
 	}
 
