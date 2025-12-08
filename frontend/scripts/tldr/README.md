@@ -59,6 +59,7 @@ The `tldr_to_db.go` script performs the following steps to transform raw markdow
   - **`pages`**: Stores individual command pages.
     - `url_hash` (PK): Integer hash of the URL.
     - `url`: The full path (e.g., `/freedevtools/tldr/common/tar/`).
+    - `cluster_hash`: Integer hash of the cluster name (FK).
     - `html_content`: Rendered HTML from markdown.
     - `metadata`: JSON string containing title, description, keywords, etc.
   - **`cluster`**: Stores metadata for command groups (platforms like `common`, `linux`).

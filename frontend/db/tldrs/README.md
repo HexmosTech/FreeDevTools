@@ -42,11 +42,11 @@ The queries are optimized for specific frontend use cases:
 *   **Query**:
     ```sql
     SELECT url, metadata FROM pages
-    WHERE url LIKE ?
+    WHERE cluster_hash = ?
     ORDER BY url
     LIMIT ? OFFSET ?
     ```
-*   **Logic**: Uses SQL `LIMIT` and `OFFSET` to fetch only the requested chunk of records, avoiding loading thousands of commands into memory.
+*   **Logic**: Uses `cluster_hash` for efficient filtering (instead of `LIKE`) and SQL `LIMIT`/`OFFSET` to fetch only the requested chunk of records.
 
 ### 3. Fetching a Single Page (`getTldrPage`)
 *   **Goal**: Get the content for a specific command.
@@ -54,8 +54,8 @@ The queries are optimized for specific frontend use cases:
 *   **Returns**: Rendered HTML content and full metadata.
 
 ### 4. Sitemap Generation
-*   **`getTldrSitemapCount`**: Counts total URLs for the sitemap index.
-*   **`getTldrSitemapUrls`**: Fetches a chunk of 5000 URLs for individual sitemap files using `LIMIT` and `OFFSET`.
+*   **`getTldrSitemapCount`**: Counts total URLs for the sitemap index (Root + Clusters + Pages).
+*   **`getTldrSitemapUrls`**: Fetches a chunk of URLs for individual sitemap files using a logic-based approach in the worker (iterating through Root -> Clusters -> Pages) with `LIMIT` and `OFFSET`.
 
 ## Data Flow
 
