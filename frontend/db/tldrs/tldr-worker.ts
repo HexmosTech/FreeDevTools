@@ -54,7 +54,7 @@ const statements = {
 
   // New query for paginated commands in a cluster
   getCommandsByClusterPaginated: db.prepare(
-    `SELECT url, description FROM pages 
+    `SELECT url, description, metadata FROM pages 
      WHERE cluster_hash = ? 
      ORDER BY url 
      LIMIT ? OFFSET ?`
