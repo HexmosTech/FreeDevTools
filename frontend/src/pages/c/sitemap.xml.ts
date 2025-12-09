@@ -1,15 +1,16 @@
 import {
-  generateCheatsheetCategoryStaticPaths,
-  generateCheatsheetStaticPaths,
-  getAllCheatsheetCategories,
-} from '@/lib/cheatsheets-utils';
+  getAllCategories,
+  getCheatsheetsByCategory,
+  getTotalCategories,
+} from 'db/cheatsheets/cheatsheets-utils';
 import type { APIRoute } from 'astro';
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const cheatsheetCategories = await getAllCheatsheetCategories();
-  const paginationPaths = await generateCheatsheetStaticPaths();
-  const categoryPaginationPaths = await generateCheatsheetCategoryStaticPaths();
+
+  // Fetch all categories (assuming < 1000 for now, or we can loop)
+  const totalCats = await getTotalCategories();
+  const cheatsheetCategories = await getAllCategories(1, totalCats);
 
   const urls: string[] = [];
 
@@ -23,60 +24,26 @@ export const GET: APIRoute = async ({ site }) => {
     </url>`
   );
 
-  // Category index pages
+
+  // Category pages and their pagination
   for (const category of cheatsheetCategories) {
-    // Remove /freedevtools prefix since site already includes it
-    const categoryUrl = category.url.replace('/freedevtools', '');
+    // Category index
     urls.push(
       `  <url>
-        <loc>${site}${categoryUrl}</loc>
+        <loc>${site}/c/${category.slug}/</loc>
         <lastmod>${now}</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.6</priority>
       </url>`
     );
-  }
 
-  // Main cheatsheet pagination pages (c/1/, c/2/, etc.)
-  for (const path of paginationPaths) {
-    const page = path.params.page;
-    if (page !== '1') {
-      // Skip page 1 as it's the same as the root
+    // Individual cheatsheets
+    // We need to fetch all cheatsheets for this category to get their slugs
+    const cheatsheets = await getCheatsheetsByCategory(category.slug);
+    for (const sheet of cheatsheets) {
       urls.push(
         `  <url>
-          <loc>${site}/c/${page}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.8</priority>
-        </url>`
-      );
-    }
-  }
-
-  // Category pagination pages (c/category/1/, c/category/2/, etc.)
-  for (const path of categoryPaginationPaths) {
-    const { category, page } = path.params;
-    if (page !== '1') {
-      // Skip page 1 as it's the same as the category index
-      urls.push(
-        `  <url>
-          <loc>${site}/c/${category}/${page}/</loc>
-          <lastmod>${now}</lastmod>
-          <changefreq>daily</changefreq>
-          <priority>0.8</priority>
-        </url>`
-      );
-    }
-  }
-
-  // Individual cheatsheet pages
-  for (const category of cheatsheetCategories) {
-    for (const sheet of category.cheatsheets) {
-      // Remove /freedevtools prefix since site already includes it
-      const sheetUrl = sheet.url.replace('/freedevtools', '');
-      urls.push(
-        `  <url>
-          <loc>${site}${sheetUrl}</loc>
+          <loc>${site}/c/${category.slug}/${sheet.slug}/</loc>
           <lastmod>${now}</lastmod>
           <changefreq>daily</changefreq>
           <priority>0.8</priority>

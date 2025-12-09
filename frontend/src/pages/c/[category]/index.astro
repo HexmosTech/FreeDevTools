@@ -1,14 +1,16 @@
 ---
-import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BaseLayout from '@/layouts/BaseLayout.astro';
 import {
-  getAllCheatsheetCategories,
+  getAllCategories,
   getCheatsheetsByCategory,
-} from '../../../lib/cheatsheets-utils';
+  getTotalCategories,
+  getTotalCheatsheets,
+  getCategoryBySlug
+} from 'db/cheatsheets/cheatsheets-utils';
 import CategoryCheatsheetsPage from './_CategoryCheatsheetsPage.astro';
 import CheatsheetPage from '../_CheatsheetPage.astro';
 
 export const prerender = false;
-
 const { category: categorySlug } = Astro.params;
 const urlPath = Astro.url.pathname;
 
@@ -34,26 +36,20 @@ if (/^\d+$/.test(categorySlug)) {
     return Astro.redirect('/freedevtools/c/');
   }
 
-  // Fetch categories data directly (SSR mode)
-  const allCategories = await getAllCheatsheetCategories();
-
   const itemsPerPage = 30;
-  const totalPages = Math.ceil(allCategories.length / itemsPerPage);
+  const totalCategories = await getTotalCategories();
+  const totalPages = Math.ceil(totalCategories / itemsPerPage);
 
   // Validate page number
   if (currentPage > totalPages || currentPage < 1) {
     return new Response(null, { status: 404 });
   }
 
-  const totalCategories = allCategories.length;
-
   // Calculate total cheatsheets
-  const totalCheatsheets = allCategories.reduce((total, category) => total + category.cheatsheetCount, 0);
+  const totalCheatsheets = await getTotalCheatsheets();
 
   // Get categories for current page
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const categories = allCategories.slice(startIndex, endIndex);
+  const categories = await getAllCategories(currentPage, itemsPerPage);
 
   // Breadcrumb data
   const breadcrumbItems = [
@@ -94,14 +90,8 @@ if (/^\d+$/.test(categorySlug)) {
   };
 } else {
   // Validate category exists
-  const allCategories = await getAllCheatsheetCategories();
-  const categoryIds = allCategories.map((c) => c.id);
-  if (!categoryIds.includes(categorySlug)) {
-    return new Response(null, { status: 404 });
-  }
-
-  // Find the category
-  const category = allCategories.find((c) => c.id === categorySlug);
+  const category = await getCategoryBySlug(categorySlug);
+  
   if (!category) {
     return new Response(null, { status: 404 });
   }
@@ -109,7 +99,8 @@ if (/^\d+$/.test(categorySlug)) {
   const categoryName = category.name;
 
   // Get cheatsheets for this category
-  const cheatsheets = await getCheatsheetsByCategory(categoryName);
+  // Note: getCheatsheetsByCategory returns all cheatsheets for the category sorted by slug
+  const cheatsheets = await getCheatsheetsByCategory(categorySlug);
   const totalCheatsheets = cheatsheets.length;
 
   // Pagination logic for page 1
@@ -143,7 +134,11 @@ if (/^\d+$/.test(categorySlug)) {
   categoryData = {
     categoryName,
     categorySlug,
-    paginatedCheatsheets,
+    paginatedCheatsheets: paginatedCheatsheets.map(c => ({
+        name: c.slug, // Using slug as name since we removed name column
+        url: `/freedevtools/c/${categorySlug}/${c.slug}/`,
+        description: c.description
+    })),
     totalCheatsheets,
     currentPage,
     totalPages,

@@ -31,6 +31,21 @@ export function copyWorkerFile() {
             name: 'EMOJI',
           },
           {
+            source: path.join(projectRoot, 'db', 'cheatsheets', 'cheatsheets-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'cheatsheets', 'cheatsheets-worker.js'),
+            name: 'CHEATSHEETS',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'man_pages', 'man-pages-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'man_pages', 'man-pages-worker.js'),
+            name: 'MAN_PAGES',
+          },
+          {
+            source: path.join(projectRoot, 'db', 'mcp', 'mcp-worker.ts'),
+            dist: path.join(distDir, 'server', 'chunks', 'db', 'mcp', 'mcp-worker.js'),
+            name: 'MCP',
+          },
+          {
             source: path.join(projectRoot, 'db', 'tldrs', 'tldr-worker.ts'),
             dist: path.join(distDir, 'server', 'chunks', 'db', 'tldrs', 'tldr-worker.js'),
             name: 'TLDR',

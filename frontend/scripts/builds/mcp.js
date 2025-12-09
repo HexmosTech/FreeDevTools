@@ -128,7 +128,7 @@ function buildProject() {
   logStep('Building project', 'Running Astro build for MCP section only...');
 
   try {
-    execSync('npx astro build', {
+    execSync('bun run ./node_modules/astro/astro.js build', {
       cwd: projectRoot,
       stdio: 'inherit',
       env: {
