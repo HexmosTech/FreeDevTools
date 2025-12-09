@@ -1,5 +1,5 @@
 export interface ManPage {
-  id: number;
+  hash_id: bigint;
   main_category: string;
   sub_category: string;
   title: string;
@@ -7,6 +7,14 @@ export interface ManPage {
   filename: string;
   content: ManPageContent; // JSON object with dynamic sections
 }
+
+export interface ManPageCategory {
+  name: string;
+  count: number;
+  description: string;
+  path: string;
+}
+
 
 export interface ManPageContent {
   NAME?: string;
@@ -29,55 +37,7 @@ export interface ManPageContent {
   [key: string]: string | undefined; // Allow any other section
 }
 
-export interface Category {
-  name: string;
-  count: number;
-  description: string;
-  keywords: string[]; // JSON array
-  path: string;
-}
-
-export interface SubCategory {
-  name: string;
-  count: number;
-  description: string;
-  keywords: string[]; // JSON array
-  path: string;
-}
-
 export interface Overview {
-  id: number;
-  total_count: number;
-}
-
-// Raw database row types (before JSON parsing)
-export interface RawManPageRow {
-  id: number;
-  main_category: string;
-  sub_category: string;
-  title: string;
-  slug: string;
-  filename: string;
-  content: string; // JSON string before parsing
-}
-
-export interface RawCategoryRow {
-  name: string;
-  count: number;
-  description: string;
-  keywords: string; // JSON string before parsing
-  path: string;
-}
-
-export interface RawSubCategoryRow {
-  name: string;
-  count: number;
-  description: string;
-  keywords: string; // JSON string before parsing
-  path: string;
-}
-
-export interface RawOverviewRow {
   id: number;
   total_count: number;
 }

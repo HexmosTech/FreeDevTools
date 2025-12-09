@@ -130,3 +130,91 @@ export async function createCategoryRepositoryMap() {
 
   return categoryMap;
 }
+
+/**
+ * SSR: Get all MCP categories (for directory pagination)
+ */
+export async function getAllMcpCategories() {
+  const metadataEntries = await getCollection('mcpMetadata');
+  const metadata = metadataEntries[0]?.data;
+
+  if (!metadata) {
+    throw new Error('MCP metadata not found');
+  }
+
+  // Get all categories from metadata
+  const categories = Object.entries(metadata.categories).map(
+    ([id, categoryData]) => ({
+      id,
+      name: categoryData.categoryDisplay,
+      description: '',
+      icon: id,
+      serverCount: categoryData.totalRepositories,
+      url: `/freedevtools/mcp/${id}/1/`,
+    })
+  );
+
+  // Add descriptions from category data
+  const categoryEntries = await getCollection('mcpCategoryData');
+  categoryEntries.forEach((entry) => {
+    const category = categories.find((c) => c.id === entry.data.category);
+    if (category) {
+      category.description = entry.data.description || '';
+    }
+  });
+
+  return categories;
+}
+
+/**
+ * SSR: Get all category IDs (for route validation)
+ */
+export async function getAllMcpCategoryIds(): Promise<string[]> {
+  const categoryEntries = await getCollection('mcpCategoryData');
+  return categoryEntries.map((entry) => entry.data.category);
+}
+
+/**
+ * SSR: Get category data by ID
+ */
+export async function getMcpCategoryById(categoryId: string) {
+  const categoryEntries = await getCollection('mcpCategoryData');
+  const entry = categoryEntries.find(
+    (e) => e.data.category === categoryId
+  );
+
+  if (!entry) {
+    return null;
+  }
+
+  return {
+    category: entry.data.category,
+    categoryDisplay: entry.data.categoryDisplay,
+    description: entry.data.description || '',
+    repositories: entry.data.repositories,
+  };
+}
+
+/**
+ * SSR: Get repositories for a category (with pagination support)
+ */
+export async function getMcpCategoryRepositories(categoryId: string) {
+  const category = await getMcpCategoryById(categoryId);
+  if (!category) {
+    return [];
+  }
+
+  // Include repository ID in each server object
+  return Object.entries(category.repositories).map(([repositoryId, server]) => ({
+    ...server,
+    repositoryId: repositoryId,
+  }));
+}
+
+/**
+ * SSR: Get MCP metadata
+ */
+export async function getMcpMetadata() {
+  const metadataEntries = await getCollection('mcpMetadata');
+  return metadataEntries[0]?.data;
+}

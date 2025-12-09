@@ -1,44 +1,47 @@
 ---
 import {
-  getClusters,
-  getIconsByCluster,
+  getClustersWithPreviewIcons,
+  getTotalClusters,
   getTotalIcons,
+  type ClusterTransformed,
 } from 'db/svg_icons/svg-icons-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SvgIcons from './_SvgIcons.astro';
 
-// Load SVG icons data from SQLite
-const clusters = getClusters();
-
-// Get all categories with their data
-const allCategories = clusters.map((cluster) => {
-  // Get icons for this cluster to count them
-  const icons = getIconsByCluster(cluster.source_folder || cluster.name);
-
-  return {
-    id: cluster.source_folder || cluster.name,
-    name: cluster.name,
-    description: cluster.description,
-    icon: `/freedevtools/svg_icons/${cluster.name}/`,
-    iconCount: icons.length,
-    url: `/freedevtools/svg_icons/${cluster.name}/`,
-    keywords: cluster.keywords,
-    features: cluster.tags,
-    fileNames: icons.map((icon) => icon.name), // Include fileNames for icon previews
-  };
-});
-
-// Calculate total SVG icons across all categories
-const totalSvgIcons = getTotalIcons();
+// Track request start time
+const requestStartTime = Date.now();
+const requestPath = Astro.url.pathname;
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
 const currentPage = 1;
-const totalPages = Math.ceil(allCategories.length / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const categories = allCategories.slice(startIndex, endIndex);
-const totalCategories = allCategories.length;
+
+// Run all queries in parallel for better performance
+const queriesStartTime = Date.now();
+const [totalCategories, categoriesResult, totalSvgIcons] = await Promise.all([
+  getTotalClusters(),
+  getClustersWithPreviewIcons(
+    currentPage,
+    itemsPerPage,
+    6,
+    true // transform = true to get transformed format
+  ) as Promise<ClusterTransformed[]>,
+  getTotalIcons(),
+]);
+const queriesEndTime = Date.now();
+console.log(
+  `[SVG_ICONS] All queries (parallel) took ${queriesEndTime - queriesStartTime}ms`
+);
+
+const categories = categoriesResult;
+const totalPages = Math.ceil(totalCategories / itemsPerPage);
+
+// Log total roundtrip time
+const requestEndTime = Date.now();
+const totalRoundtripTime = requestEndTime - requestStartTime;
+console.log(
+  `[SVG_ICONS] Server scripts (before template render) for ${requestPath} took ${totalRoundtripTime}ms`
+);
 
 // Breadcrumb data
 const breadcrumbItems = [

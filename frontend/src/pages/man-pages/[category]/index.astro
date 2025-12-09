@@ -5,16 +5,18 @@ import Pagination from '@/components/PaginationComponent.astro';
 import ToolContainer from '@/components/tool/ToolContainer';
 import ToolHead from '@/components/tool/ToolHead';
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import { getSubCategoriesByMainCategory, getSubCategoriesCountByMainCategory, getSubCategoriesByMainCategoryPaginated, getTotalManPagesCountByMainCategory, generateCategoryStaticPaths } from '@/lib/man-pages-utils';
+import {
+  getSubCategoriesByMainCategoryPaginated,
+  getTotalSubCategoriesManPagesCount,
+} from 'db/man_pages/man-pages-utils';
+import { formatName } from '@/lib/utils';
 
-export async function getStaticPaths() {
-  return generateCategoryStaticPaths();
-}
+export const prerender = false;
 
 const { category } = Astro.params;
 
 if (!category) {
-  throw new Error('Category parameter is required');
+  return Astro.redirect('/freedevtools/man-pages/');
 }
 
 // Efficient pagination for page 1
@@ -22,19 +24,27 @@ const itemsPerPage = 12;
 const currentPage = 1;
 const offset = (currentPage - 1) * itemsPerPage; // 0 for page 1
 
-// Get ONLY the subcategories for page 1 from database (efficient!)
-const currentPageSubcategories = getSubCategoriesByMainCategoryPaginated(category, itemsPerPage, offset);
-const totalSubcategoriesCount = getSubCategoriesCountByMainCategory(category);
-const totalManPagesInCategory = getTotalManPagesCountByMainCategory(category);
-const totalPages = Math.ceil(totalSubcategoriesCount / itemsPerPage);
+
+const subcategories = await getSubCategoriesByMainCategoryPaginated(
+  category,
+  itemsPerPage,
+  offset
+);
+const {man_pages_count, sub_category_count} = await getTotalSubCategoriesManPagesCount(category);
+const totalPages = Math.ceil(sub_category_count / itemsPerPage);
 
 const breadcrumbItems = [
   { label: 'Free DevTools', href: '/freedevtools/' },
   { label: 'Man Pages', href: '/freedevtools/man-pages/' },
-  { label: category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1) },
+  {
+    label:
+     formatName(category),
+  },
 ];
 
-const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + category.replace('-', ' ').slice(1);
+const categoryTitle =
+  category.replace('-', ' ').charAt(0).toUpperCase() +
+  category.replace('-', ' ').slice(1);
 ---
 
 <BaseLayout
@@ -63,11 +73,25 @@ const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + categ
     <div class="text-center">
       <div class="grid grid-cols-2 gap-6 mt-8">
         <div class="text-center">
-          <div class="text-3xl font-bold text-blue-600">{totalSubcategoriesCount >= 1000 ? Math.round(totalSubcategoriesCount / 1000) + 'k' : totalSubcategoriesCount}</div>
-          <div class="text-sm text-gray-600 dark:text-gray-400">Subcategories</div>
+          <div class="text-3xl font-bold text-blue-600">
+            {
+              sub_category_count >= 1000
+                ? Math.round(sub_category_count / 1000) + 'k'
+                : sub_category_count
+            }
+          </div>
+          <div class="text-sm text-gray-600 dark:text-gray-400">
+            Subcategories
+          </div>
         </div>
         <div class="text-center">
-          <div class="text-3xl font-bold text-green-600">{totalManPagesInCategory >= 1000 ? Math.round(totalManPagesInCategory / 1000) + 'k' : totalManPagesInCategory}</div>
+          <div class="text-3xl font-bold text-green-600">
+            {
+              man_pages_count >= 1000
+                ? Math.round(man_pages_count / 1000) + 'k'
+                : man_pages_count
+            }
+          </div>
           <div class="text-sm text-gray-600 dark:text-gray-400">Man Pages</div>
         </div>
       </div>
@@ -79,33 +103,36 @@ const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + categ
       class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8"
     >
       <div class="text-sm text-slate-600 dark:text-slate-400 text-center">
-        Showing {currentPageSubcategories.length} of {totalSubcategoriesCount} subcategories (Page {currentPage} of {totalPages})
+        Showing {subcategories.length} of {sub_category_count} subcategories
+        (Page {currentPage} of {totalPages})
       </div>
     </div>
 
     <!-- Subcategories Grid -->
     <div class="mt-8">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {currentPageSubcategories.map((subcategory) => (
-          <a
-            href={`/freedevtools/man-pages/${category}/${subcategory.name}/`}
-            class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow"
-          >
-            <div class="flex items-start justify-between mb-3">
-              <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">
-                {subcategory.name.replace('-', ' ')}
-              </h3>
-              <span class="text-xs font-mono bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">
-                {subcategory.count} pages
-              </span>
-            </div>
-            {subcategory.description && (
-              <p class="text-sm text-gray-600 dark:text-gray-400">
-                {subcategory.description}
-              </p>
-            )}
-          </a>
-        ))}
+        {
+          subcategories.map((subcategory) => (
+            <a
+              href={`/freedevtools/man-pages/${category}/${subcategory.name}/`}
+              class="block bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 hover:shadow-lg transition-shadow"
+            >
+              <div class="flex items-start justify-between mb-3">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100 capitalize">
+                  {subcategory.name.replace('-', ' ')}
+                </h3>
+                <span class="text-xs font-mono bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400 px-2 py-1 rounded">
+                  {subcategory.count} pages
+                </span>
+              </div>
+              {subcategory.description && (
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  {subcategory.description}
+                </p>
+              )}
+            </a>
+          ))
+        }
       </div>
     </div>
 
@@ -117,7 +144,9 @@ const categoryTitle = category.replace('-', ' ').charAt(0).toUpperCase() + categ
     />
 
     <!-- Credits Section -->
-    <div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+    <div
+      class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700"
+    >
       <div class="flex flex-wrap gap-4">
         <a
           href="/freedevtools/man-pages/"

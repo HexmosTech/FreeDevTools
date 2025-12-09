@@ -113,7 +113,7 @@ function installDependencies() {
       stdio: 'inherit',
       env: {
         ...process.env,
-        NODE_OPTIONS: '--max-old-space-size=16384', // 14GB for 16GB system
+        NODE_OPTIONS: '--max-old-space-size=8192', // 8GB for 8GB system
         UV_THREADPOOL_SIZE: '64' // 4x cores for I/O operations
       }
     });
@@ -128,12 +128,12 @@ function buildProject() {
   logStep('Building project', 'Running Astro build for MCP section only...');
 
   try {
-    execSync('npx astro build', {
+    execSync('bun run ./node_modules/astro/astro.js build', {
       cwd: projectRoot,
       stdio: 'inherit',
       env: {
         ...process.env,
-        NODE_OPTIONS: '--max-old-space-size=16384', // 14GB for 16GB system
+        NODE_OPTIONS: '--max-old-space-size=8192', // 8GB for 8GB system
         UV_THREADPOOL_SIZE: '64', // 4x cores for I/O operations
         NODE_OPTIONS_EXTRA: '--experimental-loader' // Enable experimental features for better performance
       }

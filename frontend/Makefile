@@ -1,8 +1,48 @@
-.PHONY: build deploy run clean gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy local-prod-build
+.PHONY: build deploy run clean install gen banners check-pagespeed deploy-no-pagespeed local-env sync-db update-db-to-b2 index-deploy serve start-prod stop-prod deploy-staging-ssr
+
+# Run development server
+run:
+	bun run dev
+
+# Clean build artifacts
+clean:
+	rm -rf dist/
+	rm -rf .astro/
+
+install:
+	cd serve && bash setup_dev.sh
 
 # Build the project
 build:
-	npm run build
+	bun run build
+
+serve:
+	bun run serve-ssr
+
+start-prod:
+	cd serve && pmdaemon --config pmd.config.json start && bash pmd-pin.sh
+
+
+stop-prod:
+	cd serve && pmdaemon delete all --force && bash kill-ports.sh && bash kill-ports.sh
+
+deploy-staging-ssr:
+	@echo "⬆️  Deploying SSR build to server..."
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./dist/ \
+		ubuntu@nats03:FreeDevTools/frontend/dist/
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./.astro/ \
+		ubuntu@nats03:FreeDevTools/frontend/.astro/
+
+	@rsync -rvz --delete --info=progress2 --no-perms --no-owner --no-group --no-times \
+		./db/ \
+		ubuntu@nats03:FreeDevTools/frontend/db/
+
+	@echo "✅ SSR deployment completed successfully"
+
 
 # Generate all tool banners
 banners:
@@ -34,18 +74,9 @@ deploy2: build
 # Deploy index.html: build then rsync index.html to a4.html
 # Note: rsync without --delete flag will only add/update files, never delete
 index-deploy:
-	npm run build:index
-	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master-do:/tools/a4.html
-	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master-do:/tools/_astro/
-
-# Run development server
-run:
-	npm run dev
-
-# Clean build artifacts
-clean:
-	rm -rf dist/
-	rm -rf .astro/
+	bun run build:index
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/index.html root@master:/tools/a4.html
+	rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./dist/_astro/style* root@master:/tools/_astro/
 
 # Generate a new tool (usage: make gen tool-name)
 gen:
@@ -67,36 +98,6 @@ local-env:
 # Requires: sudo dnf install -y libwebp-tools (Fedora) or sudo apt install -y webp (Debian/Ubuntu)
 convert-to-webp:
 	./scripts/convert-to-webp.sh "$(src)" "$(out)"
-
-
-
-# Pull all DB files via Git LFS
-# pull-db:
-# 	@echo "🔎 Checking Git LFS..."
-# 	@git lfs version || (echo "Git LFS not installed"; exit 1)
-
-# 	@echo "⬇️ Fetching all LFS objects..."
-# 	@git lfs fetch --all
-
-# 	@echo "⬇️ Pulling DB-related LFS files..."
-# 	@git lfs pull --include="db/**,frontend/db/**" --exclude=""
-
-# 	@echo "📄 Listing LFS-tracked files (only DB paths)..."
-# 	@git lfs ls-files | grep -E "db/|frontend/db/" || echo "No DB files tracked via LFS."
-
-# 	@echo "📏 Showing DB file sizes..."
-# 	@git lfs ls-files --size | grep -E "db/|frontend/db/" || true
-
-# 	@echo "✅ Checking if DB files are actual binaries (not pointers)..."
-# 	@for f in db/*.db frontend/db/*.db; do \
-# 		if [ -f "$$f" ]; then \
-# 			echo "File: $$f"; \
-# 			head -n 3 $$f; \
-# 			echo "---"; \
-# 		fi; \
-# 	done
-
-# 	@echo "✅ DB pull completed."
 
 init-rclone:
 	@echo "⬇️  Initializing Rclone..."
@@ -159,10 +160,6 @@ update-db-to-b2:
 		--retries-sleep 10s \
 		--progress; \
 	echo "✅ Database file uploaded successfully"
-
-# trigger build locally and deploy to production server via rsync
-local-prod-build:
-	bash ./scripts/local-prod-build.sh
 
 %:
 	@:

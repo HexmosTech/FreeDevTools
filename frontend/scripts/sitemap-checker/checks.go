@@ -28,7 +28,11 @@ func checkUrl(url string, headOnly bool) UrlResult {
 		result.Issues = append(result.Issues, "Fetch failed")
 		return result
 	}
-	defer resp.Body.Close()
+	defer func() {
+		// Always drain the body to ensure connection is properly closed
+		io.Copy(io.Discard, resp.Body)
+		resp.Body.Close()
+	}()
 
 	result.Status = resp.StatusCode
 

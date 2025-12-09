@@ -125,6 +125,9 @@ function processJsLinks(jsLinks: string | null): string {
 }
 
 const Banner: React.FC<BannerProps> = ({ banner }) => {
+  // Check if ads are enabled via environment variable
+  const adsEnabled = import.meta.env.ENABLE_ADS === 'true';
+
   const [isVisible, setIsVisible] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -154,6 +157,10 @@ const Banner: React.FC<BannerProps> = ({ banner }) => {
       observer.disconnect();
     };
   }, [banner, isVisible]);
+
+  if (!adsEnabled) {
+    return <div></div>;
+  }
 
   if (!banner) {
     return (
