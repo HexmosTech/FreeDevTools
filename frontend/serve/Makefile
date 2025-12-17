@@ -113,11 +113,11 @@ test-tldr-req-pmd:
 	@echo "⬇️  Server up -----------"
 	@sleep 2
 	@echo "⬇️  Warming up server logs will be flushed for the below requests, ignore the below curls -----------"
-	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb/adb
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "⬇️ Requesting tldr 10sec"
-	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "10s Requesting tldr main"
@@ -126,6 +126,14 @@ test-tldr-req-pmd:
 	@sleep 2
 	@echo "1min Requesting tldr 1min"
 	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "1min Requesting tldr main"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "1min Requesting tldr main"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "5min Requesting tldr 5min"

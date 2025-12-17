@@ -54,7 +54,7 @@ const statements = {
 
   // New query for paginated commands in a cluster
   getCommandsByClusterPaginated: db.prepare(
-    `SELECT url, description, metadata FROM pages 
+    `SELECT url, description FROM pages 
      WHERE cluster_hash = ? 
      ORDER BY url 
      LIMIT ? OFFSET ?`
@@ -151,17 +151,16 @@ parentPort?.on('message', (message: QueryMessage) => {
           clusterHash,
           limit,
           offset
-        ) as { url: string; description: string; metadata: string }[];
+        ) as { url: string; description: string }[];
         
         result = rows.map(row => {
-          const meta = JSON.parse(row.metadata);
           // Extract name from URL or metadata
           const name = row.url.split('/').filter(Boolean).pop() || '';
           return {
             name,
             url: row.url,
             description: row.description, // Use column directly
-            features: meta.features
+            features: [] // No metadata available
           };
         });
         break;
