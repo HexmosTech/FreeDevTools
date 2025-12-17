@@ -1,11 +1,10 @@
-// src/pages/man-pages/sitemap-[index].xml.ts
-import { getDb } from '@/lib/man-pages-utils';
+import { getAllManPagesPaginated } from 'db/man_pages/man-pages-utils';
 import type { APIRoute } from 'astro';
 
 const MAX_URLS = 5000;
-const PRODUCTION_SITE = 'https://hexmos.com/freedevtools';
 
-// Escape XML special characters
+export const prerender = false;
+
 function escapeXml(unsafe: string): string {
   return unsafe
     .replace(/&/g, '&amp;')
@@ -15,121 +14,44 @@ function escapeXml(unsafe: string): string {
     .replace(/'/g, '&apos;');
 }
 
-// Loader function for sitemap URLs - extracted to work in both SSG and SSR
-async function loadUrls() {
-  const db = getDb();
-  const now = new Date().toISOString();
-
-  // Get all man pages from database
-  const stmt = db.prepare(`
-    SELECT main_category, sub_category, slug
-    FROM man_pages
-    WHERE slug IS NOT NULL AND slug != ''
-    ORDER BY main_category, sub_category, slug
-  `);
-
-  const manPages = stmt.all() as Array<{
-    main_category: string;
-    sub_category: string;
-    slug: string;
-  }>;
-
-  // Build URLs with placeholder for site
-  const urls = manPages.map((manPage) => {
-    const escapedCategory = escapeXml(manPage.main_category);
-    const escapedSubCategory = escapeXml(manPage.sub_category);
-    const escapedSlug = escapeXml(manPage.slug);
-    return `
-      <url>
-        <loc>__SITE__/man-pages/${escapedCategory}/${escapedSubCategory}/${escapedSlug}/</loc>
-        <lastmod>${now}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.8</priority>
-      </url>`;
-  });
-
-  // Include the main landing page
-  urls.unshift(`
-    <url>
-      <loc>__SITE__/man-pages/</loc>
-      <lastmod>${now}</lastmod>
-      <changefreq>daily</changefreq>
-      <priority>0.9</priority>
-    </url>`);
-
-  // Add category index pages
-  const categoryStmt = db.prepare(`
-    SELECT DISTINCT main_category
-    FROM man_pages
-    ORDER BY main_category
-  `);
-  const categories = categoryStmt.all() as Array<{ main_category: string }>;
-
-  categories.forEach(({ main_category }) => {
-    const escapedCategory = escapeXml(main_category);
-    urls.push(`
-      <url>
-        <loc>__SITE__/man-pages/${escapedCategory}/</loc>
-        <lastmod>${now}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.7</priority>
-      </url>`);
-  });
-
-  // Add subcategory index pages
-  const subcategoryStmt = db.prepare(`
-    SELECT DISTINCT main_category, sub_category
-    FROM man_pages
-    ORDER BY main_category, sub_category
-  `);
-  const subcategories = subcategoryStmt.all() as Array<{
-    main_category: string;
-    sub_category: string;
-  }>;
-
-  subcategories.forEach(({ main_category, sub_category }) => {
-    const escapedCategory = escapeXml(main_category);
-    const escapedSubCategory = escapeXml(sub_category);
-    urls.push(`
-      <url>
-        <loc>__SITE__/man-pages/${escapedCategory}/${escapedSubCategory}/</loc>
-        <lastmod>${now}</lastmod>
-        <changefreq>daily</changefreq>
-        <priority>0.6</priority>
-      </url>`);
-  });
-
-  return urls;
-}
-
-export const prerender = false;
-
-export const GET: APIRoute = async ({ site, params }) => {
-  // SSR mode: call loadUrls directly
-  let urls = await loadUrls();
-
-  // Replace placeholder with actual site - use production site if localhost or undefined
-  const siteUrl =
-    site && !String(site).includes('localhost')
-      ? String(site)
-      : PRODUCTION_SITE;
-  urls = urls.map((u) => u.replace(/__SITE__/g, siteUrl));
-
-  // Split into chunks
-  const sitemapChunks: string[][] = [];
-  for (let i = 0; i < urls.length; i += MAX_URLS) {
-    sitemapChunks.push(urls.slice(i, i + MAX_URLS));
+export const GET: APIRoute = async ({ params, site }) => {
+  const index = parseInt(params.index || '1', 10);
+  if (isNaN(index) || index < 1) {
+    return new Response('Invalid index', { status: 400 });
   }
 
-  const index = parseInt(params?.index || '1', 10) - 1;
-  const chunk = sitemapChunks[index];
+  const offset = (index - 1) * MAX_URLS;
+  const limit = MAX_URLS;
 
-  if (!chunk) return new Response('Not Found', { status: 404 });
+  const manPages = await getAllManPagesPaginated(limit, offset);
+
+  if (!manPages || manPages.length === 0) {
+    return new Response('Not Found', { status: 404 });
+  }
+
+  const now = new Date().toISOString();
+
+  const siteUrl = site?.toString().replace(/\/$/, '') || 'https://hexmos.com/freedevtools';
+
+  const urls = manPages.map((page) => {
+    const escapedCategory = escapeXml(page.main_category);
+    const escapedSubCategory = escapeXml(page.sub_category);
+    const escapedSlug = escapeXml(page.slug);
+
+    return `
+    <url>
+      <loc>${siteUrl}/man-pages/${escapedCategory}/${escapedSubCategory}/${escapedSlug}/</loc>
+      <lastmod>${now}</lastmod>
+      <changefreq>monthly</changefreq>
+      <priority>0.8</priority>
+    </url>`;
+  });
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  ${chunk.join('\n')}
-</urlset>`;
+     <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
+     <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  ${urls.join('\n')}
+  </urlset>`;
 
   return new Response(xml, {
     headers: {
@@ -138,3 +60,8 @@ export const GET: APIRoute = async ({ site, params }) => {
     },
   });
 };
+
+export function getStaticPaths() {
+  return [];
+}
+
