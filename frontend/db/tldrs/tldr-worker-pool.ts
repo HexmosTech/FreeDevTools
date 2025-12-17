@@ -239,9 +239,12 @@ export function cleanupWorkers(): Promise<void> {
 // Export query functions
 export const query = {
   getOverview: () => executeQuery('getOverview', {}),
-  getMainPage: (platform: string, page: number) => executeQuery('getMainPage', { platform, page }),
+  getMainPage: (platform: string) => executeQuery('getMainPage', { platform }),
   getPage: (platform: string, slug: string) => executeQuery('getPage', { platform, slug }),
-  getSitemap: (url: string) => executeQuery('getSitemap', { url }),
+  getAllClusters: () => executeQuery('getAllClusters', {}),
+  getCommandsByClusterPaginated: (cluster: string, limit: number, offset: number) => executeQuery('getCommandsByClusterPaginated', { cluster, limit, offset }),
+  getSitemapUrls: (limit: number, offset: number) => executeQuery('getSitemapUrls', { limit, offset }),
+  getSitemapCount: () => executeQuery('getSitemapCount', {}),
 };
 
 void initWorkers().catch((err) => {

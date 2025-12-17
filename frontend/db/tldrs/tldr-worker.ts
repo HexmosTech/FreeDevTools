@@ -7,7 +7,7 @@ import { Database } from 'bun:sqlite';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { parentPort, workerData } from 'worker_threads';
-import { hashUrlToKey } from '../../src/lib/hash-utils';
+import { hashNameToKey } from '../../src/lib/hash-utils';
 
 const logColors = {
   reset: '\u001b[0m',
@@ -20,6 +20,8 @@ const highlight = (text: string, color: string) => `${color}${text}${logColors.r
 const { dbPath, workerId } = workerData;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+
 
 // Open database connection with aggressive read optimizations
 const db = new Database(dbPath, { readonly: true });
@@ -43,21 +45,42 @@ const statements = {
   getOverview: db.prepare('SELECT total_count FROM overview WHERE id = 1'),
 
   getMainPage: db.prepare(
-    `SELECT data, total_count FROM main_pages WHERE hash = ?`
+    `SELECT name, count, preview_commands_json FROM cluster WHERE hash = ?`
   ),
 
   getPage: db.prepare(
-    `SELECT html_content, metadata FROM pages WHERE url_hash = ?`
+    `SELECT title, description, html_content, metadata FROM pages WHERE url_hash = ?`
   ),
 
-  getSitemap: db.prepare(
-    `SELECT data FROM sitemap WHERE hash = ?`
+  // New query for paginated commands in a cluster
+  getCommandsByClusterPaginated: db.prepare(
+    `SELECT url, description FROM pages 
+     WHERE cluster_hash = ? 
+     ORDER BY url 
+     LIMIT ? OFFSET ?`
+  ),
+
+  // New query for all clusters (for index)
+  getAllClusters: db.prepare(
+    `SELECT name, count, preview_commands_json FROM cluster ORDER BY name`
+  ),
+
+  // Optimized sitemap queries
+  getClusterCount: db.prepare('SELECT total_clusters as count FROM overview WHERE id = 1'),
+  
+  getClustersPaginated: db.prepare(
+    'SELECT name FROM cluster ORDER BY name LIMIT ? OFFSET ?'
+  ),
+
+  getPagesPaginated: db.prepare(
+    'SELECT url FROM pages ORDER BY url_hash LIMIT ? OFFSET ?'
+  ),
+  
+  // Count total URLs for sitemap index (1 for root + clusters + pages)
+  getSitemapCount: db.prepare(
+    `SELECT total_clusters + total_pages + 1 as count FROM overview WHERE id = 1`
   ),
 };
-
-// clusterPreviews is taking 0.5 seconds need to improve db structure for this
-// pageByClusterAndName is taking 1 ms 
-
 
 // Signal ready
 parentPort?.postMessage({ ready: true });
@@ -87,14 +110,15 @@ parentPort?.on('message', (message: QueryMessage) => {
       }
 
       case 'getMainPage': {
-        const { platform, page } = params;
-        const hashKey = `${platform}/${page}`;
-        const hash = hashUrlToKey(hashKey);
-        const row = statements.getMainPage.get(hash) as { data: string; total_count: number } | undefined;
+        const { platform } = params;
+        // Hash of cluster name
+        const hash = hashNameToKey(platform);
+        const row = statements.getMainPage.get(hash) as { name: string; count: number; preview_commands_json: string } | undefined;
         if (row) {
           result = {
-            ...JSON.parse(row.data),
-            total_count: row.total_count
+            name: row.name,
+            count: row.count,
+            preview_commands: JSON.parse(row.preview_commands_json)
           };
         } else {
           result = null;
@@ -105,10 +129,12 @@ parentPort?.on('message', (message: QueryMessage) => {
       case 'getPage': {
         const { platform, slug } = params;
         const hashKey = `${platform}/${slug}`;
-        const hash = hashUrlToKey(hashKey);
-        const row = statements.getPage.get(hash) as { html_content: string; metadata: string } | undefined;
+        const hash = hashNameToKey(hashKey);
+        const row = statements.getPage.get(hash) as { title: string; description: string; html_content: string; metadata: string } | undefined;
         if (row) {
           result = {
+            title: row.title,
+            description: row.description,
             html_content: row.html_content,
             metadata: JSON.parse(row.metadata)
           };
@@ -118,16 +144,87 @@ parentPort?.on('message', (message: QueryMessage) => {
         break;
       }
 
-      case 'getSitemap': {
-        const { url } = params;
-        const hashKey = `sitemap/${url}`;
-        const hash = hashUrlToKey(hashKey);
-        const row = statements.getSitemap.get(hash) as { data: string } | undefined;
-        if (row) {
-          result = JSON.parse(row.data);
-        } else {
-          result = null;
+      case 'getCommandsByClusterPaginated': {
+        const { cluster, limit, offset } = params;
+        const clusterHash = hashNameToKey(cluster);
+        const rows = statements.getCommandsByClusterPaginated.all(
+          clusterHash,
+          limit,
+          offset
+        ) as { url: string; description: string }[];
+        
+        result = rows.map(row => {
+          // Extract name from URL or metadata
+          const name = row.url.split('/').filter(Boolean).pop() || '';
+          return {
+            name,
+            url: row.url,
+            description: row.description, // Use column directly
+            features: [] // No metadata available
+          };
+        });
+        break;
+      }
+
+      case 'getAllClusters': {
+        const rows = statements.getAllClusters.all() as { name: string; count: number; preview_commands_json: string }[];
+        result = rows.map(row => ({
+          name: row.name,
+          count: row.count,
+          preview_commands: JSON.parse(row.preview_commands_json)
+        }));
+        break;
+      }
+
+      case 'getSitemapUrls': {
+        const { limit, offset } = params;
+        const urls: string[] = [];
+        let currentOffset = offset;
+        let remainingLimit = limit;
+
+        // 1. Root URL
+        if (currentOffset === 0 && remainingLimit > 0) {
+          urls.push('/freedevtools/tldr/');
+          remainingLimit--;
+        } else if (currentOffset > 0) {
+          currentOffset--; // Consumed by root
         }
+
+        // 2. Cluster URLs
+        if (remainingLimit > 0) {
+          const clusterCountRow = statements.getClusterCount.get() as { count: number };
+          const clusterCount = clusterCountRow.count;
+
+          if (currentOffset < clusterCount) {
+            const fetchCount = Math.min(remainingLimit, clusterCount - currentOffset);
+            const rows = statements.getClustersPaginated.all(fetchCount, currentOffset) as { name: string }[];
+            
+            for (const row of rows) {
+              urls.push(`/freedevtools/tldr/${row.name}/`);
+            }
+            
+            remainingLimit -= rows.length;
+            currentOffset = 0; // Reset offset for next section
+          } else {
+            currentOffset -= clusterCount; // Skip all clusters
+          }
+        }
+
+        // 3. Page URLs
+        if (remainingLimit > 0) {
+          const rows = statements.getPagesPaginated.all(remainingLimit, currentOffset) as { url: string }[];
+          for (const row of rows) {
+            urls.push(row.url);
+          }
+        }
+
+        result = urls;
+        break;
+      }
+
+      case 'getSitemapCount': {
+        const row = statements.getSitemapCount.get() as { count: number };
+        result = row.count;
         break;
       }
 

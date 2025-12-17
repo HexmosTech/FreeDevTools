@@ -127,7 +127,7 @@ test-mcp-req-pmd:
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "⬇️ Requesting tldr 10sec"
-	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/adb
+	hey -z 10s -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "10s Requesting tldr main"
@@ -136,6 +136,14 @@ test-mcp-req-pmd:
 	@sleep 2
 	@echo "1min Requesting tldr 1min"
 	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm/npm-fund/
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "1min Requesting tldr main"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr/npm
+	@python3 pmd_logs.py --peek
+	@sleep 2
+	@echo "1min Requesting tldr main"
+	hey -z 1m -host hexmos-local.com http://127.0.0.1/freedevtools/tldr
 	@python3 pmd_logs.py --peek
 	@sleep 2
 	@echo "5min Requesting tldr 5min"
