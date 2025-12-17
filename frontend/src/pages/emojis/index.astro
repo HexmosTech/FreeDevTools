@@ -1,32 +1,40 @@
 ---
+import {
+  getCategoriesWithPreviewEmojis,
+  getEmojiCategories,
+  getTotalEmojis,
+  type EmojiData,
+} from 'db/emojis/emojis-utils';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getAllEmojis, getEmojiCategories } from '../../lib/emojis';
 import EmojiPage from './_EmojiPage.astro';
 
-const emojis = await getAllEmojis();
+// Get all data BEFORE rendering starts to prevent stream closure errors
+const [categoriesWithPreview, categories, totalEmojis] = await Promise.all([
+  getCategoriesWithPreviewEmojis(5),
+  getEmojiCategories(),
+  getTotalEmojis(),
+]);
 
-// Metadata-based categories
-const categories = getEmojiCategories();
+// Transform to match expected format
 const emojisByCategory: Record<string, EmojiData[]> = {};
-
-// Group emojis by category
-for (const cat of categories) {
-  emojisByCategory[cat] = emojis.filter((e) => (e.category || 'Other') === cat);
+const categoryCounts: Record<string, number> = {};
+for (const catWithPreview of categoriesWithPreview) {
+  emojisByCategory[catWithPreview.category] = catWithPreview.previewEmojis.map(
+    (e) =>
+      ({
+        code: e.code,
+        slug: e.slug,
+        title: e.title,
+      }) as EmojiData
+  );
+  categoryCounts[catWithPreview.category] = catWithPreview.count;
 }
 
-// Sort categories alphabetically and exclude "Other"
-const sortedCategories = Object.keys(emojisByCategory)
+// Sort categories alphabetically (already sorted from query, but ensure)
+const sortedCategories = categoriesWithPreview
+  .map((c) => c.category)
   .filter((cat) => cat !== 'Other')
   .sort();
-
-// Sort emojis within each category by title (fallback to slug)
-for (const category of sortedCategories) {
-  emojisByCategory[category].sort((a, b) => {
-    const titleA = a.title || a.slug || '';
-    const titleB = b.title || b.slug || '';
-    return titleA.localeCompare(titleB);
-  });
-}
 
 // Pagination logic for page 1
 const itemsPerPage = 30;
@@ -35,27 +43,29 @@ const totalPages = Math.ceil(sortedCategories.length / itemsPerPage);
 const startIndex = (currentPage - 1) * itemsPerPage;
 const endIndex = startIndex + itemsPerPage;
 const paginatedCategories = sortedCategories.slice(startIndex, endIndex);
-const totalCategories = sortedCategories.length
-
+const totalCategories = sortedCategories.length;
 
 // Breadcrumb items
 const breadcrumbItems = [
   { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'Emojis' }
+  { label: 'Emojis' },
 ];
 
 // SEO data
-const seoTitle = currentPage === 1 
-  ? "Emoji Reference - Browse & Copy Emojis | Online Free DevTools by Hexmos"
-  : `Emoji Reference - Page ${currentPage} | Online Free DevTools by Hexmos`;
+const seoTitle =
+  currentPage === 1
+    ? 'Emoji Reference - Browse & Copy Emojis | Online Free DevTools by Hexmos'
+    : `Emoji Reference - Page ${currentPage} | Online Free DevTools by Hexmos`;
 
-const seoDescription = currentPage === 1
-  ? "Explore the emoji reference by category. Find meanings, names, and shortcodes. Browse thousands of emojis and copy instantly. Free, fast, no signup."
-  : `Browse page ${currentPage} of our emoji reference. Find meanings, names, and shortcodes. Copy emojis instantly.`;
+const seoDescription =
+  currentPage === 1
+    ? 'Explore the emoji reference by category. Find meanings, names, and shortcodes. Browse thousands of emojis and copy instantly. Free, fast, no signup.'
+    : `Browse page ${currentPage} of our emoji reference. Find meanings, names, and shortcodes. Copy emojis instantly.`;
 
-const canonical = currentPage === 1
-  ? "https://hexmos.com/freedevtools/emojis/"
-  : `https://hexmos.com/freedevtools/emojis/${currentPage}/`;
+const canonical =
+  currentPage === 1
+    ? 'https://hexmos.com/freedevtools/emojis/'
+    : `https://hexmos.com/freedevtools/emojis/${currentPage}/`;
 
 // Enhanced keywords for main page
 const mainKeywords = [
@@ -68,18 +78,18 @@ const mainKeywords = [
   'free emojis',
   'emoji search',
   'emoji copy',
-  'unicode emojis'
+  'unicode emojis',
 ];
 ---
 
-<BaseLayout 
+<BaseLayout
   name="Emojis"
-  path={currentPage === 1 ? "/freedevtools/emojis/" : `/freedevtools/emojis/${currentPage}/`}
+  path={currentPage === 1
+    ? '/freedevtools/emojis/'
+    : `/freedevtools/emojis/${currentPage}/`}
   title={seoTitle}
   description={seoDescription}
   canonical={canonical}
-  
-  
   showHeader={true}
   totalItems={totalCategories}
   itemsPerPage={itemsPerPage}
@@ -88,16 +98,23 @@ const mainKeywords = [
   partOf="Free DevTools"
   partOfUrl="https://hexmos.com/freedevtools/"
   keywords={mainKeywords}
-  features={["Browse by category", "Copy instantly", "Find meanings", "No signup required", "Free access"]}
+  features={[
+    'Browse by category',
+    'Copy instantly',
+    'Find meanings',
+    'No signup required',
+    'Free access',
+  ]}
   emojiCategory="Reference"
 >
-  <EmojiPage 
+  <EmojiPage
     categories={paginatedCategories}
     emojisByCategory={emojisByCategory}
+    categoryCounts={categoryCounts}
     currentPage={currentPage}
     totalPages={totalPages}
     totalCategories={totalCategories}
-    totalEmojis={emojis.length}
+    totalEmojis={totalEmojis}
     breadcrumbItems={breadcrumbItems}
   />
 </BaseLayout>

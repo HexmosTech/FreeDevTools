@@ -2,8 +2,14 @@ import type { APIRoute } from "astro";
 
 export const GET: APIRoute = async ({ site }) => {
   const now = new Date().toISOString();
-  const { getAllEmojis } = await import("@/lib/emojis");
-  const emojis = getAllEmojis();
+  
+  // Use site from .env file (SITE variable) or astro.config.mjs
+  const envSite = process.env.SITE;
+  const siteStr = site?.toString() || '';
+  const siteUrl = envSite || siteStr || 'http://localhost:4321/freedevtools';
+  
+  const { getSitemapEmojis } = await import("db/emojis/emojis-utils");
+  const emojis = await getSitemapEmojis();
 
   // Predefined allowed categories
   const allowedCategories = [
@@ -29,19 +35,14 @@ export const GET: APIRoute = async ({ site }) => {
 
   // Category landing
   urls.push(
-    `  <url>\n    <loc>${site}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
+    `  <url>\n    <loc>${siteUrl}/emojis/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.9</priority>\n  </url>`
   );
 
   // Per-category pages (only allowed ones)
   const categories = new Set<string>();
 
   for (const e of emojis) {
-    const cat =
-      e.fluentui_metadata?.group ||
-      e.emoji_net_data?.category ||
-      (e as any).given_category ||
-      "other";
-
+    const cat = e.category || "other";
     const slug = cat.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 
     if (allowedSlugs.has(slug)) {
@@ -51,7 +52,7 @@ export const GET: APIRoute = async ({ site }) => {
 
   for (const cat of Array.from(categories)) {
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/${cat}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 
@@ -60,7 +61,7 @@ export const GET: APIRoute = async ({ site }) => {
     if (!e.slug) continue;
 
     urls.push(
-      `  <url>\n    <loc>${site}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
+      `  <url>\n    <loc>${siteUrl}/emojis/${e.slug}/</loc>\n    <lastmod>${now}</lastmod>\n    <changefreq>daily</changefreq>\n    <priority>0.8</priority>\n  </url>`
     );
   }
 

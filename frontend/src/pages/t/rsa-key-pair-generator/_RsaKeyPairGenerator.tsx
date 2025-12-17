@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "src/components/ui/select";
 import { Textarea } from "src/components/ui/textarea";
-import RsaKeyPairGeneratorSkeleton from "src/pages/t/rsa-key-pair-generator/_RsaKeyPairGeneratorSkeleton";
+import RsaKeyPairGeneratorSkeleton from "./_RsaKeyPairGeneratorSkeleton";
 import AdBanner from "../../../components/banner/AdBanner";
 
 const KEY_SIZES = [2048, 4096];

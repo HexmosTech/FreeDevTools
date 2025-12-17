@@ -1,93 +1,232 @@
 ---
-import { getCollection } from 'astro:content';
+import {
+  getAllTldrClusters,
+  getTldrCluster,
+  getTldrCommandsByClusterPaginated,
+} from '../../../../db/tldrs/tldr-utils';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { getTldrPlatformCommands } from '../../../lib/tldr-utils';
+import Tldr from '../_Tldr.astro';
 import TldrPlatform from '../_TldrPlatform.astro';
 
-// Test comment with bad spacing    and formatting
-
-// Generate static paths for all platforms
-export async function getStaticPaths() {
-  const tldrEntries = await getCollection('tldr');
-  const platforms = new Set<string>();
-
-  for (const entry of tldrEntries) {
-    const pathParts = entry.id.split('/');
-    const platform = pathParts[pathParts.length - 2];
-    platforms.add(platform);
-  }
-
-  return Array.from(platforms).map((platform) => ({
-    params: { platform },
-  }));
-}
+export const prerender = false;
 
 const { platform } = Astro.params;
 
-// Get all commands for this platform
-const allCommands = await getTldrPlatformCommands(platform!);
+if (!platform) {
+  return Astro.redirect('/404');
+}
 
-// Pagination logic for page 1
-const itemsPerPage = 30;
-const currentPage = 1;
-const totalPages = Math.ceil(allCommands.length / itemsPerPage);
-const startIndex = (currentPage - 1) * itemsPerPage;
-const endIndex = startIndex + itemsPerPage;
-const commands = allCommands.slice(startIndex, endIndex);
-const totalCommands = allCommands.length;
+let paginationData: any = null;
+let platformData: any = null;
 
-// Breadcrumb data
-const breadcrumbItems = [
-  { label: 'Free DevTools', href: '/freedevtools/' },
-  { label: 'TLDR', href: '/freedevtools/tldr/' },
-  { label: platform },
-];
+// If platform is numeric, this is actually a pagination route for the main index
+// Render pagination content directly (workaround for route priority)
+if (/^\d+$/.test(platform)) {
+  const currentPage = parseInt(platform, 10);
 
-// SEO data
-const seoTitle = `${platform} Commands - TLDR Documentation | Online Free DevTools by Hexmos`;
-const seoDescription = `Comprehensive documentation for ${platform} command-line tools. Learn ${platform} commands quickly with practical examples. ${totalCommands} commands available.`;
-const canonical = `https://hexmos.com/freedevtools/tldr/${platform}/`;
+  // Redirect /tldr/1 to /tldr
+  if (currentPage === 1) {
+    return Astro.redirect('/freedevtools/tldr/');
+  }
 
-// Enhanced keywords for platform page
-const platformKeywords = [
-  `${platform} commands`,
-  `${platform} cli`,
-  `${platform} documentation`,
-  'command line',
-  'cli documentation',
-  'terminal commands',
-  'command reference',
-  'cli documentation',
-];
+  // Fetch all clusters to paginate manually
+  const start = Date.now();
+  const allClusters = await getAllTldrClusters();
+  console.log(
+    `[TLDR_PLATFORM_PAGE] getAllTldrClusters() finished in ${Date.now() - start}ms`
+  );
+
+  if (!allClusters) {
+    return Astro.redirect('/404');
+  }
+
+  const itemsPerPage = 30;
+  const totalPlatforms = allClusters.length;
+  const totalPages = Math.ceil(totalPlatforms / itemsPerPage);
+
+  // Validate page number
+  if (currentPage > totalPages || currentPage < 1) {
+    return Astro.redirect('/404');
+  }
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPagePlatforms = allClusters
+    .slice(startIndex, endIndex)
+    .map((c) => ({
+      name: c.name,
+      count: c.count,
+      url: `/freedevtools/tldr/${c.name}/`,
+      commands: c.preview_commands,
+    }));
+
+  const totalCommands = allClusters.reduce((acc, c) => acc + c.count, 0);
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'TLDR', href: '/freedevtools/tldr/' },
+    { label: `Page ${currentPage}` },
+  ];
+
+  // SEO data
+  const seoTitle = `TLDR - Page ${currentPage} | Online Free DevTools by Hexmos`;
+  const seoDescription = `Browse page ${currentPage} of ${totalPages} pages in our TLDR command documentation. Learn command-line tools across different platforms.`;
+  const canonical = `https://hexmos.com/freedevtools/tldr/${currentPage}/`;
+
+  const paginatedKeywords = [
+    'tldr',
+    'command line',
+    'cli documentation',
+    'terminal commands',
+    `page ${currentPage}`,
+    'pagination',
+    'command reference',
+    'cli documentation',
+  ];
+
+  paginationData = {
+    currentPage,
+    totalPages,
+    totalPlatforms,
+    currentPagePlatforms,
+    totalCommands,
+    breadcrumbItems,
+    seoTitle,
+    seoDescription,
+    canonical,
+    paginatedKeywords,
+    itemsPerPage,
+  };
+} else {
+  // Get commands for this platform (Page 1)
+  const start = Date.now();
+
+  // Get cluster metadata first
+  const clusterData = await getTldrCluster(platform);
+
+  if (!clusterData) {
+    return Astro.redirect('/404');
+  }
+
+  const itemsPerPage = 30;
+  const totalCommands = clusterData.count;
+  const totalPages = Math.ceil(totalCommands / itemsPerPage);
+  const currentPage = 1;
+
+  // Get commands for page 1
+  const commands = await getTldrCommandsByClusterPaginated(
+    platform,
+    currentPage,
+    itemsPerPage
+  );
+
+  console.log(
+    `[TLDR_PLATFORM_PAGE] getTldrCommandsByClusterPaginated(${platform}, 1) finished in ${Date.now() - start}ms`
+  );
+
+  // Breadcrumb data
+  const breadcrumbItems = [
+    { label: 'Free DevTools', href: '/freedevtools/' },
+    { label: 'TLDR', href: '/freedevtools/tldr/' },
+    { label: platform },
+  ];
+
+  // SEO data
+  const seoTitle = `${platform} Commands - TLDR Documentation | Online Free DevTools by Hexmos`;
+  const seoDescription = `Comprehensive documentation for ${platform} command-line tools. Learn ${platform} commands quickly with practical examples. ${totalCommands} commands available.`;
+  const canonical = `https://hexmos.com/freedevtools/tldr/${platform}/`;
+
+  // Enhanced keywords for platform page
+  const platformKeywords = [
+    `${platform} commands`,
+    `${platform} cli`,
+    `${platform} documentation`,
+    'command line',
+    'cli documentation',
+    'terminal commands',
+    'command reference',
+    'cli documentation',
+  ];
+
+  platformData = {
+    platform,
+    commands,
+    currentPage,
+    totalPages,
+    totalCommands,
+    breadcrumbItems,
+    seoTitle,
+    seoDescription,
+    canonical,
+    platformKeywords,
+    itemsPerPage,
+  };
+}
 ---
 
-<BaseLayout
-  name={`${platform} Commands`}
-  path={`/freedevtools/tldr/${platform}/`}
-  title={seoTitle}
-  description={seoDescription}
-  canonical={canonical}
-  showHeader={true}
-  totalItems={totalCommands}
-  itemsPerPage={itemsPerPage}
-  currentPage={currentPage}
-  category={`${platform} Commands`}
-  partOf="TLDR"
-  partOfUrl="https://hexmos.com/freedevtools/tldr/"
-  keywords={platformKeywords}
-  features={[
-    'Quick Reference',
-    'Platform Specific',
-    'Practical Examples',
-    'No Registration',
-  ]}
->
-  <TldrPlatform
-    commands={commands}
-    currentPage={currentPage}
-    totalPages={totalPages}
-    totalCommands={totalCommands}
-    platform={platform}
-    breadcrumbItems={breadcrumbItems}
-  />
-</BaseLayout>
+{
+  paginationData ? (
+    <BaseLayout
+      name="TLDR"
+      path={`/freedevtools/tldr/${paginationData.currentPage}/`}
+      title={paginationData.seoTitle}
+      description={paginationData.seoDescription}
+      canonical={paginationData.canonical}
+      showHeader={true}
+      totalItems={paginationData.totalPlatforms}
+      itemsPerPage={paginationData.itemsPerPage}
+      currentPage={paginationData.currentPage}
+      category="TLDR"
+      partOf="Free DevTools"
+      partOfUrl="https://hexmos.com/freedevtools/"
+      keywords={paginationData.paginatedKeywords}
+      features={[
+        'Quick Reference',
+        'Platform Specific',
+        'Practical Examples',
+        'No Registration',
+      ]}
+    >
+      <Tldr
+        platforms={paginationData.currentPagePlatforms}
+        currentPage={paginationData.currentPage}
+        totalPages={paginationData.totalPages}
+        totalPlatforms={paginationData.totalPlatforms}
+        totalCommands={paginationData.totalCommands}
+        breadcrumbItems={paginationData.breadcrumbItems}
+      />
+    </BaseLayout>
+  ) : platformData ? (
+    <BaseLayout
+      name={`${platformData.platform} Commands`}
+      path={`/freedevtools/tldr/${platformData.platform}/`}
+      title={platformData.seoTitle}
+      description={platformData.seoDescription}
+      canonical={platformData.canonical}
+      showHeader={true}
+      totalItems={platformData.totalCommands}
+      itemsPerPage={platformData.itemsPerPage}
+      currentPage={platformData.currentPage}
+      category={`${platformData.platform} Commands`}
+      partOf="TLDR"
+      partOfUrl="https://hexmos.com/freedevtools/tldr/"
+      keywords={platformData.platformKeywords}
+      features={[
+        'Quick Reference',
+        'Platform Specific',
+        'Practical Examples',
+        'No Registration',
+      ]}
+    >
+      <TldrPlatform
+        commands={platformData.commands}
+        currentPage={platformData.currentPage}
+        totalPages={platformData.totalPages}
+        totalCommands={platformData.totalCommands}
+        platform={platformData.platform}
+        breadcrumbItems={platformData.breadcrumbItems}
+      />
+    </BaseLayout>
+  ) : null
+}

@@ -1,0 +1,128 @@
+---
+// No server-side JS needed here
+---
+
+<script is:inline>
+  if (typeof window !== 'undefined') {
+    const params = new URLSearchParams(window.location.search);
+    const hasDataParam = params.has('data');
+    let jwt = sessionStorage.getItem('fdt_jwt');
+
+    // Also sync cookie if JWT exists in sessionStorage but not in cookie
+    if (jwt && !document.cookie.includes('fdt_jwt=')) {
+      try {
+        document.cookie = `fdt_jwt=${jwt}; path=/; SameSite=Lax`;
+      } catch {}
+    }
+
+    // --- 1. If ?data= exists, parse and store user info ---
+    if (hasDataParam) {
+      const raw = params.get('data');
+      if (raw) {
+        try {
+          const decoded = decodeURIComponent(raw);
+          const parsed = JSON.parse(decoded);
+
+          const extractedJwt = parsed?.result?.jwt;
+          const email =
+            parsed?.result?.data?.email || parsed?.result?.data?.username;
+          if (
+            extractedJwt &&
+            email &&
+            /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
+          ) {
+            const first = parsed?.result?.data?.first_name?.trim() || '';
+            const last = parsed?.result?.data?.last_name?.trim() || '';
+            let name = (
+              first + (last && last !== first ? ' ' + last : '')
+            ).trim();
+            if (!name) {
+              const username = parsed?.result?.data?.username;
+              if (username && !username.includes('@')) name = username;
+              else name = email.split('@')[0];
+            }
+            const avatarUrl = parsed?.result?.data?.profilePicUrl;
+
+            const userObj = { email, name, jwt: extractedJwt, avatarUrl };
+            try {
+              sessionStorage.setItem('fdt_jwt', extractedJwt);
+            } catch {}
+            try {
+              sessionStorage.setItem('fdt_user_json', JSON.stringify(userObj));
+            } catch {}
+            // Also set cookie for server-side access
+            try {
+              document.cookie = `fdt_jwt=${extractedJwt}; path=/; SameSite=Lax`;
+            } catch {}
+            jwt = extractedJwt; // update local variable
+          }
+        } catch (e) {
+          console.error('[FDT] Failed to parse ?data= param', e);
+        }
+      }
+
+      // --- 2. Clean URL after parsing ---
+      try {
+        window.history.replaceState(null, '', window.location.pathname);
+      } catch (e) {
+        console.warn('[FDT] Failed to clean URL', e);
+      }
+    }
+
+    // --- 3. Intercept fetch() to inject JWT header ---
+    const originalFetch = window.fetch;
+    window.fetch = function (...args) {
+      const jwt = sessionStorage.getItem('fdt_jwt');
+      if (jwt) {
+        // Handle different fetch() call patterns
+        if (args[1]) {
+          // fetch(url, options)
+          if (!args[1].headers) {
+            args[1].headers = {};
+          } else if (args[1].headers instanceof Headers) {
+            // Use Headers API to set Authorization
+            args[1].headers.set('Authorization', `Bearer ${jwt}`);
+          } else if (Array.isArray(args[1].headers)) {
+            // Headers as array of [key, value] pairs
+            args[1].headers.push(['Authorization', `Bearer ${jwt}`]);
+          } else {
+            // Headers as plain object
+            args[1].headers['Authorization'] = `Bearer ${jwt}`;
+          }
+        } else {
+          // fetch(url) - no options
+          args[1] = { headers: { Authorization: `Bearer ${jwt}` } };
+        }
+      }
+      return originalFetch.apply(this, args);
+    };
+
+    // --- 4. Intercept XMLHttpRequest to inject JWT header ---
+    const originalOpen = XMLHttpRequest.prototype.open;
+    const originalSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
+
+    XMLHttpRequest.prototype.open = function (...args) {
+      this._url = args[1];
+      this._hasAuthHeader = false;
+      return originalOpen.apply(this, args);
+    };
+
+    XMLHttpRequest.prototype.setRequestHeader = function (...args) {
+      // Track if Authorization header is being set
+      if (args[0].toLowerCase() === 'authorization') {
+        this._hasAuthHeader = true;
+      }
+      return originalSetRequestHeader.apply(this, args);
+    };
+
+    // Add JWT before send if not already set
+    const originalSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function (...args) {
+      const jwt = sessionStorage.getItem('fdt_jwt');
+      if (jwt && !this._hasAuthHeader) {
+        originalSetRequestHeader.call(this, 'Authorization', `Bearer ${jwt}`);
+      }
+      return originalSend.apply(this, args);
+    };
+  }
+</script>

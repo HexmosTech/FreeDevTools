@@ -9,10 +9,10 @@ export function formatNumber(num: number): string {
   if (num >= 1000) {
     return (num / 1000).toFixed(1) + 'k';
   }
-  return num.toString();
+  return num?.toString();
 }
 
-export function formatRepositoryName(name: string): string {
+export function formatName(name: string): string {
   return name
     .split('-')
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
