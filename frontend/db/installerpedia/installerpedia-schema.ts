@@ -1,3 +1,5 @@
+export type Keywords = string;
+
 export interface InstallationGuide {
     id: number;
     repo: string;
@@ -10,6 +12,7 @@ export interface InstallationGuide {
     description: string;
     stars: number;
     note?: string;
+    keywords: Keywords[]
   }
   
   export interface Prerequisite {
@@ -51,6 +54,7 @@ export interface InstallationGuide {
     description: string;
     stars: number;
     note?: string;
+    keywords: string;        
   }
   
 
@@ -66,7 +70,21 @@ export interface InstallationGuide {
     description: string;
     stars: number;
     note: string;
+    keywords: Keywords[];  
   }
   
-  export type RawRepoRow = RepoData; // same, since parsed in `parseRepoRow`
+  export interface RawRepoRow {
+    id: number;
+    repo: string;
+    repo_type: string;
+    has_installation: boolean;
+    prerequisites: string;
+    installation_methods: string;
+    post_installation: string;
+    resources_of_interest: string;
+    description: string;
+    stars: number;
+    note?: string;
+    keywords: string; 
+  }
   

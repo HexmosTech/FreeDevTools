@@ -35,13 +35,17 @@ import type {
       description: row.description,
       stars: row.stars,
       note: row.note,
+      keywords: JSON.parse(row.keywords || '[]'),   // ✅ ADDED
     };
   }
+  
   
   /**
    * Convert InstallationGuide to DB-ready format
    */
-  export function serializeInstallationGuideForDb(guide: Omit<InstallationGuide, 'id'>): Omit<RawInstallationGuideRow, 'id'> {
+  export function serializeInstallationGuideForDb(
+    guide: Omit<InstallationGuide, 'id'>
+  ): Omit<RawInstallationGuideRow, 'id'> {
     return {
       repo: guide.repo,
       repo_type: guide.repo_type,
@@ -53,8 +57,10 @@ import type {
       description: guide.description,
       stars: guide.stars,
       note: guide.note,
+      keywords: JSON.stringify(guide.keywords || []),   // ✅ ADDED
     };
   }
+  
   
   /**
    * Extract specific section from an InstallationGuide
@@ -192,8 +198,11 @@ export function getReposByTypePaginated(category: string, limit: number, offset:
       description: row.description,
       stars: row.stars,
       note: row.note,
+      keywords: JSON.parse(row.keywords || '[]'),   // ✅ ADDED
     };
   }
+  
+  
   
   /**
    * Get a repository by its slug (repo name)

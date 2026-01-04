@@ -127,7 +127,7 @@ sync-db-to-local:
 	@echo "⬇️  Syncing database files from Backblaze B2..."
 	@mkdir -p db/all_dbs
 	rclone sync \
-		b2-config:hexmos/freedevtools/content/db/ \
+		b2-config:hexmos/freedevtools/content/db/cheatsheets-db.db \
 		db/all_dbs/ \
 		--checksum \
 		--retries 20 \
