@@ -15,11 +15,20 @@ import (
 
 var dbPool *sql.DB
 
+
+
+
+
 // Raw DB row
 type RawInstallerpediaRow struct {
-	ID                  int
+	SlugHash            int
 	Repo                string
+	RepoSlug            string
 	RepoType            string
+
+	CategoryHash        int
+	CategoryName        string 
+
 	HasInstallation     bool
 	Prerequisites       string
 	InstallationMethods string
@@ -27,8 +36,10 @@ type RawInstallerpediaRow struct {
 	ResourcesOfInterest string
 	Description         string
 	Stars               int
+	Keywords            string
 	Note                string
 }
+
 
 func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, error) {
 	var err error
@@ -43,23 +54,32 @@ func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, erro
 		log.Fatalf("❌ Failed to ping SQLite DB: %v", err)
 	}
 
-	// Filter only rows WITH installation methods
 	rows, err := dbPool.Query(`
-        SELECT 
-            id,
-            repo,
-            repo_type,
-            has_installation,
-            prerequisites,
-            installation_methods,
-            post_installation,
-            resources_of_interest,
-            description,
-            stars,
-            COALESCE(note, '') AS note
-        FROM ipm_data
-        WHERE has_installation = 1
-    `)
+		SELECT
+			d.slug_hash,
+			d.repo,
+			d.repo_slug,
+			d.repo_type,
+
+			d.category_hash,
+			c.repo_type AS category_name,   -- 👈 THIS IS THE KEY
+
+			d.has_installation,
+			COALESCE(d.prerequisites, '') AS prerequisites,
+			COALESCE(d.installation_methods, '') AS installation_methods,
+			COALESCE(d.post_installation, '') AS post_installation,
+			COALESCE(d.resources_of_interest, '') AS resources_of_interest,
+			COALESCE(d.description, '') AS description,
+			COALESCE(d.stars, 0) AS stars,
+			COALESCE(d.keywords, '') AS keywords,
+			COALESCE(d.note, '') AS note
+		FROM ipm_data d
+		JOIN ipm_category c
+		ON d.category_hash = c.category_hash
+		WHERE d.has_installation = 1;
+
+`)
+
 	if err != nil {
 		return nil, fmt.Errorf("failed to query installerpedia: %w", err)
 	}
@@ -71,9 +91,14 @@ func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, erro
 		var raw RawInstallerpediaRow
 
 		err := rows.Scan(
-			&raw.ID,
+			&raw.SlugHash,
 			&raw.Repo,
+			&raw.RepoSlug,
 			&raw.RepoType,
+		
+			&raw.CategoryHash,
+			&raw.CategoryName, 
+		
 			&raw.HasInstallation,
 			&raw.Prerequisites,
 			&raw.InstallationMethods,
@@ -81,20 +106,25 @@ func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, erro
 			&raw.ResourcesOfInterest,
 			&raw.Description,
 			&raw.Stars,
+			&raw.Keywords,
 			&raw.Note,
 		)
+		
 		if err != nil {
 			return nil, fmt.Errorf("failed to scan installerpedia row: %w", err)
 		}
 
-		// Only keep rows that ACTUALLY have installation = true
 		if !raw.HasInstallation {
 			continue
 		}
 
 		guide, err := parseInstallerpediaRow(raw)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse installerpedia row id=%d: %w", raw.ID, err)
+			return nil, fmt.Errorf(
+				"failed to parse installerpedia row slug_hash=%d: %w",
+				raw.SlugHash,
+				err,
+			)
 		}
 
 		guides = append(guides, guide)
@@ -104,49 +134,50 @@ func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, erro
 }
 
 func parseInstallerpediaRow(raw RawInstallerpediaRow) (InstallerpediaData, error) {
-	// ---- prerequisites ----
 	var prerequisites []Prerequisite
 	if raw.Prerequisites != "" {
 		if err := json.Unmarshal([]byte(raw.Prerequisites), &prerequisites); err != nil {
-			log.Printf("⚠️ Invalid prerequisites JSON for id=%d: %v", raw.ID, err)
+			log.Printf("⚠️ Invalid prerequisites JSON slug_hash=%d: %v", raw.SlugHash, err)
 			prerequisites = []Prerequisite{}
 		}
 	}
 
-	// ---- installation_methods ----
 	var methods []InstallMethod
 	if raw.InstallationMethods != "" {
 		if err := json.Unmarshal([]byte(raw.InstallationMethods), &methods); err != nil {
-			log.Printf("⚠️ Invalid installation_methods JSON for id=%d: %v", raw.ID, err)
+			log.Printf("⚠️ Invalid installation_methods JSON slug_hash=%d: %v", raw.SlugHash, err)
 			methods = []InstallMethod{}
 		}
 	}
 
-	// ---- post_installation ----
 	var post []string
 	if raw.PostInstallation != "" {
 		if err := json.Unmarshal([]byte(raw.PostInstallation), &post); err != nil {
-			log.Printf("⚠️ Invalid post_installation JSON for id=%d: %v", raw.ID, err)
+			log.Printf("⚠️ Invalid post_installation JSON slug_hash=%d: %v", raw.SlugHash, err)
 			post = []string{}
 		}
 	}
 
-	// ---- resources_of_interest ----
 	var resources []Resource
 	if raw.ResourcesOfInterest != "" {
 		if err := json.Unmarshal([]byte(raw.ResourcesOfInterest), &resources); err != nil {
-			log.Printf("⚠️ Invalid resources_of_interest JSON for id=%d: %v", raw.ID, err)
+			log.Printf("⚠️ Invalid resources_of_interest JSON slug_hash=%d: %v", raw.SlugHash, err)
 			resources = []Resource{}
 		}
 	}
 
-	// ---- final clean return ----
 	return InstallerpediaData{
-		ID:          fmt.Sprintf("installerpedia-%d", raw.ID),
+		ID:          fmt.Sprintf("installerpedia-%d", raw.SlugHash),
 		Name:        raw.Repo,
 		Description: raw.Description,
-		Path:        fmt.Sprintf("installerpedia/%s", raw.Repo),
-		Category:    "installerpedia",
+
+		Path: fmt.Sprintf(
+			"/freedevtools/installerpedia/%s/%s/",
+			raw.CategoryName,
+			raw.RepoSlug,
+		),
+		
+		Category: "installerpedia",
 
 		RepoType: raw.RepoType,
 		Stars:    raw.Stars,
@@ -187,4 +218,27 @@ func RunInstallerPediaOnly(ctx context.Context, start time.Time) {
 	elapsed := time.Since(start)
 	fmt.Printf("\n🎉 Installerpedia generation completed in %v\n", elapsed)
 	fmt.Printf("💾 Saved to %s\n", filePath)
+}
+
+
+type VersionString string
+
+func (v *VersionString) UnmarshalJSON(data []byte) error {
+	// number → string
+	var num float64
+	if err := json.Unmarshal(data, &num); err == nil {
+		*v = VersionString(fmt.Sprintf("%g", num))
+		return nil
+	}
+
+	// string → string
+	var str string
+	if err := json.Unmarshal(data, &str); err == nil {
+		*v = VersionString(str)
+		return nil
+	}
+
+	// null → empty
+	*v = ""
+	return nil
 }

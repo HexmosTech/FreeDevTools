@@ -134,7 +134,7 @@ type InstallerpediaData struct {
 type Prerequisite struct {
 	Type        string   `json:"type"`
 	Name        string   `json:"name"`
-	Version     string   `json:"version"`
+	Version     VersionString `json:"version,omitempty"`
 	Description string   `json:"description"`
 	Optional    bool     `json:"optional"`
 	AppliesTo   []string `json:"applies_to"`
