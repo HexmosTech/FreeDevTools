@@ -381,6 +381,7 @@ make gen-svg-icons    # Generate svg_icons.json
 make gen-png-icons    # Generate png_icons.json
 make gen-cheatsheets  # Generate cheatsheets.json
 make gen-mcp          # Generate mcp.json
+make gen-installerpeda          # Generate installerpedia.json
 
 # Generate all categories
 make gen-all
