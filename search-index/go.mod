@@ -3,8 +3,8 @@ module search-index
 go 1.21
 
 require (
-	github.com/clipperhouse/jargon v1.0.9 // indirect
-	github.com/mattn/go-sqlite3 v1.14.32 // indirect
+	github.com/clipperhouse/jargon v1.0.9
+	github.com/mattn/go-sqlite3 v1.14.32
 	gopkg.in/yaml.v2 v2.4.0
 
 )
