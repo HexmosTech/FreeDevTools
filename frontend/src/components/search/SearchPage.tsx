@@ -6,8 +6,7 @@ import {
   ImageIcon,
   ModulzLogoIcon,
   RocketIcon,
-  ReaderIcon,
-  DownloadIcon
+  ReaderIcon
 } from '@radix-ui/react-icons';
 import React, { useCallback, useEffect, useState } from 'react';
 import { MEILI_SEARCH_API_KEY } from '@/config';
@@ -76,8 +75,6 @@ function getCategoryDisplayName(category: string): string {
       return 'TLDRs';
     case 'cheatsheets':
       return 'cheatsheets';
-    case 'installerpedia':
-      return 'installerpedia';
     case 'man_pages':
       return 'man pages';
     default:
@@ -109,8 +106,6 @@ function getBadgeVariant(category: string): string {
       return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200';
     case 'mcp':
       return 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200';
-    case 'installerpedia':
-      return 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900 dark:text-cyan-200';    
     case 'man_pages':
       return 'bg-teal-100 text-teal-800 dark:bg-teal-900 dark:text-teal-200';
     default:
@@ -590,10 +585,6 @@ const SearchPage: React.FC = () => {
         return (
           <ModulzLogoIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
         );
-      case 'installerpedia':
-        return (
-          <DownloadIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
-      );
       case 'man_pages':
         return (
           <ReaderIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
@@ -612,7 +603,6 @@ const SearchPage: React.FC = () => {
     { key: 'svg_icons', label: 'SVG Icons' },
     { key: 'emoji', label: 'Emojis' },
     { key: 'mcp', label: 'MCP' },
-    { key: 'installerpedia', label: 'InstallerPedia' },
     { key: 'man_pages', label: 'Man Pages' },
   ];
 
@@ -663,11 +653,11 @@ const SearchPage: React.FC = () => {
         </div>
 
         {/* CategoryFilter */}
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:flex-wrap lg:gap-2 gap-2 pb-2">
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:flex lg:space-x-2 gap-2 lg:gap-0 pb-2">
           <button
             onClick={() => handleCategoryClick('all')}
             onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
-            className={`text-xs lg:text-sm flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+            className={`text-xs lg:text-sm w-full flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
               activeCategory === 'all'
                 ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
                 : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
@@ -704,26 +694,42 @@ const SearchPage: React.FC = () => {
                 </>
               );
 
-              const buttonClassName = `text-xs lg:text-sm flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
+              const buttonClassName = `text-xs lg:text-sm w-full flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
                 isActive || selectedCategories.includes(category.key)
                   ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
                   : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
               }`;
 
+              if (isActive || selectedCategories.includes(category.key)) {
+                return (
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryClick(category.key)}
+                    onContextMenu={(e) =>
+                      handleCategoryRightClick(e, category.key)
+                    }
+                    className={buttonClassName}
+                  >
+                    {buttonContent}
+                  </button>
+                );
+              }
+
               return (
                 <button
                   key={category.key}
                   onClick={() => handleCategoryClick(category.key)}
-                  onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
+                  onContextMenu={(e) =>
+                    handleCategoryRightClick(e, category.key)
+                  }
                   className={buttonClassName}
-                  title={!isActive ? 'Right-click to multi-select' : undefined}
+                  title="Right-click to multi-select"
                 >
                   {buttonContent}
                 </button>
               );
             })}
         </div>
-
       </div>
 
       {/* LoadingState */}
