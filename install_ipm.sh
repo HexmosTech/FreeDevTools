@@ -62,9 +62,8 @@ if [[ -f "$TARGET" ]]; then
 fi
 
 INSTALL_ID="install-$(date +%s)-$RANDOM"
-###################################
-# Track install started
-###################################
+
+# Track installation start
 (
   curl -s -X POST "https://us.i.posthog.com/i/v0/e/" \
     -H "Content-Type: application/json" \
@@ -92,9 +91,8 @@ if [[ "$OS" != "windows" ]]; then
 else
     curl -L "$DOWNLOAD_URL" -o "$TARGET"
 fi
-###################################
-# Track install success 
-###################################
+
+# Track installation success
 (
   curl -s -X POST "https://us.i.posthog.com/i/v0/e/" \
     -H "Content-Type: application/json" \
