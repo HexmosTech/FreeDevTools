@@ -168,6 +168,26 @@ curl -fsSL https://raw.githubusercontent.com/HexmosTech/freeDevTools/main/instal
 
 To get the latest updates, run `ipm update`.
 
+
+#### Configuration (`ipm.toml`)
+
+You can customize `ipm` behavior by creating a `.ipm.toml` file in your **home directory**:
+
+* **Linux/macOS:** `~/.ipm.toml`
+* **Windows:** `C:\Users\<User>\.ipm.toml`
+
+#### Options
+
+Currently, you can toggle whether `ipm` prompts you to report installation bugs to GitHub when you interrupt a process (Ctrl+C) or cancel an installation:
+
+```toml
+# Enable/Disable bug report prompts on exit (Default: true)
+report-bugs = false
+
+```
+
+
+
 ## Related Projects
 
 **[LiveReview](https://hexmos.com/livereview)** - I'm building a private AI code review tool that runs on your LLM key (OpenAI, Gemini, etc.) with flat, no-seat pricing — designed for small teams. Check it out, if that's your kind of thing.
