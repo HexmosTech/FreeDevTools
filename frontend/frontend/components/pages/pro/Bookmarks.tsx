@@ -299,9 +299,12 @@ const Bookmarks: React.FC = () => {
                   const iconPreviewUrl = getIconPreviewUrl(bookmark.url, bookmark.category);
                   
                   return (
-                    <div
+                    <a
                       key={`${bookmark.uId_hash_id}-${bookmark.url}`}
-                      className="flex items-start justify-between p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1"
+                      href={bookmark.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="relative flex items-start justify-between p-2 bg-white dark:bg-slate-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 no-underline"
                     >
                       <div className="flex items-start gap-2 flex-1 min-w-0">
                         {iconPreviewUrl && (
@@ -318,14 +321,9 @@ const Bookmarks: React.FC = () => {
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
-                          <a
-                            href={bookmark.url}
-                            className="block text-blue-600 dark:text-blue-400 hover:underline truncate"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
+                          <span className="block text-blue-600 dark:text-blue-400 hover:underline truncate font-medium">
                             {getPageTitleFromUrl(bookmark.url)}
-                          </a>
+                          </span>
                           <p className="text-sm text-gray-500 dark:text-gray-400 truncate mt-1">
                             {bookmark.url}
                           </p>
@@ -335,8 +333,12 @@ const Bookmarks: React.FC = () => {
                         </div>
                       </div>
                       <button
-                        onClick={() => handleUnbookmark(bookmark.url, bookmark.category)}
-                        className="ml-4 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors flex-shrink-0"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleUnbookmark(bookmark.url, bookmark.category);
+                        }}
+                        className="ml-4 p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors flex-shrink-0 z-10 relative"
                         title="Remove bookmark"
                         aria-label="Remove bookmark"
                       >
@@ -355,7 +357,7 @@ const Bookmarks: React.FC = () => {
                           />
                         </svg>
                       </button>
-                    </div>
+                    </a>
                   );
                 })}
               </div>

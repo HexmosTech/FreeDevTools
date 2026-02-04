@@ -298,7 +298,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
         href={result.path ? `${baseUrl}${result.path}` : '#'}
         className="block no-underline"
       >
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 overflow-hidden h-full flex flex-col cursor-pointer">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 overflow-hidden h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
             {result.category && (
               <div
@@ -323,7 +323,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
         href={result.path ? `${baseUrl}${result.path}` : '#'}
         className="block no-underline"
       >
-        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
             {result.category && (
               <div
@@ -356,7 +356,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
       href={result.path ? `${baseUrl}${result.path}` : '#'}
       className="block no-underline"
     >
-      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
         <div className="p-4 flex flex-col h-full relative">
           {result.category && (
             <div
