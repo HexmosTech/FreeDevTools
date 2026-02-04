@@ -301,7 +301,7 @@ const Bookmarks: React.FC = () => {
                   return (
                     <div
                       key={`${bookmark.uId_hash_id}-${bookmark.url}`}
-                      className="flex items-start justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="flex items-start justify-between p-2 bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1"
                     >
                       <div className="flex items-start gap-2 flex-1 min-w-0">
                         {iconPreviewUrl && (

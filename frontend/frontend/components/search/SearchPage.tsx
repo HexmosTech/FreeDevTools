@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 // Icons are tree-shakeable, so only imported icons are bundled
+import { MEILI_SEARCH_API_KEY } from '@/config';
 import {
   Cross2Icon,
+  DownloadIcon,
   FileIcon,
   FileTextIcon,
   GearIcon,
   ImageIcon,
   ModulzLogoIcon,
-  RocketIcon,
   ReaderIcon,
-  DownloadIcon
+  RocketIcon
 } from '@radix-ui/react-icons';
-import { MEILI_SEARCH_API_KEY } from '@/config';
 // Types
 interface SearchResult {
   id?: string;
@@ -298,7 +298,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
         href={result.path ? `${baseUrl}${result.path}` : '#'}
         className="block no-underline"
       >
-        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 overflow-hidden h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
             {result.category && (
               <div
@@ -323,7 +323,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
         href={result.path ? `${baseUrl}${result.path}` : '#'}
         className="block no-underline"
       >
-        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
             {result.category && (
               <div
@@ -356,7 +356,7 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
       href={result.path ? `${baseUrl}${result.path}` : '#'}
       className="block no-underline"
     >
-      <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
+      <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
         <div className="p-4 flex flex-col h-full relative">
           {result.category && (
             <div
@@ -364,9 +364,9 @@ const ResultCard = ({ result }: { result: SearchResult }) => {
             >
               {(result.category as string).includes('_')
                 ? (result.category as string)
-                    .split('_')
-                    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ')
+                  .split('_')
+                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                  .join(' ')
                 : result.category}
             </div>
           )}
@@ -598,7 +598,7 @@ const SearchPage: React.FC = () => {
       case 'installerpedia':
         return (
           <DownloadIcon className="hidden md:block w-4 h-4 mr-1 flex-shrink-0" />
-      );
+        );
       default:
         return null;
     }
@@ -669,11 +669,10 @@ const SearchPage: React.FC = () => {
           <button
             onClick={() => handleCategoryClick('all')}
             onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
-            className={`text-xs lg:text-sm flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-              activeCategory === 'all'
-                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
-            }`}
+            className={`text-xs lg:text-sm flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${activeCategory === 'all'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+              : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+              }`}
           >
             All{' '}
             {activeCategory === 'all' &&
@@ -706,11 +705,10 @@ const SearchPage: React.FC = () => {
                 </>
               );
 
-              const buttonClassName = `text-xs lg:text-sm flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${
-                isActive || selectedCategories.includes(category.key)
-                  ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
-                  : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
-              }`;
+              const buttonClassName = `text-xs lg:text-sm flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive || selectedCategories.includes(category.key)
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
+                }`;
 
 
 

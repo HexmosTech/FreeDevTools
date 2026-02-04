@@ -14,16 +14,15 @@ const ResultCard = ({ result }: ResultCardProps) => {
       <a
         href={
           result.path
-            ? `${
-                typeof window !== 'undefined'
-                  ? `${window.location.protocol}//${window.location.host}`
-                  : 'https://hexmos.com'
-              }${result.path}`
+            ? `${typeof window !== 'undefined'
+              ? `${window.location.protocol}//${window.location.host}`
+              : 'https://hexmos.com'
+            }${result.path}`
             : '#'
         }
         className="block no-underline"
       >
-        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all overflow-hidden h-full flex flex-col">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 overflow-hidden h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-6 relative">
             {result.category && (
               <div
@@ -48,16 +47,15 @@ const ResultCard = ({ result }: ResultCardProps) => {
       <a
         href={
           result.path
-            ? `${
-                typeof window !== 'undefined'
-                  ? `${window.location.protocol}//${window.location.host}`
-                  : 'https://hexmos.com'
-              }${result.path}`
+            ? `${typeof window !== 'undefined'
+              ? `${window.location.protocol}//${window.location.host}`
+              : 'https://hexmos.com'
+            }${result.path}`
             : '#'
         }
         className="block no-underline"
       >
-        <div className="rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-card text-card-foreground shadow-sm cursor-pointer hover:border-primary hover:bg-slate-50 dark:hover:bg-slate-900 transition-all h-full flex flex-col">
+        <div className="bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-xl transition-all duration-300 ease-in-out hover:-translate-y-1 h-full flex flex-col cursor-pointer">
           <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
             {result.category && (
               <div
@@ -90,11 +88,10 @@ const ResultCard = ({ result }: ResultCardProps) => {
     <a
       href={
         result.path
-          ? `${
-              typeof window !== 'undefined'
-                ? `${window.location.protocol}//${window.location.host}`
-                : 'https://hexmos.com'
-            }${result.path}`
+          ? `${typeof window !== 'undefined'
+            ? `${window.location.protocol}//${window.location.host}`
+            : 'https://hexmos.com'
+          }${result.path}`
           : '#'
       }
       className="block no-underline"
