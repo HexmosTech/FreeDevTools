@@ -1,0 +1,402 @@
+package layouts
+
+import (
+	"fmt"
+	"strings"
+	"fdt-templ/assets"
+	"fdt-templ/components/common"
+	"fdt-templ/components/common/banner"
+	"fdt-templ/internal/chunks"
+	"fdt-templ/internal/config"
+)
+
+templ BaseLayout(props BaseLayoutProps) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			
+			<!-- Resource hints for better performance - early in head -->
+			<link rel="preconnect" href="https://hexmos.com"/>
+
+			<link rel="preconnect" href="https://www.googletagmanager.com">
+			<link rel="preconnect" href="https://www.google-analytics.com">
+			<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
+			<link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin>
+ 
+			<!-- Critical CSS - loaded early and render-blocking -->
+			<!-- Inline Critical CSS -->
+			@templ.Raw("<style>" + assets.CriticalCSS + "</style>")
+			<!-- Defer non-critical CSS -->
+			<link rel="preload" href="/freedevtools/static/css/output.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
+			<noscript><link rel="stylesheet" href="/freedevtools/static/css/output.css"/></noscript>
+			
+			<!-- Theme initialization script -->
+			<script>
+				(function () {
+					const theme = localStorage.getItem('theme') || 'dark';
+					const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+					if (theme === 'dark' || (!theme && prefersDark)) {
+						document.documentElement.classList.add('dark');
+					} else {
+						document.documentElement.classList.remove('dark');
+					}
+				})();
+			</script>
+			
+			<!-- Global pro status cookie management -->
+			<script>
+				// Define globally accessible function for pro status cookie
+				window.getProStatusCookie = function() {
+					const cookies = document.cookie.split('; ');
+					for (const cookie of cookies) {
+						const [name, value] = cookie.split('=');
+						if (name.trim() === 'hexmos-one-fdt-p-status') {
+							return value === 'true';
+						}
+					}
+					return false;
+				};
+				
+				// Check cookie immediately and prevent Google AdSense loading
+				(function() {
+					function removeGoogleAdSense() {
+						const cookieStatus = window.getProStatusCookie();
+						console.log('GA Read Cookie Status:', cookieStatus);
+						
+						if (cookieStatus) {
+							// Remove Google AdSense meta tag and script if they exist
+							const metaTag = document.querySelector('meta[name="google-adsense-account"]');
+							if (metaTag) {
+								metaTag.remove();
+							}
+							const adScript = document.querySelector('script[src*="adsbygoogle.js"]');
+							if (adScript) {
+								adScript.remove();
+							}
+						}
+					}
+					
+					// Check on initial load
+					if (document.readyState === 'loading') {
+						document.addEventListener('DOMContentLoaded', removeGoogleAdSense);
+					} else {
+						removeGoogleAdSense();
+					}
+					
+					// Listen for pro status changes
+					window.addEventListener('pro-status-changed', removeGoogleAdSense);
+				})();
+			</script>
+			
+			<!-- Google AdSense -->
+			if config.GetAdsEnabled() && config.GetEnabledAdTypes(GetAdPageTypeFromPath(props.Canonical))["google"] {
+				<script>
+					// Only load if pro status cookie is not set
+					(function() {
+						let adScriptLoaded = false;
+						
+						function loadGoogleAdSense() {
+							const cookieStatus = window.getProStatusCookie();
+							if (!cookieStatus && !adScriptLoaded) {
+								adScriptLoaded = true;
+								
+								// Add meta tag
+								const meta = document.createElement('meta');
+								meta.name = 'google-adsense-account';
+								meta.content = 'ca-pub-1540226945870088';
+								document.head.appendChild(meta);
+								
+								// Add script
+								const script = document.createElement('script');
+								script.async = true;
+								script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1540226945870088';
+								script.crossOrigin = 'anonymous';
+								document.head.appendChild(script);
+							} else if (cookieStatus && adScriptLoaded) {
+								// Remove Google AdSense if user becomes pro
+								const metaTag = document.querySelector('meta[name="google-adsense-account"]');
+								if (metaTag) {
+									metaTag.remove();
+								}
+								const adScript = document.querySelector('script[src*="adsbygoogle.js"]');
+								if (adScript) {
+									adScript.remove();
+								}
+								adScriptLoaded = false;
+							}
+						}
+						
+						// Check on initial load
+						if (document.readyState === 'loading') {
+							document.addEventListener('DOMContentLoaded', loadGoogleAdSense);
+						} else {
+							loadGoogleAdSense();
+						}
+						
+						// Listen for pro status changes
+						window.addEventListener('pro-status-changed', loadGoogleAdSense);
+					})();
+				</script>
+			}
+			<!-- Basic SEO Meta Tags -->
+			<title>{ props.Title }</title>
+			if props.Description != "" {
+				<meta name="description" content={ props.Description }/>
+			}
+			if len(props.Keywords) > 0 {
+				<meta name="keywords" content={ strings.Join(props.Keywords, ", ") }/>
+			}
+			if props.Canonical != "" {
+				<link rel="canonical" href={ props.Canonical }/>
+			}
+
+			<!-- Open Graph / Facebook -->
+			<meta property="og:type" content="website"/>
+			<meta property="og:title" content={ props.Title }/>
+			if props.Description != "" {
+				<meta property="og:description" content={ props.Description }/>
+			}
+			if props.Canonical != "" {
+				<meta property="og:url" content={ props.Canonical }/>
+			}
+			if props.ThumbnailUrl != "" {
+				<meta property="og:image" content={ props.ThumbnailUrl }/>
+			} else if props.OgImage != "" {
+				<meta property="og:image" content={ props.OgImage }/>
+			}
+			<meta property="og:site_name" content="Free DevTools by Hexmos"/>
+
+			<!-- Twitter Card -->
+			<meta name="twitter:card" content="summary_large_image"/>
+			<meta name="twitter:title" content={ props.Title }/>
+			if props.Description != "" {
+				<meta name="twitter:description" content={ props.Description }/>
+			}
+			if props.ThumbnailUrl != "" {
+				<meta name="twitter:image" content={ props.ThumbnailUrl }/>
+			} else if props.TwitterImage != "" {
+				<meta name="twitter:image" content={ props.TwitterImage }/>
+			}
+
+			<!-- JSON-LD Structured Data -->
+			if schemaJSON := GenerateSchemaJSON(props); schemaJSON != "" {
+				@templ.Raw(`<script type="application/ld+json">` + schemaJSON + `</script>`)
+			}
+
+			<!-- Additional SEO Meta Tags -->
+			<meta name="robots" content="index, follow"/>
+			<meta name="author" content="Free DevTools by Hexmos"/>
+			<meta name="generator" content="Templ"/>
+
+			<!-- Image-specific meta tags for better SEO -->
+			if props.ThumbnailUrl != "" {
+				<meta name="image" content={ props.ThumbnailUrl }/>
+				if props.ImgWidth > 0 {
+					<meta property="og:image:width" content={ fmt.Sprintf("%d", props.ImgWidth) }/>
+				}
+				if props.ImgHeight > 0 {
+					<meta property="og:image:height" content={ fmt.Sprintf("%d", props.ImgHeight) }/>
+				}
+				if props.EncodingFormat != "" {
+					<meta property="og:image:type" content={ props.EncodingFormat }/>
+				}
+				if props.Name != "" {
+					<meta property="og:image:alt" content={ props.Name }/>
+					<meta name="twitter:image:alt" content={ props.Name }/>
+				}
+			} else if props.OgImage != "" {
+				<meta name="image" content={ props.OgImage }/>
+			}
+
+			<!-- Add global search state -->
+			<script>
+				// Initialize global search state
+				window.searchState = {
+					query: '',
+					setQuery: function (query) {
+						this.query = query;
+						// Dispatch an event when query changes
+						window.dispatchEvent(
+							new CustomEvent('searchQueryChanged', {
+								detail: { query },
+							})
+						);
+					},
+					getQuery: function () {
+						return this.query;
+					},
+				};
+			</script>
+
+			<!-- Preload React chunks and index.js in parallel to avoid sequential loading chain -->
+			<!-- Static modulepreload links generated at build time -->
+			{{
+				// Preload index.js itself
+				var links strings.Builder
+				links.WriteString(`<link rel="modulepreload" href="/freedevtools/static/js/index.js"/>`)
+				links.WriteString("\n\t\t\t")
+				
+				// Preload all React chunks
+				reactChunks := chunks.GetReactChunks()
+				for _, chunk := range reactChunks {
+					links.WriteString(fmt.Sprintf(`<link rel="modulepreload" href="/freedevtools/static/js/chunks/%s"/>`, chunk))
+					links.WriteString("\n\t\t\t")
+				}
+			}}
+			@templ.Raw(links.String())
+
+			<!-- Favicon -->
+			<link rel="icon" type="image/x-icon" href="/freedevtools/public/favicon.png"/>
+
+			<!-- Optimized GTM loading -->
+			<script>
+				(function () {
+					const GA_MEASUREMENT_ID = 'G-WXSDF484XZ';
+					const GTM_ID = 'GTM-KH6DG8PP';
+
+					// minimal dataLayer init
+					window.dataLayer = window.dataLayer || [];
+					window.dataLayer.push({
+						'gtm.start': new Date().getTime(),
+						event: 'gtm.js',
+					});
+
+			function loadGTM() {
+				if (window.__gtmLoaded) return;
+				window.__gtmLoaded = true;
+
+				const s = document.createElement('script');
+				s.async = true;
+				s.src = `https://www.googletagmanager.com/gtm.js?id=${GTM_ID}`;
+				document.head.appendChild(s);
+			}
+
+			// Load GTM when window is fully loaded
+			window.addEventListener('load', loadGTM);
+				})();
+			</script>
+		</head>
+		<body class="m-0 p-0 bg-slate-50 text-slate-800 leading-relaxed dark:bg-slate-900 dark:text-slate-200 min-h-screen flex flex-col" aria-hidden="false">
+			<!-- Skip Links for Accessibility -->
+			<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+				Skip to main content
+			</a>
+			<a href="#search" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-64 bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+				Skip to search
+			</a>
+			<div class="flex flex-1 flex-col" style="height: auto !important;">
+				if props.ShowHeader {
+					@common.Header()
+				}
+
+				<main class="flex-1 overflow-auto bg-background min-h-[85vh]" id="main-content" role="main" aria-labelledby="main-content-heading">
+					<div id="main-page">
+						<div id="search-container" style="display: none;" class="max-w-6xl mx-auto px-2 md:px-6"> </div>
+						<div id="slot-container" style="display: block; min-height: 100vh;">
+							if !props.HideBanner {
+								@banner.AdBanner()
+							}
+							{ children... }
+						</div>
+					</div>
+
+					<script>
+						let jsModuleLoaded = false;
+						let jsModuleLoading = false;
+						
+						async function loadSearchModule() {
+							if (jsModuleLoaded) return Promise.resolve();
+							if (jsModuleLoading) {
+								// Wait for the ongoing load to complete
+								return new Promise((resolve) => {
+									const checkInterval = setInterval(() => {
+										if (jsModuleLoaded) {
+											clearInterval(checkInterval);
+											resolve(undefined);
+										}
+									}, 50);
+								});
+							}
+							jsModuleLoading = true;
+							try {
+								// Chunks are already preloaded via static modulepreload links in head
+								await import('/freedevtools/static/js/index.js');
+								jsModuleLoaded = true;
+							} finally {
+								jsModuleLoading = false;
+							}
+						}
+						
+						function toggleSearchView() {
+							const searchContainer = document.getElementById('search-container');
+							const slotContainer = document.getElementById('slot-container');
+
+							if (!searchContainer || !slotContainer) return;
+
+							const searchQuery = window.searchState?.getQuery?.() || '';
+
+							if (searchQuery.trim()) {
+								searchContainer.style.display = 'block';
+								slotContainer.style.display = 'none';
+								
+								// Only mount if not already mounted
+								if (!window.searchMounted) {
+									// Load the module (may already be preloaded)
+									loadSearchModule().then(() => {
+										if (window.renderTool && !window.searchMounted) {
+											window.renderTool('search-page', 'search-container');
+											window.searchMounted = true;
+										}
+									});
+								}
+							} else {
+								searchContainer.style.display = 'none';
+								slotContainer.style.display = 'block';
+							}
+						}
+
+						document.addEventListener('DOMContentLoaded', function () {
+							toggleSearchView();
+							window.addEventListener('searchQueryChanged', toggleSearchView);
+							
+							// Check for initial hash param for search
+							if (window.location.hash.startsWith('#search')) {
+								const params = new URLSearchParams(window.location.hash.substring(1)); // remove #
+                                // search?q=... -> we need to parse properly.
+                                // The hash is like #search?q=foo
+                                const hash = window.location.hash;
+                                const qIndex = hash.indexOf('q=');
+                                if (qIndex !== -1) {
+                                    const q = decodeURIComponent(hash.substring(qIndex + 2));
+                                    if (q) {
+                                        window.searchState.setQuery(q);
+                                    }
+                                }
+							}
+							
+							// Preload search module in the background after page load
+							// Use requestIdleCallback if available, otherwise setTimeout
+							if ('requestIdleCallback' in window) {
+								requestIdleCallback(() => {
+									loadSearchModule().catch(() => {
+										// Silently fail preload, will load on demand
+									});
+								}, { timeout: 2000 });
+							} else {
+								setTimeout(() => {
+									loadSearchModule().catch(() => {
+										// Silently fail preload, will load on demand
+									});
+								}, 1000);
+							}
+						});
+					</script>
+				</main>
+
+				@common.Footer()
+			</div>
+		</body>
+	</html>
+}

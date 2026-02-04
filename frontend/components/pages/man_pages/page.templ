@@ -1,0 +1,115 @@
+package man_pages
+
+import (
+	"fmt"
+	"net/url"
+	"fdt-templ/components"
+	"fdt-templ/components/banner"
+	"fdt-templ/components/layouts"
+	"fdt-templ/components/common"
+	banner_db "fdt-templ/internal/db/banner"
+	man_pages_db "fdt-templ/internal/db/man_pages"
+	"sort"
+	"strings"
+)
+
+type PageData struct {
+	ManPage         *man_pages_db.ManPage
+	Category        string
+	SubCategory     string
+	BreadcrumbItems []components.BreadcrumbItem
+	LayoutProps     layouts.BaseLayoutProps
+	TextBanner      *banner_db.Banner
+	Keywords        []string
+	SeeAlsoItems    []common.SeeAlsoItem
+}
+
+func getTOCSections(content man_pages_db.ManPageContent) []string {
+	var sections []string
+	for section := range content {
+		sections = append(sections, section)
+	}
+	sort.Strings(sections)
+	return sections
+}
+
+templ Page(data PageData) {
+	@layouts.BaseLayout(data.LayoutProps) {
+		<div id="man-page-detail-container" class="mx-auto" style="max-width: 72rem; padding-left: 0.5rem; padding-right: 0.5rem;">
+			<div id="man-page-detail-ad-banner">
+				@banner.Banner(data.TextBanner, data.LayoutProps.Canonical)
+			</div>
+
+			<div class="mb-6">
+				@components.Breadcrumb(data.BreadcrumbItems)
+				<h1 class="text-3xl font-bold mb-4 mt-4 text-black dark:text-slate-300">
+					{ data.ManPage.Title }
+				</h1>
+			</div>
+
+			<!-- Pre-rendered Content (includes TOC and all sections) -->
+			if data.ManPage.ContentHTML != "" {
+				@templ.Raw(data.ManPage.ContentHTML)
+			} else {
+				<!-- Fallback to old rendering if content_html is not available -->
+				<!-- Table of Contents -->
+				<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-0 rounded-lg p-4 mb-6">
+					<h2 class="text-lg font-semibold mb-3">Contents</h2>
+					<nav class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+						for _, section := range getTOCSections(data.ManPage.Content) {
+							<a
+								href={ fmt.Sprintf("#%s", strings.ToLower(section)) }
+								class="block px-3 py-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+							>
+								{ section }
+							</a>
+						}
+					</nav>
+				</div>
+
+				<!-- Main Content -->
+				<div class="bg-slate-50 dark:bg-slate-800/50 rounded-lg p-6">
+					<div class="space-y-8">
+						for _, section := range getTOCSections(data.ManPage.Content) {
+							if content, ok := data.ManPage.Content[section]; ok && content != "" {
+								<section id={ strings.ToLower(section) }>
+									<h2 class="text-xl font-bold font-mono mb-4 scroll-mt-32">
+										{ section }
+									</h2>
+									<div
+										class="font-mono text-sm leading-relaxed whitespace-pre-wrap bg-white dark:bg-slate-900 p-2 rounded border border-slate-200 dark:border-slate-700 overflow-x-auto"
+									>
+										@templ.Raw(content)
+									</div>
+								</section>
+							}
+						}
+					</div>
+				</div>
+			}
+
+			@common.SeeAlsoStatic(data.SeeAlsoItems)
+			<!-- Credits Section -->
+			<div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+				<div class="flex flex-wrap gap-4">
+					@common.BackButton(fmt.Sprintf("/freedevtools/man-pages/%s/", url.PathEscape(data.Category)), fmt.Sprintf("View %s Category", FormatCategoryName(data.Category)))
+					@common.BackButton(fmt.Sprintf("/freedevtools/man-pages/%s/%s/", url.PathEscape(data.Category), url.PathEscape(data.SubCategory)), fmt.Sprintf("Back to %s", FormatCategoryName(data.SubCategory)))
+					@common.CreditsButton("/freedevtools/man-pages/credits/")
+				</div>
+			</div>
+
+			<!-- Ethical Ads Banner -->
+			@banner.EABanner(data.Keywords, data.LayoutProps.Canonical)
+		</div>
+	}
+	<style>
+		/* md:px-6 for page container */
+		@media (min-width: 768px) {
+			#man-page-detail-container {
+				padding-left: 1.5rem !important;
+				padding-right: 1.5rem !important;
+			}
+		}
+	</style>
+}
+

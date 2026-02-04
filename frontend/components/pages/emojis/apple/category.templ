@@ -1,0 +1,148 @@
+package apple
+
+import (
+	"fmt"
+	"strings"
+	"fdt-templ/components"
+	"fdt-templ/components/banner"
+	"fdt-templ/components/common"
+	"fdt-templ/components/layouts"
+	emojis_db "fdt-templ/internal/db/emojis"
+	emojis_helpers "fdt-templ/components/pages/emojis"
+	banner_db "fdt-templ/internal/db/banner"
+)
+
+type CategoryData struct {
+	Category            string
+	CategorySlug        string
+	Emojis              []EmojiWithImage
+	TotalEmojis         int
+	CurrentPage         int
+	TotalPages          int
+	BreadcrumbItems     []components.BreadcrumbItem
+	CategoryDescription string
+	LayoutProps         layouts.BaseLayoutProps
+	TextBanner          *banner_db.Banner
+}
+
+// getEmojiSizeClass calculates the CSS class for emoji size based on complexity
+func getEmojiSizeClass(emojiChar string) string {
+	graphemeCount := len([]rune(emojiChar))
+	zwjCount := strings.Count(emojiChar, "\u200d")
+	complexity := graphemeCount + zwjCount*2
+	
+	if complexity > 10 {
+		return "h-6 w-6"
+	} else if complexity > 6 {
+		return "h-8 w-8"
+	}
+	return "h-10 w-10"
+}
+
+templ emojiCard(emoji *emojis_db.EmojiData, latestImage *string) {
+	<a
+		href={ fmt.Sprintf("/freedevtools/emojis/apple-emojis/%s/", emoji.Slug) }
+		class="emoji-card bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-4 text-center hover:shadow-lg transition-all duration-200 cursor-pointer block"
+		data-emoji={ emoji.Code }
+		data-title={ emoji.Title }
+	>
+		<div class="mb-2 select-none">
+			if latestImage != nil && *latestImage != "" {
+				<img
+					src={ *latestImage }
+					alt={ emoji.Title }
+					class={ fmt.Sprintf("mx-auto %s", getEmojiSizeClass(emoji.Code)) }
+					loading="lazy"
+					decoding="async"
+					draggable="false"
+				/>
+			} else {
+				<div class="text-4xl">{ emoji.Code }</div>
+			}
+		</div>
+		<div class="text-xs text-slate-600 dark:text-slate-400 truncate" title={ emoji.Title }>
+			{ emoji.Title }
+		</div>
+	</a>
+}
+
+templ Category(data CategoryData) {
+	@layouts.BaseLayout(data.LayoutProps) {
+		<div class="max-w-6xl mx-auto px-2 md:px-6">
+			<div class="mb-16 mt-[74px]">
+				@banner.Banner(data.TextBanner, data.LayoutProps.Canonical)
+			</div>
+
+		<!-- ToolHead structure: breadcrumb first, then title and description -->
+		<div id="tool-head-container">
+			<div id="tool-head-breadcrumb-container" class="mb-10 mt-10">
+				@components.Breadcrumb(data.BreadcrumbItems)
+			</div>
+			<div id="tool-head-content">
+				<h1 id="head-title" class="text-2xl font-medium mb-2 text-black dark:text-slate-300">
+					{ data.Category } (Apple)
+				</h1>
+				<p class="text-muted-foreground">
+					{ data.CategoryDescription }
+				</p>
+			</div>
+		</div>
+
+		<!-- Overview Stats -->
+		<div id="pagination-info" class="text-center mb-8">
+			<div class="grid grid-cols-2 gap-6 mt-8 mb-4">
+				<div class="text-center">
+					<div class="text-3xl font-bold text-green-600">
+						{ emojis_helpers.FormatCount(data.TotalEmojis) }
+					</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">Emojis</div>
+				</div>
+				<div class="text-center">
+					<div class="text-3xl font-bold text-blue-600">
+						{ emojis_helpers.FormatCount(data.TotalPages) }
+					</div>
+					<div class="text-sm text-gray-600 dark:text-gray-400">Pages</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Pagination Info -->
+		<div class="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 mb-6 mt-8">
+			<div class="text-sm text-slate-600 dark:text-slate-400 text-center">
+				Showing { fmt.Sprintf("%d", len(data.Emojis)) } of { fmt.Sprintf("%d", data.TotalEmojis) } emojis (Page { fmt.Sprintf("%d", data.CurrentPage) } of { fmt.Sprintf("%d", data.TotalPages) })
+			</div>
+		</div>
+
+		<!-- Emojis Grid -->
+		<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 mb-8">
+			for _, emojiWithImage := range data.Emojis {
+				if emojiWithImage.Emoji != nil {
+					@emojiCard(emojiWithImage.Emoji, emojiWithImage.LatestImage)
+				}
+			}
+		</div>
+
+		<!-- Pagination -->
+		if data.TotalPages > 1 {
+			<div class="mt-8 flex justify-center">
+				@components.Pagination(components.NewPaginationData(data.CurrentPage, data.TotalPages, fmt.Sprintf("/freedevtools/emojis/apple-emojis/%s/", data.CategorySlug), false))
+			</div>
+		}
+
+		<!-- Credits and Back -->
+		<div class="mt-10 pt-6 mb-8 border-t border-slate-200 dark:border-slate-700">
+			<div class="flex flex-wrap gap-4">
+				<a
+					href="/freedevtools/emojis/apple-emojis/"
+					class="inline-flex items-center px-4 py-2 text-sm font-medium text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/20 rounded-lg hover:bg-green-100 dark:hover:bg-green-900/30 transition-colors"
+				>
+					← Back to Apple Emojis
+				</a>
+				@common.CreditsButton("/freedevtools/emojis/credits/")
+			</div>
+		</div>
+		@common.PaginationScript()
+		</div>
+	}
+}
+
