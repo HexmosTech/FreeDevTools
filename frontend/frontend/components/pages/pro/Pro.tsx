@@ -160,7 +160,7 @@ const Pro: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-2 md:px-6 mb-10 mt-12">
+      <div className="">
         <div className="flex flex-col items-center gap-8">
           {bookmarkInfo && (
             <div className="w-full max-w-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">

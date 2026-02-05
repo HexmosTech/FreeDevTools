@@ -128,6 +128,9 @@ const toolLoaders: Record<string, (e: HTMLElement) => void> = {
     "bookmarkIcon": (e) => {
         renderDynamic(e, () => import('./components/common/BookmarkIcon'));
     },
+    "sidebarProfile": (e) => {
+        renderDynamic(e, () => import('./components/common/SidebarProfile'));
+    },
 };
 
 // Expose render functions globally

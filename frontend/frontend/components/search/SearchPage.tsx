@@ -646,7 +646,7 @@ const SearchPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-2 md:px-6 py-8">
+    <div className="">
       <div className="mb-8">
         {/* SearchInfoHeader */}
         <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
