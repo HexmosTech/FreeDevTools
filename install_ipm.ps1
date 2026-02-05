@@ -27,12 +27,12 @@ if (!(Test-Path -Path $INSTALL_DIR)) {
 ###################################
 # Check existing binary
 ###################################
+
 if (Test-Path -Path $TARGET) {
     Write-Host "==> $APPNAME already exists at $TARGET"
     Write-Host "Run it using: $TARGET"
-    exit 0
+    return 
 }
-
 # Generate Install ID (date + random)
 $INSTALL_ID = "install-$([DateTimeOffset]::Now.ToUnixTimeSeconds())-$(Get-Random -Minimum 1000 -Maximum 9999)"
 
