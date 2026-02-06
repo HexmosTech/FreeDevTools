@@ -192,6 +192,12 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 		handler.ServeHTTP(w, r)
 	})
 
+	// VS Code Extension page
+	mux.HandleFunc(basePath+"/vs-code-extension/", func(w http.ResponseWriter, r *http.Request) {
+		handler := templ.Handler(static_pages.VSCodeExtension())
+		handler.ServeHTTP(w, r)
+	})
+
 	// Pro page
 	mux.HandleFunc(basePath+"/pro/", func(w http.ResponseWriter, r *http.Request) {
 		handler := templ.Handler(pro_pages.Pro())

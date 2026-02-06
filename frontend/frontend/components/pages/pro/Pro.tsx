@@ -7,16 +7,16 @@ function extractCategoryFromURL(urlStr: string): string {
   try {
     const url = new URL(urlStr);
     const path = url.pathname;
-    
+
     // Remove leading /freedevtools/ if present
     const cleanPath = path.replace(/^\/freedevtools\//, '');
-    
+
     // Extract first segment as category
     const segments = cleanPath.split('/').filter(s => s);
     if (segments.length === 0) return 'page';
-    
+
     const category = segments[0];
-    
+
     // Normalize category names
     const categoryMap: Record<string, string> = {
       'emojis': 'emoji',
@@ -28,7 +28,7 @@ function extractCategoryFromURL(urlStr: string): string {
       'man-pages': 'Man Pages',
       'installerpedia': 'Installerpedia',
     };
-    
+
     return categoryMap[category] || category.charAt(0).toUpperCase() + category.slice(1);
   } catch {
     return 'page';
@@ -40,16 +40,16 @@ function extractItemName(urlStr: string): string {
   try {
     const url = new URL(urlStr);
     const path = url.pathname;
-    
+
     // Remove leading /freedevtools/ if present
     const cleanPath = path.replace(/^\/freedevtools\//, '');
-    
+
     // Extract last segment as item name
     const segments = cleanPath.split('/').filter(s => s);
     if (segments.length === 0) return 'this page';
-    
+
     const itemName = segments[segments.length - 1];
-    
+
     // Remove file extension if present
     return itemName.replace(/\.(svg|png|md|txt)$/i, '') || 'this page';
   } catch {
@@ -105,7 +105,7 @@ const Pro: React.FC = () => {
     const checkBookmarkInfo = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const feature = urlParams.get('feature');
-      
+
       // Get source URL from sessionStorage (preferred) or query param (fallback)
       let source = sessionStorage.getItem('bookmark_source_url');
       if (!source) {
@@ -114,7 +114,7 @@ const Pro: React.FC = () => {
           source = decodeURIComponent(source);
         }
       }
-      
+
       if (feature === 'bookmark' && source) {
         const jwt = localStorage.getItem('hexmos-one');
         // Check pro status from cookie (set by getLicences in ShowPlans)
@@ -128,7 +128,7 @@ const Pro: React.FC = () => {
             break;
           }
         }
-        
+
         // Only show bookmark message if user is NOT pro
         if (!isPro || !jwt) {
           const isProPageCheck = isProPage(source);
@@ -142,17 +142,17 @@ const Pro: React.FC = () => {
         }
       }
     };
-    
+
     // Check immediately
     checkBookmarkInfo();
-    
+
     // Also listen for active-licence-changed event in case licences are fetched later
     const handleLicenceChange = () => {
       checkBookmarkInfo();
     };
-    
+
     window.addEventListener('active-licence-changed', handleLicenceChange);
-    
+
     return () => {
       window.removeEventListener('active-licence-changed', handleLicenceChange);
     };
@@ -161,7 +161,7 @@ const Pro: React.FC = () => {
   return (
     <>
       <div className="">
-        <div className="flex flex-col items-center gap-8">
+        <div className="flex flex-col gap-8">
           {bookmarkInfo && (
             <div className="w-full max-w-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
               <div className="flex items-start gap-3">
@@ -182,7 +182,7 @@ const Pro: React.FC = () => {
                     <>
                       <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
                         Looks like you were trying to bookmark{' '}
-                        <a 
+                        <a
                           href={bookmarkInfo.source}
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
                         >
@@ -197,7 +197,7 @@ const Pro: React.FC = () => {
                     <>
                       <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
                         Looks like you were trying to bookmark{' '}
-                        <a 
+                        <a
                           href={bookmarkInfo.source}
                           className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
                         >

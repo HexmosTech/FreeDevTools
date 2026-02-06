@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 // Icons are tree-shakeable, so only imported icons are bundled
 import { MEILI_SEARCH_API_KEY } from '@/config';
+import { getProStatusFromCookie } from '@/lib/api';
 import {
   Cross2Icon,
   DownloadIcon,
@@ -123,12 +124,11 @@ function updateUrlHash(searchQuery: string): void {
   if (searchQuery.trim()) {
     window.location.hash = `search?q=${encodeURIComponent(searchQuery)}`;
   } else {
+    // Keep empty search state hash instead of removing it
     if (window.location.hash.startsWith('#search')) {
-      history.pushState(
-        '',
-        document.title,
-        window.location.pathname + window.location.search
-      );
+      if (window.location.hash !== '#search?q=') {
+        window.location.hash = 'search?q=';
+      }
     }
   }
 }
@@ -232,11 +232,10 @@ function useSearchQuery() {
             window.location.hash.substring(8)
           );
           const searchParam = hashParams.get('q');
-          if (searchParam) {
-            setQuery(searchParam);
-            if (window.searchState) {
-              window.searchState.setQuery(searchParam);
-            }
+          // Set query even if empty (for empty search state)
+          setQuery(searchParam || '');
+          if (window.searchState) {
+            window.searchState.setQuery(searchParam || '');
           }
         } catch (e) {
           console.error('Error parsing hash params:', e);
@@ -400,12 +399,20 @@ const SearchPage: React.FC = () => {
   const [availableCategories, setAvailableCategories] = useState<{
     [key: string]: number;
   }>({});
+  const [isPro, setIsPro] = useState<boolean>(false);
+  const [searchesLeft] = useState<number>(20);
 
   const getEffectiveCategories = useCallback(() => {
     if (activeCategory === 'all') return [];
     if (activeCategory === 'multi') return selectedCategories;
     return [activeCategory];
   }, [activeCategory, selectedCategories]);
+
+  // Check pro status on mount
+  useEffect(() => {
+    const proStatus = getProStatusFromCookie();
+    setIsPro(proStatus);
+  }, []);
 
   useEffect(() => {
     if (!query.trim()) {
@@ -560,10 +567,6 @@ const SearchPage: React.FC = () => {
     };
   }, [query, clearResults]);
 
-  if (!query.trim()) {
-    return null;
-  }
-
   const getCategoryIcon = (key: string) => {
     switch (key) {
       case 'tools':
@@ -616,6 +619,90 @@ const SearchPage: React.FC = () => {
     { key: 'man_pages', label: 'Man Pages' },
     { key: 'installerpedia', label: 'InstallerPedia' },
   ];
+
+  // Check if we're in empty search state (hash is #search?q= with empty or no query)
+  const isEmptySearchState = !query.trim() && window.location.hash.startsWith('#search');
+
+  // Empty state component
+  if (isEmptySearchState) {
+    return (
+      <div className="" style={{ minHeight: '60vh' }}>
+        <div className="mb-8">
+          {/* Empty State Header */}
+          <div className="mb-8 mt-8 md:mt-0">
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-black dark:text-slate-300">
+              Search anything
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400">
+              Enter a keyword to find open source resources
+            </p>
+          </div>
+
+          {/* Pro Upgrade Button */}
+          {!isPro && (
+            <div className="flex justify-start items-center gap-2 mb-8">
+              <a
+                href="/freedevtools/pro"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm text-slate-700 dark:text-slate-300"
+                title="Upgrade to Pro for unlimited searches"
+              >
+                <span>Get unlimited searches</span>
+              </a>
+              <a
+                href="/freedevtools/pro"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-md border border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors text-sm text-slate-700 dark:text-slate-300"
+                title="Upgrade to Pro for unlimited searches"
+              >
+                <span>{searchesLeft} search left</span>
+              </a>
+            </div>
+          )}
+
+          {/* Category Filters - Same as in search results */}
+          <div className="flex flex-wrap gap-2 pb-2">
+            <button
+              onClick={() => handleCategoryClick('all')}
+              onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
+              className={`text-xs lg:text-sm flex items-center justify-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${activeCategory === 'all'
+                ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground'
+                }`}
+            >
+              All
+            </button>
+
+            {categories
+              .filter((cat) => cat.key !== 'all')
+              .map((category) => {
+                const isActive =
+                  activeCategory === category.key ||
+                  selectedCategories.includes(category.key);
+
+                return (
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryClick(category.key)}
+                    onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
+                    className={`text-xs lg:text-sm flex items-center gap-1 px-2 h-9 rounded-md whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 ${isActive || selectedCategories.includes(category.key)
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-md shadow-blue-500/50'
+                      : 'border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:shadow-md hover:shadow-gray-500/30 dark:hover:bg-slate-900 dark:hover:shadow-slate-900/50'
+                      }`}
+                    title={!isActive ? 'Right-click to multi-select' : undefined}
+                  >
+                    {getCategoryIcon(category.key)}
+                    <span className="truncate">{category.label}</span>
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!query.trim() && !isEmptySearchState) {
+    return null;
+  }
 
   const formatCount = (count: number | undefined): string => {
     if (count === undefined) return '';

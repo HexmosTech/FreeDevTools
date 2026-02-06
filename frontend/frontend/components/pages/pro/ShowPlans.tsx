@@ -135,16 +135,16 @@ const ShowPlans: React.FC = () => {
           // Clear legacy state
           setLicence(null);
           setRenewals([]);
-          
+
           // If activeStatus is false, also fetch available plans
-          const isActive = licencesResult.activeLicence.activeStatus === true || 
-                          licencesResult.activeLicence.activeStatus === 'true' ||
-                          licencesResult.activeLicence.activeStatus === 'active';
+          const isActive = licencesResult.activeLicence.activeStatus === true ||
+            licencesResult.activeLicence.activeStatus === 'true' ||
+            licencesResult.activeLicence.activeStatus === 'active';
           if (!isActive) {
             console.log('[ShowPlans] ActiveStatus is false, fetching available plans');
             fetchAvailablePlans(currentCurrency);
           }
-          
+
           setIsLoading(false);
           return;
         } else if (licencesResult.purchasesData) {
@@ -163,10 +163,10 @@ const ShowPlans: React.FC = () => {
         console.log('[ShowPlans] No active licence, fetching available plans');
         fetchAvailablePlans(currentCurrency);
       }
-      } catch (error) {
-        console.error('[ShowPlans] Error fetching plan details:', error);
-        // Fetch available plans on error too
-        fetchAvailablePlans(currentCurrency);
+    } catch (error) {
+      console.error('[ShowPlans] Error fetching plan details:', error);
+      // Fetch available plans on error too
+      fetchAvailablePlans(currentCurrency);
     } finally {
       setIsLoading(false);
     }
@@ -179,18 +179,18 @@ const ShowPlans: React.FC = () => {
   useEffect(() => {
     // Wait for currency detection to complete before fetching plans
     if (!isCurrencyDetected) return;
-    
+
     const jwt = getJWT();
     const jwtExists = !!jwt;
-    
+
     setHasJWT(jwtExists);
-    
+
     // Check for active licence in localStorage first
     const storedLicence = getActiveLicence();
     if (storedLicence) {
       setActiveLicence(storedLicence);
     }
-    
+
     if (jwtExists) {
       // Only fetch plan details once
       if (!hasFetchedRef.current) {
@@ -218,9 +218,9 @@ const ShowPlans: React.FC = () => {
     const handleJWTChange = () => {
       const jwt = getJWT();
       const jwtExists = !!jwt;
-      
+
       setHasJWT(jwtExists);
-      
+
       // Only fetch if JWT status actually changed and we haven't already fetched
       if (jwtExists && !hasFetchedRef.current) {
         hasFetchedRef.current = true;
@@ -251,10 +251,10 @@ const ShowPlans: React.FC = () => {
 
     // Listen for custom event (dispatched from Signin component)
     window.addEventListener('jwt-changed', handleJWTChange);
-    
+
     // Listen for active licence changes
     window.addEventListener('active-licence-changed', handleActiveLicenceChange);
-    
+
     // Also listen for storage event (for cross-tab sync)
     window.addEventListener('storage', (e) => {
       if (e.key === 'hexmos-one') {
@@ -346,9 +346,9 @@ const ShowPlans: React.FC = () => {
   // If no JWT, show plans
   if (!hasJWT) {
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-6">
+      <div className="w-full max-w-4xl space-y-6">
         {/* Currency Selector */}
-        <div className="flex justify-center mb-4">
+        <div className="flex mb-4">
           <div className="relative">
             <button
               ref={currencyButtonRef}
@@ -361,7 +361,7 @@ const ShowPlans: React.FC = () => {
               <span>{currencies.find(c => c.code === selectedCurrency)?.name || 'Select currency'}</span>
               <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
-            
+
             {isCurrencyDropdownOpen && (
               <div
                 ref={currencyDropdownRef}
@@ -378,9 +378,8 @@ const ShowPlans: React.FC = () => {
                         fetchAvailablePlans(currency.code);
                         setIsCurrencyDropdownOpen(false);
                       }}
-                      className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${
-                        selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
-                      }`}
+                      className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
+                        }`}
                       role="menuitem"
                     >
                       <span>{currency.name}</span>
@@ -400,7 +399,7 @@ const ShowPlans: React.FC = () => {
             <div className="w-80 h-96 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl animate-pulse" />
           </div>
         ) : availablePlans.length > 0 ? (
-          <div className="flex flex-wrap gap-6 justify-center w-full">
+          <div className="flex flex-wrap gap-6 w-full">
             {availablePlans.map((plan, index) => {
               // Parse features from description JSON string
               let features: string[] = [];
@@ -479,7 +478,7 @@ const ShowPlans: React.FC = () => {
                   <CardFooter className="mt-6">
                     <Button
                       onClick={() => {
-                        const purchaseUrl = plan.objectId 
+                        const purchaseUrl = plan.objectId
                           ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
                           : PURCHASE_URL;
                         window.location.href = purchaseUrl;
@@ -515,18 +514,18 @@ const ShowPlans: React.FC = () => {
   if (activeLicence || purchasesData) {
     // Check if activeStatus is false - if so, also show available plans
     const isActiveStatusFalse = activeLicence && (
-      activeLicence.activeStatus === false || 
+      activeLicence.activeStatus === false ||
       activeLicence.activeStatus === 'false'
     );
-    
+
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-      <PurchaseHistory
-        activeLicence={activeLicence || undefined}
-        purchasesData={purchasesData || undefined}
-        licenceDetails={licenceDetails || undefined}
-      />
-        
+      <div className="w-full max-w-4xl space-y-6">
+        <PurchaseHistory
+          activeLicence={activeLicence || undefined}
+          purchasesData={purchasesData || undefined}
+          licenceDetails={licenceDetails || undefined}
+        />
+
         {/* Show available plans if activeStatus is false */}
         {isActiveStatusFalse && (
           <>
@@ -537,8 +536,8 @@ const ShowPlans: React.FC = () => {
             ) : availablePlans.length > 0 ? (
               <div>
                 <div className="flex flex-col gap-4 mb-4">
-                  <h2 className="text-2xl font-semibold text-center">Available Plans</h2>
-                  <div className="flex justify-center">
+                  <h2 className="text-2xl font-semibold">Available Plans</h2>
+                  <div className="flex justify-start">
                     <select
                       value={selectedCurrency}
                       onChange={(e) => {
@@ -555,7 +554,7 @@ const ShowPlans: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-6 justify-center w-full">
+                <div className="flex flex-wrap gap-6 justify-start w-full">
                   {availablePlans.map((plan, index) => {
                     // Parse features from description JSON string
                     let features: string[] = [];
@@ -634,7 +633,7 @@ const ShowPlans: React.FC = () => {
                         <CardFooter className="mt-6">
                           <Button
                             onClick={() => {
-                              const purchaseUrl = plan.objectId 
+                              const purchaseUrl = plan.objectId
                                 ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
                                 : PURCHASE_URL;
                               window.location.href = purchaseUrl;
@@ -658,12 +657,12 @@ const ShowPlans: React.FC = () => {
 
   if (!licence) {
     return (
-      <div className="w-full max-w-4xl mx-auto space-y-6">
+      <div className="w-full max-w-4xl  space-y-6">
         <Card className="w-full max-w-96 mx-auto dark:bg-slate-900">
-        <CardHeader>
-          <CardTitle>No Active Plan</CardTitle>
-          <CardDescription>You don't have an active subscription</CardDescription>
-        </CardHeader>
+          <CardHeader>
+            <CardTitle>No Active Plan</CardTitle>
+            <CardDescription>You don't have an active subscription</CardDescription>
+          </CardHeader>
         </Card>
 
         {/* Show available plans below */}
@@ -688,7 +687,7 @@ const ShowPlans: React.FC = () => {
                     <span>{currencies.find(c => c.code === selectedCurrency)?.name || 'Select currency'}</span>
                     <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
                   </button>
-                  
+
                   {isCurrencyDropdownOpen && (
                     <div
                       ref={currencyDropdownRef}
@@ -705,9 +704,8 @@ const ShowPlans: React.FC = () => {
                               fetchAvailablePlans(currency.code);
                               setIsCurrencyDropdownOpen(false);
                             }}
-                            className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${
-                              selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
-                            }`}
+                            className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
+                              }`}
                             role="menuitem"
                           >
                             <span>{currency.name}</span>
@@ -799,19 +797,19 @@ const ShowPlans: React.FC = () => {
                       </div>
                     </div>
                     <CardFooter className="mt-6">
-          <Button
-            onClick={() => {
-                          const purchaseUrl = plan.objectId 
+                      <Button
+                        onClick={() => {
+                          const purchaseUrl = plan.objectId
                             ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
                             : PURCHASE_URL;
                           window.location.href = purchaseUrl;
-            }}
+                        }}
                         className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2"
-          >
+                      >
                         Buy Now
-          </Button>
-        </CardFooter>
-      </Card>
+                      </Button>
+                    </CardFooter>
+                  </Card>
                 );
               })}
             </div>
@@ -822,7 +820,7 @@ const ShowPlans: React.FC = () => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto space-y-6">
+    <div className="w-full max-w-4xl space-y-6">
       {/* Cancel Subscription Modal */}
       {cancelModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
