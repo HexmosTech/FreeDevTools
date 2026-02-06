@@ -189,7 +189,7 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB,
 	if page < 1 {
 		page = 1
 	}
-	limit := 10 // Show 10 icons per page
+	limit := 30 // Show 30 icons per page
 	offset := (page - 1) * limit
 
 	icons, err := db.GetIconsByCluster(cluster.SourceFolder, &categoryName, limit, offset)
