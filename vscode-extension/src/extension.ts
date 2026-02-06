@@ -8,7 +8,7 @@ let currentQuery = '';
 let currentOffset = 0;
 
 export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('fdt.search', async () => {
+    let disposable = vscode.commands.registerCommand('freedevtools.search', async () => {
         // Show Input Box for Live Search
         const inputBox = vscode.window.createInputBox();
         inputBox.placeholder = 'Search 350k+ resources...';
@@ -46,7 +46,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Status Bar Item
     const statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-    statusBarItem.command = 'fdt.search';
+    statusBarItem.command = 'freedevtools.search';
     statusBarItem.text = '$(search) freedevtools';
     statusBarItem.tooltip = 'Search Free Dev Tools';
     statusBarItem.show();
