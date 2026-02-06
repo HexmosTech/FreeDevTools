@@ -98,7 +98,9 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB, pa
 	totalPages := (totalCategories + itemsPerPage - 1) / itemsPerPage
 	if page > totalPages && totalPages > 0 { // Added totalPages > 0 check for safety
 		if page > 1 { // Allow page 1 even if empty?
-			http.NotFound(w, r)
+			// Redirect invalid pagination pages to home
+			basePath := config.GetBasePath()
+			http.Redirect(w, r, basePath+"/svg_icons/", http.StatusMovedPermanently)
 			return
 		}
 	}
@@ -111,6 +113,13 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB, pa
 	if !ok {
 		// Fallback or error?
 		// Should be OK if success.
+	}
+
+	// If home page (page 1) has no items, redirect to store
+	if page == 1 && (totalCategories == 0 || len(categories) == 0) {
+		basePath := config.GetBasePath()
+		http.Redirect(w, r, basePath+"/svg_icons/store/", http.StatusMovedPermanently)
+		return
 	}
 
 	basePath := config.GetBasePath()
@@ -206,6 +215,13 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB,
 	}
 
 	totalPages := (cluster.Count + limit - 1) / limit
+
+	// Redirect invalid pagination pages to category page
+	if page > totalPages && totalPages > 0 {
+		basePath := config.GetBasePath()
+		http.Redirect(w, r, fmt.Sprintf("%s/svg_icons/%s/", basePath, category), http.StatusMovedPermanently)
+		return
+	}
 
 	// Fix title/description logic
 	title := cluster.Title
