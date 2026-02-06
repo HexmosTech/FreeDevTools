@@ -1,4 +1,4 @@
-# [FreeDevTools](https://hexmos.com/freedevtools/) for VS Code
+# [Free DevTools](https://hexmos.com/freedevtools/) for VS Code
 
 Search and access a curated collection of **3,50,000+** free resources, icons, cheat sheets, MCPs, TLDRs etc directly from VS Code.
 
@@ -19,4 +19,4 @@ Search and access a curated collection of **3,50,000+** free resources, icons, c
 
 
 **Enjoying the extension?**  
-Check out [FreeDevTools](https://hexmos.com/freedevtools/) for more details.
+Check out [Free DevTools](https://hexmos.com/freedevtools/) for more details.
