@@ -212,7 +212,7 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@pmdaemon --config pmd.config.json start
 	@if [ "$(NODE_ENV)" = "prod" ]; then \
 		sudo rm -rf /var/www/freedevtools-static; \
-		sudo cp -r /home/ubuntu/FreeDevTools/assets /var/www/freedevtools-static; \
+		sudo cp -r /home/ubuntu/FreeDevTools/frontend/assets /var/www/freedevtools-static; \
 		sudo touch /var/log/nginx/hexmos.com.error.log 2>/dev/null || true; \
 		sudo sh -c "> /var/log/nginx/hexmos.com.error.log" 2>/dev/null || true; \
 	fi
@@ -243,7 +243,7 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@pmdaemon --config pmd.config.json start
 	@if [ "$(NODE_ENV)" = "prod" ]; then \
 		sudo rm -rf /var/www/freedevtools-static; \
-		sudo cp -r /home/ubuntu/FreeDevTools/assets /var/www/freedevtools-static; \
+		sudo cp -r /home/ubuntu/FreeDevTools/frontend/assets /var/www/freedevtools-static; \
 		sudo touch /var/log/nginx/hexmos.com.error.log 2>/dev/null || true; \
 		sudo sh -c "> /var/log/nginx/hexmos.com.error.log" 2>/dev/null || true; \
 	fi
