@@ -776,8 +776,8 @@ const SearchPage: React.FC = () => {
               type="text"
               id="search-page-input"
               className="w-full bg-white dark:bg-slate-800 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 hover:bg-white dark:hover:bg-slate-800 rounded-lg pr-10"
-              placeholder="Search 350k+ resources"
-              aria-label="Search 350k+ resources"
+              placeholder="Search icon, emoji, tool, cheatsheet or Github repository"
+              aria-label="Search icon, emoji, tool, cheatsheet or Github repository"
               value={query}
               onChange={(e) => {
                 const newQuery = e.target.value;
