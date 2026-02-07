@@ -136,7 +136,7 @@ function updateUrlHash(searchQuery: string): void {
 
 // LocalStorage utilities for search tracking
 const SEARCH_COUNT_KEY = 'freedevtools-search-count';
-const MAX_SEARCHES = 20;
+const MAX_SEARCHES = 99;
 
 function getSearchCount(): number {
   if (typeof window === 'undefined') return 0;
@@ -758,103 +758,102 @@ const SearchPage: React.FC = () => {
   };
 
   return (
-    <div className="">
-      {/* Search Bar */}
-      <div className="mb-6 flex items-center justify-between">
-        <div className="relative group" style={{ width: '66%' }}>
-          <input
-            ref={searchInputRef}
-            type="text"
-            id="search-page-input"
-            className="w-full bg-white dark:bg-slate-800 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 focus-visible:border-blue-500 border-gray-300 dark:border-gray-600 hover:bg-white dark:hover:bg-slate-800 rounded-lg pr-10"
-            placeholder="Search 350k+ resources"
-            aria-label="Search 350k+ resources"
-            value={query}
-            onChange={(e) => {
-              const newQuery = e.target.value;
-              setQuery(newQuery);
-              // Update searchState first
-              if (window.searchState) {
-                window.searchState.setQuery(newQuery);
-              }
-              // Then update hash - this ensures searchState is updated before hashchange event
-              if (newQuery.trim()) {
-                window.location.hash = `search?q=${encodeURIComponent(newQuery)}`;
-              } else {
-                // Keep search page open with empty query
-                // Set hash to search?q= to keep search page visible
-                if (window.location.hash !== '#search?q=') {
-                  window.location.hash = 'search?q=';
-                }
-              }
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape' && query.trim()) {
-                clearResults();
-              }
-            }}
-            style={{
-              height: '3rem',
-              fontSize: '1rem',
-              paddingLeft: '1rem',
-              borderWidth: '1px',
-              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-            }}
-          />
-          {/* Clear button (X icon) - appears on hover */}
-          {query.trim() && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                const emptyQuery = '';
-                setQuery(emptyQuery);
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto">
+      <div id="search-page" className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6">
+        {/* Search Bar */}
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Search engine for developer resources</h2>
+          <button
+            onClick={clearResults}
+            className="hidden md:flex  bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 items-center gap-2 h-9 rounded-md px-3 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+          >
+            <Cross2Icon className="h-4 w-4" />
+          </button>
+        </div>
+        <div className="mt-12 mb-12 flex items-center gap-3">
+          <div className="relative group flex-1">
+            <input
+              ref={searchInputRef}
+              type="text"
+              id="search-page-input"
+              className="w-full bg-white dark:bg-slate-800 placeholder:text-gray-500 dark:placeholder:text-gray-400 focus-visible:outline-none focus-visible:ring-0 hover:bg-white dark:hover:bg-slate-800 rounded-lg pr-10"
+              placeholder="Search 350k+ resources"
+              aria-label="Search 350k+ resources"
+              value={query}
+              onChange={(e) => {
+                const newQuery = e.target.value;
+                setQuery(newQuery);
                 // Update searchState first
                 if (window.searchState) {
-                  window.searchState.setQuery(emptyQuery);
+                  window.searchState.setQuery(newQuery);
                 }
-                // Set hash to search?q= to keep search page visible
-                if (window.location.hash !== '#search?q=') {
-                  window.location.hash = 'search?q=';
-                }
-                // Focus back on input after clearing
-                setTimeout(() => {
-                  if (searchInputRef.current) {
-                    searchInputRef.current.focus();
+                // Then update hash - this ensures searchState is updated before hashchange event
+                if (newQuery.trim()) {
+                  window.location.hash = `search?q=${encodeURIComponent(newQuery)}`;
+                } else {
+                  // Keep search page open with empty query
+                  // Set hash to search?q= to keep search page visible
+                  if (window.location.hash !== '#search?q=') {
+                    window.location.hash = 'search?q=';
                   }
-                }, 0);
+                }
               }}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 cursor-pointer z-20 flex items-center justify-center"
-              style={{ pointerEvents: 'auto' }}
-              aria-label="Clear search"
-            >
-              <Cross2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
-            </button>
-          )}
-        </div>
-        <button
-          onClick={clearResults}
-          className="hidden md:flex items-center gap-2 h-9 rounded-md px-3 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
-        >
-          <kbd className="px-1.5 py-0.5 text-xs text-gray-800 bg-gray-100 border border-gray-200 rounded dark:bg-gray-600 dark:text-gray-300 dark:border-gray-500">
-            Esc
-          </kbd>
-          <span className="text-sm">Close search</span>
-          <Cross2Icon className="h-4 w-4" />
-        </button>
-      </div>
-
-      <div className="mb-8">
-        {/* SearchInfoHeader */}
-        <div className="mb-4 mt-8 md:mt-0">
-          <h2>{getTitle()}</h2>
+              onKeyDown={(e) => {
+                if (e.key === 'Escape' && query.trim()) {
+                  clearResults();
+                }
+              }}
+              style={{
+                height: '3rem',
+                fontSize: '1rem',
+                paddingLeft: '1rem',
+                borderWidth: '1px',
+                borderColor: '#d4cb24',
+                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+              }}
+            />
+            {/* Clear button (X icon) - appears on hover */}
+            {query.trim() && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  const emptyQuery = '';
+                  setQuery(emptyQuery);
+                  // Update searchState first
+                  if (window.searchState) {
+                    window.searchState.setQuery(emptyQuery);
+                  }
+                  // Set hash to search?q= to keep search page visible
+                  if (window.location.hash !== '#search?q=') {
+                    window.location.hash = 'search?q=';
+                  }
+                  // Focus back on input after clearing
+                  setTimeout(() => {
+                    if (searchInputRef.current) {
+                      searchInputRef.current.focus();
+                    }
+                  }, 0);
+                }}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-slate-700 cursor-pointer z-20 flex items-center justify-center"
+                style={{ pointerEvents: 'auto' }}
+              >
+                <Cross2Icon className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+              </button>
+            )}
+          </div>
           {/* Search Limit Indicator */}
           {!isPro && searchesLeft >= 0 && (
-            <div className="flex items-center gap-3 mt-4">
+            <div className="flex-shrink-0">
               <div
-                className="px-2 py-2 rounded-xl shadow-sm hover:shadow-lg  transition-all duration-300 ease-in-out hover:-translate-y-1"
-                style={{ width: '180px', backgroundColor: '#FFFFE6' }}
+                className="px-2 py-1 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1"
+                style={{
+                  width: '180px',
+                  backgroundColor: '#FFFFE6',
+                  borderWidth: '1px',
+                  borderColor: '#d4cb24'
+                }}
               >
                 <div className="flex items-center gap-3 mb-2">
                   {searchesLeft === 0 ? (
@@ -884,163 +883,175 @@ const SearchPage: React.FC = () => {
               </div>
             </div>
           )}
+
         </div>
 
-        {/* CategoryFilter - Google-style tabs */}
-        <div className="flex items-center gap-2 pb-1 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
-          <button
-            onClick={() => handleCategoryClick('all')}
-            onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
-            className={`flex items-center gap-1.5 px-1 py-3 whitespace-nowrap transition-colors relative ${activeCategory === 'all'
-              ? 'text-gray-900 dark:text-white'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-              }`}
-            style={{
-              fontSize: '0.875rem',
-            }}
-          >
-            <span>All</span>
-            <span style={{ minWidth: '1rem', display: 'inline-block', textAlign: 'left' }}>
-              {activeCategory === 'all' &&
-                Object.keys(availableCategories).length > 0 && (
-                  <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                    {formatCount(getAllCount())}
-                  </span>
-                )}
-            </span>
-            {activeCategory === 'all' && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 dark:bg-white"></div>
-            )}
-          </button>
+        <div className="mb-8">
 
-          {categories
-            .filter((cat) => cat.key !== 'all')
-            .map((category) => {
-              const isActive =
-                activeCategory === category.key ||
-                selectedCategories.includes(category.key);
-              const searchCategoryKey = getCategoryKeyForSearch(category.key);
-              const count =
-                availableCategories[searchCategoryKey] ||
-                (activeCategory === 'all'
-                  ? availableCategories[searchCategoryKey]
-                  : undefined);
+          {/* CategoryFilter - Google-style tabs */}
+          <div className="flex items-center gap-2 pb-1 border-b border-gray-200 dark:border-slate-700 overflow-x-auto">
+            <button
+              onClick={() => handleCategoryClick('all')}
+              onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
+              className={`flex items-center gap-1.5 px-1 py-3 whitespace-nowrap transition-colors relative ${activeCategory === 'all'
+                ? 'text-gray-900 dark:text-white'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                }`}
+              style={{
+                fontSize: '0.875rem',
+              }}
+            >
+              <span>All</span>
+              <span style={{ minWidth: '1rem', display: 'inline-block', textAlign: 'left' }}>
+                {activeCategory === 'all' &&
+                  Object.keys(availableCategories).length > 0 && (
+                    <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                      {formatCount(getAllCount())}
+                    </span>
+                  )}
+              </span>
+              {activeCategory === 'all' && (
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 dark:bg-white"></div>
+              )}
+            </button>
 
-              return (
-                <button
-                  key={category.key}
-                  onClick={() => handleCategoryClick(category.key)}
-                  onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
-                  className={`flex items-center gap-1.5 px-1 py-3 whitespace-nowrap transition-colors relative ${isActive || selectedCategories.includes(category.key)
-                    ? 'text-gray-900 dark:text-white'
-                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                    }`}
-                  style={{
-                    fontSize: '0.875rem',
-                  }}
-                  title={!isActive ? 'Right-click to multi-select' : undefined}
-                >
-                  {/* <span className="hidden md:inline-flex flex-shrink-0">
+            {categories
+              .filter((cat) => cat.key !== 'all')
+              .map((category) => {
+                const isActive =
+                  activeCategory === category.key ||
+                  selectedCategories.includes(category.key);
+                const searchCategoryKey = getCategoryKeyForSearch(category.key);
+                const count =
+                  availableCategories[searchCategoryKey] ||
+                  (activeCategory === 'all'
+                    ? availableCategories[searchCategoryKey]
+                    : undefined);
+
+                return (
+                  <button
+                    key={category.key}
+                    onClick={() => handleCategoryClick(category.key)}
+                    onContextMenu={(e) => handleCategoryRightClick(e, category.key)}
+                    className={`flex items-center gap-1.5 px-1 py-3 whitespace-nowrap transition-colors relative ${isActive || selectedCategories.includes(category.key)
+                      ? 'text-gray-900 dark:text-white'
+                      : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
+                      }`}
+                    style={{
+                      fontSize: '0.875rem',
+                    }}
+                    title={!isActive ? 'Right-click to multi-select' : undefined}
+                  >
+                    {/* <span className="hidden md:inline-flex flex-shrink-0">
                     {getCategoryIcon(category.key)}
                   </span> */}
-                  <span>{category.label}</span>
-                  <span style={{ minWidth: '1.5rem', display: 'inline-block', textAlign: 'left' }}>
-                    {count !== undefined && (
-                      <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
-                        {formatCount(count)}
-                      </span>
-                    )}
-                  </span>
-                  {(isActive || selectedCategories.includes(category.key)) && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 dark:bg-white"></div>
-                  )}
-                </button>
-              );
-            })}
-        </div>
-      </div>
-
-      {/* LoadingState */}
-      {loading && (
-        <div className="text-center p-8">
-          <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
-          <p className="mt-2 text-muted-foreground">Searching...</p>
-        </div>
-      )}
-
-      {/* EmptyState */}
-      {!loading && results.length === 0 && query.trim() && (
-        <div className="text-center p-8">
-          <p className="text-muted-foreground">
-            No results found for &quot;{query}&quot;
-          </p>
-        </div>
-      )}
-
-      {!loading && results.length > 0 && filteredResults.length === 0 && (
-        <div className="text-center p-8">
-          <p className="text-muted-foreground">
-            No results found in category <strong>{activeCategory}</strong>
-          </p>
-          <button
-            onClick={() => setActiveCategory('all')}
-            className="mt-2 text-primary underline-offset-4 hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
-          >
-            View all results
-          </button>
-        </div>
-      )}
-
-      {/* ResultsGrid */}
-      {!loading && filteredResults.length > 0 && (
-        <>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filteredResults.map((result, index) => (
-              <ResultCard key={result.id || index} result={result} />
-            ))}
-          </div>
-
-          {/* LoadMoreSection */}
-          {currentPage < totalPages && (
-            <div className="flex flex-col items-center space-y-4 mt-8">
-              {searchInfo && (
-                <p className="text-sm text-muted-foreground">
-                  Showing {allResults.length} of{' '}
-                  {searchInfo.totalHits.toLocaleString()}{' '}
-                  {activeCategory === 'all'
-                    ? 'items'
-                    : getCategoryDisplayName(activeCategory)}{' '}
-                  (Page {Math.ceil(allResults.length / 100)} of {totalPages})
-                </p>
-              )}
-
-              <button
-                onClick={loadMoreResults}
-                disabled={loadingMore}
-                className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 space-x-2"
-              >
-                {loadingMore ? (
-                  <>
-                    <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-foreground"></div>
-                    <span className="text-primary-foreground">Loading...</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-primary-foreground">Load More</span>
-                    <span className="text-xs text-primary-foreground/80">
-                      (
-                      {searchInfo
-                        ? searchInfo.totalHits - allResults.length
-                        : 0}{' '}
-                      more)
+                    <span>{category.label}</span>
+                    <span style={{ minWidth: '1.5rem', display: 'inline-block', textAlign: 'left' }}>
+                      {count !== undefined && (
+                        <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                          {formatCount(count)}
+                        </span>
+                      )}
                     </span>
-                  </>
-                )}
+                    {(isActive || selectedCategories.includes(category.key)) && (
+                      <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gray-900 dark:bg-white"></div>
+                    )}
+                  </button>
+                );
+              })}
+          </div>
+        </div>
+
+        {/* LoadingState */}
+        {
+          loading && (
+            <div className="text-center p-8">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+              <p className="mt-2 text-muted-foreground">Searching...</p>
+            </div>
+          )
+        }
+
+        {/* EmptyState */}
+        {
+          !loading && results.length === 0 && query.trim() && (
+            <div className="text-center p-8">
+              <p className="text-muted-foreground">
+                No results found for &quot;{query}&quot;
+              </p>
+            </div>
+          )
+        }
+
+        {
+          !loading && results.length > 0 && filteredResults.length === 0 && (
+            <div className="text-center p-8">
+              <p className="text-muted-foreground">
+                No results found in category <strong>{activeCategory}</strong>
+              </p>
+              <button
+                onClick={() => setActiveCategory('all')}
+                className="mt-2 text-primary underline-offset-4 hover:underline transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+              >
+                View all results
               </button>
             </div>
-          )}
-        </>
-      )}
+          )
+        }
+
+        {/* ResultsGrid */}
+        {
+          !loading && filteredResults.length > 0 && (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {filteredResults.map((result, index) => (
+                  <ResultCard key={result.id || index} result={result} />
+                ))}
+              </div>
+
+              {/* LoadMoreSection */}
+              {currentPage < totalPages && (
+                <div className="flex flex-col items-center space-y-4 mt-8">
+                  {searchInfo && (
+                    <p className="text-sm text-muted-foreground">
+                      Showing {allResults.length} of{' '}
+                      {searchInfo.totalHits.toLocaleString()}{' '}
+                      {activeCategory === 'all'
+                        ? 'items'
+                        : getCategoryDisplayName(activeCategory)}{' '}
+                      (Page {Math.ceil(allResults.length / 100)} of {totalPages})
+                    </p>
+                  )}
+
+                  <button
+                    onClick={loadMoreResults}
+                    disabled={loadingMore}
+                    className="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 h-10 px-4 py-2 whitespace-nowrap bg-primary text-primary-foreground hover:bg-primary/90 space-x-2"
+                  >
+                    {loadingMore ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-primary-foreground"></div>
+                        <span className="text-primary-foreground">Loading...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-primary-foreground">Load More</span>
+                        <span className="text-xs text-primary-foreground/80">
+                          (
+                          {searchInfo
+                            ? searchInfo.totalHits - allResults.length
+                            : 0}{' '}
+                          more)
+                        </span>
+                      </>
+                    )}
+                  </button>
+                </div>
+              )}
+            </>
+          )
+        }
+      </div>
     </div>
   );
 };
