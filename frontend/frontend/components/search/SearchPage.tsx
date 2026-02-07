@@ -759,7 +759,7 @@ const SearchPage: React.FC = () => {
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto">
-      <div id="search-page" className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6">
+      <div id="search-page" className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6" style={{ minHeight: '99%' }}>
         {/* Search Bar */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Search engine for developer resources</h2>
