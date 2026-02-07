@@ -151,10 +151,15 @@ build: generate build-css build-js checkpoint-db ## Build the application
 	@echo "Building application..."
 	$(GO_CMD) build -o bin/fdt-binary ./cmd/server
 
-build-fdtdb-cli: ## Build fdtdb CLI
-	@echo "Building fdtdb..."
-	cd fdtdb-cli && $(GO_CMD) build -o ../fdtdb .
-
+build-b2m: ## Build b2m CLI
+	@echo "Building b2m..."
+	@if [ ! -d "../b2-manager" ]; then \
+		echo "❌ Error: ../b2-manager directory not found"; \
+		exit 1; \
+	fi
+	cd ../b2-manager && $(GO_CMD) build -o ../b2m .
+	cp ../b2m ./b2m
+	
 run: generate build-css build-js ## Run the development server
 	@echo "Starting server on port $(PORT)..."
 	@$(LOAD_ENV) PORT=$(PORT) $(GO_CMD) run ./cmd/server
