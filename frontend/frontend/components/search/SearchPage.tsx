@@ -902,10 +902,10 @@ const SearchPage: React.FC = () => {
               }}
             >
               <span>All</span>
-              <span style={{ minWidth: '1rem', display: 'inline-block', textAlign: 'left' }}>
+              <span style={{ minWidth: '2rem', minHeight: '1rem', display: 'inline-block', textAlign: 'left' }}>
                 {activeCategory === 'all' &&
                   Object.keys(availableCategories).length > 0 && (
-                    <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                    <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>
                       {formatCount(getAllCount())}
                     </span>
                   )}
@@ -946,9 +946,9 @@ const SearchPage: React.FC = () => {
                     {getCategoryIcon(category.key)}
                   </span> */}
                     <span>{category.label}</span>
-                    <span style={{ minWidth: '1.5rem', display: 'inline-block', textAlign: 'left' }}>
+                    <span style={{ minWidth: '1.5rem', minHeight: '1rem', display: 'inline-block', textAlign: 'left' }}>
                       {count !== undefined && (
-                        <span style={{ fontSize: '0.75rem', opacity: 0.8 }}>
+                        <span style={{ fontSize: '0.65rem', opacity: 0.8 }}>
                           {formatCount(count)}
                         </span>
                       )}
