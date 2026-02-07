@@ -109,7 +109,7 @@ const ProBanner: React.FC = () => {
               </h3>
 
               {/* Pricing */}
-              <div className="mb-6">
+              <div className="mb-2 mt-6">
                 <div className="flex items-baseline gap-3 mb-3">
                   <span className="text-slate-400 dark:text-slate-500 line-through text-lg font-medium">$149</span>
                   <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">$89</span>
