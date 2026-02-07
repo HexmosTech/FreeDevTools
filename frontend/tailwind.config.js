@@ -72,7 +72,10 @@ module.exports = {
         },
         'fdt-yellow': {
           DEFAULT: '#d4cb24',
-          light: '#fef9c3',
+          dark: '#b6b000',
+        },
+        'fdt-yellow-dark': {
+          DEFAULT: '#b6b000',
         },
         'fdt-red': {
           DEFAULT: '#b81c1d',
