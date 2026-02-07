@@ -846,12 +846,16 @@ const SearchPage: React.FC = () => {
           {!isPro && searchesLeft >= 0 && (
             <div className="flex-shrink-0">
               <div
-                className="px-2 py-1 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1"
+                className="px-2 py-1 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 cursor-pointer"
                 style={{
                   width: '180px',
                   backgroundColor: '#FFFFE6',
                   borderWidth: '1px',
                   borderColor: '#d4cb24'
+                }}
+                onClick={() => {
+                  // Trigger ProBanner popup
+                  window.location.hash = '#pro-banner';
                 }}
               >
                 <div className="flex items-center gap-3 mb-2">

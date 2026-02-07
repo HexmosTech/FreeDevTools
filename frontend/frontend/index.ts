@@ -131,6 +131,7 @@ const toolLoaders: Record<string, (e: HTMLElement) => void> = {
     "sidebarProfile": (e) => {
         renderDynamic(e, () => import('./components/common/SidebarProfile'));
     },
+    "pro-banner": (e) => renderDynamic(e, () => import('./components/common/ProBanner')),
 };
 
 // Expose render functions globally
