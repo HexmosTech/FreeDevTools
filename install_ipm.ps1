@@ -24,13 +24,22 @@ if (!(Test-Path -Path $INSTALL_DIR)) {
     New-Item -ItemType Directory -Path $INSTALL_DIR -Force | Out-Null
 }
 
+function ipm { & "$TARGET" @args }
+function Update-IpmPath {
+    $UserPath = [Environment]::GetEnvironmentVariable("Path", "User")
+    if ($UserPath -notlike "*$INSTALL_DIR*") {
+        Write-Host "==> Adding $INSTALL_DIR to user PATH..."
+        [Environment]::SetEnvironmentVariable("Path", "$UserPath;$INSTALL_DIR", "User")
+        $env:Path += ";$INSTALL_DIR"
+    }
+}
 ###################################
 # Check existing binary
 ###################################
 
 if (Test-Path -Path $TARGET) {
+    Update-IpmPath  # Ensure PATH is fixed even if already installed
     Write-Host "==> $APPNAME already exists at $TARGET"
-    Write-Host "Run it using: $TARGET"
     return 
 }
 # Generate Install ID (date + random)
@@ -90,7 +99,5 @@ if ($UserPath -notlike "*$INSTALL_DIR*") {
     $env:Path += ";$INSTALL_DIR"
 }
 
-# Define a Function for the current session
-function ipm { & "$TARGET" @args }
-
+Update-IpmPath
 Write-Host "==> Installation complete! You can now run '$APPNAME'."
