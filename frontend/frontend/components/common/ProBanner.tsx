@@ -93,49 +93,49 @@ const ProBanner: React.FC = () => {
             <div className="p-8 flex flex-col">
               {/* Limited Time Offer Badge */}
               <div
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full mb-3 w-fit"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 w-fit"
                 style={{
                   backgroundColor: '#000000',
                   color: '#ffffff'
                 }}
               >
-                <Flame className="h-3.5 w-3.5" style={{ color: '#f97316' }} />
-                <span className="text-xs font-semibold">LIMITED TIME OFFER</span>
+                <Flame className="h-4 w-4" style={{ color: '#f97316' }} />
+                <span className="text-xs font-bold tracking-wide uppercase">LIMITED TIME OFFER</span>
               </div>
 
               {/* Main Offer Text */}
-              <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-4 leading-tight">
+              <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-6 leading-snug">
                 Power up FreeDevTools — zero ads, zero limits, all features
               </h3>
 
               {/* Pricing */}
-              <div className="mb-4">
-                <div className="flex items-baseline gap-2.5 mb-1.5">
-                  <span className="text-slate-400 dark:text-slate-500 line-through text-base">$149</span>
-                  <span className="text-4xl font-bold text-slate-900 dark:text-slate-100">$89</span>
-                  <span className="text-base text-slate-700 dark:text-slate-300">lifetime</span>
+              <div className="mb-6">
+                <div className="flex items-baseline gap-3 mb-3">
+                  <span className="text-slate-400 dark:text-slate-500 line-through text-lg font-medium">$149</span>
+                  <span className="text-3xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">$89</span>
+                  <span className="text-lg text-slate-600 dark:text-slate-400 font-medium">lifetime</span>
                 </div>
 
               </div>
 
               {/* Urgency Bar */}
               <div
-                className="px-3 py-1 pt-2 rounded-xl mb-4"
+                className="px-4 py-3 rounded-xl mb-6"
                 style={{
                   backgroundColor: '#FFFFE6',
                   borderWidth: '1px',
                   borderColor: '#d4cb24'
                 }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1.5">
-                    <Clock className="h-3.5 w-3.5 flex-shrink-0" style={{ color: '#d4cb24' }} />
-                    <span className="text-xs font-semibold" style={{ color: '#d4cb24' }}>Limited Offer</span>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 flex-shrink-0" style={{ color: '#d4cb24' }} />
+                    <span className="text-sm font-semibold" style={{ color: '#d4cb24' }}>Limited Offer</span>
                   </div>
-                  <span className="text-xs font-semibold" style={{ color: '#d4cb24' }}>43/1000 left</span>
+                  <span className="text-sm font-semibold" style={{ color: '#d4cb24' }}>43/1000 left</span>
                 </div>
                 <div
-                  className="w-full rounded-full overflow-hidden mb-2"
+                  className="w-full rounded-full overflow-hidden"
                   style={{
                     height: '8px',
                     backgroundColor: '#F2F2DC'
@@ -154,38 +154,24 @@ const ProBanner: React.FC = () => {
               {/* CTA Button */}
               <button
                 onClick={handleBuyNow}
-                className="w-full font-semibold py-3 px-4 rounded-lg transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 mb-4"
+                className="w-full font-bold py-4 px-6 rounded-xl transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 mb-6 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                 style={{
                   backgroundColor: '#1e293b',
                   color: '#d4cb24'
                 }}
               >
-                <span className="flex items-center justify-center gap-2">
-                  <Flame className="h-4 w-4" style={{ color: '#d4cb24' }} />
+                <span className="flex items-center justify-center gap-2.5 text-base">
+                  <Flame className="h-5 w-5" style={{ color: '#d4cb24' }} />
                   Claim Deal - $89
                 </span>
               </button>
 
-              {/* Guarantees */}
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
-                  <Check className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100 flex-shrink-0" />
-                  <span>Instant Access</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
-                  <Check className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100 flex-shrink-0" />
-                  <span>Lifetime Updates</span>
-                </div>
-                <div className="flex items-center gap-2 text-xs text-slate-700 dark:text-slate-300">
-                  <Check className="h-3.5 w-3.5 text-slate-900 dark:text-slate-100 flex-shrink-0" />
-                  <span>Money Back</span>
-                </div>
-              </div>
+
             </div>
 
             {/* Right Column - Benefits */}
             <div className="p-8 flex flex-col bg-slate-100 dark:bg-slate-900 rounded-lg ">
-              <div className="space-y-2 flex-1 mt-8">
+              <div className="space-y-2 flex-1 mt-12">
                 {benefits.map((benefit, index) => {
                   const IconComponent = benefit.icon;
                   return (
