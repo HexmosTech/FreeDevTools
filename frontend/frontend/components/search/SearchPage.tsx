@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 // Icons are tree-shakeable, so only imported icons are bundled
+import toast from '@/components/ToastProvider';
 import { MEILI_SEARCH_API_KEY } from '@/config';
 import { getProStatusFromCookie } from '@/lib/api';
 import {
   Cross2Icon,
   DownloadIcon,
+  ExclamationTriangleIcon,
   FileIcon,
   FileTextIcon,
   GearIcon,
   ImageIcon,
+  MagnifyingGlassIcon,
   ModulzLogoIcon,
   ReaderIcon,
   RocketIcon
@@ -129,6 +132,35 @@ function updateUrlHash(searchQuery: string): void {
       window.location.hash = 'search?q=';
     }
   }
+}
+
+// LocalStorage utilities for search tracking
+const SEARCH_COUNT_KEY = 'freedevtools-search-count';
+const MAX_SEARCHES = 20;
+
+function getSearchCount(): number {
+  if (typeof window === 'undefined') return 0;
+  try {
+    const count = localStorage.getItem(SEARCH_COUNT_KEY);
+    return count ? parseInt(count, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function incrementSearchCount(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const currentCount = getSearchCount();
+    localStorage.setItem(SEARCH_COUNT_KEY, (currentCount + 1).toString());
+  } catch {
+    // Ignore localStorage errors
+  }
+}
+
+function getSearchesLeft(): number {
+  const count = getSearchCount();
+  return Math.max(0, MAX_SEARCHES - count);
 }
 
 // API
@@ -398,7 +430,13 @@ const SearchPage: React.FC = () => {
     [key: string]: number;
   }>({});
   const [isPro, setIsPro] = useState<boolean>(false);
-  const [searchesLeft] = useState<number>(20);
+  const [searchesLeft, setSearchesLeft] = useState<number>(() => getSearchesLeft());
+
+  // Track last counted search to avoid duplicate increments
+  const lastCountedSearchRef = React.useRef<{
+    query: string;
+    categories: string[];
+  } | null>(null);
 
   const getEffectiveCategories = useCallback(() => {
     if (activeCategory === 'all') return [];
@@ -406,10 +444,13 @@ const SearchPage: React.FC = () => {
     return [activeCategory];
   }, [activeCategory, selectedCategories]);
 
-  // Check pro status on mount
+  // Check pro status on mount and initialize searches left
   useEffect(() => {
     const proStatus = getProStatusFromCookie();
     setIsPro(proStatus);
+    if (!proStatus) {
+      setSearchesLeft(getSearchesLeft());
+    }
   }, []);
 
   useEffect(() => {
@@ -424,14 +465,28 @@ const SearchPage: React.FC = () => {
       return;
     }
 
+    // Check if search limit is reached for non-pro users
+    if (!isPro && searchesLeft <= 0) {
+      toast.warning('Search Limit Reached - Upgrade to Pro for unlimited searches');
+      return;
+    }
+
     const timeoutId = setTimeout(async () => {
       setLoading(true);
       setCurrentPage(1);
       setAvailableCategories({});
+
+      const effectiveCategories = getEffectiveCategories();
+
+      // Check if this is a new search (different from last counted)
+      const isNewSearch = !lastCountedSearchRef.current ||
+        lastCountedSearchRef.current.query !== query.trim() ||
+        JSON.stringify(lastCountedSearchRef.current.categories.sort()) !== JSON.stringify(effectiveCategories.sort());
+
       try {
         const searchResponse = await searchUtilities(
           query,
-          getEffectiveCategories(),
+          effectiveCategories,
           1
         );
         console.log('Search results:', searchResponse);
@@ -454,6 +509,17 @@ const SearchPage: React.FC = () => {
           processingTime: searchResponse.processingTimeMs || 0,
           facetTotal: facetTotal,
         });
+
+        // Increment search count for non-pro users only for new searches
+        if (!isPro && query.trim() && isNewSearch) {
+          incrementSearchCount();
+          setSearchesLeft(getSearchesLeft());
+          // Track this search as counted
+          lastCountedSearchRef.current = {
+            query: query.trim(),
+            categories: effectiveCategories,
+          };
+        }
       } catch (error) {
         console.error('Search error:', error);
         setResults([]);
@@ -462,10 +528,10 @@ const SearchPage: React.FC = () => {
       } finally {
         setLoading(false);
       }
-    }, 300);
+    }, 500); // Increased debounce delay to reduce rapid searches
 
     return () => clearTimeout(timeoutId);
-  }, [query, activeCategory, selectedCategories, getEffectiveCategories]);
+  }, [query, activeCategory, selectedCategories, getEffectiveCategories, isPro, searchesLeft]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -781,8 +847,43 @@ const SearchPage: React.FC = () => {
 
       <div className="mb-8">
         {/* SearchInfoHeader */}
-        <div className="flex items-center justify-between mb-4 mt-8 md:mt-0">
+        <div className="mb-4 mt-8 md:mt-0">
           <h2>{getTitle()}</h2>
+          {/* Search Limit Indicator */}
+          {!isPro && searchesLeft >= 0 && (
+            <div className="flex items-center gap-3 mt-2">
+              <div
+                className="px-2 py-2 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ease-in-out hover:-translate-y-1"
+                style={{ width: '180px', backgroundColor: '#FFFFE6', border: '1px solid #d4cb24' }}
+              >
+                <div className="flex items-center gap-3 mb-2">
+                  {searchesLeft === 0 ? (
+                    <ExclamationTriangleIcon className="w-4 h-4 flex-shrink-0" style={{ color: '#d4cb24' }} />
+                  ) : (
+                    <MagnifyingGlassIcon className="w-4 h-4 flex-shrink-0" style={{ color: '#d4cb24' }} />
+                  )}
+                  <span className="font-bold text-sm" style={{ color: '#d4cb24' }}>
+                    {searchesLeft} searches left
+                  </span>
+                </div>
+                <div
+                  className="w-full rounded-full overflow-hidden mb-1"
+                  style={{
+                    height: '8px',
+                    backgroundColor: '#fff'
+                  }}
+                >
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${((MAX_SEARCHES - searchesLeft) / MAX_SEARCHES) * 100}%`,
+                      backgroundColor: '#d4cb24'
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* CategoryFilter - Google-style tabs */}

@@ -70,6 +70,13 @@ module.exports = {
           DEFAULT: '#06b6d4',
           light: '#22d3ee',
         },
+        'fdt-yellow': {
+          DEFAULT: '#d4cb24',
+          light: '#fef9c3',
+        },
+        'fdt-red': {
+          DEFAULT: '#b81c1d',
+        },
       },
       borderRadius: {
         lg: 'var(--radius)',
