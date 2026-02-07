@@ -615,12 +615,9 @@ const SearchPage: React.FC = () => {
     }
 
     // Close search page - remove hash entirely
+    // Use window.location.hash = '' to trigger hashchange event
     if (window.location.hash.startsWith('#search')) {
-      history.pushState(
-        '',
-        document.title,
-        window.location.pathname + window.location.search
-      );
+      window.location.hash = '';
     }
   }, [setQuery]);
 
@@ -720,7 +717,9 @@ const SearchPage: React.FC = () => {
   }, [setQuery]);
 
   // Don't render if no query and not on search page
-  if (!query.trim() && !window.location.hash.startsWith('#search')) {
+  // Also don't render if hash is empty (search was closed)
+  const hash = window.location.hash;
+  if ((!query.trim() && !hash.startsWith('#search')) || hash === '') {
     return null;
   }
 
