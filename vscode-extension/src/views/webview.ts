@@ -12,16 +12,24 @@ export function getWebviewContent(url: string = CONFIG.APP_URL): string {
         </style>
     </head>
     <body>
-        <iframe src="${url}" id="content-frame"></iframe>
+        <iframe src="${url}" id="content-frame" onload="this.contentWindow.postMessage({ command: 'init-vscode' }, '*');"></iframe>
         <script>
             const vscode = acquireVsCodeApi();
             const iframe = document.getElementById('content-frame');
 
-            // Listen for messages from the extension
+            // Listen for messages
             window.addEventListener('message', event => {
                 const message = event.data;
-                if (iframe && message) {
-                    // Forward message to iframe
+                if (!message) return;
+
+                // Message from Iframe (App) -> Forward to Extension Host
+                if (message.command === 'download') {
+                    vscode.postMessage(message);
+                    return;
+                }
+
+                // Message from Extension Host -> Forward to Iframe (App)
+                if (iframe) {
                     iframe.contentWindow.postMessage(message, '*');
                 }
             });
