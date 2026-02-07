@@ -1,6 +1,6 @@
-# fdtdb-cli
+# b2m-cli
 
-`fdtdb-cli` is a command-line tool for managing Hexmos FreeDevTools databases securely using Backblaze B2 as a backend. It implements a locking mechanism to prevent concurrent writes and ensures data consistency across the team.
+`b2m-cli` is a command-line tool for managing Hexmos FreeDevTools databases securely using Backblaze B2 as a backend. It implements a locking mechanism to prevent concurrent writes and ensures data consistency across the team.
 
 ## Features
 
@@ -16,10 +16,17 @@
 2.  Clone the repository.
 3.  Build the tool:
     ```bash
-    cd fdtdb-cli
-    go build -o fdtdb .
+    cd b2m-cli
+    go build -o b2m .
     ```
 4.  (Optional) Add to your PATH.
+
+### Logging
+
+The application logs its operations and errors to `b2m.log` in the current working directory.
+
+- **INFO** logs include application startup/shutdown, status updates, and upload/download milestones.
+- **ERROR** logs capture critical failures, rclone errors, and network issues.
 
 ## Configuration
 
@@ -38,7 +45,7 @@ It also relies on `rclone`. The `init` checks will attempt to install and config
 Start the interactive shell:
 
 ```bash
-./fdtdb
+./b2m
 ```
 
 ### Core Workflow
@@ -46,13 +53,13 @@ Start the interactive shell:
 The typical workflow for editing a database is:
 
 1.  **Check Status**: verify you have the latest data.
-2.  **Sync**: `Sync to Local` if you are behind.
+2.  **Sync**: `Download DB's` if you are behind.
 3.  **Lock & Upload** (from `Upload` menu):
     - Select the database you want to edit.
     - The tool acquires a **LOCK** on B2.
     - The tool **PAUSES** and waits for you.
 4.  **Edit**: Open the SQLite database in `db/all_dbs/` using your preferred SQLite editor (e.g., DB Browser for SQLite) and make changes.
-5.  **Commit**: Return to the `fdtdb` terminal and select **Proceed**.
+5.  **Commit**: Return to the `b2m` terminal and select **Proceed**.
     - The tool uploads the changed database to B2.
     - It releases the lock.
     - It notifies Discord.
@@ -74,7 +81,7 @@ Access the upload and locking sub-menu:
 - **Upload Locked DB's**: Use this if you already have a lock (e.g., from a previous session or manual lock) and want to upload changes.
 - **Lock/Unlock DB**: Manually acquire or release locks without uploading. Useful for reserving a DB or clearing a stale lock.
 
-#### `Sync to Local`
+#### `Download DB's`
 
 Downloads the latest state of all databases from B2 to your local `db/all_dbs/` directory.
 
