@@ -851,7 +851,7 @@ const SearchPage: React.FC = () => {
           <h2>{getTitle()}</h2>
           {/* Search Limit Indicator */}
           {!isPro && searchesLeft >= 0 && (
-            <div className="flex items-center gap-3 mt-2">
+            <div className="flex items-center gap-3 mt-4">
               <div
                 className="px-2 py-2 rounded-xl shadow-sm hover:shadow-lg  transition-all duration-300 ease-in-out hover:-translate-y-1"
                 style={{ width: '180px', backgroundColor: '#FFFFE6' }}
