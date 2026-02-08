@@ -13,7 +13,7 @@ function getJWT(): string | null {
 export const confirmSignOut = async () => {
   const jwt = getJWT();
   const url = 'https://parse.apps.hexmos.com/parse/functions/logout';
-  
+
   try {
     if (jwt) {
       const response = await fetch(url, {
@@ -32,27 +32,36 @@ export const confirmSignOut = async () => {
 
   // Remove JWT from localStorage
   localStorage.removeItem('hexmos-one');
-  
+
   // Remove user info from localStorage
   localStorage.removeItem('hexmos-user-info');
-  
+
+  // Remove pro status and active licence from localStorage
+  localStorage.removeItem('hexmos-one-fdt-p-status');
+  localStorage.removeItem('fdt_active_licence');
+
   // Dispatch event to notify other components
   window.dispatchEvent(new Event('jwt-changed'));
+
+  // Notify VS Code Extension to clear its secrets
+  if (typeof window !== 'undefined' && window.parent) {
+    window.parent.postMessage({ command: 'logout' }, '*');
+  }
 
   // Remove cookies (similar to purchases)
   if (typeof document !== 'undefined') {
     const isProduction = window.location.hostname.includes('hexmos.com');
     const domain = isProduction ? '.hexmos.com' : 'localhost';
-    
+
     // Remove hexmos-one cookie from both current domain and .hexmos.com
     document.cookie = 'hexmos-one=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     if (isProduction) {
       document.cookie = 'hexmos-one=; path=/; domain=.hexmos.com; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
-    
+
     // Remove hexmos-one-id cookie
     document.cookie = `hexmos-one-id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domain ? `; domain=${domain}` : ''}`;
-    
+
     // Remove hexmos-one-fdt-p-status cookie
     document.cookie = `hexmos-one-fdt-p-status=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domain ? `; domain=${domain}` : ''}`;
     if (isProduction) {
