@@ -399,6 +399,78 @@ templ BaseLayout(props BaseLayoutProps) {
 							}
 						}
 						
+						function trackPageVisit() {
+							// Exclude search and pro pages from visit counting
+							const hash = window.location.hash;
+							const pathname = window.location.pathname;
+							
+							if (hash.startsWith('#search') || pathname.includes('/pro/')) {
+								return 0; // Don't count these pages
+							}
+							
+							const storageKey = 'fdt_pro_banner_visits';
+							const lastPageKey = 'fdt_pro_banner_last_page';
+							const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+							
+							try {
+								// Get current page (pathname only, ignore hash)
+								const currentPage = pathname;
+								
+								// Get last visited page
+								const lastPage = localStorage.getItem(lastPageKey);
+								
+								// Only count if this is a different page (not just hash change)
+								if (lastPage === currentPage) {
+									// Same page, just return current count without incrementing
+									const stored = localStorage.getItem(storageKey);
+									if (stored) {
+										try {
+											const visitData = JSON.parse(stored);
+											if (visitData.date === today) {
+												return visitData.count;
+											}
+										} catch (e) {
+											// Invalid data
+										}
+									}
+									return 0;
+								}
+								
+								// Store current page for next check
+								localStorage.setItem(lastPageKey, currentPage);
+								
+								const stored = localStorage.getItem(storageKey);
+								let visitData = { date: today, count: 0 };
+								
+								if (stored) {
+									try {
+										visitData = JSON.parse(stored);
+										// Reset if date doesn't match today
+										if (visitData.date !== today) {
+											visitData = { date: today, count: 0 };
+											// Also reset last page on date change
+											localStorage.removeItem(lastPageKey);
+										}
+									} catch (e) {
+										// Invalid data, reset
+										visitData = { date: today, count: 0 };
+										localStorage.removeItem(lastPageKey);
+									}
+								}
+								
+								// Increment visit count (new page visited)
+								visitData.count += 1;
+								
+								// Store updated count
+								localStorage.setItem(storageKey, JSON.stringify(visitData));
+								
+								return visitData.count;
+							} catch (e) {
+								// localStorage not available or error, return 0
+								return 0;
+							}
+						}
+						
 						function toggleProBanner() {
 							const proBannerContainer = document.getElementById('pro-banner-container');
 							if (!proBannerContainer) return;
@@ -406,7 +478,23 @@ templ BaseLayout(props BaseLayoutProps) {
 							const urlParams = new URLSearchParams(window.location.search);
 							const buyParam = urlParams.get('buy');
 							const hash = window.location.hash;
-							const shouldShow = buyParam === 'pro' || hash === '#pro-banner';
+							
+							// Manual trigger (query param or hash) takes priority
+							const manualTrigger = buyParam === 'pro' || hash === '#pro-banner';
+							
+							// Always track the visit (even if we don't show the banner)
+							const visitCount = trackPageVisit();
+							
+							// Auto-show logic: every 3rd visit (3, 6, 9, 12) up to 12 visits
+							let shouldShow = false;
+							if (manualTrigger) {
+								shouldShow = true;
+							} else {
+								// Show on visits 3, 6, 9, 12 (every 3rd visit, max 4 times per day)
+								if (visitCount > 0 && visitCount <= 12 && visitCount % 3 === 0) {
+									shouldShow = true;
+								}
+							}
 
 							if (shouldShow) {
 								proBannerContainer.style.display = 'block';
