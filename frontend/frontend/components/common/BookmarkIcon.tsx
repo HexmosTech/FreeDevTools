@@ -157,7 +157,7 @@ const BookmarkIcon: React.FC = () => {
           <BookmarkSVG filled={isBookmarked} />
         </div>
         <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
-          Bookmark this page
+          {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
         </span>
       </button>
     );
