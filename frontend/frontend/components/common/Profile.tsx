@@ -156,6 +156,12 @@ function handleSigninCallback(): string | null {
 function handleAutoLogin(): void {
   if (typeof window === 'undefined') return;
 
+  // Skip auto-login from cookies if running in VS Code
+  // We rely on the extension to provide the session via message
+  if (window.location.search.includes('vscode=true') || window.location.hash.includes('vscode=true')) {
+    return;
+  }
+
   // Check if already signed in via localStorage
   const existingJWT = getJWT();
   if (existingJWT) {

@@ -196,6 +196,7 @@ function ensurePanel(context: vscode.ExtensionContext) {
 
             if (message.command === 'logout') {
                 // If webview triggers logout, execute the command
+                vscode.window.showInformationMessage('Logging out...');
                 vscode.commands.executeCommand('freedevtools.logout');
                 return;
             }
