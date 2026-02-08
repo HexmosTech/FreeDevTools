@@ -1,22 +1,22 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
-import { Loader2, DownloadIcon, Check, ChevronDown } from 'lucide-react';
 import {
-  getAvailablePlans,
-  getLicences,
   cancelSubscription,
   getActiveLicence,
+  getAvailablePlans,
   getDefaultCurrency,
-  type LicenceDetails,
-  type LicenceRenewal,
-  type AvailablePlan,
+  getLicences,
   type ActiveLicence,
-  type PurchasesData,
+  type AvailablePlan,
+  type LicenceDetails,
   type LicenceDetailsInfo,
+  type LicenceRenewal,
+  type PurchasesData,
 } from '@/lib/api';
+import { Check, ChevronDown, DownloadIcon, Loader2 } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PurchaseHistory from './PurchaseHistory';
 
 const PURCHASE_URL = 'https://purchase.hexmos.com/freedevtools/subscription';
@@ -346,9 +346,9 @@ const ShowPlans: React.FC = () => {
   // If no JWT, show plans
   if (!hasJWT) {
     return (
-      <div className="w-full max-w-4xl space-y-6">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         {/* Currency Selector */}
-        <div className="flex mb-4">
+        <div className="flex mb-4 justify-center">
           <div className="relative">
             <button
               ref={currencyButtonRef}
@@ -399,7 +399,7 @@ const ShowPlans: React.FC = () => {
             <div className="w-80 h-96 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl animate-pulse" />
           </div>
         ) : availablePlans.length > 0 ? (
-          <div className="flex flex-wrap gap-6 w-full">
+          <div className="flex flex-wrap gap-6 w-full justify-center">
             {availablePlans.map((plan, index) => {
               // Parse features from description JSON string
               let features: string[] = [];
@@ -519,7 +519,7 @@ const ShowPlans: React.FC = () => {
     );
 
     return (
-      <div className="w-full max-w-4xl space-y-6">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         <PurchaseHistory
           activeLicence={activeLicence || undefined}
           purchasesData={purchasesData || undefined}
@@ -536,8 +536,8 @@ const ShowPlans: React.FC = () => {
             ) : availablePlans.length > 0 ? (
               <div>
                 <div className="flex flex-col gap-4 mb-4">
-                  <h2 className="text-2xl font-semibold">Available Plans</h2>
-                  <div className="flex justify-start">
+                  <h2 className="text-2xl font-semibold text-center">Available Plans</h2>
+                  <div className="flex justify-center">
                     <select
                       value={selectedCurrency}
                       onChange={(e) => {
@@ -554,7 +554,7 @@ const ShowPlans: React.FC = () => {
                     </select>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-6 justify-start w-full">
+                <div className="flex flex-wrap gap-6 justify-center w-full">
                   {availablePlans.map((plan, index) => {
                     // Parse features from description JSON string
                     let features: string[] = [];
@@ -657,7 +657,7 @@ const ShowPlans: React.FC = () => {
 
   if (!licence) {
     return (
-      <div className="w-full max-w-4xl  space-y-6">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         <Card className="w-full max-w-96 mx-auto dark:bg-slate-900">
           <CardHeader>
             <CardTitle>No Active Plan</CardTitle>

@@ -38,7 +38,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
   // Render active licence format
   if (activeLicence) {
     return (
-      <div className="w-full max-w-4xl space-y-6">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         {/* Active Licence */}
         <div>
           <h2 className="text-2xl font-semibold mb-4">Active Licence</h2>
@@ -148,7 +148,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
   // Render purchases data format (renewal format)
   if (purchasesData) {
     return (
-      <div className="w-full max-w-4xl space-y-6">
+      <div className="w-full max-w-4xl mx-auto space-y-6">
         {/* Last Purchased Licence */}
         {purchasesData.lastPurchasedLicence && (
           <div>

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { hasActiveProLicence } from '@/lib/api';
 import ShowPlans from './ShowPlans';
 
 // Extract category from URL path
@@ -160,10 +159,10 @@ const Pro: React.FC = () => {
 
   return (
     <>
-      <div className="">
-        <div className="flex flex-col gap-8">
+      <div className="flex justify-center w-full">
+        <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto px-4">
           {bookmarkInfo && (
-            <div className="w-full max-w-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+            <div className="w-full max-w-xl mx-auto bg-yellow-50/70 dark:bg-slate-900 border border-fdt-yellow-dark dark:border-yellow-700 rounded-lg p-4 mb-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
                   <span className="text-2xl">🔖</span>
@@ -171,41 +170,41 @@ const Pro: React.FC = () => {
                 <div className="flex-1">
                   {(bookmarkInfo.isProPage || bookmarkInfo.isHomePage) ? (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
                         Looks like you just discovered a premium feature
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
                         Buy our Pro plan and enjoy many more benefits with Pro!
                       </p>
                     </>
                   ) : bookmarkInfo.isCategoryPage ? (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
                         Looks like you were trying to bookmark{' '}
                         <a
                           href={bookmarkInfo.source}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
+                          className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
                           {bookmarkInfo.category}
                         </a>
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
                         Buy our Pro plan and enjoy many more benefits with Pro!
                       </p>
                     </>
                   ) : (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
                         Looks like you were trying to bookmark{' '}
                         <a
                           href={bookmarkInfo.source}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
+                          className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
                           {bookmarkInfo.itemName}
                         </a>
                         {' '}of {bookmarkInfo.category}
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
                         Buy our Pro plan and enjoy many more benefits with Pro!
                       </p>
                     </>
@@ -214,7 +213,9 @@ const Pro: React.FC = () => {
               </div>
             </div>
           )}
-          <ShowPlans />
+          <div className="flex justify-center w-full">
+            <ShowPlans />
+          </div>
         </div>
       </div>
     </>
