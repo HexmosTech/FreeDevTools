@@ -802,9 +802,10 @@ const SearchPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Search engine for developer resources</h2>
           <button
             onClick={closeSearchPage}
-            className="hidden md:flex  bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 items-center gap-2 h-9 rounded-md px-3 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
+            className="hidden md:flex p-1 rounded-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+            aria-label="Close"
           >
-            <Cross2Icon className="h-4 w-4" />
+            <Cross2Icon className="h-5 w-5 p-0.5 text-slate-700 dark:text-slate-300" />
           </button>
         </div>
         <div className="mt-12 mb-12 flex items-center gap-3">
