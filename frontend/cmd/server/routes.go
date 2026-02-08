@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"log"
 	"net/http"
 	"net/http/pprof"
@@ -9,6 +11,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"fdt-templ/components/pages"
 	cheatsheets_pages "fdt-templ/components/pages/cheatsheets"
@@ -105,6 +108,66 @@ func matchCategoryPagination(path string) (category string, page int, ok bool) {
 	return "", 0, false
 }
 
+// fetchVSXExtensionInstallCount fetches the install count from Open VSX API
+func fetchVSXExtensionInstallCount() int {
+	client := &http.Client{
+		Timeout: 5 * time.Second,
+	}
+
+	requestBody := map[string]interface{}{
+		"filters": []map[string]interface{}{
+			{
+				"criteria": []map[string]interface{}{
+					{
+						"filterType": 7,
+						"value":      "hexmos.freedevtools",
+					},
+				},
+			},
+		},
+		"flags": 914,
+	}
+
+	jsonData, err := json.Marshal(requestBody)
+	if err != nil {
+		log.Printf("Error marshaling VSX API request: %v", err)
+		return 0
+	}
+
+	resp, err := client.Post("https://open-vsx.org/vscode/gallery/extensionquery", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		log.Printf("Error fetching VSX extension data: %v", err)
+		return 0
+	}
+	defer resp.Body.Close()
+
+	var result struct {
+		Results []struct {
+			Extensions []struct {
+				Statistics []struct {
+					StatisticName string  `json:"statisticName"`
+					Value         float64 `json:"value"`
+				} `json:"statistics"`
+			} `json:"extensions"`
+		} `json:"results"`
+	}
+
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		log.Printf("Error decoding VSX API response: %v", err)
+		return 0
+	}
+
+	if len(result.Results) > 0 && len(result.Results[0].Extensions) > 0 {
+		for _, stat := range result.Results[0].Extensions[0].Statistics {
+			if stat.StatisticName == "install" {
+				return int(stat.Value)
+			}
+		}
+	}
+
+	return 0
+}
+
 // Cheatsheets route matching functions are now in cheatsheets_routes.go
 
 func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_pages.DB, emojisDB *emojis.DB, mcpDB *mcp.DB, pngIconsDB *png_icons.DB, cheatsheetsDB *cheatsheets.DB, tldrDB *tldr.DB, installerpediaDB *installerpedia.DB, toolsConfig *tools.Config, fdtPgDB *bookmarks.DB) {
@@ -194,7 +257,8 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 
 	// VS Code Extension page
 	mux.HandleFunc(basePath+"/vs-code-extension/", func(w http.ResponseWriter, r *http.Request) {
-		handler := templ.Handler(static_pages.VSCodeExtension())
+		installCount := fetchVSXExtensionInstallCount()
+		handler := templ.Handler(static_pages.VSCodeExtension(installCount))
 		handler.ServeHTTP(w, r)
 	})
 
