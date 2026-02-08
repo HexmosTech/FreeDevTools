@@ -194,6 +194,12 @@ function ensurePanel(context: vscode.ExtensionContext) {
                 return;
             }
 
+            if (message.command === 'logout') {
+                // If webview triggers logout, execute the command
+                vscode.commands.executeCommand('freedevtools.logout');
+                return;
+            }
+
             if (message.command === 'download') {
                 const workspaceFolders = vscode.workspace.workspaceFolders;
                 const defaultUri = workspaceFolders && workspaceFolders[0] ? workspaceFolders[0].uri : undefined;

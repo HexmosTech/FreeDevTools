@@ -43,6 +43,11 @@ export const confirmSignOut = async () => {
   // Dispatch event to notify other components
   window.dispatchEvent(new Event('jwt-changed'));
 
+  // Notify VS Code Extension to clear its secrets
+  if (typeof window !== 'undefined' && window.parent) {
+    window.parent.postMessage({ command: 'logout' }, '*');
+  }
+
   // Remove cookies (similar to purchases)
   if (typeof document !== 'undefined') {
     const isProduction = window.location.hostname.includes('hexmos.com');
