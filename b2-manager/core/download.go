@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"b2m/config"
 	"b2m/model"
@@ -30,7 +29,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 	// -------------------------------------------------------------------------
 	locks, err := FetchLocks(ctx)
 	if err != nil {
-		LogError("fetchLocks failed in SyncDatabase: %v", err)
+		LogError("fetchLocks failed in DownloadDatabase for %s: %v", dbName, err)
 		return fmt.Errorf("failed to fetch locks: %w", err)
 	}
 
@@ -99,7 +98,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 			if ctx.Err() != nil {
 				return fmt.Errorf("sync cancelled")
 			}
-			LogError("SyncDatabase rclone copyto failed: %v", err)
+			LogError("DownloadDatabase rclone copy failed for %s: %v", dbName, err)
 			return fmt.Errorf("sync failed: %w", err)
 		}
 	}
@@ -115,7 +114,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
-	mirrorPath := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename)
+	mirrorMetadataPath := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename)
 	// anchorPath := filepath.Join(config.AppConfig.LocalAnchorDir, metadataFilename) // Handled by UpdateLocalVersion
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
@@ -131,7 +130,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 	var remoteUploader = "unknown"
 	var remoteHost = "unknown"
 
-	input, err := os.ReadFile(mirrorPath)
+	input, err := os.ReadFile(mirrorMetadataPath)
 	if err == nil {
 		var mirrorMeta model.Metadata
 		if err := json.Unmarshal(input, &mirrorMeta); err == nil {
@@ -144,9 +143,9 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 		// Try to fetch specific metadata file
 		remoteMetaPath := config.AppConfig.VersionDir + metadataFilename
 		// Copy single file
-		if err := exec.CommandContext(ctx, "rclone", "copyto", remoteMetaPath, mirrorPath).Run(); err == nil {
+		if err := exec.CommandContext(ctx, "rclone", "copyto", remoteMetaPath, mirrorMetadataPath).Run(); err == nil {
 			// Read again
-			if input, err = os.ReadFile(mirrorPath); err == nil {
+			if input, err = os.ReadFile(mirrorMetadataPath); err == nil {
 				var mirrorMeta model.Metadata
 				if err := json.Unmarshal(input, &mirrorMeta); err == nil {
 					remoteTimestamp = mirrorMeta.Timestamp
@@ -155,8 +154,8 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 				}
 			}
 		} else {
-			LogInfo("DownloadDatabase: Failed to fetch remote metadata: %v. Using current time.", err)
-			remoteTimestamp = time.Now().Unix()
+			LogError("DownloadDatabase: Failed to fetch remote metadata for %s: %v. Cannot anchor securely.", dbName, err)
+			return fmt.Errorf("failed to fetch remote metadata for %s: %w", dbName, err)
 		}
 	}
 
@@ -173,7 +172,8 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 
 	// 3.4. Save to LocalAnchorDir
 	if err := UpdateLocalVersion(dbName, anchorMeta); err != nil {
-		LogError("DownloadDatabase: Failed to update local anchor: %v", err)
+		LogError("DownloadDatabase: Failed to update local anchor for %s: %v", dbName, err)
+		return fmt.Errorf("failed to update local anchor for %s: %w", dbName, err)
 	} else {
 		LogInfo("DownloadDatabase: Successfully anchored %s (Hash: %s, Ts: %d)", dbName, localHash, remoteTimestamp)
 	}
@@ -237,12 +237,11 @@ func DownloadAllDatabases(onProgress func(model.RcloneProgress)) error {
 				LogInfo("DownloadAllDatabases cancelled")
 				return fmt.Errorf("download cancelled")
 			}
-			LogError("DownloadAllDatabases rclone copy failed: %v", err)
+			LogError("DownloadAllDatabases batch rclone copy failed: %v", err)
 			return fmt.Errorf("download failed: %w", err)
 		}
 	}
 
-	// Phase 6.2: Anchor Persistence
 	// 1. Sync Remote Metadata -> Local Mirror (version/)
 	LogInfo("DownloadAllDatabases: Updating metadata mirror...")
 
