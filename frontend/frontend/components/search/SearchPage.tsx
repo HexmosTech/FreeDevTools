@@ -431,12 +431,29 @@ const SearchPage: React.FC = () => {
   }>({});
   const [isPro, setIsPro] = useState<boolean>(false);
   const [searchesLeft, setSearchesLeft] = useState<number>(() => getSearchesLeft());
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
   // Track last counted search to avoid duplicate increments
   const lastCountedSearchRef = React.useRef<{
     query: string;
     categories: string[];
   } | null>(null);
+
+  // Detect dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
 
   const getEffectiveCategories = useCallback(() => {
     if (activeCategory === 'all') return [];
@@ -756,14 +773,35 @@ const SearchPage: React.FC = () => {
     return `Found ${searchInfo.totalHits.toLocaleString()} ${getCategoryDisplayName(activeCategory)} for "${query}"`;
   };
 
+  const handleBackdropClick = () => {
+    // Close search page by clearing the hash
+    window.location.hash = '';
+  };
+
+  const closeSearchPage = () => {
+    window.location.hash = '';
+    setQuery('');
+    if (window.searchState) {
+      window.searchState.setQuery('');
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto">
-      <div id="search-page" className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6" style={{ minHeight: '99%' }}>
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto"
+      onClick={handleBackdropClick}
+    >
+      <div
+        id="search-page"
+        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6"
+        style={{ minHeight: '99%' }}
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Search Bar */}
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Search engine for developer resources</h2>
           <button
-            onClick={clearResults}
+            onClick={closeSearchPage}
             className="hidden md:flex  bg-gray-200 dark:bg-slate-700 hover:bg-gray-300 dark:hover:bg-slate-600 items-center gap-2 h-9 rounded-md px-3 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground"
           >
             <Cross2Icon className="h-4 w-4" />
@@ -790,16 +828,13 @@ const SearchPage: React.FC = () => {
                 if (newQuery.trim()) {
                   window.location.hash = `search?q=${encodeURIComponent(newQuery)}`;
                 } else {
-                  // Keep search page open with empty query
-                  // Set hash to search?q= to keep search page visible
-                  if (window.location.hash !== '#search?q=') {
-                    window.location.hash = 'search?q=';
-                  }
+                  // Close search page when query is cleared
+                  closeSearchPage();
                 }
               }}
               onKeyDown={(e) => {
-                if (e.key === 'Escape' && query.trim()) {
-                  clearResults();
+                if (e.key === 'Escape') {
+                  closeSearchPage();
                 }
               }}
               style={{
@@ -849,7 +884,7 @@ const SearchPage: React.FC = () => {
                 className="px-2 py-1 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 cursor-pointer"
                 style={{
                   width: '180px',
-                  backgroundColor: '#FFFFE6',
+                  ...(isDarkMode ? {} : { backgroundColor: 'oklch(97.3% 0.071 103.193)' }),
                   borderWidth: '1px',
                   borderColor: '#d4cb24'
                 }}
