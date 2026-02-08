@@ -1,7 +1,7 @@
 import { Bookmark, Clock, Download, Flame, Headphones, Rocket, Shield, X, Zap } from 'lucide-react';
 import React, { useCallback, useEffect, useState } from 'react';
 
-const PURCHASE_URL = 'https://purchase.hexmos.com/freedevtools/subscription';
+const PURCHASE_URL = 'https://purchase.hexmos.com/freedevtools/subscription/YM4xQvD6QY';
 
 const ProBanner: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
