@@ -2,7 +2,6 @@ package core
 
 import (
 	"context"
-	"crypto/sha256"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -11,6 +10,9 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
+
+	"github.com/zeebo/xxh3"
 
 	"b2m/config"
 	"b2m/model"
@@ -21,9 +23,9 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 	localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
 
 	// Calculate hash
-	hash, err := CalculateSHA256(localPath)
+	hash, err := CalculateXXHash(localPath)
 	if err != nil {
-		LogError("GenerateLocalMetadata: calculateSHA256 failed for %s: %v", dbName, err)
+		LogError("GenerateLocalMetadata: CalculateXXHash failed for %s: %v", dbName, err)
 		return nil, fmt.Errorf("failed to calculate hash: %w", err)
 	}
 
@@ -59,22 +61,127 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 	return meta, nil
 }
 
-// CalculateSHA256 calculates the SHA256 hash of a file
-func CalculateSHA256(filePath string) (string, error) {
+// cachedHash stores the hash and file stat info to avoid re-hashing unchanged files
+type cachedHash struct {
+	Hash    string
+	ModTime int64
+	Size    int64
+}
+
+var (
+	fileHashCache   = make(map[string]cachedHash)
+	fileHashCacheMu sync.RWMutex
+)
+
+// CalculateXXHash calculates the xxHash (as hex string) of a file with caching
+func CalculateXXHash(filePath string) (string, error) {
+	info, err := os.Stat(filePath)
+	if err != nil {
+		LogError("CalculateXXHash: Failed to stat file %s: %v", filePath, err)
+		return "", err
+	}
+
+	// Check cache
+	fileHashCacheMu.RLock()
+	cached, ok := fileHashCache[filePath]
+	fileHashCacheMu.RUnlock()
+
+	if ok && cached.ModTime == info.ModTime().UnixNano() && cached.Size == info.Size() {
+		return cached.Hash, nil
+	} else {
+		LogInfo("Cache miss for %s. Cached: %v, Current: ModTime=%d, Size=%d", filepath.Base(filePath), ok, info.ModTime().UnixNano(), info.Size())
+	}
+
+	// Calculate hash
 	f, err := os.Open(filePath)
 	if err != nil {
-		LogError("calculateSHA256: Failed to open file %s: %v", filePath, err)
+		LogError("CalculateXXHash: Failed to open file %s: %v", filePath, err)
 		return "", err
 	}
 	defer f.Close()
 
-	h := sha256.New()
+	// Use streaming digest
+	h := xxh3.New()
 	if _, err := io.Copy(h, f); err != nil {
-		LogError("calculateSHA256: io.Copy failed for %s: %v", filePath, err)
+		LogError("CalculateXXHash: io.Copy failed for %s: %v", filePath, err)
 		return "", err
 	}
 
-	return fmt.Sprintf("%x", h.Sum(nil)), nil
+	// Sum64 returns uint64, format as hex string for compatibility
+	hash := fmt.Sprintf("%016x", h.Sum64())
+
+	// Update cache
+	fileHashCacheMu.Lock()
+	fileHashCache[filePath] = cachedHash{
+		Hash:    hash,
+		ModTime: info.ModTime().UnixNano(),
+		Size:    info.Size(),
+	}
+	fileHashCacheMu.Unlock()
+
+	return hash, nil
+}
+
+// LoadHashCache loads the hash cache from disk
+func LoadHashCache() error {
+	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
+	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
+		return nil // No cache exists yet
+	}
+
+	data, err := os.ReadFile(cachePath)
+	if err != nil {
+		LogError("LoadHashCache: Failed to read cache file: %v", err)
+		return err
+	}
+
+	fileHashCacheMu.Lock()
+	defer fileHashCacheMu.Unlock()
+
+	if err := json.Unmarshal(data, &fileHashCache); err != nil {
+		LogError("LoadHashCache: Failed to unmarshal cache: %v", err)
+		// Don't fail hard, just start with empty cache
+		return nil
+	}
+
+	LogInfo("Loaded %d entries from hash cache", len(fileHashCache))
+	// LogInfo("Loaded %d entries from hash cache at %s", len(fileHashCache), cachePath)
+	// for k, v := range fileHashCache {
+	// 	LogInfo(" - Loaded: %s -> %s (Mod: %d, Size: %d)", filepath.Base(k), v.Hash, v.ModTime, v.Size)
+	// }
+	return nil
+}
+
+// SaveHashCache saves the hash cache to disk
+func SaveHashCache() error {
+	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
+
+	// Ensure directory exists
+	if err := os.MkdirAll(config.AppConfig.LocalAnchorDir, 0755); err != nil {
+		LogError("SaveHashCache: Failed to create directory: %v", err)
+		return err
+	}
+
+	fileHashCacheMu.RLock()
+	data, err := json.MarshalIndent(fileHashCache, "", "  ")
+	fileHashCacheMu.RUnlock()
+
+	if err != nil {
+		LogError("SaveHashCache: Failed to marshal cache: %v", err)
+		return err
+	}
+
+	if err := os.WriteFile(cachePath, data, 0644); err != nil {
+		LogError("SaveHashCache: Failed to write file: %v", err)
+		return err
+	}
+
+	LogInfo("Saved %d entries to hash cache", len(fileHashCache))
+	// LogInfo("Saving %d entries to hash cache:", len(fileHashCache))
+	// for k := range fileHashCache {
+	// 	LogInfo(" - Saving: %s", filepath.Base(k))
+	// }
+	return nil
 }
 
 // DownloadAndLoadMetadata syncs metadata from remote to local cache and loads it
@@ -89,22 +196,10 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 	// 2. Sync remote metadata to local
 	LogInfo("Syncing metadata from %s to %s", config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir)
 
-	// Safety Check: Verify remote directory is accessible
-	checkCmd := exec.CommandContext(GetContext(), "rclone", "lsf", config.AppConfig.VersionDir, "--max-depth", "1")
-	if err := checkCmd.Run(); err != nil {
-		// Exit status 3 means directory not found (common for new buckets)
-		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() == 3 {
-			LogInfo("DownloadAndLoadMetadata: Remote metadata directory not found (new bucket?). initializing empty.")
-			return make(map[string]*model.Metadata), nil
-		}
-		LogError("DownloadAndLoadMetadata: Remote metadata directory inaccessible: %v", err)
-		return nil, fmt.Errorf("remote metadata inaccessible (safety check failed): %w", err)
-	}
-
-	// rclone sync remote:dir local:dir
-	cmd := exec.CommandContext(GetContext(), "rclone", "sync", config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir)
-	if err := cmd.Run(); err != nil {
-		LogError("DownloadAndLoadMetadata: rclone sync failed: %v", err)
+	// Use RcloneSync helper
+	if err := RcloneSync(config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir); err != nil {
+		// Log and fail as sync is critical for accurate status
+		LogError("DownloadAndLoadMetadata: RcloneSync failed: %v", err)
 		return nil, fmt.Errorf("failed to sync metadata: %w", err)
 	}
 
@@ -124,7 +219,6 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 
 		// Extract DB name
 		dbName := strings.TrimSuffix(info.Name(), ".metadata.json") + ".db"
-		LogInfo("DownloadAndLoadMetadata: Found metadata file %s -> DB %s", info.Name(), dbName)
 
 		// Read file
 		content, err := os.ReadFile(path)
@@ -250,20 +344,12 @@ func HandleBatchMetadataGeneration() {
 	local, err := getLocalDBs()
 	if err != nil {
 		// fmt.Printf("❌ Failed to list local databases: %v\n", err)
-		LogError("❌ Failed to list local databases: %v", err)
 		LogError("BatchMetadata: Failed to list local databases: %v", err)
 		return
 	}
 
-	// We only care about local for generation, but AggregateDBs expects both.
-	// We can pass empty remote if we don't care about remote-only ones.
-	// Or we can just iterate local list directly?
-	// The original code used getAllDBs which returns DBInfo.
-	// Let's just use local list directly, it's simpler.
-
 	if len(local) == 0 {
 		// fmt.Println("⚠️  No local databases found.")
-		LogInfo("⚠️  No local databases found.")
 		LogInfo("BatchMetadata: No local databases found")
 		return
 	}
@@ -280,7 +366,6 @@ func HandleBatchMetadataGeneration() {
 
 	successCount := 0
 	for _, dbName := range local {
-		// padding := strings.Repeat(" ", maxLen-len(dbName))
 		// fmt.Printf("Processing %s... %s", dbName, padding)
 		LogInfo("Processing %s...", dbName)
 
@@ -288,7 +373,6 @@ func HandleBatchMetadataGeneration() {
 		meta, err := GenerateLocalMetadata(dbName, 0, "success")
 		if err != nil {
 			// fmt.Printf("❌ Failed to generate: %v\n", err)
-			LogError("❌ Failed to generate: %v", err)
 			LogError("BatchMetadata: Failed to generate metadata for %s: %v", dbName, err)
 			continue
 		}
@@ -297,9 +381,17 @@ func HandleBatchMetadataGeneration() {
 		// Upload metadata
 		if err := UploadMetadata(GetContext(), dbName, meta); err != nil {
 			// fmt.Printf("❌ Failed to upload: %v\n", err)
-			LogError("❌ Failed to upload: %v", err)
 			LogError("BatchMetadata: Failed to upload metadata for %s: %v", dbName, err)
 			continue
+		}
+
+		// Update local anchor (local-version) to match the new metadata
+		// This ensures we don't show "DB Outdated" immediately after generation
+		if err := UpdateLocalVersion(dbName, *meta); err != nil {
+			LogError("BatchMetadata: Failed to update local anchor for %s: %v", dbName, err)
+			// Non-critical but annoying, continue
+		} else {
+			LogInfo("BatchMetadata: Local anchor updated for %s", dbName)
 		}
 
 		// fmt.Println("✅ Done")
@@ -308,7 +400,6 @@ func HandleBatchMetadataGeneration() {
 	}
 
 	// fmt.Printf("\n✨ Completed! Successfully generated metadata for %d mixed databases.\n", successCount)
-	LogInfo("✨ Completed! Successfully generated metadata for %d mixed databases.", successCount)
 	LogInfo("Batch metadata generation completed. Success: %d", successCount)
 }
 
@@ -320,7 +411,7 @@ func ConstructVerifiedAnchor(dbName string) error {
 
 	// 1. Calculate Local Hash
 	localDBPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
-	localHash, err := CalculateSHA256(localDBPath)
+	localHash, err := CalculateXXHash(localDBPath)
 	if err != nil {
 		LogError("ConstructVerifiedAnchor: Failed to calculate local hash for %s: %v", dbName, err)
 		return fmt.Errorf("failed to calculate local hash: %w", err)

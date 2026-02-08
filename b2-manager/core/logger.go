@@ -24,9 +24,7 @@ func InitLogger() error {
 		return fmt.Errorf("failed to create app config dir: %v", err)
 	}
 
-	logPath := filepath.Join(appConfigDir, "b2m.log")
-	// User requested logs in current directory
-	// logPath := "b2m.log"
+	logPath := "b2m.log"
 	file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open log file: %v", err)

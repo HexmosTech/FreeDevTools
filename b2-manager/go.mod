@@ -6,9 +6,11 @@ require (
 	github.com/BurntSushi/toml v1.6.0
 	github.com/jedib0t/go-pretty/v6 v6.7.8
 	github.com/jroimartin/gocui v0.5.0
+	github.com/zeebo/xxh3 v1.1.0
 )
 
 require (
+	github.com/klauspost/cpuid/v2 v2.2.10 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect

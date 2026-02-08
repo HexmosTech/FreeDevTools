@@ -16,13 +16,13 @@ There are **15** functions defined in this file:
 4.  **BootstrapSystem**: Performs initial checks for database discovery and synchronization.
 5.  **checkDBDiscoveryAndSync**: (Internal) Orchestrates local and remote database discovery.
 6.  **getLocalDBs**: Lists local database files.
-7.  **getRemoteDBs**: Lists remote database files using `rclone lsf`.
+7.  **LsfRclone**: Lists all files recursively using `rclone lsf -R` to retrieve both databases and locks efficiently.
 8.  **checkSyncStatus**: (Internal) Checks synchronization status for all files using `rclone check`.
 9.  **checkFileChanged**: Checks if a specific file has changed between local and remote.
 10. **SyncDatabase** / **DownloadDatabase**: (Moved to `core/download.go`) Downloads a single database.
 11. **DownloadAllDatabases**: (Moved to `core/download.go`) Downloads all databases.
 12. **UploadDatabase**: Uploads a single database from local to remote. **Returns** the uploaded `model.Metadata` object for anchor persistence.
-13. **LockDatabase**: Creates a lock file (`.lock` or `.reserve`) on the remote.
+13. **LockDatabase**: Creates a lock file (`.lock`) on the remote.
 14. **UnlockDatabase**: Removes a lock file from the remote.
 15. **FetchLocks**: Retrieves and parses all active lock files from the remote.
 
@@ -33,7 +33,7 @@ The code executes the following **6** distinct `rclone` commands:
 | Command      | Usage Context                                            | Description                                                                              |
 | :----------- | :------------------------------------------------------- | :--------------------------------------------------------------------------------------- |
 | `version`    | `RunInit`                                                | Checks the installed version of rclone.                                                  |
-| `lsf`        | `getRemoteDBs`, `FetchLocks`                             | Lists files in the remote bucket (databases or locks).                                   |
+| `lsf`        | `LsfRclone`, `FetchLocks`                                | Lists files in the remote bucket (databases or locks).                                   |
 | `check`      | `checkSyncStatus`, `checkFileChanged`                    | Compares local files with remote files to detect changes.                                |
 | `copyto`     | `LockDatabase`                                           | Copies a specific file to a specific destination (used for naming lock files).           |
 | `copy`       | `SyncDatabase`, `DownloadAllDatabases`, `UploadDatabase` | Copies files from source to destination (used for sync, bulk downloads, and DB uploads). |

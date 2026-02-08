@@ -27,8 +27,9 @@ The upload process is orchestrated by `PerformUpload` in `core/upload.go`.
 
 ### Phase 4: Anchor Update
 
-1.  **Sync Local State**: Updates the `local-versions/` anchor file with the metadata just uploaded.
-2.  **Result**: Ensures the system knows the local file is now identical to the remote (Status becomes "Synced").
+1.  **Sync Local State**: `PerformUpload` receives the generated metadata from `UploadDatabase` and calls `UpdateLocalVersion` to update the `local-versions/` anchor file.
+2.  **Efficiency**: This avoids re-calculating the hash locally, as the metadata object already contains the verified hash used for the upload.
+3.  **Result**: Ensures the system knows the local file is now identical to the remote (Status becomes "Synced").
 
 ### Phase 5: Finalization
 

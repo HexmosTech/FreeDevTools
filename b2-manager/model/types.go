@@ -49,11 +49,10 @@ type RcloneProgress struct {
 
 // LockEntry represents a lock file on B2
 type LockEntry struct {
-	DBName    string
-	Owner     string
-	Hostname  string
-	Type      string // "reserve" or "lock"
-	ExpiresAt time.Time
+	DBName   string
+	Owner    string
+	Hostname string
+	Type     string // "lock"
 }
 
 // Metadata represents the synchronization state of a database
@@ -121,11 +120,11 @@ var (
 
 	// Local-only Logic
 	DBStatusNewLocal        = DBStatusDefinition{StatusCodeNewLocal, "Ready To Upload ⬆️", text.FgCyan} // Exists locally only. Needs upload.
-	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan} 
+	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan}
 
 	// Remote Logic
 	DBStatusRecievedStaleMeta = DBStatusDefinition{StatusCodeRecievedStaleMeta, "Ready To Upload ⬆️", text.FgCyan} // There is no metadata present in new remote db.
-	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow} // Exists remotely only. Needs download.
+	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow}          // Exists remotely only. Needs download.
 
 	// Consistency Checks
 	DBStatusNoMetadata     = DBStatusDefinition{StatusCodeNoMetadata, "Ready To Upload ⬆️", text.FgCyan}

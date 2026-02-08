@@ -138,7 +138,7 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 
 			// var bar *progressbar.ProgressBar
 
-			err := core.DownloadDatabase(ctx, dbName, func(p model.RcloneProgress) {
+			err := core.DownloadDatabase(ctx, dbName, false, func(p model.RcloneProgress) {
 				// Remove unused progressbar library usage
 				var percent int
 				var speedMB float64

@@ -2,24 +2,19 @@
 
 This document outlines the structural logic used by the CLI to determine the status of each database. The process is divided into two main phases: **Data Collection** and **Status Calculation**.
 
-## 1. Parallel Data Collection
+## 1. Sequential Data Collection
 
-The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gathering of all necessary information. It executes the following 5 operations in **parallel** using goroutines to minimize latency.
+The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gathering of all necessary information. It executes the following operations **sequentially** to ensure stability and reduce resource usage.
 
 ### A. List Local Databases
 
 - **Source**: `core/helpers.go` (`getLocalDBs`)
 - **Action**: Scans `config.LocalDBDir` for `*.db` files.
 
-### B. List Remote Databases
+### B. Fetch Remote State (DBs + Locks)
 
-- **Source**: `core/helpers.go` (`getRemoteDBs`)
-- **Action**: Executes `rclone lsf` on the B2 bucket to list `*.db` files.
-
-### C. Fetch Locks
-
-- **Source**: `core/rclone.go`
-- **Action**: Lists files in the lock directory (`locks/`) on B2 and parses entries.
+- **Source**: `core/rclone.go` (`LsfRclone`)
+- **Action**: Executes `rclone lsf -R` on the B2 bucket to list `*.db` files and lock files recursively in a single call.
 
 ### D. Download Metadata
 

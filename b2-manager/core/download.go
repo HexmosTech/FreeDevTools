@@ -21,7 +21,7 @@ import (
 // 1. Lock Check: Verify that no one else is currently uploading this database.
 // 2. Download: Execute `rclone copy` to pull the file from B2.
 // 3. Anchor: Construct a local "Verified Anchor" (LocalVersion) to mark this state as synced.
-func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.RcloneProgress)) error {
+func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress)) error {
 	LogInfo("Downloading database %s", dbName)
 
 	// -------------------------------------------------------------------------
@@ -50,59 +50,17 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 	// Use directory as destination for 'copy'
 	localDir := config.AppConfig.LocalDBDir
 
-	// Changed from copyto to copy for safety/data loss prevention
-	rcloneArgs := []string{"copy",
-		remotePath,
-		localDir,
-		"--checksum",
-		"--retries", "20",
-		"--low-level-retries", "30",
-		"--retries-sleep", "10s",
-	}
-
-	if onProgress != nil {
-		// Removed --verbose to avoid polluting JSON output
-		// User reported stats missing without verbose. restoring -v.
-		rcloneArgs = append(rcloneArgs, "-v", "--use-json-log", "--stats", "0.5s")
-	} else {
-		rcloneArgs = append(rcloneArgs, "--progress")
-	}
-
-	cmdSync := exec.CommandContext(ctx, "rclone", rcloneArgs...)
-
 	// -------------------------------------------------------------------------
 	// PHASE 2: EXECUTE DOWNLOAD
 	// Perform the actual network transfer using `rclone copy`.
 	// -------------------------------------------------------------------------
-	if onProgress != nil {
-		stderr, err := cmdSync.StderrPipe()
-		if err != nil {
-			LogError("Failed to get stderr pipe: %v", err)
-			return fmt.Errorf("failed to get stderr pipe: %w", err)
-		}
-		if err := cmdSync.Start(); err != nil {
-			LogError("Download start failed: %v", err)
-			return fmt.Errorf("download start failed: %w", err)
-		}
-		go ParseRcloneOutput(stderr, onProgress)
+	description := "Downloading " + dbName
+	// Use the passed quiet parameter
+	// The new RcloneCopy uses !quiet for verbose. If onProgress is set, it adds json flags.
 
-		if err := cmdSync.Wait(); err != nil {
-			if ctx.Err() != nil {
-				return fmt.Errorf("download cancelled")
-			}
-			LogError("Download of %s failed: %v", dbName, err)
-			return fmt.Errorf("download of %s failed: %w", dbName, err)
-		}
-	} else {
-		cmdSync.Stdout = os.Stdout
-		cmdSync.Stderr = os.Stderr
-		if err := cmdSync.Run(); err != nil {
-			if ctx.Err() != nil {
-				return fmt.Errorf("download cancelled")
-			}
-			LogError("DownloadDatabase rclone copy failed for %s: %v", dbName, err)
-			return fmt.Errorf("download of %s failed: %w", dbName, err)
-		}
+	if err := RcloneCopy(ctx, remotePath, localDir, description, quiet, onProgress); err != nil {
+		LogError("DownloadDatabase RcloneCopy failed for %s: %v", dbName, err)
+		return fmt.Errorf("download of %s failed: %w", dbName, err)
 	}
 
 	// -------------------------------------------------------------------------
@@ -120,7 +78,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
 	localDBPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
-	localHash, err := CalculateSHA256(localDBPath)
+	localHash, err := CalculateXXHash(localDBPath)
 	if err != nil {
 		LogError("DownloadDatabase: Failed to calculate hash of downloaded file %s: %v", dbName, err)
 		return fmt.Errorf("failed to calculate hash of downloaded database: %w", err)
@@ -177,100 +135,6 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 		return fmt.Errorf("failed to update local anchor for %s: %w", dbName, err)
 	} else {
 		LogInfo("DownloadDatabase: Successfully anchored %s (Hash: %s, Ts: %d)", dbName, localHash, remoteTimestamp)
-	}
-
-	return nil
-}
-
-// DownloadAllDatabases syncs all databases from remote to local
-func DownloadAllDatabases(onProgress func(model.RcloneProgress)) error {
-	ctx := GetContext()
-
-	LogInfo("Starting batch download of all databases")
-
-	if err := os.MkdirAll(config.AppConfig.LocalDBDir, 0755); err != nil {
-		LogError("Failed to create local directory in DownloadAllDatabases: %v", err)
-		return fmt.Errorf("failed to create local directory: %w", err)
-	}
-
-	rcloneArgs := []string{"copy",
-		config.AppConfig.RootBucket,
-		config.AppConfig.LocalDBDir,
-		"--checksum",
-		"--retries", "20",
-		"--low-level-retries", "30",
-		"--retries-sleep", "10s",
-	}
-
-	if onProgress != nil {
-		rcloneArgs = append(rcloneArgs, "--use-json-log", "--stats", "0.5s")
-	} else {
-		rcloneArgs = append(rcloneArgs, "--progress")
-	}
-
-	cmdSync := exec.CommandContext(ctx, "rclone", rcloneArgs...)
-
-	if onProgress != nil {
-		stderr, err := cmdSync.StderrPipe()
-		if err != nil {
-			LogError("Failed to get stderr pipe: %v", err)
-			return fmt.Errorf("failed to get stderr pipe: %w", err)
-		}
-		if err := cmdSync.Start(); err != nil {
-			LogError("Batch download start failed: %v", err)
-			return fmt.Errorf("batch download start failed: %w", err)
-		}
-		go ParseRcloneOutput(stderr, onProgress)
-
-		if err := cmdSync.Wait(); err != nil {
-			if ctx.Err() != nil {
-				LogInfo("DownloadAllDatabases cancelled")
-				return fmt.Errorf("batch download cancelled")
-			}
-			LogError("Batch download failed: %v", err)
-			return fmt.Errorf("batch download failed: %w", err)
-		}
-	} else {
-		cmdSync.Stdout = os.Stdout
-		cmdSync.Stderr = os.Stderr
-		if err := cmdSync.Run(); err != nil {
-			if ctx.Err() != nil {
-				LogInfo("DownloadAllDatabases cancelled")
-				return fmt.Errorf("batch download cancelled")
-			}
-			LogError("DownloadAllDatabases batch rclone copy failed: %v", err)
-			return fmt.Errorf("batch download failed: %w", err)
-		}
-	}
-
-	// 1. Sync Remote Metadata -> Local Mirror (version/)
-	LogInfo("DownloadAllDatabases: Updating metadata mirror...")
-
-	// 1. Remote:VersionDir -> Local:VersionDir (Mirror)
-	cmdMirror := exec.CommandContext(ctx, "rclone", "sync", config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir)
-	if err := cmdMirror.Run(); err != nil {
-		LogError("DownloadAllDatabases: Failed to update metadata mirror: %v", err)
-	} else {
-		// 2. Iterate over all downloaded DBs and construct Verified Anchors
-		// We use the same strict logic as DownloadDatabase
-		LogInfo("DownloadAllDatabases: Constructing verified anchors...")
-
-		// Get list of local DBs we just downloaded
-		entries, err := os.ReadDir(config.AppConfig.LocalDBDir)
-		if err == nil {
-			for _, entry := range entries {
-				if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".db") {
-					dbName := entry.Name()
-
-					// Use shared helper
-					if err := ConstructVerifiedAnchor(dbName); err != nil {
-						LogError("DownloadAllDatabases: Failed to anchor %s: %v", dbName, err)
-					}
-				}
-			}
-		} else {
-			LogError("DownloadAllDatabases: Failed to read local db dir: %v", err)
-		}
 	}
 
 	return nil

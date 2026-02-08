@@ -23,6 +23,16 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Load hash cache
+	if err := core.LoadHashCache(); err != nil {
+		core.LogInfo("Warning: Failed to load hash cache: %v", err)
+	}
+	defer func() {
+		if err := core.SaveHashCache(); err != nil {
+			core.LogError("Failed to save hash cache: %v", err)
+		}
+	}()
+
 	core.LogInfo("Configuration loaded successfully")
 	core.LogInfo("RootBucket: %s", config.AppConfig.RootBucket)
 	core.LogInfo("DiscordWebhookURL: %s", config.AppConfig.DiscordWebhookURL)
