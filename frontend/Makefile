@@ -212,7 +212,7 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@pmdaemon --config pmd.config.json start
 	@if [ "$(NODE_ENV)" = "prod" ]; then \
 		sudo rm -rf /var/www/freedevtools-static; \
-		sudo cp -r /home/ubuntu/fdt-templ/assets /var/www/freedevtools-static; \
+		sudo cp -r /home/ubuntu/FreeDevTools/frontend/assets /var/www/freedevtools-static; \
 		sudo touch /var/log/nginx/hexmos.com.error.log 2>/dev/null || true; \
 		sudo sh -c "> /var/log/nginx/hexmos.com.error.log" 2>/dev/null || true; \
 	fi
@@ -243,7 +243,7 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@pmdaemon --config pmd.config.json start
 	@if [ "$(NODE_ENV)" = "prod" ]; then \
 		sudo rm -rf /var/www/freedevtools-static; \
-		sudo cp -r /home/ubuntu/fdt-templ/assets /var/www/freedevtools-static; \
+		sudo cp -r /home/ubuntu/FreeDevTools/frontend/assets /var/www/freedevtools-static; \
 		sudo touch /var/log/nginx/hexmos.com.error.log 2>/dev/null || true; \
 		sudo sh -c "> /var/log/nginx/hexmos.com.error.log" 2>/dev/null || true; \
 	fi
@@ -901,7 +901,7 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 		else \
 			echo "MEILI_SEARCH_KEY=$$SEARCH_KEY" > "$$FDT_ROOT/.env"; \
 		fi; \
-		echo "✅ Saved MEILI_SEARCH_KEY to fdt-templ .env"; \
+		echo "✅ Saved MEILI_SEARCH_KEY to FreeDevTools .env"; \
 	else \
 		echo "⚠️  Warning: Failed to create search API key (may already exist)"; \
 		echo "   Response: $$SEARCH_KEY_RESPONSE"; \
