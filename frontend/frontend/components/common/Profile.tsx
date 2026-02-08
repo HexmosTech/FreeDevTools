@@ -156,9 +156,20 @@ function handleSigninCallback(): string | null {
 function handleAutoLogin(): void {
   if (typeof window === 'undefined') return;
 
+  // Check URL or Session Storage for VS Code context
+  const isVSCode =
+    window.location.search.includes('vscode=true') ||
+    window.location.hash.includes('vscode=true') ||
+    sessionStorage.getItem('isVSCode') === 'true';
+
+  // Persist VS Code flag if found in URL
+  if (window.location.search.includes('vscode=true') || window.location.hash.includes('vscode=true')) {
+    sessionStorage.setItem('isVSCode', 'true');
+  }
+
   // Skip auto-login from cookies if running in VS Code
   // We rely on the extension to provide the session via message
-  if (window.location.search.includes('vscode=true') || window.location.hash.includes('vscode=true')) {
+  if (isVSCode) {
     return;
   }
 
