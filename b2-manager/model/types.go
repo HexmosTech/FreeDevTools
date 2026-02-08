@@ -1,0 +1,173 @@
+package model
+
+import (
+	"time"
+
+	"github.com/jedib0t/go-pretty/v6/text"
+)
+
+// DBInfo represents static information about a database
+type DBInfo struct {
+	Name         string
+	ExistsLocal  bool
+	ExistsRemote bool
+	CreatedAt    time.Time
+	ModifiedAt   time.Time
+}
+
+// DBStatusInfo represents a database with its calculated status
+type DBStatusInfo struct {
+	DB         DBInfo
+	Status     string
+	StatusCode string // Stable identifier for logic (e.g. "remote_newer")
+	Color      text.Color
+}
+
+// RcloneProgress represents the structure of rclone's JSON stats output
+type RcloneProgress struct {
+	Level string `json:"level"`
+	Msg   string `json:"msg"`
+	Stats struct {
+		Bytes          int64   `json:"bytes"`
+		Checks         int     `json:"checks"`
+		DeletedDirs    int     `json:"deletedDirs"`
+		Deletes        int     `json:"deletes"`
+		ElapsedTime    float64 `json:"elapsedTime"`
+		Errors         int     `json:"errors"`
+		Eta            int     `json:"eta"` // seconds
+		FatalError     bool    `json:"fatalError"`
+		Renames        int     `json:"renames"`
+		RetryError     bool    `json:"retryError"`
+		Speed          float64 `json:"speed"` // bytes/sec
+		TotalBytes     int64   `json:"totalBytes"`
+		TotalChecks    int     `json:"totalChecks"`
+		TotalTransfers int     `json:"totalTransfers"`
+		TransferTime   float64 `json:"transferTime"`
+		Transfers      int     `json:"transfers"`
+	} `json:"stats"`
+}
+
+// LockEntry represents a lock file on B2
+type LockEntry struct {
+	DBName    string
+	Owner     string
+	Hostname  string
+	Type      string // "reserve" or "lock"
+	ExpiresAt time.Time
+}
+
+// Metadata represents the synchronization state of a database
+type Metadata struct {
+	FileID            string      `json:"file_id"`
+	Hash              string      `json:"hash"`
+	Timestamp         int64       `json:"timestamp"`
+	SizeBytes         int64       `json:"size_bytes"`
+	Uploader          string      `json:"uploader"`
+	Hostname          string      `json:"hostname"`
+	Platform          string      `json:"platform"`
+	ToolVersion       string      `json:"tool_version"`
+	UploadDurationSec float64     `json:"upload_duration_sec"`
+	Datetime          string      `json:"datetime"`
+	Status            string      `json:"status"` // "success", "uploading", "cancelled"
+	Events            []MetaEvent `json:"events"`
+}
+
+// MetaEvent tracks operation history
+type MetaEvent struct {
+	SequenceID        int     `json:"sequence_id"`
+	Datetime          string  `json:"datetime"`
+	Timestamp         int64   `json:"timestamp"`
+	Hash              string  `json:"hash"`
+	SizeBytes         int64   `json:"size_bytes"`
+	Uploader          string  `json:"uploader"`
+	Hostname          string  `json:"hostname"`
+	Platform          string  `json:"platform"`
+	ToolVersion       string  `json:"tool_version"`
+	UploadDurationSec float64 `json:"upload_duration_sec"`
+	Status            string  `json:"status"` // "success" or "cancelled"
+}
+
+// DBStatusDefinition defines the properties of a status
+type DBStatusDefinition struct {
+	Code  string // Stable code for logic
+	Text  string
+	Color text.Color
+}
+
+// Status Codes
+const (
+	StatusCodeLockedByOther     = "locked_by_other"
+	StatusCodeLockedByYou       = "locked_by_you"
+	StatusCodeUploading         = "uploading"
+	StatusCodeNewLocal          = "new_local"
+	StatusCodeUploadCancelled   = "upload_cancelled" // reused?
+	StatusCodeRecievedStaleMeta = "stale_meta"       // reused?
+	StatusCodeRemoteOnly        = "remote_only"
+	StatusCodeNoMetadata        = "no_metadata" // reused?
+	StatusCodeErrorReadLocal    = "error_read_local"
+	StatusCodeUpToDate          = "up_to_date"
+	StatusCodeErrorStatLocal    = "error_stat_local"
+	StatusCodeLocalNewer        = "local_newer"
+	StatusCodeRemoteNewer       = "remote_newer"
+	StatusCodeUnknown           = "unknown"
+)
+
+// Global DBStatuses
+var (
+	// Lock-based Statuses
+	DBStatusLockedByOther = DBStatusDefinition{StatusCodeLockedByOther, "%s is Uploading ⬆️", text.FgYellow} // Locked by another user (Dynamic: Owner@Host)
+	DBStatusLockedByYou   = DBStatusDefinition{StatusCodeLockedByYou, "Ready to Upload ⬆️", text.FgGreen}    // Locked by current user on this machine (Idle)
+	DBStatusUploading     = DBStatusDefinition{StatusCodeUploading, "You are Uploading ⬆️", text.FgGreen}    // Locked by current user (uploading)
+
+	// Local-only Logic
+	DBStatusNewLocal        = DBStatusDefinition{StatusCodeNewLocal, "Ready To Upload ⬆️", text.FgCyan} // Exists locally only. Needs upload.
+	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan} 
+
+	// Remote Logic
+	DBStatusRecievedStaleMeta = DBStatusDefinition{StatusCodeRecievedStaleMeta, "Ready To Upload ⬆️", text.FgCyan} // There is no metadata present in new remote db.
+	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow} // Exists remotely only. Needs download.
+
+	// Consistency Checks
+	DBStatusNoMetadata     = DBStatusDefinition{StatusCodeNoMetadata, "Ready To Upload ⬆️", text.FgCyan}
+	DBStatusUpToDate       = DBStatusDefinition{StatusCodeUpToDate, "Up to Date ✅", text.FgGreen}       // Hashes match
+	DBStatusErrorReadLocal = DBStatusDefinition{StatusCodeErrorReadLocal, "Error (Read ❌)", text.FgRed} // IO Error
+	DBStatusErrorStatLocal = DBStatusDefinition{StatusCodeErrorStatLocal, "Error (Read ❌)", text.FgRed} // IO Error
+
+	// Mismatches
+	DBStatusLocalNewer  = DBStatusDefinition{StatusCodeLocalNewer, "Ready To Upload ⬆️", text.FgCyan}            // Local changed (Anchor matches remote).
+	DBStatusRemoteNewer = DBStatusDefinition{StatusCodeRemoteNewer, "DB Outdated Download Now 🔽", text.FgYellow} // Remote changed (Anchor Mismatch or Missing).
+	DBStatusUnknown     = DBStatusDefinition{StatusCodeUnknown, "Error (Read ❌)", text.FgRed}
+
+	// Grouping for reference if needed, or just export individual vars
+	DBStatuses = struct {
+		LockedByOther     DBStatusDefinition
+		LockedByYou       DBStatusDefinition
+		Uploading         DBStatusDefinition
+		NewLocal          DBStatusDefinition
+		UploadCancelled   DBStatusDefinition
+		RecievedStaleMeta DBStatusDefinition
+		RemoteOnly        DBStatusDefinition
+		NoMetadata        DBStatusDefinition
+		ErrorReadLocal    DBStatusDefinition
+		UpToDate          DBStatusDefinition
+		ErrorStatLocal    DBStatusDefinition
+		LocalNewer        DBStatusDefinition
+		RemoteNewer       DBStatusDefinition
+		Unknown           DBStatusDefinition
+	}{
+		LockedByOther:     DBStatusLockedByOther,
+		LockedByYou:       DBStatusLockedByYou,
+		Uploading:         DBStatusUploading,
+		NewLocal:          DBStatusNewLocal,
+		UploadCancelled:   DBStatusUploadCancelled,
+		RecievedStaleMeta: DBStatusRecievedStaleMeta,
+		RemoteOnly:        DBStatusRemoteOnly,
+		NoMetadata:        DBStatusNoMetadata,
+		ErrorReadLocal:    DBStatusErrorReadLocal,
+		UpToDate:          DBStatusUpToDate,
+		ErrorStatLocal:    DBStatusErrorStatLocal,
+		LocalNewer:        DBStatusLocalNewer,
+		RemoteNewer:       DBStatusRemoteNewer,
+		Unknown:           DBStatusUnknown,
+	}
+)
