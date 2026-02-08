@@ -14,7 +14,6 @@ import (
 type Config struct {
 	// Paths
 	RootBucket      string
-	DBBucket        string
 	LockDir         string
 	VersionDir      string
 	LocalVersionDir string
@@ -45,20 +44,19 @@ const (
 )
 
 // InitializeConfig sets up global configuration variables
-// InitializeConfig sets up global configuration variables
 func InitializeConfig() error {
 	var err error
 
 	AppConfig.ProjectRoot, err = findProjectRoot()
 	if err != nil {
-		// fmt.Printf("⚠️  Could not determine project root: %v. Using CWD.\n", err)
+		fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
 		AppConfig.ProjectRoot, _ = os.Getwd()
 	}
 
 	// Load config from b2m.toml
 	tomlPath := filepath.Join(AppConfig.ProjectRoot, "b2m.toml")
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("couldn't find b2m.toml file at %s", tomlPath)
+		return fmt.Errorf("couldn't find b2m.toml file at %s: %w", tomlPath, err)
 	}
 
 	var tomlConf struct {
@@ -66,7 +64,7 @@ func InitializeConfig() error {
 		RootBucket string `toml:"rootbucket"`
 	}
 	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
-		return fmt.Errorf("failed to decode b2m.toml: %v", err)
+		return fmt.Errorf("failed to decode b2m.toml: %w", err)
 	}
 
 	AppConfig.RootBucket = tomlConf.RootBucket
@@ -80,11 +78,13 @@ func InitializeConfig() error {
 	}
 
 	// Derived paths
-	// Ensure no double slashes if RootBucket ends with /
-	root := strings.TrimSuffix(AppConfig.RootBucket, "/")
-	AppConfig.DBBucket = root + "/"
-	AppConfig.LockDir = root + "/lock/"
-	AppConfig.VersionDir = root + "/version/"
+	// Ensure RootBucket ends with /
+	if !strings.HasSuffix(AppConfig.RootBucket, "/") {
+		AppConfig.RootBucket += "/"
+	}
+
+	AppConfig.LockDir = AppConfig.RootBucket + "lock/"
+	AppConfig.VersionDir = AppConfig.RootBucket + "version/"
 
 	var u *user.User
 	u, err = user.Current()
@@ -102,9 +102,9 @@ func InitializeConfig() error {
 		AppConfig.Hostname = h
 	}
 
-	AppConfig.LocalDBDir = filepath.Join(AppConfig.ProjectRoot, "db/all_dbs/")
-	AppConfig.LocalVersionDir = filepath.Join(AppConfig.ProjectRoot, "db/all_dbs/version/")
-	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.ProjectRoot, "db/all_dbs/local-version/")
+	AppConfig.LocalDBDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs")
+	AppConfig.LocalVersionDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs", "version")
+	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs", "local-version")
 
 	// Initialize logging if needed, or other startup tasks
 	return nil
@@ -116,7 +116,7 @@ func findProjectRoot() (string, error) {
 		return "", err
 	}
 	for {
-		if _, err := os.Stat(filepath.Join(dir, "db")); err == nil {
+		if info, err := os.Stat(filepath.Join(dir, "db")); err == nil && info.IsDir() {
 			return dir, nil
 		}
 		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
@@ -124,7 +124,7 @@ func findProjectRoot() (string, error) {
 		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", fmt.Errorf("root not found")
+			return "", fmt.Errorf("root not found (searched for 'db' dir or 'go.mod')")
 		}
 		dir = parent
 	}

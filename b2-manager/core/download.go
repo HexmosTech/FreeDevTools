@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"path/filepath"
 	"strings"
 
@@ -45,7 +46,7 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 		return fmt.Errorf("failed to create local directory: %w", err)
 	}
 
-	remotePath := config.AppConfig.DBBucket + dbName
+	remotePath := path.Join(config.AppConfig.RootBucket, dbName)
 	// Use directory as destination for 'copy'
 	localDir := config.AppConfig.LocalDBDir
 
@@ -61,7 +62,8 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 
 	if onProgress != nil {
 		// Removed --verbose to avoid polluting JSON output
-		rcloneArgs = append(rcloneArgs, "--use-json-log", "--stats", "0.5s")
+		// User reported stats missing without verbose. restoring -v.
+		rcloneArgs = append(rcloneArgs, "-v", "--use-json-log", "--stats", "0.5s")
 	} else {
 		rcloneArgs = append(rcloneArgs, "--progress")
 	}
@@ -79,27 +81,27 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 			return fmt.Errorf("failed to get stderr pipe: %w", err)
 		}
 		if err := cmdSync.Start(); err != nil {
-			LogError("Sync start failed: %v", err)
-			return fmt.Errorf("sync start failed: %w", err)
+			LogError("Download start failed: %v", err)
+			return fmt.Errorf("download start failed: %w", err)
 		}
 		go ParseRcloneOutput(stderr, onProgress)
 
 		if err := cmdSync.Wait(); err != nil {
 			if ctx.Err() != nil {
-				return fmt.Errorf("sync cancelled")
+				return fmt.Errorf("download cancelled")
 			}
-			LogError("Sync failed: %v", err)
-			return fmt.Errorf("sync failed: %w", err)
+			LogError("Download of %s failed: %v", dbName, err)
+			return fmt.Errorf("download of %s failed: %w", dbName, err)
 		}
 	} else {
 		cmdSync.Stdout = os.Stdout
 		cmdSync.Stderr = os.Stderr
 		if err := cmdSync.Run(); err != nil {
 			if ctx.Err() != nil {
-				return fmt.Errorf("sync cancelled")
+				return fmt.Errorf("download cancelled")
 			}
 			LogError("DownloadDatabase rclone copy failed for %s: %v", dbName, err)
-			return fmt.Errorf("sync failed: %w", err)
+			return fmt.Errorf("download of %s failed: %w", dbName, err)
 		}
 	}
 
@@ -115,7 +117,6 @@ func DownloadDatabase(ctx context.Context, dbName string, onProgress func(model.
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
 	mirrorMetadataPath := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename)
-	// anchorPath := filepath.Join(config.AppConfig.LocalAnchorDir, metadataFilename) // Handled by UpdateLocalVersion
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
 	localDBPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
@@ -193,7 +194,7 @@ func DownloadAllDatabases(onProgress func(model.RcloneProgress)) error {
 	}
 
 	rcloneArgs := []string{"copy",
-		config.AppConfig.DBBucket,
+		config.AppConfig.RootBucket,
 		config.AppConfig.LocalDBDir,
 		"--checksum",
 		"--retries", "20",
@@ -216,18 +217,18 @@ func DownloadAllDatabases(onProgress func(model.RcloneProgress)) error {
 			return fmt.Errorf("failed to get stderr pipe: %w", err)
 		}
 		if err := cmdSync.Start(); err != nil {
-			LogError("Download start failed: %v", err)
-			return fmt.Errorf("download start failed: %w", err)
+			LogError("Batch download start failed: %v", err)
+			return fmt.Errorf("batch download start failed: %w", err)
 		}
 		go ParseRcloneOutput(stderr, onProgress)
 
 		if err := cmdSync.Wait(); err != nil {
 			if ctx.Err() != nil {
 				LogInfo("DownloadAllDatabases cancelled")
-				return fmt.Errorf("download cancelled")
+				return fmt.Errorf("batch download cancelled")
 			}
-			LogError("Download failed: %v", err)
-			return fmt.Errorf("download failed: %w", err)
+			LogError("Batch download failed: %v", err)
+			return fmt.Errorf("batch download failed: %w", err)
 		}
 	} else {
 		cmdSync.Stdout = os.Stdout
@@ -235,10 +236,10 @@ func DownloadAllDatabases(onProgress func(model.RcloneProgress)) error {
 		if err := cmdSync.Run(); err != nil {
 			if ctx.Err() != nil {
 				LogInfo("DownloadAllDatabases cancelled")
-				return fmt.Errorf("download cancelled")
+				return fmt.Errorf("batch download cancelled")
 			}
 			LogError("DownloadAllDatabases batch rclone copy failed: %v", err)
-			return fmt.Errorf("download failed: %w", err)
+			return fmt.Errorf("batch download failed: %w", err)
 		}
 	}
 

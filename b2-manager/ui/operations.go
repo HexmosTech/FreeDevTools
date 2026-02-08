@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"io"
-
 	"github.com/jroimartin/gocui"
-	"github.com/schollz/progressbar/v3"
 
 	"b2m/core"
 	"b2m/model"
@@ -31,36 +28,40 @@ func (lc *ListController) onUpload(g *gocui.Gui, v *gocui.View) error {
 	}
 
 	return lc.app.startOperation("Upload", func(ctx context.Context, dbName string) error {
-		var bar *progressbar.ProgressBar
+		// var bar *progressbar.ProgressBar
 
 		// Define upload logic as a closure so we can retry it
 		doUpload := func(force bool) error {
 			return core.PerformUpload(ctx, dbName, force, func(p model.RcloneProgress) {
-				if p.Stats.TotalBytes > 0 {
-					if bar == nil {
-						// We only use progressbar for speed/ETA calculation mechanics logic internal state
-						bar = progressbar.NewOptions64(p.Stats.TotalBytes,
-							progressbar.OptionSetWriter(io.Discard),
-							progressbar.OptionShowBytes(true),
-						)
-					}
-					bar.Set64(p.Stats.Bytes)
+				// Remove unused progressbar library usage
+				var percent int
+				var speedMB float64
+				var eta string
+				var msg = "Uploading..."
 
+				if p.Stats.TotalBytes > 0 {
 					rawPercent := float64(p.Stats.Bytes) / float64(p.Stats.TotalBytes)
 					// Scale 10-90% range for upload
-					percent := 10 + int(rawPercent*80)
-					speedMB := p.Stats.Speed / 1024 / 1024
-
-					// Calculate ETA
-					eta := ""
-					if p.Stats.Speed > 0 {
-						remaining := p.Stats.TotalBytes - p.Stats.Bytes
-						seconds := remaining / int64(p.Stats.Speed)
-						eta = (time.Duration(seconds) * time.Second).String()
-					}
-
-					lc.app.updateDBStatus(dbName, "Uploading...", percent, speedMB, "upload", eta)
+					percent = 10 + int(rawPercent*80)
+				} else {
+					// Indeterminate
+					percent = 0
+					// Show transferred amount in message since bar is empty
+					transferredMB := float64(p.Stats.Bytes) / 1024 / 1024
+					msg = fmt.Sprintf("Uploading (%.1f MB)...", transferredMB)
 				}
+
+				speedMB = p.Stats.Speed / 1024 / 1024
+
+				// Calculate ETA
+				if p.Stats.Speed > 0 && p.Stats.TotalBytes > 0 {
+					remaining := p.Stats.TotalBytes - p.Stats.Bytes
+					seconds := remaining / int64(p.Stats.Speed)
+					eta = (time.Duration(seconds) * time.Second).String()
+				}
+
+				lc.app.updateDBStatus(dbName, msg, percent, speedMB, "upload", eta)
+
 			}, func(msg string) {
 				percent := -1
 				switch msg {
@@ -135,31 +136,33 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 
 			lc.app.updateDBStatus(dbName, "Starting Download...", 5, 0, "download", "")
 
-			var bar *progressbar.ProgressBar
+			// var bar *progressbar.ProgressBar
 
 			err := core.DownloadDatabase(ctx, dbName, func(p model.RcloneProgress) {
+				// Remove unused progressbar library usage
+				var percent int
+				var speedMB float64
+				var eta string
+				var msg = "Downloading..."
+
 				if p.Stats.TotalBytes > 0 {
-					if bar == nil {
-						bar = progressbar.NewOptions64(p.Stats.TotalBytes,
-							progressbar.OptionSetWriter(io.Discard),
-							progressbar.OptionShowBytes(true),
-						)
-					}
-					bar.Set64(p.Stats.Bytes)
-
 					rawPercent := float64(p.Stats.Bytes) / float64(p.Stats.TotalBytes)
-					percent := 5 + int(rawPercent*90)
-					speedMB := p.Stats.Speed / 1024 / 1024
-
-					eta := ""
-					if p.Stats.Speed > 0 {
-						remaining := p.Stats.TotalBytes - p.Stats.Bytes
-						seconds := remaining / int64(p.Stats.Speed)
-						eta = (time.Duration(seconds) * time.Second).String()
-					}
-
-					lc.app.updateDBStatus(dbName, "Downloading...", percent, speedMB, "download", eta)
+					percent = 5 + int(rawPercent*90)
+				} else {
+					percent = 0
+					transferredMB := float64(p.Stats.Bytes) / 1024 / 1024
+					msg = fmt.Sprintf("Downloading (%.1f MB)...", transferredMB)
 				}
+
+				speedMB = p.Stats.Speed / 1024 / 1024
+
+				if p.Stats.Speed > 0 && p.Stats.TotalBytes > 0 {
+					remaining := p.Stats.TotalBytes - p.Stats.Bytes
+					seconds := remaining / int64(p.Stats.Speed)
+					eta = (time.Duration(seconds) * time.Second).String()
+				}
+
+				lc.app.updateDBStatus(dbName, msg, percent, speedMB, "download", eta)
 			})
 
 			if err == nil {

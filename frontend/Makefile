@@ -160,6 +160,10 @@ build-b2m: ## Build b2m CLI
 	cd ../b2-manager && $(GO_CMD) build -o ../b2m .
 	cp ../b2m ./b2m
 	
+b2m-test: ## Run b2-manager test script
+	@echo "Running b2-manager test script..."
+	@../b2-manager/testing/test.sh
+
 run: generate build-css build-js ## Run the development server
 	@echo "Starting server on port $(PORT)..."
 	@$(LOAD_ENV) PORT=$(PORT) $(GO_CMD) run ./cmd/server

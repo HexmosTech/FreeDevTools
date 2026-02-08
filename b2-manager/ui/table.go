@@ -105,10 +105,14 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 
 			stepText = uiStat.Message
 
+			statsStr := ""
 			// Render Progress Bar
-			if uiStat.Percent > 0 {
+			// Always render if OpType is set (active operation), or if Percent > 0
+			if uiStat.Percent > 0 || uiStat.OpType == "upload" || uiStat.OpType == "download" {
 				// Calculate available space for bar
-				statsStr := fmt.Sprintf(" %d%%", uiStat.Percent)
+				if uiStat.Percent > 0 {
+					statsStr = fmt.Sprintf(" %d%%", uiStat.Percent)
+				}
 				if uiStat.Speed > 0 {
 					statsStr += fmt.Sprintf(" (%.1f MB/s)", uiStat.Speed)
 				}

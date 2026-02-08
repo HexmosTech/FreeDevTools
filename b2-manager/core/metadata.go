@@ -92,6 +92,11 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 	// Safety Check: Verify remote directory is accessible
 	checkCmd := exec.CommandContext(GetContext(), "rclone", "lsf", config.AppConfig.VersionDir, "--max-depth", "1")
 	if err := checkCmd.Run(); err != nil {
+		// Exit status 3 means directory not found (common for new buckets)
+		if exitError, ok := err.(*exec.ExitError); ok && exitError.ExitCode() == 3 {
+			LogInfo("DownloadAndLoadMetadata: Remote metadata directory not found (new bucket?). initializing empty.")
+			return make(map[string]*model.Metadata), nil
+		}
 		LogError("DownloadAndLoadMetadata: Remote metadata directory inaccessible: %v", err)
 		return nil, fmt.Errorf("remote metadata inaccessible (safety check failed): %w", err)
 	}

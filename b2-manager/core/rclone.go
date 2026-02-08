@@ -68,7 +68,7 @@ func checkDBDiscoveryAndSync() error {
 }
 
 func getRemoteDBs() ([]string, error) {
-	cmd := exec.CommandContext(GetContext(), "rclone", "lsf", config.AppConfig.DBBucket, "--files-only", "--include", "*.db")
+	cmd := exec.CommandContext(GetContext(), "rclone", "lsf", config.AppConfig.RootBucket, "--files-only", "--include", "*.db")
 	LogInfo("getRemoteDBs: Running command: %v", cmd.Args)
 	out, err := cmd.Output()
 	if err != nil {
@@ -87,46 +87,9 @@ func getRemoteDBs() ([]string, error) {
 	}
 	return names, nil
 }
-
-// checkSyncStatus ... (keeping internal)
-func checkSyncStatus() (map[string]string, error) {
-	cmd := exec.CommandContext(GetContext(), "rclone", "check", "--combined", "-", "--one-way", config.AppConfig.DBBucket, config.AppConfig.LocalDBDir)
-	LogInfo("checkSyncStatus: Running command: %v", cmd.Args)
-	out, err := cmd.CombinedOutput()
-	if err != nil {
-		if exitError, ok := err.(*exec.ExitError); ok {
-			if exitError.ExitCode() != 1 {
-				LogError("rclone check failed in checkSyncStatus: %v. Output: %s", err, string(out))
-				return nil, fmt.Errorf("rclone check failed: %v", string(out))
-			}
-		} else {
-			LogError("rclone check error in checkSyncStatus: %v", err)
-			return nil, err
-		}
-	}
-
-	lines := strings.Split(string(out), "\n")
-	result := make(map[string]string)
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		parts := strings.SplitN(line, " ", 2)
-		if len(parts) != 2 {
-			continue
-		}
-		code := parts[0]
-		path := strings.TrimSpace(parts[1])
-
-		result[path] = code
-	}
-	return result, nil
-}
-
 func checkFileChanged(dbName string) (bool, error) {
 	localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
-	remotePath := config.AppConfig.DBBucket + dbName
+	remotePath := config.AppConfig.RootBucket + dbName
 
 	cmd := exec.CommandContext(GetContext(), "rclone", "check", localPath, remotePath, "--one-way")
 	LogInfo("checkFileChanged [%s]: Running command: %v", dbName, cmd.Args)
@@ -175,7 +138,7 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 
 	rcloneArgs := []string{"copy",
 		localPath,
-		config.AppConfig.DBBucket,
+		config.AppConfig.RootBucket,
 		"--checksum",
 		"--retries", "20",
 		"--low-level-retries", "30",
@@ -183,7 +146,7 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 	}
 
 	if !quiet || onProgress != nil {
-		rcloneArgs = append(rcloneArgs, "--use-json-log", "--stats", "0.5s")
+		rcloneArgs = append(rcloneArgs, "-v", "--use-json-log", "--stats", "0.5s")
 	}
 
 	cmd := exec.CommandContext(ctx, "rclone", rcloneArgs...)

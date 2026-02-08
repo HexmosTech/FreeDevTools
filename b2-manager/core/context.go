@@ -43,46 +43,44 @@ func ResetContext() {
 func CleanupOnCancel(dbName string, startTime time.Time) error {
 	uploadDuration := time.Since(startTime).Seconds()
 
-	// fmt.Printf("\n⚠️  Upload cancelled for %s\n", dbName)
 	LogInfo("⚠️  Upload cancelled for %s", dbName)
 
 	// Generate metadata with "cancelled" status
-	// fmt.Println("📝 Recording cancellation...")
 	LogInfo("📝 Recording cancellation...")
 	meta, err := GenerateLocalMetadata(dbName, uploadDuration, "cancelled")
 	if err != nil {
-		// fmt.Printf("⚠️  Failed to generate cancellation metadata: %v\n", err)
 		LogError("⚠️  Failed to generate cancellation metadata: %v", err)
 	} else {
 		// Append event
 		meta, err = AppendEventToMetadata(dbName, meta)
 		if err != nil {
-			// fmt.Printf("⚠️  Failed to append cancellation event: %v\n", err)
 			LogError("⚠️  Failed to append cancellation event: %v", err)
 		} else {
 			// Upload metadata
 			// Use context.Background() because original context is likely cancelled
 			if err := UploadMetadata(context.Background(), dbName, meta); err != nil {
-				// fmt.Printf("⚠️  Failed to upload cancellation metadata: %v\n", err)
 				LogError("⚠️  Failed to upload cancellation metadata: %v", err)
 			} else {
-				// fmt.Println("✅ Cancellation recorded in metadata")
 				LogInfo("✅ Cancellation recorded in metadata")
 			}
 		}
 	}
 
-	// Release lock
-	// fmt.Printf("🔓 Releasing lock on %s...\n", dbName)
-	LogInfo("🔓 Releasing lock on %s...", dbName)
+	// Release lock with retries
+	LogInfo("🔓 Releasing lock on %s... (Attempting cleanup)", dbName)
 	// Cleanup runs on a NEW context or a background context usually, since the original might be cancelled.
-	if err := UnlockDatabase(context.Background(), dbName, config.AppConfig.CurrentUser, true); err != nil {
-		// fmt.Printf("⚠️  Failed to release lock: %v\n", err)
-		LogError("⚠️  Failed to release lock: %v", err)
-		return err
+	var lastErr error
+	for i := 0; i < 3; i++ {
+		if err := UnlockDatabase(context.Background(), dbName, config.AppConfig.CurrentUser, true); err == nil {
+			LogInfo("✅ Lock released successfully on attempt %d", i+1)
+			return nil
+		} else {
+			lastErr = err
+			LogInfo("⚠️  Unlock attempt %d failed: %v. Retrying...", i+1, err)
+			time.Sleep(1 * time.Second)
+		}
 	}
-	// fmt.Println("✅ Lock released")
-	LogInfo("✅ Lock released")
 
-	return nil
+	LogError("❌ CRITICAL: Failed to release lock for %s after 3 attempts. Manual unlock required! Error: %v", dbName, lastErr)
+	return lastErr
 }

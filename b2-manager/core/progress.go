@@ -25,9 +25,9 @@ func ParseRcloneOutput(r io.Reader, onUpdate func(p model.RcloneProgress)) error
 		}
 
 		// Update callback
-		if p.Stats.TotalBytes > 0 {
-			onUpdate(p)
-		}
+		// if p.Stats.TotalBytes > 0 { // Allow 0 for indeterminate progress
+		onUpdate(p)
+		// }
 	}
 	if err := scanner.Err(); err != nil {
 		return err
