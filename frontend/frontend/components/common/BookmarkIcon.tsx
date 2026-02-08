@@ -1,10 +1,43 @@
-import React, { useEffect, useState } from 'react';
 import { checkBookmark, toggleBookmark } from '@/lib/api';
+import React, { useEffect, useState } from 'react';
 
 const BookmarkIcon: React.FC = () => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [hasChecked, setHasChecked] = useState<boolean>(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const [isSidebar, setIsSidebar] = useState<boolean>(false);
+
+  // Track dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(document.documentElement.classList.contains('dark'));
+    };
+
+    checkDarkMode();
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Check if component is in sidebar
+  useEffect(() => {
+    const checkLocation = () => {
+      const sidebarContainer = document.getElementById('sidebar-bookmark-container');
+      if (sidebarContainer) {
+        setIsSidebar(sidebarContainer.closest('#sidebar') !== null);
+      }
+    };
+
+    checkLocation();
+    // Recheck after a short delay to ensure DOM is ready
+    const timeout = setTimeout(checkLocation, 100);
+    return () => clearTimeout(timeout);
+  }, []);
 
   // Defer API call until component is actually visible or user interacts
   useEffect(() => {
@@ -24,7 +57,7 @@ const BookmarkIcon: React.FC = () => {
       { threshold: 0.1 }
     );
 
-    const container = document.getElementById('header-bookmark-container');
+    const container = document.getElementById('header-bookmark-container') || document.getElementById('sidebar-bookmark-container');
     if (container) {
       observer.observe(container);
     }
@@ -50,13 +83,13 @@ const BookmarkIcon: React.FC = () => {
   const handleToggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     const currentURL = window.location.href;
-    
+
     try {
       setIsLoading(true);
       const result = await toggleBookmark(currentURL);
-      
+
       // Check if redirect is needed (non-pro user or not signed in)
       if (result.requiresPro && result.redirect) {
         // Store source URL in sessionStorage before redirecting (cleaner than URL params)
@@ -66,7 +99,7 @@ const BookmarkIcon: React.FC = () => {
         window.location.href = result.redirect;
         return;
       }
-      
+
       if (result.success) {
         setIsBookmarked(result.bookmarked);
       }
@@ -96,6 +129,41 @@ const BookmarkIcon: React.FC = () => {
     </svg>
   );
 
+
+  if (isSidebar) {
+    // Render full-width clickable row for sidebar
+    return (
+      <button
+        onClick={handleToggle}
+        disabled={isLoading}
+        type="button"
+        className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          cursor: isLoading ? 'not-allowed' : 'pointer',
+          pointerEvents: isLoading ? 'none' : 'auto'
+        }}
+        aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+        title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+      >
+        <div
+          className="w-5 h-5 flex items-center justify-center flex-shrink-0"
+          style={{
+            pointerEvents: 'none',
+            color: isBookmarked
+              ? (isDarkMode ? '#d4cb24' : '#b6b000')
+              : undefined
+          }}
+        >
+          <BookmarkSVG filled={isBookmarked} />
+        </div>
+        <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
+          Bookmark this page
+        </span>
+      </button>
+    );
+  }
+
+  // Render icon-only button for header
   return (
     <div className="flex-shrink-0 mobile-search-hide" style={{ position: 'relative', zIndex: 100 }}>
       <button
@@ -103,7 +171,7 @@ const BookmarkIcon: React.FC = () => {
         disabled={isLoading}
         type="button"
         className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed w-9 h-9 p-0"
-        style={{ 
+        style={{
           position: 'relative',
           zIndex: 100,
           cursor: isLoading ? 'not-allowed' : 'pointer',
@@ -112,9 +180,14 @@ const BookmarkIcon: React.FC = () => {
         aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
         title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
       >
-        <div 
-          className={`w-5 h-5 flex items-center justify-center ${isBookmarked ? 'text-yellow-500 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-400'}`}
-          style={{ pointerEvents: 'none' }}
+        <div
+          className="w-5 h-5 flex items-center justify-center"
+          style={{
+            pointerEvents: 'none',
+            color: isBookmarked
+              ? (isDarkMode ? '#d4cb24' : '#b6b000')
+              : undefined
+          }}
         >
           <BookmarkSVG filled={isBookmarked} />
         </div>

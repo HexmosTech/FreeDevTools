@@ -1,7 +1,9 @@
 package common
 
 templ Sidebar() {
-	<aside id="sidebar" class="w-56 bg-slate-100 dark:bg-slate-900   flex flex-col flex-shrink-0">
+	<!-- Sidebar Backdrop (for mobile overlay) -->
+	<div id="sidebar-backdrop" class="sidebar-backdrop" style="display: none;"></div>
+	<aside id="sidebar" class="w-56 bg-slate-100 dark:bg-slate-900 flex flex-col flex-shrink-0">
 		<!-- Logo Section -->
 		<div class="p-4">
 			<a 
@@ -156,6 +158,11 @@ templ Sidebar() {
 			</div>
 		</nav>
 
+		<!-- Bookmark This Page Section -->
+		<div class="px-4 py-2">
+			<div id="sidebar-bookmark-container" class="flex items-center justify-center"></div>
+		</div>
+
 		<!-- Theme Switcher Section -->
 		<div class="px-4 py-2">
 			@SidebarThemeSwitcher()
@@ -227,23 +234,58 @@ templ Sidebar() {
 			margin: 0 !important;
 		}
 
-		/* Responsive: hide sidebar on mobile, show on desktop */
+		/* Sidebar Backdrop */
+		.sidebar-backdrop {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			background-color: rgba(0, 0, 0, 0.5);
+			backdrop-filter: blur(4px);
+			z-index: 40;
+			transition: opacity 0.3s ease;
+		}
+
+		/* Responsive: hide sidebar on mobile by default, show as overlay when toggled */
 		@media (max-width: 1023px) {
 			#sidebar {
 				display: none;
+				position: fixed;
+				top: 0;
+				left: 0;
+				height: 100vh;
+				z-index: 50;
+				transform: translateX(-100%);
+				transition: transform 0.3s ease;
 			}
+			
+			/* Show sidebar when sidebar-open class is present */
+			#sidebar.sidebar-open {
+				display: flex;
+				transform: translateX(0);
+			}
+			
 			#main-content {
 				box-shadow: none;
 			}
 		}
+		
+		/* Desktop: always show sidebar */
 		@media (min-width: 1024px) {
+			.sidebar-backdrop {
+				display: none !important;
+			}
+			
 			#sidebar {
 				display: flex;
 				height: 100vh;
 				position: sticky;
 				top: 0;
 				align-self: flex-start;
+				transform: none !important;
 			}
+			
 			/* Add shadow to main content on desktop for separation */
 			#main-content {
 				box-shadow: -8px 0 12px -4px rgba(0, 0, 0, 0.15);
@@ -315,6 +357,75 @@ templ Sidebar() {
 				setActiveNavLink();
 			}
 		})();
+
+		// Defer SidebarBookmark component loading until after main content
+		const deferSidebarBookmarkLoad = () => {
+			const bookmarkContainer = document.getElementById('sidebar-bookmark-container');
+			if (!bookmarkContainer) return;
+
+			// Don't initialize bookmark icon on pro pages
+			const currentPath = window.location.pathname;
+			if (currentPath.includes('/pro/')) {
+				bookmarkContainer.style.display = 'none';
+				return;
+			}
+
+			// Load and render BookmarkIcon component
+			async function loadSidebarBookmark() {
+				const bookmarkContainer = document.getElementById('sidebar-bookmark-container');
+				if (!bookmarkContainer) return;
+				
+				try {
+					// Check if module is already loaded (from base_layout or previous import)
+					if (window.renderTool) {
+						window.renderTool('bookmarkIcon', 'sidebar-bookmark-container');
+						return;
+					}
+					
+					// Import the module (ES modules are cached, so duplicate imports are safe)
+					// The module may already be preloaded via modulepreload links in base_layout
+					await import('/freedevtools/static/js/index.js');
+					
+					// Render BookmarkIcon component (replaces empty placeholder)
+					if (window.renderTool) {
+						window.renderTool('bookmarkIcon', 'sidebar-bookmark-container');
+					} else {
+						// Fallback: wait for module to load
+						const checkInterval = setInterval(() => {
+							if (window.renderTool) {
+								window.renderTool('bookmarkIcon', 'sidebar-bookmark-container');
+								clearInterval(checkInterval);
+							}
+						}, 100);
+						
+						// Timeout after 5 seconds
+						setTimeout(() => clearInterval(checkInterval), 5000);
+					}
+				} catch (error) {
+					console.error('[Sidebar] Failed to load BookmarkIcon component:', error);
+				}
+			}
+
+			// Wait for page to be fully loaded, then use requestIdleCallback
+			const loadWhenReady = () => {
+				if ('requestIdleCallback' in window) {
+					requestIdleCallback(() => {
+						loadSidebarBookmark();
+					}, { timeout: 1000 });
+				} else {
+					// Fallback for browsers without requestIdleCallback
+					setTimeout(() => loadSidebarBookmark(), 1000);
+				}
+			};
+
+			// Check if page is already loaded
+			if (document.readyState === 'complete') {
+				loadWhenReady();
+			} else {
+				// Wait for load event
+				window.addEventListener('load', loadWhenReady, { once: true });
+			}
+		};
 
 		// Defer SidebarProfile component loading until after main content
 		const deferSidebarProfileLoad = () => {
@@ -516,10 +627,12 @@ templ Sidebar() {
 		// Run immediately if DOM is ready, otherwise wait for DOMContentLoaded
 		if (document.readyState === 'loading') {
 			document.addEventListener('DOMContentLoaded', function () {
+				deferSidebarBookmarkLoad();
 				deferSidebarProfileLoad();
 			});
 		} else {
 			// DOM already loaded, run immediately (but still defer component loading)
+			deferSidebarBookmarkLoad();
 			deferSidebarProfileLoad();
 		}
 	</script>
