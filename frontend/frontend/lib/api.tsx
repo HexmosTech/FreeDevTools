@@ -33,9 +33,11 @@ export function setActiveLicence(licence: ActiveLicence | null): void {
   window.dispatchEvent(new Event('active-licence-changed'));
 }
 
-// Get pro status from cookie
+// Get pro status from cookie or localStorage
 export function getProStatusFromCookie(): boolean {
   if (typeof window === 'undefined') return false;
+
+  // 1. Check Cookie
   const cookies = document.cookie.split('; ');
   for (const cookie of cookies) {
     const [name, value] = cookie.split('=');
@@ -43,6 +45,12 @@ export function getProStatusFromCookie(): boolean {
       return true;
     }
   }
+
+  // 2. Check LocalStorage (Fallback for VS Code / environments where cookies fail)
+  if (localStorage.getItem('hexmos-one-fdt-p-status') === 'true') {
+    return true;
+  }
+
   return false;
 }
 
@@ -51,14 +59,14 @@ export function getProStatusFromCookie(): boolean {
 export function hasActiveProLicence(): boolean {
   const licence = getActiveLicence();
   if (!licence) return false;
-  
+
   // Check activeStatus - must be true/active
-  const isActive = licence.activeStatus === true || 
-                   licence.activeStatus === 'true' || 
-                   licence.activeStatus === 'active';
-  
+  const isActive = licence.activeStatus === true ||
+    licence.activeStatus === 'true' ||
+    licence.activeStatus === 'active';
+
   if (!isActive) return false;
-  
+
   // Check expiration date if available - if expired, return false
   if (licence.expirationDate || licence.expireAt) {
     const expiryDate = licence.expirationDate || licence.expireAt;
@@ -72,31 +80,35 @@ export function hasActiveProLicence(): boolean {
       }
     }
   }
-  
+
   return true;
 }
 
-// Set or clear pro status cookie
+// Set or clear pro status cookie and localStorage
 function setProStatusCookie(isPro: boolean): void {
   if (typeof window === 'undefined') return;
-  
+
   const isSecure = window.location.protocol === 'https:';
   const isProduction = window.location.hostname.includes('hexmos.com');
   const domain = isProduction ? '.hexmos.com' : 'localhost';
   const sameSite = isProduction ? 'None' : 'Lax';
-  
+
   if (isPro) {
     // Set cookie
     const cookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
     document.cookie = `hexmos-one-fdt-p-status=true; ${cookieOptions}`;
+    // Set LocalStorage
+    localStorage.setItem('hexmos-one-fdt-p-status', 'true');
   } else {
     // Clear cookie
     document.cookie = `hexmos-one-fdt-p-status=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT${domain ? `; domain=${domain}` : ''}`;
     if (isProduction) {
       document.cookie = `hexmos-one-fdt-p-status=; path=/; domain=.hexmos.com; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
     }
+    // Clear LocalStorage
+    localStorage.removeItem('hexmos-one-fdt-p-status');
   }
-  
+
   // Dispatch event to notify banners to re-check pro status
   window.dispatchEvent(new CustomEvent('pro-status-changed', { detail: { isPro } }));
 }
@@ -109,7 +121,7 @@ async function callAPIParse(
 ): Promise<any> {
   const url = `${PARSE_API_BASE_URL}${endpoint}`;
   const jwt = getJWT();
-  
+
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
     ...(jwt && { Authorization: `Bearer ${jwt}` }),
@@ -260,7 +272,7 @@ export async function getAvailablePlans(currencyCode?: string): Promise<{ succes
     };
 
     console.log('[API] Request body:', body);
-    
+
     const response = await callAPIParse('/functions/getLicencePlans', body);
     console.log('[API] Available plans response:', response.data);
 
@@ -283,7 +295,7 @@ export async function getAvailablePlans(currencyCode?: string): Promise<{ succes
     if (Array.isArray(response.data)) {
       return {
         success: true,
-        data: response.data.filter((plan: any): plan is AvailablePlan => 
+        data: response.data.filter((plan: any): plan is AvailablePlan =>
           plan !== null && plan !== undefined && plan.name
         ),
       };
@@ -402,9 +414,9 @@ export async function getLicences(): Promise<{
         setActiveLicence(activeLicence);
 
         // Set or clear pro status cookie based on activeStatus
-        const isActive = activeLicence.activeStatus === true || 
-                        activeLicence.activeStatus === 'true' || 
-                        activeLicence.activeStatus === 'active';
+        const isActive = activeLicence.activeStatus === true ||
+          activeLicence.activeStatus === 'true' ||
+          activeLicence.activeStatus === 'active';
         setProStatusCookie(isActive);
 
         return {
@@ -416,15 +428,15 @@ export async function getLicences(): Promise<{
       // Check if it's renewal format (has lastPurchasedLicence)
       else if (result.data?.lastPurchasedLicence) {
         const purchasesData = result.data as PurchasesData;
-        
+
         // If lastPurchasedLicence has activeStatus, create an ActiveLicence and store it
         if (purchasesData.lastPurchasedLicence) {
           const lastLicence = purchasesData.lastPurchasedLicence;
           // Handle both string and boolean activeStatus
-          const activeStatusValue = typeof lastLicence.activeStatus === 'string' 
+          const activeStatusValue = typeof lastLicence.activeStatus === 'string'
             ? (lastLicence.activeStatus === 'true' || lastLicence.activeStatus === 'active')
             : lastLicence.activeStatus === true;
-          
+
           if (activeStatusValue) {
             const activeLicence: ActiveLicence = {
               expirationDate: lastLicence.expirationDate,
@@ -444,7 +456,7 @@ export async function getLicences(): Promise<{
         } else {
           setProStatusCookie(false);
         }
-        
+
         return {
           success: true,
           purchasesData,
@@ -502,7 +514,7 @@ export async function cancelSubscription(
 // Get user ID from hexmos-one-id cookie
 function getUserIdFromCookie(): string | null {
   if (typeof window === 'undefined') return null;
-  
+
   const cookies = document.cookie.split('; ');
   for (const cookie of cookies) {
     const [name, value] = cookie.split('=');
@@ -589,7 +601,7 @@ export async function toggleBookmark(url: string): Promise<{ success: boolean; b
     }
 
     const data = await response.json();
-    
+
     // Check if pro is required
     if (data.requiresPro && data.redirect) {
       // Store source URL in sessionStorage before redirecting
@@ -599,7 +611,7 @@ export async function toggleBookmark(url: string): Promise<{ success: boolean; b
       window.location.href = data.redirect;
       return { success: false, bookmarked: false, redirect: data.redirect, requiresPro: true };
     }
-    
+
     return {
       success: data.success || false,
       bookmarked: data.bookmarked || false,
@@ -650,7 +662,7 @@ export async function getAllBookmarks(): Promise<{ success: boolean; bookmarks: 
     }
 
     const data = await response.json();
-    
+
     // Check if pro is required (backend fallback check)
     if (data.requiresPro && data.redirect) {
       if (typeof window !== 'undefined') {
@@ -658,7 +670,7 @@ export async function getAllBookmarks(): Promise<{ success: boolean; bookmarks: 
       }
       return { success: false, bookmarks: [], redirect: data.redirect, requiresPro: true };
     }
-    
+
     return {
       success: data.success || false,
       bookmarks: data.bookmarks || [],

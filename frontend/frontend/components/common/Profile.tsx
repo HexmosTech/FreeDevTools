@@ -1,20 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { LogOut } from 'lucide-react';
-import { getLicences } from '@/lib/api';
+import { getLicences, getProStatusFromCookie } from '@/lib/api';
 import { useSignOutDialog } from '@/hooks/useSignOutDialog';
-
-// Get pro status from cookie
-function getProStatusFromCookie(): boolean {
-  if (typeof window === 'undefined') return false;
-  const cookies = document.cookie.split('; ');
-  for (const cookie of cookies) {
-    const [name, value] = cookie.split('=');
-    if (name.trim() === 'hexmos-one-fdt-p-status' && value === 'true') {
-      return true;
-    }
-  }
-  return false;
-}
 
 // Get JWT from localStorage
 function getJWT(): string | null {
@@ -25,7 +12,7 @@ function getJWT(): string | null {
 // Get JWT from cookie
 function getJWTFromCookie(): string | null {
   if (typeof window === 'undefined') return null;
-  
+
   const cookies = document.cookie.split('; ');
   for (const cookie of cookies) {
     const [name, value] = cookie.split('=');
@@ -41,7 +28,7 @@ function extractUserIdFromJWT(jwt: string): string | null {
   try {
     const parts = jwt.split('.');
     if (parts.length !== 3) return null;
-    
+
     const payload = JSON.parse(atob(parts[1].replace(/-/g, '+').replace(/_/g, '/')));
     return payload.uId || payload.parseUserId || payload.userId || payload.sub || null;
   } catch (e) {
@@ -82,7 +69,7 @@ function setUserInfo(info: UserInfo | null): void {
 // Format user display name
 function formatUserName(info: UserInfo | null): string {
   if (!info) return '';
-  
+
   if (info.firstName && info.lastName) {
     return `${info.firstName} ${info.lastName}`;
   } else if (info.firstName) {
@@ -90,7 +77,7 @@ function formatUserName(info: UserInfo | null): string {
   } else if (info.email) {
     return info.email;
   }
-  
+
   return '';
 }
 
@@ -98,26 +85,26 @@ function formatUserName(info: UserInfo | null): string {
 function setJWT(jwt: string): void {
   if (typeof window === 'undefined') return;
   localStorage.setItem('hexmos-one', jwt);
-  
+
   // Extract user ID and set hexmos-one-id cookie (avoids decoding JWT on every request)
   const userId = extractUserIdFromJWT(jwt);
-  
+
   // Set cookies for SSR compatibility and cross-domain access
   const isSecure = window.location.protocol === 'https:';
   const isProduction = window.location.hostname.includes('hexmos.com');
   const domain = isProduction ? '.hexmos.com' : 'localhost';
   const sameSite = isProduction ? 'None' : 'Lax';
-  
+
   // Set hexmos-one cookie (for auto-login compatibility across all hexmos.com subdomains)
   const hexmosCookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
   document.cookie = `hexmos-one=${jwt}; ${hexmosCookieOptions}`;
-  
+
   // Set hexmos-one-id cookie (for fast user ID lookup)
   if (userId) {
     const pIdCookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
     document.cookie = `hexmos-one-id=${userId}; ${pIdCookieOptions}`;
   }
-  
+
   window.dispatchEvent(new Event('jwt-changed')); // Dispatch custom event
 }
 
@@ -137,20 +124,20 @@ function handleSigninCallback(): string | null {
 
       if (jwt) {
         setJWT(jwt);
-        
+
         // Extract and store user info (name/email)
         if (userData) {
           const userInfo: UserInfo = {};
           if (userData.first_name) userInfo.firstName = userData.first_name;
           if (userData.last_name) userInfo.lastName = userData.last_name;
           if (userData.email) userInfo.email = userData.email;
-          
+
           // Only set if we have at least one field
           if (userInfo.firstName || userInfo.lastName || userInfo.email) {
             setUserInfo(userInfo);
           }
         }
-        
+
         const cleanUrl = window.location.pathname;
         window.history.replaceState({}, '', cleanUrl);
         return jwt;
@@ -168,7 +155,7 @@ function handleSigninCallback(): string | null {
 // Handle auto-login from cookies
 function handleAutoLogin(): void {
   if (typeof window === 'undefined') return;
-  
+
   // Check if already signed in via localStorage
   const existingJWT = getJWT();
   if (existingJWT) {
@@ -198,10 +185,38 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
   const { handleSignOut, SignOutDialog } = useSignOutDialog();
 
   useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.command === 'login-success' && event.data?.token) {
+        setJWT(event.data.token);
+        // If user data included in message, store it
+        if (event.data.user) {
+          const userData = event.data.user;
+          const userInfo: UserInfo = {};
+          if (userData.first_name) userInfo.firstName = userData.first_name;
+          if (userData.last_name) userInfo.lastName = userData.last_name;
+          if (userData.email) userInfo.email = userData.email;
+          // Fallback for username (from user's pasted data)
+          if (!userInfo.email && userData.username) userInfo.email = userData.username;
+
+          if (userInfo.firstName || userInfo.lastName || userInfo.email) {
+            setUserInfo(userInfo);
+            setUserName(formatUserName(userInfo));
+          }
+        }
+      }
+      if (event.data?.command === 'logout') {
+        handleSignOut();
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, []);
+
+  useEffect(() => {
     // Load user info on mount
     const userInfo = getUserInfo();
     setUserName(formatUserName(userInfo));
-    
+
     // Check for signin callback first
     const jwt = handleSigninCallback();
     if (jwt) {
@@ -209,7 +224,7 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
       // Update user name after signin callback
       const updatedUserInfo = getUserInfo();
       setUserName(formatUserName(updatedUserInfo));
-      
+
       // Fetch licence status after signin to set cookie and update pro status
       getLicences().then((result) => {
         if (result.success) {
@@ -236,7 +251,7 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
     // Check if already signed in
     const existingJWT = getJWT();
     setHasJWT(!!existingJWT);
-    
+
     // Load user info if already signed in
     if (existingJWT) {
       const userInfo = getUserInfo();
@@ -247,7 +262,7 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
       // Check cookie first - this is the source of truth, no API call needed
       const proStatusFromCookie = getProStatusFromCookie();
       setIsPro(proStatusFromCookie);
-      
+
       // Only fetch from API if cookie is missing (first time or cookie expired)
       // This handles the case where user was already signed in but cookie wasn't set
       if (!proStatusFromCookie) {
@@ -274,16 +289,16 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
     const handleJWTChange = async () => {
       const jwt = getJWT();
       setHasJWT(!!jwt);
-      
+
       // Update user name when JWT changes
       const userInfo = getUserInfo();
       setUserName(formatUserName(userInfo));
-      
+
       if (jwt) {
         // When JWT changes (e.g., after sign-in), check cookie first
         const proStatusFromCookie = getProStatusFromCookie();
         setIsPro(proStatusFromCookie);
-        
+
         // Only fetch from API if cookie is missing
         if (!proStatusFromCookie) {
           try {
@@ -395,7 +410,7 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
           <ProfileIcon />
         </div>
       </button>
-      
+
       {isDropdownOpen && (
         <div
           ref={dropdownRef}
@@ -483,9 +498,14 @@ const Profile: React.FC<ProfileProps> = ({ isPro: backendIsPro = false }) => {
                 <button
                   onClick={() => {
                     setIsDropdownOpen(false);
-                    const currentUrl = window.location.href;
-                    const signinUrl = `https://hexmos.com/signin?app=livereview&appRedirectURI=${encodeURIComponent(currentUrl)}`;
-                    window.location.href = signinUrl;
+                    // Check if running in VS Code
+                    if (window.location.search.includes('vscode=true') || window.location.hash.includes('vscode=true')) {
+                      window.parent.postMessage({ command: 'login' }, '*');
+                    } else {
+                      const currentUrl = window.location.href;
+                      const signinUrl = `https://hexmos.com/signin?app=freedevtools&appRedirectURI=${encodeURIComponent(currentUrl)}`;
+                      window.location.href = signinUrl;
+                    }
                   }}
                   className="flex w-full items-center justify-start gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                   role="menuitem"

@@ -23,7 +23,7 @@ export function getWebviewContent(url: string = CONFIG.APP_URL): string {
                 if (!message) return;
 
                 // Message from Iframe (App) -> Forward to Extension Host
-                if (message.command === 'download') {
+                if (message.command === 'download' || message.command === 'login') {
                     vscode.postMessage(message);
                     return;
                 }
