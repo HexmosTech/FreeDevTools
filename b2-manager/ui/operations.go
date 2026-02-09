@@ -253,10 +253,31 @@ func (lc *ListController) onLock(g *gocui.Gui, v *gocui.View) error {
 			lc.app.updateDBStatus(dbName, "Locked (Updating)...", 100, 0, "lock", "")
 			// Refresh to show new status
 			go func() {
-				// We sleep briefly to allow the remote change to propagate and be visible to the next list/status fetch.
-				// This is a heuristic; ideally we should poll or have immediate local state reflection.
-				time.Sleep(1 * time.Second)
-				lc.app.refreshStatus()
+				// Poll for lock propagation to avoid stale state
+				// We verify that the lock is visible remotely before triggering a full refresh
+				pollCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+
+				ticker := time.NewTicker(500 * time.Millisecond)
+				defer ticker.Stop()
+
+				for {
+					select {
+					case <-pollCtx.Done():
+						// Timeout, status update might be stale but we proceed
+						lc.app.refreshStatus()
+						return
+					case <-ticker.C:
+						locks, err := core.FetchLocks(pollCtx)
+						if err == nil {
+							if _, ok := locks[dbName]; ok {
+								// Lock is visible, safe to refresh
+								lc.app.refreshStatus()
+								return
+							}
+						}
+					}
+				}
 			}()
 
 			return nil

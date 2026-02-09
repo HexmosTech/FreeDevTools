@@ -48,12 +48,15 @@ if err := core.LoadHashCache(); err != nil {
 
 ### Saving
 
-The cache is saved deferred until the application exits:
+The cache is saved to disk (`hash.json`) in the following scenarios to avoid recalculating hashes unnecessarily:
+
+1.  **Application Shutdown**: Deferred save in `main.go`.
+2.  **Post-Operation**: Immediately after a successful **Upload** or **Download** operation (to capture state of the new file).
+3.  **Hash Calculation**: Whenever a new hash is calculated (cache miss).
 
 ```go
-defer func() {
-    if err := core.SaveHashCache(); err != nil {
-        core.LogError("Failed to save hash cache: %v", err)
-    }
-}()
+// Example from core/upload.go
+if err := SaveHashCache(); err != nil {
+    LogInfo("PerformUpload: Warning: Failed to save hash cache: %v", err)
+}
 ```

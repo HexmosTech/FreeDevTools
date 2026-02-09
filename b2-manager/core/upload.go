@@ -150,8 +150,6 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 	}
 	LogInfo("Upload complete for %s", dbName)
 
-	LogInfo("Upload complete for %s", dbName)
-
 	return nil
 }
 

@@ -44,18 +44,6 @@ func ValidateAction(dbInfo model.DBStatusInfo, action string) error {
 			// But wait, ValidateAction only takes dbInfo.
 			// core.CalculateDBStatus returns formatted string.
 			// "User 1 is Updating 🔄"
-			// This relies on string parsing which is brittle.
-			// BETTER: ValidateAction should maybe take the raw metadata or lock info?
-			// OR validation check in UI?
-			// The user request says: "Also should show small warning notification suggesting to downloader that db is updating"
-			// In `CalculateDBStatus`, we return `LockedByOther` and text "... is Updating ...".
-
-			// Let's rely on string check for now as we don't want to change ValidateAction signature too much yet
-			// unless we really need to.
-			// Actually, let's look at `ui/operations.go`: `core.ValidateAction(selectedDB, "download")`
-			// `selectedDB` is `model.DBStatusInfo`.
-
-			// If status contains "Updating", return warning.
 			// We now check dbInfo.RemoteMetaStatus which is populated from raw metadata
 			// If status is "updating" or "uploading", return warning.
 			if dbInfo.StatusCode == model.StatusCodeLockedByOther && (dbInfo.RemoteMetaStatus == "updating" || dbInfo.RemoteMetaStatus == "uploading") {

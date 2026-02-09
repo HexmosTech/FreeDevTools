@@ -8,7 +8,7 @@ The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gatherin
 
 ### A. List Local Databases
 
-- **Source**: `core/helpers.go` (`getLocalDBs`)
+- **Source**: `core/local.go` (`getLocalDBs`)
 - **Action**: Scans `config.LocalDBDir` for `*.db` files.
 
 ### B. Fetch Remote State (DBs + Locks)
@@ -23,7 +23,7 @@ The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gatherin
 
 ### E. Load Local-Version Anchors
 
-- **Source**: `core/status.go` / `core/helpers.go`
+- **Source**: `core/status.go` / `core/metadata.go`
 - **Action**: Scans `local-version/` directory for metadata files representing the state of the database _at the time of last sync_. This is crucial for 3-way comparison.
 
 ### Aggregation

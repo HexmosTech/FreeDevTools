@@ -121,6 +121,8 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 
 // FetchSingleRemoteMetadata downloads and parses the metadata for a specific DB from the remote version dir
 func FetchSingleRemoteMetadata(ctx context.Context, dbName string) (*model.Metadata, error) {
+	// Get file ID (db name without .db extension). Use simple string trimming;
+	// if dbName doesn't end in .db, fileID will equal dbName.
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
 
@@ -321,68 +323,6 @@ func HandleBatchMetadataGeneration() {
 
 	// fmt.Printf("\n✨ Completed! Successfully generated metadata for %d mixed databases.\n", successCount)
 	LogInfo("Batch metadata generation completed. Success: %d", successCount)
-}
-
-// ConstructVerifiedAnchor creates a local anchor by combining the local file's hash
-// with the identity (timestamp, etc.) from the remote metadata mirror.
-// This ensures that the anchor truthfully represents the local state while linking it to the remote version.
-func ConstructVerifiedAnchor(dbName string) error {
-	LogInfo("ConstructVerifiedAnchor: Building anchor for %s...", dbName)
-
-	// 1. Calculate Local Hash
-	localDBPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
-	localHash, err := CalculateXXHash(localDBPath)
-	if err != nil {
-		LogError("ConstructVerifiedAnchor: Failed to calculate local hash for %s: %v", dbName, err)
-		return fmt.Errorf("failed to calculate local hash: %w", err)
-	}
-
-	// 2. Read Remote Mirror (Source of Truth for Identity)
-	fileID := strings.TrimSuffix(dbName, ".db")
-	metadataFilename := fileID + ".metadata.json"
-	mirrorPath := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename) // LocalVersionDir = Mirror (db/all_dbs/version)
-
-	input, err := os.ReadFile(mirrorPath)
-	if err != nil {
-		LogError("ConstructVerifiedAnchor: Failed to read mirror metadata at %s: %v", mirrorPath, err)
-		return fmt.Errorf("failed to read mirror metadata: %w", err)
-	}
-
-	var meta model.Metadata
-	if err := json.Unmarshal(input, &meta); err != nil {
-		LogError("ConstructVerifiedAnchor: Failed to unmarshal mirror metadata: %v", err)
-		return fmt.Errorf("failed to unmarshal mirror metadata: %w", err)
-	}
-
-	// 3. Update Hash to match Local File
-	// User Requirement: "fetching local db hash and cpy same time from remote metada json"
-	// We preserve all other fields (Timestamp, Events, Uploader, etc.) from the Mirror.
-	meta.Hash = localHash
-	meta.Status = "success" // Ensure status is success
-
-	// FIX: Update SizeBytes from local file as well, to match the Hash we just calculated.
-	// If the file changed locally, its size might have changed too.
-	info, err := os.Stat(localDBPath)
-	if err == nil {
-		meta.SizeBytes = info.Size()
-	} else {
-		// Just log warning, Hash is more critical, but SizeBytes mismatch is confusing.
-		LogInfo("ConstructVerifiedAnchor: Warning: Failed to stat %s for size update: %v", dbName, err)
-	}
-
-	// FIX: Spec at docs/b2m.md:L658 shows local-version WITHOUT events.
-	// It serves as a lightweight anchor. History is in the 'version/' mirror.
-	// meta.Events = nil // Handled globally by UpdateLocalVersion now.
-
-	// 4. Save to Anchor Directory (LocalAnchorDir)
-	// UpdateLocalVersion handles writing to config.AppConfig.LocalAnchorDir
-	if err := UpdateLocalVersion(dbName, meta); err != nil {
-		LogError("ConstructVerifiedAnchor: Failed to save anchor: %v", err)
-		return fmt.Errorf("failed to save anchor: %w", err)
-	}
-
-	LogInfo("ConstructVerifiedAnchor: Successfully anchored %s. Hash: %s, TS: %d", dbName, localHash, meta.Timestamp)
-	return nil
 }
 
 // UpdateLocalVersion writes the metadata to db/all_dbs/local-version/<dbname>.metadata.json
