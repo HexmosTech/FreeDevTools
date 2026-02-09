@@ -103,8 +103,8 @@ func InitializeConfig() error {
 	}
 
 	AppConfig.LocalDBDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs")
-	AppConfig.LocalVersionDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs", "version")
-	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs", "local-version")
+	AppConfig.LocalVersionDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "version")
+	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "local-version")
 
 	// Initialize logging if needed, or other startup tasks
 	return nil
