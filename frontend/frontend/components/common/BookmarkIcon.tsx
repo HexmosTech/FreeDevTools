@@ -110,7 +110,7 @@ const BookmarkIcon: React.FC = () => {
     }
   };
 
-  // Bookmark icon SVG - filled when bookmarked, outline when not
+  // Bookmark icon SVG - filled when bookmarked, uses sidebar colors
   const BookmarkSVG = ({ filled }: { filled: boolean }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -118,7 +118,7 @@ const BookmarkIcon: React.FC = () => {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className="w-6 h-6"
+      className="w-6 h-6 bookmark-icon"
       aria-hidden="true"
     >
       <path
@@ -129,70 +129,93 @@ const BookmarkIcon: React.FC = () => {
     </svg>
   );
 
+  // Shared styles for bookmark icon - matches sidebar nav link colors
+  const bookmarkStyles = (
+    <style>{`
+      .bookmark-icon-wrapper {
+        color: inherit;
+        transition: color 0.2s;
+      }
+      .bookmark-button:hover .bookmark-icon-wrapper .bookmark-icon {
+        color: #b6b000;
+      }
+      .dark .bookmark-button:hover .bookmark-icon-wrapper .bookmark-icon {
+        color: #d4cb24;
+      }
+      .bookmark-icon-wrapper.bookmarked .bookmark-icon {
+        color: #b6b000;
+      }
+      .dark .bookmark-icon-wrapper.bookmarked .bookmark-icon {
+        color: #d4cb24;
+      }
+    `}</style>
+  );
 
   if (isSidebar) {
     // Render full-width clickable row for sidebar
     return (
-      <button
-        onClick={handleToggle}
-        disabled={isLoading}
-        type="button"
-        className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-        style={{
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}
-        aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-        title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-      >
-        <div
-          className="w-5 h-5 flex items-center justify-center flex-shrink-0"
+      <>
+        {bookmarkStyles}
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="w-full flex items-center justify-center gap-2 px-2 py-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button"
           style={{
-            pointerEvents: 'none',
-            color: isBookmarked
-              ? (isDarkMode ? '#d4cb24' : '#b6b000')
-              : undefined
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto'
           }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
         >
-          <BookmarkSVG filled={isBookmarked} />
-        </div>
-        <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
-          {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
-        </span>
-      </button>
+          <div
+            className={`w-5 h-5 flex items-center justify-center flex-shrink-0 bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+          <span className="text-sm text-slate-700 dark:text-slate-300 font-medium">
+            {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
+          </span>
+        </button>
+      </>
     );
   }
 
   // Render icon-only button for header
   return (
-    <div className="flex-shrink-0 mobile-search-hide" style={{ position: 'relative', zIndex: 100 }}>
-      <button
-        onClick={handleToggle}
-        disabled={isLoading}
-        type="button"
-        className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed w-9 h-9 p-0"
-        style={{
-          position: 'relative',
-          zIndex: 100,
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}
-        aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-        title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-      >
-        <div
-          className="w-5 h-5 flex items-center justify-center"
+    <>
+      {bookmarkStyles}
+      <div className="flex-shrink-0 mobile-search-hide" style={{ position: 'relative', zIndex: 100 }}>
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed w-9 h-9 p-0 bookmark-button"
           style={{
-            pointerEvents: 'none',
-            color: isBookmarked
-              ? (isDarkMode ? '#d4cb24' : '#b6b000')
-              : undefined
+            position: 'relative',
+            zIndex: 100,
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto'
           }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
         >
-          <BookmarkSVG filled={isBookmarked} />
-        </div>
-      </button>
-    </div>
+          <div
+            className={`w-5 h-5 flex items-center justify-center bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+        </button>
+      </div>
+    </>
   );
 };
 
