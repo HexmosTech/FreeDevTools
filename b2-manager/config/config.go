@@ -36,13 +36,6 @@ var AppConfig = Config{
 	ToolVersion: "v1.0",
 }
 
-// Sync Status Constants
-const (
-	SyncStatusLocalOnly  = "+"
-	SyncStatusRemoteOnly = "-"
-	SyncStatusDifferent  = "*"
-)
-
 // InitializeConfig sets up global configuration variables
 func InitializeConfig() error {
 	var err error
@@ -54,59 +47,23 @@ func InitializeConfig() error {
 	}
 
 	// Load config from b2m.toml
-	tomlPath := filepath.Join(AppConfig.ProjectRoot, "b2m.toml")
-	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("couldn't find b2m.toml file at %s: %w", tomlPath, err)
+	// Load config from b2m.toml
+	if err := loadTOMLConfig(); err != nil {
+		return err
 	}
 
-	var tomlConf struct {
-		Discord    string `toml:"discord"`
-		RootBucket string `toml:"rootbucket"`
-	}
-	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
-		return fmt.Errorf("failed to decode b2m.toml: %w", err)
+	// Validate and set derived paths
+	if err := validateAndSetPaths(); err != nil {
+		return err
 	}
 
-	AppConfig.RootBucket = tomlConf.RootBucket
-	AppConfig.DiscordWebhookURL = tomlConf.Discord
-
-	if AppConfig.RootBucket == "" {
-		return fmt.Errorf("rootbucket not defined in b2m.toml file")
-	}
-	if AppConfig.DiscordWebhookURL == "" {
-		return fmt.Errorf("discord not defined in b2m.toml file")
-	}
-
-	// Derived paths
-	// Ensure RootBucket ends with /
-	if !strings.HasSuffix(AppConfig.RootBucket, "/") {
-		AppConfig.RootBucket += "/"
-	}
-
-	AppConfig.LockDir = AppConfig.RootBucket + "lock/"
-	AppConfig.VersionDir = AppConfig.RootBucket + "version/"
-
-	var u *user.User
-	u, err = user.Current()
-	if err != nil {
-		AppConfig.CurrentUser = "unknown"
-	} else {
-		AppConfig.CurrentUser = u.Username
-	}
-
-	var h string
-	h, err = os.Hostname()
-	if err != nil {
-		AppConfig.Hostname = "unknown"
-	} else {
-		AppConfig.Hostname = h
-	}
+	// Fetch user details
+	fetchUserDetails()
 
 	AppConfig.LocalDBDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs")
 	AppConfig.LocalVersionDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "version")
 	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "local-version")
 
-	// Initialize logging if needed, or other startup tasks
 	return nil
 }
 
@@ -127,5 +84,58 @@ func findProjectRoot() (string, error) {
 			return "", fmt.Errorf("root not found (searched for 'db' dir or 'go.mod')")
 		}
 		dir = parent
+	}
+}
+
+func loadTOMLConfig() error {
+	tomlPath := filepath.Join(AppConfig.ProjectRoot, "b2m.toml")
+	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
+		return fmt.Errorf("couldn't find b2m.toml file at %s: %w", tomlPath, err)
+	}
+
+	var tomlConf struct {
+		Discord    string `toml:"discord"`
+		RootBucket string `toml:"rootbucket"`
+	}
+	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
+		return fmt.Errorf("failed to decode b2m.toml: %w", err)
+	}
+
+	AppConfig.RootBucket = tomlConf.RootBucket
+	AppConfig.DiscordWebhookURL = tomlConf.Discord
+
+	return nil
+}
+
+func validateAndSetPaths() error {
+	if AppConfig.RootBucket == "" {
+		return fmt.Errorf("rootbucket not defined in b2m.toml file")
+	}
+	if AppConfig.DiscordWebhookURL == "" {
+		return fmt.Errorf("discord not defined in b2m.toml file")
+	}
+
+	if !strings.HasSuffix(AppConfig.RootBucket, "/") {
+		AppConfig.RootBucket += "/"
+	}
+
+	AppConfig.LockDir = AppConfig.RootBucket + "lock/"
+	AppConfig.VersionDir = AppConfig.RootBucket + "version/"
+	return nil
+}
+
+func fetchUserDetails() {
+	u, err := user.Current()
+	if err != nil {
+		AppConfig.CurrentUser = "unknown"
+	} else {
+		AppConfig.CurrentUser = u.Username
+	}
+
+	h, err := os.Hostname()
+	if err != nil {
+		AppConfig.Hostname = "unknown"
+	} else {
+		AppConfig.Hostname = h
 	}
 }
