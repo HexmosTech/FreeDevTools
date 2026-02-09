@@ -788,13 +788,13 @@ const SearchPage: React.FC = () => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-12 pb-12 overflow-y-auto"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-0 pb-0 md:pt-12 md:pb-12 overflow-y-auto"
       onClick={handleBackdropClick}
     >
       <div
         id="search-page"
-        className="bg-white dark:bg-slate-900 rounded-xl shadow-2xl w-full max-w-6xl mx-4 p-6"
-        style={{ minHeight: '99%' }}
+        className="bg-white dark:bg-slate-900 rounded-none md:rounded-xl shadow-2xl w-full max-w-6xl mx-0 md:mx-4 p-4 md:p-6 h-full md:h-auto"
+        style={{ minHeight: '100%' }}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Search Bar */}
@@ -802,7 +802,7 @@ const SearchPage: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Search engine for developer resources</h2>
           <button
             onClick={closeSearchPage}
-            className="hidden md:flex p-1 rounded-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+            className="flex p-1 rounded-sm bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-300 dark:border-slate-600 shadow-sm hover:shadow-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
             aria-label="Close"
           >
             <Cross2Icon className="h-5 w-5 p-0.5 text-slate-700 dark:text-slate-300" />
