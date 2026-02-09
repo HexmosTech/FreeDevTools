@@ -160,7 +160,7 @@ const BookmarkIcon: React.FC = () => {
           onClick={handleToggle}
           disabled={isLoading}
           type="button"
-          className="w-full flex items-center justify-start gap-3 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-sm nav-link-text text-slate-700 dark:text-slate-300"
+          className="w-full flex items-center justify-start gap-3 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-base lg:text-sm nav-link-text text-slate-700 dark:text-slate-300"
           style={{
             cursor: isLoading ? 'not-allowed' : 'pointer',
             pointerEvents: isLoading ? 'none' : 'auto'
@@ -177,7 +177,7 @@ const BookmarkIcon: React.FC = () => {
           >
             <BookmarkSVG filled={isBookmarked} />
           </div>
-          <span className="font-medium">
+          <span className="font-medium text-base lg:text-sm">
             {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
           </span>
         </button>
