@@ -4,15 +4,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
-
-	"github.com/zeebo/xxh3"
 
 	"b2m/config"
 	"b2m/model"
@@ -59,129 +55,6 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 
 	LogInfo("Generated metadata for %s (Hash: %s)", dbName, hash)
 	return meta, nil
-}
-
-// cachedHash stores the hash and file stat info to avoid re-hashing unchanged files
-type cachedHash struct {
-	Hash    string
-	ModTime int64
-	Size    int64
-}
-
-var (
-	fileHashCache   = make(map[string]cachedHash)
-	fileHashCacheMu sync.RWMutex
-)
-
-// CalculateXXHash calculates the xxHash (as hex string) of a file with caching
-func CalculateXXHash(filePath string) (string, error) {
-	info, err := os.Stat(filePath)
-	if err != nil {
-		LogError("CalculateXXHash: Failed to stat file %s: %v", filePath, err)
-		return "", err
-	}
-
-	// Check cache
-	fileHashCacheMu.RLock()
-	cached, ok := fileHashCache[filePath]
-	fileHashCacheMu.RUnlock()
-
-	if ok && cached.ModTime == info.ModTime().UnixNano() && cached.Size == info.Size() {
-		return cached.Hash, nil
-	} else {
-		LogInfo("Cache miss for %s. Cached: %v, Current: ModTime=%d, Size=%d", filepath.Base(filePath), ok, info.ModTime().UnixNano(), info.Size())
-	}
-
-	// Calculate hash
-	f, err := os.Open(filePath)
-	if err != nil {
-		LogError("CalculateXXHash: Failed to open file %s: %v", filePath, err)
-		return "", err
-	}
-	defer f.Close()
-
-	// Use streaming digest
-	h := xxh3.New()
-	if _, err := io.Copy(h, f); err != nil {
-		LogError("CalculateXXHash: io.Copy failed for %s: %v", filePath, err)
-		return "", err
-	}
-
-	// Sum64 returns uint64, format as hex string for compatibility
-	hash := fmt.Sprintf("%016x", h.Sum64())
-
-	// Update cache
-	fileHashCacheMu.Lock()
-	fileHashCache[filePath] = cachedHash{
-		Hash:    hash,
-		ModTime: info.ModTime().UnixNano(),
-		Size:    info.Size(),
-	}
-	fileHashCacheMu.Unlock()
-
-	return hash, nil
-}
-
-// LoadHashCache loads the hash cache from disk
-func LoadHashCache() error {
-	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
-	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
-		return nil // No cache exists yet
-	}
-
-	data, err := os.ReadFile(cachePath)
-	if err != nil {
-		LogError("LoadHashCache: Failed to read cache file: %v", err)
-		return err
-	}
-
-	fileHashCacheMu.Lock()
-	defer fileHashCacheMu.Unlock()
-
-	if err := json.Unmarshal(data, &fileHashCache); err != nil {
-		LogError("LoadHashCache: Failed to unmarshal cache: %v", err)
-		// Don't fail hard, just start with empty cache
-		return nil
-	}
-
-	LogInfo("Loaded %d entries from hash cache", len(fileHashCache))
-	// LogInfo("Loaded %d entries from hash cache at %s", len(fileHashCache), cachePath)
-	// for k, v := range fileHashCache {
-	// 	LogInfo(" - Loaded: %s -> %s (Mod: %d, Size: %d)", filepath.Base(k), v.Hash, v.ModTime, v.Size)
-	// }
-	return nil
-}
-
-// SaveHashCache saves the hash cache to disk
-func SaveHashCache() error {
-	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
-
-	// Ensure directory exists
-	if err := os.MkdirAll(config.AppConfig.LocalAnchorDir, 0755); err != nil {
-		LogError("SaveHashCache: Failed to create directory: %v", err)
-		return err
-	}
-
-	fileHashCacheMu.RLock()
-	data, err := json.MarshalIndent(fileHashCache, "", "  ")
-	fileHashCacheMu.RUnlock()
-
-	if err != nil {
-		LogError("SaveHashCache: Failed to marshal cache: %v", err)
-		return err
-	}
-
-	if err := os.WriteFile(cachePath, data, 0644); err != nil {
-		LogError("SaveHashCache: Failed to write file: %v", err)
-		return err
-	}
-
-	LogInfo("Saved %d entries to hash cache", len(fileHashCache))
-	// LogInfo("Saving %d entries to hash cache:", len(fileHashCache))
-	// for k := range fileHashCache {
-	// 	LogInfo(" - Saving: %s", filepath.Base(k))
-	// }
-	return nil
 }
 
 // DownloadAndLoadMetadata syncs metadata from remote to local cache and loads it
@@ -244,6 +117,53 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 
 	LogInfo("Loaded metadata for %d databases", len(result))
 	return result, nil
+}
+
+// FetchSingleRemoteMetadata downloads and parses the metadata for a specific DB from the remote version dir
+func FetchSingleRemoteMetadata(ctx context.Context, dbName string) (*model.Metadata, error) {
+	fileID := strings.TrimSuffix(dbName, ".db")
+	metadataFilename := fileID + ".metadata.json"
+
+	// Paths
+	remotePath := filepath.Join(config.AppConfig.VersionDir, metadataFilename)
+	localDir := config.AppConfig.LocalVersionDir // Destination is the directory
+	localFile := filepath.Join(localDir, metadataFilename)
+
+	// Ensure local dir exists
+	if err := os.MkdirAll(localDir, 0755); err != nil {
+		return nil, fmt.Errorf("failed to create local version dir: %w", err)
+	}
+
+	// Use RcloneCopy (it takes a file source and a directory destination usually, but let's check RcloneCopy impl)
+	// RcloneCopy signature: func RcloneCopy(ctx context.Context, src, dst, description string, quiet bool, onProgress func(model.RcloneProgress)) error
+	// If src is a file, dst can be a directory or a file? rclone copy usually expects dest to be a directory if source is a file?
+	// Actually rclone copy src dest. If dest is existing dir, it puts it there.
+	// Our RcloneCopy wraps `rclone copy`.
+
+	// To be safe and specific, we can use `copyto` via direct exec or trust `RcloneCopy` if we pass the full remote path.
+	// RcloneCopy uses `rclone copy`.
+	// "Copy the source to the destination. Doesn't transfer unchanged files."
+
+	// Let's use RcloneCopy with quiet=true.
+	if err := RcloneCopy(ctx, "copy", remotePath, localDir, "Fetching metadata", true, nil); err != nil {
+		return nil, fmt.Errorf("failed to fetch remote metadata: %w", err)
+	}
+
+	// Read the file
+	data, err := os.ReadFile(localFile)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil // Metadata doesn't exist remotely yet (New DB)
+		}
+		return nil, fmt.Errorf("failed to read fetched metadata: %w", err)
+	}
+
+	var meta model.Metadata
+	if err := json.Unmarshal(data, &meta); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal metadata: %w", err)
+	}
+
+	return &meta, nil
 }
 
 // UploadMetadata uploads the metadata file for a database

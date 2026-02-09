@@ -29,7 +29,7 @@ Before starting, `core.ValidateAction` enforces safeguards.
 Once the download is successful, we anchor the local state to the remote state.
 
 1.  **ConstructVerifiedAnchor**: This function calculates the SHA256 of the newly downloaded file.
-2.  **Fetch Remote Context**: Reads the latest metadata from the local mirror (`db/all_dbs/version/`) to get the `Timestamp` and `Uploader`.
+2.  **Fetch Remote Context**: Reads the latest metadata from the local mirror (`db/all_dbs/.b2m/version/`) to get the `Timestamp` and `Uploader`.
 3.  **Construct Anchor**: Creates a new metadata object combining the **Local Hash** + **Remote Timestamp**.
 4.  **Save**: Writes to `local-versions/`.
 5.  **Result**: Status becomes **"Up to Date ✅"**.

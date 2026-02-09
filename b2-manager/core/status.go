@@ -283,11 +283,17 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 			colorVal = statusColor[0]
 		}
 
+		var rawMetaStatus string
+		if meta, ok := remoteMetas[db.Name]; ok {
+			rawMetaStatus = meta.Status
+		}
+
 		statusData = append(statusData, model.DBStatusInfo{
-			DB:         db,
-			Status:     statusText,
-			StatusCode: statusCode,
-			Color:      colorVal,
+			DB:               db,
+			Status:           statusText,
+			StatusCode:       statusCode,
+			RemoteMetaStatus: rawMetaStatus,
+			Color:            colorVal,
 		})
 	}
 

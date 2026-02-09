@@ -57,8 +57,7 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 	description := "Downloading " + dbName
 	// Use the passed quiet parameter
 	// The new RcloneCopy uses !quiet for verbose. If onProgress is set, it adds json flags.
-
-	if err := RcloneCopy(ctx, remotePath, localDir, description, quiet, onProgress); err != nil {
+	if err := RcloneCopy(ctx, "copy", remotePath, localDir, description, quiet, onProgress); err != nil {
 		LogError("DownloadDatabase RcloneCopy failed for %s: %v", dbName, err)
 		return fmt.Errorf("download of %s failed: %w", dbName, err)
 	}
@@ -135,6 +134,10 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 		return fmt.Errorf("failed to update local anchor for %s: %w", dbName, err)
 	} else {
 		LogInfo("DownloadDatabase: Successfully anchored %s (Hash: %s, Ts: %d)", dbName, localHash, remoteTimestamp)
+		// Update hash cache on disk as we just calculated it and it is fresh
+		if err := SaveHashCache(); err != nil {
+			LogInfo("DownloadDatabase: Warning: Failed to save hash cache: %v", err)
+		}
 	}
 
 	return nil

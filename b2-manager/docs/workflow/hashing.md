@@ -4,7 +4,7 @@ The application uses xxHash (specifically xxh3) to calculate checksums of local 
 
 ## Cache Logic
 
-1. **Startup**: The application loads the existing cache from `hash.json` located in the local anchor directory (`db/all_dbs/local-version/`).
+1. **Startup**: The application loads the existing cache from `hash.json` located in the local anchor directory (`db/all_dbs/.b2m/local-version/`).
 2. **Hashing Request**: When a hash is requested for a file:
    - The system checks if the file path exists in the in-memory cache.
    - It compares the file's current modification time (`ModTime`) and size (`Size`) against the cached values.

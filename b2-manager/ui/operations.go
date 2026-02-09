@@ -181,6 +181,13 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 			}, nil)
 			return nil
 		}
+		if err == core.ErrWarningDatabaseUpdating {
+			// Warning: Database is being updated by another user
+			lc.app.confirm("Warning: DB Updating", "This database is currently being updated by another user.\nDownloading now might give you incomplete data.\n\nAre you sure?", func() {
+				startDownload()
+			}, nil)
+			return nil
+		}
 		// Block error
 		lc.app.confirm("Error: Cannot Download", err.Error()+"\n\n(Press y/n to close)", nil, nil)
 		return nil
@@ -204,5 +211,57 @@ func (lc *ListController) onCancel(g *gocui.Gui, v *gocui.View) error {
 		cancel()
 		lc.app.updateDBStatus(dbName, "Cancelling...", -1, -1, "", "")
 	}
+	return nil
+}
+
+func (lc *ListController) onLock(g *gocui.Gui, v *gocui.View) error {
+	lc.app.mu.Lock()
+	if lc.app.selected < 0 || lc.app.selected >= len(lc.app.dbs) {
+		lc.app.mu.Unlock()
+		return nil
+	}
+	selectedDB := lc.app.dbs[lc.app.selected]
+	lc.app.mu.Unlock()
+
+	// Validation: Check if already locked by other
+	if selectedDB.StatusCode == model.StatusCodeLockedByOther {
+		lc.app.confirm("Error: Cannot Lock", "Database is already locked by another user.\n\n(Press y/n to close)", nil, nil)
+		return nil
+	}
+
+	// Check if already locked by you (status LockedByYou or Uploading)
+	// If it is locked by us, we might want to either re-lock or just warn?
+	// User request: "User can lock the db for update by pressing 'l' key."
+	// If we already lock it, maybe we just want to update status to "updating"?
+	// Use case: I locked it potentially automatically or manually before, now I want to explicitly say "updating".
+	// So we should allow it even if locked by us.
+
+	confirmMsg := fmt.Sprintf("Lock %s for manual update?\n\nThis will prevent others from uploading\nand set status to 'updating'.", selectedDB.DB.Name)
+
+	lc.app.confirm("Lock Database?", confirmMsg, func() {
+		// on Yes
+		lc.app.startOperation("Locking", func(ctx context.Context, dbName string) error {
+			lc.app.updateDBStatus(dbName, "Locking...", 0, 0, "lock", "")
+
+			err := core.AcquireCustomLock(ctx, dbName)
+			if err != nil {
+				lc.app.updateDBStatus(dbName, fmt.Sprintf("Error: %v", err), -1, -1, "error", "")
+				return err
+			}
+
+			// Success
+			lc.app.updateDBStatus(dbName, "Locked (Updating)...", 100, 0, "lock", "")
+			// Refresh to show new status
+			go func() {
+				// We sleep briefly to allow the remote change to propagate and be visible to the next list/status fetch.
+				// This is a heuristic; ideally we should poll or have immediate local state reflection.
+				time.Sleep(1 * time.Second)
+				lc.app.refreshStatus()
+			}()
+
+			return nil
+		})
+	}, nil)
+
 	return nil
 }

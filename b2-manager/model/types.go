@@ -17,10 +17,11 @@ type DBInfo struct {
 
 // DBStatusInfo represents a database with its calculated status
 type DBStatusInfo struct {
-	DB         DBInfo
-	Status     string
-	StatusCode string // Stable identifier for logic (e.g. "remote_newer")
-	Color      text.Color
+	DB               DBInfo
+	Status           string
+	StatusCode       string // Stable identifier for logic (e.g. "remote_newer")
+	RemoteMetaStatus string // Raw status from remote metadata (e.g. "updating", "uploading")
+	Color            text.Color
 }
 
 // RcloneProgress represents the structure of rclone's JSON stats output

@@ -3,6 +3,7 @@ package core
 import (
 	"context"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"b2m/config"
@@ -19,6 +20,21 @@ import (
 // 4. Anchor: Upon success, update the local execution anchor (LocalVersion) to match the new state.
 // 5. Finalize: Remove the lock file.
 func PerformUpload(ctx context.Context, dbName string, force bool, onProgress func(model.RcloneProgress), onStatusUpdate func(string)) error {
+	if onStatusUpdate != nil {
+		onStatusUpdate("Safety Check...")
+	}
+
+	// -------------------------------------------------------------------------
+	// PHASE 0: PRE-UPLOAD SAFETY CHECK
+	// Check if the remote file is newer than our local version to prevent data loss.
+	// -------------------------------------------------------------------------
+	if !force {
+		if err := CheckUploadSafety(ctx, dbName); err != nil {
+			LogError("PerformUpload: Safety check failed for %s: %v", dbName, err)
+			return fmt.Errorf("safety check failed: %w", err)
+		}
+	}
+
 	if onStatusUpdate != nil {
 		onStatusUpdate("Locking...")
 	}
@@ -100,6 +116,18 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 			// Non-fatal, but meaningful warning
 		} else {
 			LogInfo("Successfully updated local-version anchor for %s", dbName)
+
+			// Update hash cache on disk as we just calculated it and it is fresh
+			// We recalculate the hash of the LOCAL file. CalculateXXHash updates the in-memory cache
+			// with the new ModTime and Size. Then SaveHashCache persists it.
+			localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+			if _, err := CalculateXXHash(localPath); err != nil {
+				LogError("PerformUpload: Failed to recalculate hash for cache update: %v", err)
+			} else {
+				if err := SaveHashCache(); err != nil {
+					LogInfo("PerformUpload: Warning: Failed to save hash cache: %v", err)
+				}
+			}
 		}
 	}
 
@@ -122,5 +150,63 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 	}
 	LogInfo("Upload complete for %s", dbName)
 
+	LogInfo("Upload complete for %s", dbName)
+
+	return nil
+}
+
+// CheckUploadSafety verifies that the remote database is not newer than the local one.
+// It fetches the specific remote metadata and compares it with the local anchor and file.
+func CheckUploadSafety(ctx context.Context, dbName string) error {
+	LogInfo("CheckUploadSafety: Verifying status for %s...", dbName)
+
+	// 1. Fetch Remote Metadata (Specific file only)
+	remoteMeta, err := FetchSingleRemoteMetadata(ctx, dbName)
+	if err != nil {
+		// If fetch failed, it might be net issue or config.
+		// If it's just "not found", FetchSingleRemoteMetadata returns nil, nil.
+		return fmt.Errorf("failed to fetch remote metadata: %w", err)
+	}
+
+	if remoteMeta == nil {
+		LogInfo("CheckUploadSafety: No remote metadata found. Safe to upload (New DB).")
+		return nil
+	}
+
+	// 2. Get Local Anchor
+	localAnchor, err := GetLocalVersion(dbName)
+	if err != nil {
+		// If non-critical error (like permission), we might fail.
+		// If not found, localAnchor is nil.
+		LogInfo("CheckUploadSafety: Error reading local anchor: %v (Assuming no anchor)", err)
+	}
+
+	// 3. Compare
+	// Logic matches CalculateDBStatus Phase 3 & 4 somewhat, but strict for upload.
+
+	// Case A: Remote Exists, but No Local Anchor.
+	// This implies we pulled a repo or deleted local metadata, but remote has history.
+	// We risk overwriting something we don't know about.
+	if localAnchor == nil {
+		// Exception: If hashes match, we are coincidentally in sync (autofixed elsewhere, but here we proceed).
+		localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+		if hash, err := CalculateXXHash(localPath); err == nil && hash == remoteMeta.Hash {
+			LogInfo("CheckUploadSafety: No anchor, but hashes match. Safe to upload (Update).")
+			return nil
+		}
+
+		return fmt.Errorf("remote database exists but no local history found. Please download first to sync")
+	}
+
+	// Case B: Remote Hash != Anchor Hash
+	// This means Remote has changed since we last downloaded/uploaded.
+	if remoteMeta.Hash != localAnchor.Hash {
+		// The remote version is different from what we based our work on.
+		return fmt.Errorf("remote database is newer (Remote Hash %s != Anchor Hash %s). Please download to merge/sync", remoteMeta.Hash[:8], localAnchor.Hash[:8])
+	}
+
+	// Case C: Remote Hash == Anchor Hash
+	// We are based on the latest remote. Safe to overwrite.
+	LogInfo("CheckUploadSafety: Local anchor matches remote. Safe to upload.")
 	return nil
 }
