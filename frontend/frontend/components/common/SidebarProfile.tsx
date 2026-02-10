@@ -346,7 +346,6 @@ const SidebarProfile: React.FC = () => {
               Sign In
             </p>
             <p className="text-slate-600 dark:text-slate-400 leading-tight" style={{ fontSize: '0.55rem' }}>
-              <span>Enjoy benefits with Pro</span>
             </p>
           </div>
         </button>
