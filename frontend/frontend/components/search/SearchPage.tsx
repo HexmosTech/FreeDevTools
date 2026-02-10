@@ -779,10 +779,13 @@ const SearchPage: React.FC = () => {
   };
 
   const closeSearchPage = () => {
-    window.location.hash = '';
     setQuery('');
     if (window.searchState) {
       window.searchState.setQuery('');
+    }
+    // Clear hash completely using replaceState to avoid leaving # behind
+    if (window.location.hash.startsWith('#search')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   };
 
