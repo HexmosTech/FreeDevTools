@@ -153,7 +153,7 @@ const ProBanner: React.FC = () => {
               <div className="mb-6 md:mb-12">
                 {/* Urgency Bar */}
                 <div
-                  className="px-4 py-2.5 rounded-xl bg-yellow-50 mb-2"
+                  className="px-4 py-2.5 rounded-xl mb-2"
                   style={{
                     borderWidth: '1px',
                     borderColor: '#d4cb24'
@@ -164,7 +164,7 @@ const ProBanner: React.FC = () => {
                       <Clock className="h-4 w-4 flex-shrink-0" style={{ color: '#d4cb24' }} />
                       <span className="text-sm font-semibold" style={{ color: '#d4cb24' }}>Limited Offer</span>
                     </div>
-                    <span className="text-sm font-semibold" style={{ color: '#d4cb24' }}>43/1000 left</span>
+                    <span className="text-sm font-semibold" style={{ color: '#d4cb24' }}>53/100 left</span>
                   </div>
                   <div
                     className="w-full rounded-full overflow-hidden"

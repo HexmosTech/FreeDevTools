@@ -885,7 +885,6 @@ const SearchPage: React.FC = () => {
                 className="px-2 py-1 rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 cursor-pointer"
                 style={{
                   width: '180px',
-                  ...(isDarkMode ? {} : { backgroundColor: 'oklch(97.3% 0.071 103.193)' }),
                   borderWidth: '1px',
                   borderColor: '#d4cb24'
                 }}
