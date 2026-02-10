@@ -5,6 +5,7 @@ const BookmarkIcon: React.FC = () => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSidebar, setIsSidebar] = useState<boolean>(false);
+  const [isBreadcrumb, setIsBreadcrumb] = useState<boolean>(false);
   const [isReady, setIsReady] = useState<boolean>(false);
 
   useEffect(() => {
@@ -18,10 +19,14 @@ const BookmarkIcon: React.FC = () => {
     };
 
     const initializeComponent = async () => {
-      // Check if component is in sidebar
+      // Check if component is in sidebar or breadcrumb
       const sidebarContainer = document.getElementById('sidebar-bookmark-container');
+      const breadcrumbContainer = document.getElementById('breadcrumb-bookmark-container');
       const isInSidebar = sidebarContainer?.closest('#sidebar') !== null;
+      const isInBreadcrumb = breadcrumbContainer !== null;
+
       setIsSidebar(isInSidebar);
+      setIsBreadcrumb(isInBreadcrumb);
 
       // Make API call to check bookmark status
       try {
@@ -116,10 +121,12 @@ const BookmarkIcon: React.FC = () => {
           onClick={handleToggle}
           disabled={isLoading}
           type="button"
-          className="w-full flex items-center justify-start gap-3 py-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-base lg:text-sm nav-link-text text-slate-700 dark:text-slate-300"
+          className="flex items-center gap-2 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-sm text-slate-700 dark:text-slate-300"
           style={{
             cursor: isLoading ? 'not-allowed' : 'pointer',
-            pointerEvents: isLoading ? 'none' : 'auto'
+            pointerEvents: isLoading ? 'none' : 'auto',
+            paddingLeft: '1rem',
+            paddingRight: '1rem'
           }}
           aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
           title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
@@ -133,7 +140,7 @@ const BookmarkIcon: React.FC = () => {
           >
             <BookmarkSVG filled={isBookmarked} />
           </div>
-          <span className="font-medium text-base lg:text-sm">
+          <span className="font-medium text-sm">
             {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
           </span>
         </button>
@@ -141,6 +148,43 @@ const BookmarkIcon: React.FC = () => {
     );
   }
 
+  // Breadcrumb version with text
+  if (isBreadcrumb) {
+    return (
+      <>
+        {bookmarkStyles}
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="flex items-center gap-2 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-sm text-slate-700 dark:text-slate-300"
+          style={{
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto',
+            paddingLeft: '1rem',
+            paddingRight: '1rem'
+          }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+        >
+          <div
+            className={`w-5 h-5 flex items-center justify-center flex-shrink-0 bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+          <span className="font-medium text-sm">
+            {isBookmarked ? 'Remove bookmark' : 'Bookmark this page'}
+          </span>
+        </button>
+      </>
+    );
+  }
+
+  // Header version (icon only)
   return (
     <>
       {bookmarkStyles}
