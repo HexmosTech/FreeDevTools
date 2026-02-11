@@ -279,3 +279,10 @@ window.addEventListener('load', () => {
     searchInput.focus();
     updateClearBtn();
 });
+
+window.addEventListener('focus', () => {
+    // Re-focus search input when the webview gains focus
+    if (searchInput) {
+        searchInput.focus();
+    }
+});

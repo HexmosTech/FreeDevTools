@@ -6,32 +6,9 @@ let currentQuery = '';
 
 export function registerSearchCommands(context: vscode.ExtensionContext) {
     // Search Command
-    context.subscriptions.push(vscode.commands.registerCommand('freedevtools.search', async (query?: string) => {
-        if (typeof query === 'string') {
-            openSearchWebview(context, query);
-            return;
-        }
-
-        const inputBox = vscode.window.createInputBox();
-        inputBox.placeholder = 'Search 350k+ resources...';
-        inputBox.title = 'Free Devtools Search';
-        inputBox.value = currentQuery;
-
-        inputBox.onDidChangeValue(value => {
-            currentQuery = value;
-        });
-
-        inputBox.onDidAccept(() => {
-            const q = inputBox.value;
-            inputBox.hide();
-            openSearchWebview(context, q);
-        });
-
-        inputBox.onDidHide(() => {
-            inputBox.dispose();
-        });
-
-        inputBox.show();
+    context.subscriptions.push(vscode.commands.registerCommand('freedevtools.search', async () => {
+        // This command name must match the view ID in package.json
+        await vscode.commands.executeCommand('freedevtools.sidebar.focus');
     }));
 
     // Open Tool Command

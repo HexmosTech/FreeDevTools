@@ -21,7 +21,7 @@ export function getSidebarHtml(webview: vscode.Webview, extensionUri: vscode.Uri
             </div>
 
             <div class="search-container">
-                <input type="text" id="search-input" class="search-input" placeholder="Search 350k+ resources..." />
+                <input type="text" id="search-input" class="search-input" placeholder="Search 350k+ resources..." autofocus />
                 <span id="clear-btn" class="clear-btn">✕</span>
                 <span id="filter-btn" class="filter-btn" title="Filter by category">
                     <!-- Filter SVG Icon -->
