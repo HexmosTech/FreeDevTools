@@ -159,10 +159,19 @@ function getInitials(userName: string): string {
   return userName.substring(0, 2).toUpperCase();
 }
 
+function getSidebarCollapsed(): boolean {
+  if (typeof document === 'undefined') return false;
+  const container = document.getElementById('sidebar-profile-container');
+  if (container?.getAttribute('data-collapsed') === 'true') return true;
+  const sidebar = document.getElementById('sidebar');
+  return sidebar?.classList.contains('sidebar-collapsed') ?? false;
+}
+
 const SidebarProfile: React.FC = () => {
   const [hasJWT, setHasJWT] = useState<boolean>(false);
   const [isPro, setIsPro] = useState<boolean>(false);
   const [userName, setUserName] = useState<string>('');
+  const [collapsed, setCollapsed] = useState<boolean>(() => getSidebarCollapsed());
   const { handleSignOut, SignOutDialog } = useSignOutDialog();
 
   useEffect(() => {
@@ -291,11 +300,54 @@ const SidebarProfile: React.FC = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setCollapsed(getSidebarCollapsed());
+    const handleCollapsedChange = (e: CustomEvent<{ collapsed: boolean }>) => {
+      setCollapsed(e.detail?.collapsed ?? false);
+    };
+    window.addEventListener('sidebar-collapsed-changed', handleCollapsedChange as EventListener);
+    return () => {
+      window.removeEventListener('sidebar-collapsed-changed', handleCollapsedChange as EventListener);
+    };
+  }, []);
+
   const handleSignIn = () => {
     const currentUrl = window.location.href;
     const signinUrl = `https://hexmos.com/signin?app=livereview&appRedirectURI=${encodeURIComponent(currentUrl)}`;
     window.location.href = signinUrl;
   };
+
+  if (collapsed) {
+    return (
+      <div className="flex items-center justify-center">
+        {hasJWT ? (
+          <a
+            href="/freedevtools/pro"
+            className="flex items-center justify-center w-10 h-10 rounded-full bg-neon/20 dark:bg-neon-light/20 text-neon dark:text-neon-light font-semibold text-xs hover:opacity-80 transition-opacity"
+            title={userName ? `${userName}${isPro ? ' • PRO' : ' • FREE'}` : 'User'}
+            aria-label={userName || 'User'}
+          >
+            {getInitials(userName)}
+          </a>
+        ) : (
+          <button
+            onClick={handleSignIn}
+            className="flex items-center justify-center w-10 h-10 rounded-full hover:opacity-80 transition-opacity"
+            title="Sign In"
+            aria-label="Sign In"
+          >
+            <img
+              src="https://hexmos.com/freedevtools/svg_icons/productivity/hexmos.svg"
+              alt="Sign In"
+              className="w-8 h-8 rounded-full"
+              loading="lazy"
+            />
+          </button>
+        )}
+        <SignOutDialog />
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center justify-between gap-3">
