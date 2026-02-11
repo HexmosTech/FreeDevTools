@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { authenticate, logout, getUserData, getJwt } from './auth';
+import { authenticate, logout, getUserData, getJwt } from '../services/AuthService';
 
 export class FdtAuthenticationProvider implements vscode.AuthenticationProvider {
     static id = 'freedevtools';
@@ -71,5 +71,26 @@ export class FdtAuthenticationProvider implements vscode.AuthenticationProvider 
     async removeSession(sessionId: string): Promise<void> {
         await logout(this.context);
         this._onDidChangeSessions.fire({ added: [], removed: [{ id: sessionId, accessToken: '', account: { id: '', label: '' }, scopes: [] }], changed: [] });
+    }
+
+    // Force cleanup and UI update
+    async forceLogout(): Promise<void> {
+        const sessions = await this.getSessions();
+        await logout(this.context);
+
+        if (sessions.length > 0) {
+            this._onDidChangeSessions.fire({ added: [], removed: sessions, changed: [] });
+        } else {
+            this._onDidChangeSessions.fire({
+                added: [],
+                removed: [{
+                    id: 'fdt-session',
+                    accessToken: '',
+                    account: { id: 'fdt-user', label: 'User' },
+                    scopes: []
+                }],
+                changed: []
+            });
+        }
     }
 }
