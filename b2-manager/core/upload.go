@@ -57,7 +57,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 		onStatusUpdate("Setting Metadata...")
 	}
 
-	metaMap, err := DownloadAndLoadMetadata()
+	metaMap, err := DownloadAndLoadMetadata(ctx)
 	if err == nil {
 		var metaToUpload *model.Metadata
 		if existing, ok := metaMap[dbName]; ok {
@@ -120,7 +120,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 			// We recalculate the hash of the LOCAL file. CalculateXXHash updates the in-memory cache
 			// with the new ModTime and Size. Then SaveHashCache persists it.
 			localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-			if _, err := CalculateXXHash(localPath); err != nil {
+			if _, err := CalculateXXHash(localPath, nil); err != nil {
 				LogError("PerformUpload: Failed to recalculate hash for cache update: %v", err)
 			} else {
 				if err := SaveHashCache(); err != nil {
@@ -187,7 +187,7 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 	if localAnchor == nil {
 		// Exception: If hashes match, we are coincidentally in sync (autofixed elsewhere, but here we proceed).
 		localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-		if hash, err := CalculateXXHash(localPath); err == nil && hash == remoteMeta.Hash {
+		if hash, err := CalculateXXHash(localPath, nil); err == nil && hash == remoteMeta.Hash {
 			LogInfo("CheckUploadSafety: No anchor, but hashes match. Safe to upload (Update).")
 			return nil
 		}
@@ -206,4 +206,90 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 	// We are based on the latest remote. Safe to overwrite.
 	LogInfo("CheckUploadSafety: Local anchor matches remote. Safe to upload.")
 	return nil
+}
+
+// UploadDatabase uploads a single database to remote
+// Returns the uploaded metadata on success, or nil/error
+func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress)) (*model.Metadata, error) {
+	// Check for changes before uploading
+	changed, err := checkFileChanged(ctx, dbName)
+	if err != nil {
+		if !quiet {
+			LogError("⚠️  Could not verify changes: %v. Proceeding with upload.", err)
+		}
+		LogError("Could not verify changes for %s: %v", dbName, err)
+		changed = true // Fallback to upload
+	}
+
+	if !changed {
+		if !quiet {
+			LogInfo("No change found in this db skipping Upload")
+		}
+		LogInfo("Skipping upload for %s (no changes)", dbName)
+		return nil, nil
+	}
+
+	if !quiet && onProgress == nil {
+		LogInfo("⬆ Uploading %s to Backblaze B2...", dbName)
+	}
+	LogInfo("Uploading %s to Backblaze B2...", dbName)
+	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+
+	startTime := time.Now()
+
+	// Use RcloneCopy with flat arguments
+	description := "Uploading " + dbName
+	if err := RcloneCopy(ctx, "copy", localPath, model.AppConfig.RootBucket, description, quiet, onProgress); err != nil {
+		LogError("UploadDatabase: RcloneCopy failed: %v", err)
+		return nil, err
+	}
+
+	uploadDuration := time.Since(startTime).Seconds()
+
+	if !quiet {
+		LogInfo("📝 Generating metadata...")
+	}
+	LogInfo("Generating metadata for %s", dbName)
+	meta, err := GenerateLocalMetadata(dbName, uploadDuration, "success")
+	if err != nil {
+		if !quiet {
+			LogError("⚠️  Failed to generate metadata: %v", err)
+		}
+		LogError("Failed to generate metadata for %s: %v", dbName, err)
+		return nil, err
+	}
+
+	meta, err = AppendEventToMetadata(ctx, dbName, meta)
+	if err != nil {
+		if !quiet {
+			LogError("⚠️  Failed to append event: %v", err)
+		}
+		LogError("Failed to append event to metadata for %s: %v", dbName, err)
+		return nil, err
+	}
+
+	// Update hash cache on disk as GenerateLocalMetadata updated memory cache
+	if err := SaveHashCache(); err != nil {
+		LogInfo("UploadDatabase: Warning: Failed to save hash cache: %v", err)
+	}
+
+	if err := UploadMetadata(ctx, dbName, meta); err != nil {
+		if !quiet {
+			LogError("⚠️  Failed to upload metadata: %v", err)
+		}
+		LogError("Failed to upload metadata for %s: %v", dbName, err)
+		return nil, err
+	} else if !quiet {
+		LogInfo("✅ Metadata uploaded")
+	}
+
+	if !quiet {
+		LogInfo("📢 Notifying Discord...")
+		sendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
+	} else {
+		sendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
+	}
+	LogInfo("Notified Discord for %s", dbName)
+
+	return meta, nil
 }

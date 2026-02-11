@@ -43,7 +43,7 @@ func AcquireCustomLock(ctx context.Context, dbName string) error {
 	// Appending event?
 	// The user request says "update metadata with status: 'updating'".
 	// Typically we track history. Let's append an event.
-	meta, err = AppendEventToMetadata(dbName, meta)
+	meta, err = AppendEventToMetadata(ctx, dbName, meta)
 	if err != nil {
 		LogError("AcquireCustomLock: Failed to append event: %v", err)
 		UnlockDatabase(ctx, dbName, model.AppConfig.CurrentUser, true)

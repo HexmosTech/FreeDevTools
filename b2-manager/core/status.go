@@ -33,7 +33,7 @@ import (
 //   - Matches Remote Hash -> "Up to Date".
 //   - Mismatch + Anchor Matches -> "Ready To Upload" (Local changes).
 //   - Mismatch + No Anchor -> "DB Outdated" (Safety fallback).
-func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remoteMetas map[string]*model.Metadata, localVersions map[string]*model.Metadata) (string, string, text.Colors) {
+func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remoteMetas map[string]*model.Metadata, localVersions map[string]*model.Metadata, onProgress func(string)) (string, string, text.Colors) {
 	// -------------------------------------------------------------------------
 	// PHASE 1: LOCK STATUS CHECK
 	// Priority 1: If a database is locked, the lock state overrides everything.
@@ -124,7 +124,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// -------------------------------------------------------------------------
 	if db.ExistsLocal && hasRemoteMeta {
 		localPath := filepath.Join(model.AppConfig.LocalDBDir, db.Name)
-		localHash, err := CalculateXXHash(localPath)
+		localHash, err := CalculateXXHash(localPath, onProgress)
 		if err != nil {
 			LogError("Status Check: Failed to verify %s: %v", db.Name, err)
 			return model.StatusCodeErrorReadLocal, model.DBStatuses.ErrorReadLocal.Text, text.Colors{model.DBStatuses.ErrorReadLocal.Color}
@@ -216,7 +216,7 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	if onProgress != nil {
 		onProgress("Syncing metadata...")
 	}
-	remoteMetas, errMetas := DownloadAndLoadMetadata()
+	remoteMetas, errMetas := DownloadAndLoadMetadata(ctx)
 	if errMetas != nil {
 		LogError("Failed to sync/load metadata: %v", errMetas)
 		return nil, fmt.Errorf("failed to download metadata: %w", errMetas)
@@ -275,7 +275,7 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	// Calculate status for each database
 	var statusData []model.DBStatusInfo
 	for _, db := range allDBs {
-		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions)
+		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions, onProgress)
 
 		colorVal := text.FgWhite
 		if len(statusColor) > 0 {

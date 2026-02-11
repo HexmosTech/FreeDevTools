@@ -40,7 +40,7 @@ func NewListController(app *AppUI) *ListController {
 	return &ListController{app: app}
 }
 
-func RunUI() {
+func RunUI(sigHandler *core.SignalHandler) {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
@@ -75,7 +75,7 @@ func RunUI() {
 		// handleSignalLoop:
 		for {
 			// Wait for signal
-			<-core.GetContext().Done()
+			<-sigHandler.Context().Done()
 
 			// Check active operations
 			app.mu.Lock()
@@ -136,7 +136,7 @@ func RunUI() {
 			} else {
 				// User said No.
 				// Reset the signal context so we can catch Ctrl+C again
-				core.ResetContext()
+				sigHandler.Reset()
 				// loop runs again
 			}
 		}

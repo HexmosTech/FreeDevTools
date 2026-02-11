@@ -18,7 +18,7 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 
 	// Calculate hash
-	hash, err := CalculateXXHash(localPath)
+	hash, err := CalculateXXHash(localPath, nil)
 	if err != nil {
 		LogError("GenerateLocalMetadata: CalculateXXHash failed for %s: %v", dbName, err)
 		return nil, fmt.Errorf("failed to calculate hash: %w", err)
@@ -57,7 +57,7 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 }
 
 // DownloadAndLoadMetadata syncs metadata from remote to local cache and loads it
-func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
+func DownloadAndLoadMetadata(ctx context.Context) (map[string]*model.Metadata, error) {
 	LogInfo("Downloading and loading metadata...")
 	// 1. Ensure local version dir exists
 	if err := os.MkdirAll(model.AppConfig.LocalVersionDir, 0755); err != nil {
@@ -69,7 +69,7 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 	LogInfo("Syncing metadata from %s to %s", model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir)
 
 	// Use RcloneSync helper
-	if err := RcloneSync(model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir); err != nil {
+	if err := RcloneSync(ctx, model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir); err != nil {
 		// Log and fail as sync is critical for accurate status
 		LogError("DownloadAndLoadMetadata: RcloneSync failed: %v", err)
 		return nil, fmt.Errorf("failed to sync metadata: %w", err)
@@ -205,9 +205,9 @@ func UploadMetadata(ctx context.Context, dbName string, meta *model.Metadata) er
 }
 
 // AppendEventToMetadata appends a new event to existing metadata or creates new metadata
-func AppendEventToMetadata(dbName string, newMeta *model.Metadata) (*model.Metadata, error) {
+func AppendEventToMetadata(ctx context.Context, dbName string, newMeta *model.Metadata) (*model.Metadata, error) {
 	// Fetch existing metadata
-	remoteMetas, err := DownloadAndLoadMetadata()
+	remoteMetas, err := DownloadAndLoadMetadata(ctx)
 	if err != nil {
 		LogError("AppendEventToMetadata: Failed to load metadata: %v", err)
 		return nil, err
@@ -300,7 +300,7 @@ func HandleBatchMetadataGeneration() {
 		// ... (rest is same)
 
 		// Upload metadata
-		if err := UploadMetadata(GetContext(), dbName, meta); err != nil {
+		if err := UploadMetadata(context.Background(), dbName, meta); err != nil {
 			// fmt.Printf("❌ Failed to upload: %v\n", err)
 			LogError("BatchMetadata: Failed to upload metadata for %s: %v", dbName, err)
 			continue

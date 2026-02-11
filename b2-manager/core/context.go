@@ -4,35 +4,51 @@ import (
 	"context"
 	"os"
 	"os/signal"
+	"sync"
 	"syscall"
 	"time"
 
 	"b2m/model"
 )
 
-// Global cancellation context
-
-// SetupCancellation sets up signal handling for graceful cancellation
-func SetupCancellation() {
-	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	model.GlobalCtx = ctx
-	model.GlobalCancel = cancel
+// SignalHandler manages the application lifecycle context triggered by OS signals
+type SignalHandler struct {
+	ctx    context.Context
+	cancel context.CancelFunc
+	mu     sync.Mutex
 }
 
-// GetContext returns the global cancellation context
-func GetContext() context.Context {
-	if model.GlobalCtx == nil {
-		SetupCancellation()
-	}
-	return model.GlobalCtx
+// NewSignalHandler creates a new signal handler
+func NewSignalHandler() *SignalHandler {
+	h := &SignalHandler{}
+	h.Reset()
+	return h
 }
 
-// ResetContext resets the cancellation context (for after a cancellation event)
-func ResetContext() {
-	if model.GlobalCancel != nil {
-		model.GlobalCancel()
+// Context returns the current active context
+func (h *SignalHandler) Context() context.Context {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	return h.ctx
+}
+
+// Reset creates a new context watching for signals (clearing previous cancellation)
+func (h *SignalHandler) Reset() {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.cancel != nil {
+		h.cancel()
 	}
-	SetupCancellation()
+	h.ctx, h.cancel = signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+}
+
+// Cancel manually cancels the current context
+func (h *SignalHandler) Cancel() {
+	h.mu.Lock()
+	defer h.mu.Unlock()
+	if h.cancel != nil {
+		h.cancel()
+	}
 }
 
 // CleanupOnCancel handles cleanup when an upload is cancelled
@@ -48,7 +64,7 @@ func CleanupOnCancel(dbName string, startTime time.Time) error {
 		LogError("⚠️  Failed to generate cancellation metadata: %v", err)
 	} else {
 		// Append event
-		meta, err = AppendEventToMetadata(dbName, meta)
+		meta, err = AppendEventToMetadata(context.Background(), dbName, meta)
 		if err != nil {
 			LogError("⚠️  Failed to append cancellation event: %v", err)
 		} else {

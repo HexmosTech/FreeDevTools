@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
 
@@ -24,6 +25,9 @@ func main() {
 		os.Exit(1)
 	}
 
+	// Set version
+	model.AppConfig.ToolVersion = "2.0"
+
 	// Load hash cache
 	if err := core.LoadHashCache(); err != nil {
 		core.LogInfo("Warning: Failed to load hash cache: %v", err)
@@ -41,7 +45,9 @@ func main() {
 	// Check for metadata generation flag
 	if len(os.Args) > 1 && os.Args[1] == "--generate-metadata" {
 		// Bootstrap system minimal
-		if err := core.BootstrapSystem(); err != nil {
+		// Use background context for CLI tool mode, or create a handler
+		cliCtx := context.Background()
+		if err := core.BootstrapSystem(cliCtx); err != nil {
 			// fmt.Println("Startup Warning:", err)
 			core.LogError("Startup Warning: %v", err)
 		}
@@ -50,7 +56,7 @@ func main() {
 	}
 
 	// Setup cancellation handling
-	core.SetupCancellation()
+	sigHandler := core.NewSignalHandler()
 
 	// Startup checks
 	if err := core.CheckRclone(); err != nil {
@@ -61,11 +67,11 @@ func main() {
 		// fmt.Println("Warning: rclone config not found. Run 'init' or check setup.")
 		core.LogError("Warning: rclone config not found. Run 'init' or check setup.")
 	}
-	if err := core.BootstrapSystem(); err != nil {
+	if err := core.BootstrapSystem(sigHandler.Context()); err != nil {
 		// fmt.Println("Startup Warning:", err)
 		core.LogError("Startup Warning: %v", err)
 	}
 
 	// Start UI
-	ui.RunUI()
+	ui.RunUI(sigHandler)
 }

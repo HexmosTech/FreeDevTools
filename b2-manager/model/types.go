@@ -1,12 +1,8 @@
 package model
 
 import (
-	"context"
 	"errors"
 	"fmt"
-	"log"
-	"os"
-	"sync"
 	"time"
 
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -189,30 +185,9 @@ const (
 	ActionDownload = "download"
 )
 
-var LogFile *os.File
-var Logger *log.Logger
-
-// CachedHash stores the hash and file stat info to avoid re-hashing unchanged files
-type CachedHash struct {
-	Hash    string
-	ModTime int64
-	Size    int64
-}
-
-var (
-	FileHashCache   = make(map[string]CachedHash)
-	FileHashCacheMu sync.RWMutex
-)
-
 var (
 	// ErrDatabaseLocked indicates the database is locked by another user or process
 	ErrDatabaseLocked = errors.New("database is locked")
-)
-
-// Global cancellation context
-var (
-	GlobalCtx    context.Context
-	GlobalCancel context.CancelFunc
 )
 
 // Config holds all application configuration
@@ -237,6 +212,4 @@ type Config struct {
 	ToolVersion string
 }
 
-var AppConfig = Config{
-	ToolVersion: "v1.0",
-}
+var AppConfig = Config{}

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
@@ -68,10 +69,10 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 	sortDBs(all)
 	return all, nil
 }
-func sendDiscord(content string) {
+func sendDiscord(ctx context.Context, content string) {
 	payload := map[string]string{"content": content}
 	data, _ := json.Marshal(payload)
-	err := exec.CommandContext(GetContext(), "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
+	err := exec.CommandContext(ctx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
 	if err != nil {
 		LogError("Failed to send discord notification: %v", err)
 	}

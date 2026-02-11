@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"b2m/model"
 )
@@ -20,15 +19,15 @@ func CheckRclone() error {
 	return err
 }
 
-func BootstrapSystem() error {
-	if err := checkDBDiscoveryAndSync(); err != nil {
+func BootstrapSystem(ctx context.Context) error {
+	if err := checkDBDiscoveryAndSync(ctx); err != nil {
 		LogError("bootstrapSystem failed: %v", err)
 		return fmt.Errorf("db discovery: %w", err)
 	}
 	return nil
 }
 
-func checkDBDiscoveryAndSync() error {
+func checkDBDiscoveryAndSync(ctx context.Context) error {
 	localDBs, err := getLocalDBs()
 	if err != nil {
 		LogError("getLocalDBs failed: %v", err)
@@ -43,7 +42,7 @@ func checkDBDiscoveryAndSync() error {
 	LogInfo("No local databases found.")
 	LogInfo("No local databases found.")
 
-	remoteDBs, _, err := LsfRclone(context.Background())
+	remoteDBs, _, err := LsfRclone(ctx)
 	if err != nil {
 		LogError("LsfRclone failed: %v", err)
 		return nil
@@ -65,11 +64,11 @@ func checkDBDiscoveryAndSync() error {
 	}
 	return nil
 }
-func checkFileChanged(dbName string) (bool, error) {
+func checkFileChanged(ctx context.Context, dbName string) (bool, error) {
 	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 	remotePath := model.AppConfig.RootBucket + dbName
 
-	cmd := exec.CommandContext(GetContext(), "rclone", "check", localPath, remotePath, "--one-way")
+	cmd := exec.CommandContext(ctx, "rclone", "check", localPath, remotePath, "--one-way")
 	LogInfo("checkFileChanged [%s]: Running command: %v", dbName, cmd.Args)
 	if err := cmd.Run(); err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
@@ -145,92 +144,6 @@ func RcloneCopy(ctx context.Context, cmdName, src, dst, description string, quie
 		}
 	}
 	return nil
-}
-
-// UploadDatabase uploads a single database to remote
-// Returns the uploaded metadata on success, or nil/error
-func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress)) (*model.Metadata, error) {
-	// Check for changes before uploading
-	changed, err := checkFileChanged(dbName)
-	if err != nil {
-		if !quiet {
-			LogError("⚠️  Could not verify changes: %v. Proceeding with upload.", err)
-		}
-		LogError("Could not verify changes for %s: %v", dbName, err)
-		changed = true // Fallback to upload
-	}
-
-	if !changed {
-		if !quiet {
-			LogInfo("No change found in this db skipping Upload")
-		}
-		LogInfo("Skipping upload for %s (no changes)", dbName)
-		return nil, nil
-	}
-
-	if !quiet && onProgress == nil {
-		LogInfo("⬆ Uploading %s to Backblaze B2...", dbName)
-	}
-	LogInfo("Uploading %s to Backblaze B2...", dbName)
-	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-
-	startTime := time.Now()
-
-	// Use RcloneCopy with flat arguments
-	description := "Uploading " + dbName
-	if err := RcloneCopy(ctx, "copy", localPath, model.AppConfig.RootBucket, description, quiet, onProgress); err != nil {
-		LogError("UploadDatabase: RcloneCopy failed: %v", err)
-		return nil, err
-	}
-
-	uploadDuration := time.Since(startTime).Seconds()
-
-	if !quiet {
-		LogInfo("📝 Generating metadata...")
-	}
-	LogInfo("Generating metadata for %s", dbName)
-	meta, err := GenerateLocalMetadata(dbName, uploadDuration, "success")
-	if err != nil {
-		if !quiet {
-			LogError("⚠️  Failed to generate metadata: %v", err)
-		}
-		LogError("Failed to generate metadata for %s: %v", dbName, err)
-		return nil, err
-	}
-
-	meta, err = AppendEventToMetadata(dbName, meta)
-	if err != nil {
-		if !quiet {
-			LogError("⚠️  Failed to append event: %v", err)
-		}
-		LogError("Failed to append event to metadata for %s: %v", dbName, err)
-		return nil, err
-	}
-
-	// Update hash cache on disk as GenerateLocalMetadata updated memory cache
-	if err := SaveHashCache(); err != nil {
-		LogInfo("UploadDatabase: Warning: Failed to save hash cache: %v", err)
-	}
-
-	if err := UploadMetadata(ctx, dbName, meta); err != nil {
-		if !quiet {
-			LogError("⚠️  Failed to upload metadata: %v", err)
-		}
-		LogError("Failed to upload metadata for %s: %v", dbName, err)
-		return nil, err
-	} else if !quiet {
-		LogInfo("✅ Metadata uploaded")
-	}
-
-	if !quiet {
-		LogInfo("📢 Notifying Discord...")
-		sendDiscord(fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
-	} else {
-		sendDiscord(fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
-	}
-	LogInfo("Notified Discord for %s", dbName)
-
-	return meta, nil
 }
 
 // RcloneDeleteFile deletes a single file using rclone deletefile
@@ -346,8 +259,8 @@ func FetchLocks(ctx context.Context) (map[string]model.LockEntry, error) {
 }
 
 // RcloneSync syncs source to destination using rclone sync
-func RcloneSync(src, dst string) error {
-	cmd := exec.CommandContext(GetContext(), "rclone", "sync", src, dst)
+func RcloneSync(ctx context.Context, src, dst string) error {
+	cmd := exec.CommandContext(ctx, "rclone", "sync", src, dst)
 	if err := cmd.Run(); err != nil {
 		LogError("RcloneSync failed (src=%s, dst=%s): %v", src, dst, err)
 		return fmt.Errorf("rclone sync failed: %w", err)

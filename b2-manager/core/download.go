@@ -76,7 +76,7 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
 	localDBPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-	localHash, err := CalculateXXHash(localDBPath)
+	localHash, err := CalculateXXHash(localDBPath, nil)
 	if err != nil {
 		LogError("DownloadDatabase: Failed to calculate hash of downloaded file %s: %v", dbName, err)
 		return fmt.Errorf("failed to calculate hash of downloaded database: %w", err)

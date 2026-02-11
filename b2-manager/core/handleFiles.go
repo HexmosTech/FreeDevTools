@@ -113,18 +113,11 @@ func UnlockDatabase(ctx context.Context, dbName, owner string, force bool) error
 // CheckRcloneConfig checks if rclone is configured.
 // It tries to find the config file using `rclone config file`.
 func CheckRcloneConfig() bool {
-	// 1. Try running `rclone config file` to get the path
-	cmd := exec.Command("rclone", "config", "file")
-	output, err := cmd.Output()
-	if err == nil {
-		lines := strings.Split(string(output), "\n")
-		// Output format is usually: "Configuration file is stored at:\n/path/to/rclone.conf"
-		if len(lines) >= 2 {
-			path := strings.TrimSpace(lines[1])
-			if _, err := os.Stat(path); err == nil {
-				return true
-			}
-		}
+	// 1. Try running `rclone config dump` which requires a valid config
+	// This is more robust than parsing the file path string
+	cmd := exec.Command("rclone", "config", "dump")
+	if err := cmd.Run(); err == nil {
+		return true // Config exists and is valid/loadable
 	}
 
 	// 2. Fallback to standard locations if the command output parsing fails but rclone exists

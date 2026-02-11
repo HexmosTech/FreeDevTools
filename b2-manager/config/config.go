@@ -12,8 +12,6 @@ import (
 	"b2m/model"
 )
 
-// Config holds all application configuration
-
 // InitializeConfig sets up global configuration variables
 func InitializeConfig() error {
 	var err error
@@ -38,7 +36,7 @@ func InitializeConfig() error {
 	fetchUserDetails()
 
 	if model.AppConfig.LocalDBDir == "" {
-		return fmt.Errorf("⚠️  Warning: LocalDBDir not configured. Please set b2m_db_dir in your config file")
+		return fmt.Errorf("LocalDBDir not configured. Please set b2m_db_dir in your config file")
 	}
 	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "version")
 	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "local-version")
