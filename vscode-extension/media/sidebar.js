@@ -134,7 +134,7 @@ resultsList.addEventListener('scroll', () => {
     }
 });
 
-async function performSearch(query) {
+async function performSearch(query, isNewSearch = true) {
     if (!query) {
         resultsList.innerHTML = '';
         clearBtn.style.display = 'none';
@@ -142,17 +142,28 @@ async function performSearch(query) {
         return;
     }
 
-    clearBtn.style.display = 'flex';
-    filterBtn.style.display = 'flex';
-    loadingIndicator.style.display = 'block';
-    noResultsIndicator.style.display = 'none';
-    errorMsg.style.display = 'none';
-    resultsList.innerHTML = '';
+    if (isNewSearch) {
+        offset = 0;
+        hasMore = true;
+        currentQuery = query;
+        resultsList.innerHTML = '';
+        noResultsIndicator.style.display = 'none';
+        errorMsg.style.display = 'none';
+        clearBtn.style.display = 'flex';
+        filterBtn.style.display = 'flex';
+        loadingIndicator.style.display = 'block';
+    } else {
+        if (isLoading || !hasMore) return;
+        loadingIndicator.style.display = 'block';
+    }
+
+    isLoading = true;
 
     try {
         const searchBody = {
             q: query,
-            limit: 20,
+            limit: LIMIT,
+            offset: offset,
             attributesToRetrieve: [
                 'id',
                 'name',
@@ -186,14 +197,29 @@ async function performSearch(query) {
         }
 
         const data = await response.json();
-        renderResults(data.hits, true); // Using renderResults and treating as new search
+        const hits = data.hits || [];
+
+        // Update Pagination State
+        if (hits.length < LIMIT) {
+            hasMore = false;
+        }
+        offset += hits.length;
+
+        renderResults(hits, isNewSearch);
+
+        // Handle no results case specifically for new search
+        if (isNewSearch && hits.length === 0) {
+            noResultsIndicator.style.display = 'block';
+        }
 
     } catch (error) {
         console.error(error);
-        loadingIndicator.style.display = 'none';
-        errorMsg.textContent = error.message;
-        errorMsg.style.display = 'block';
+        if (isNewSearch) {
+            errorMsg.textContent = error.message;
+            errorMsg.style.display = 'block';
+        }
     } finally {
+        isLoading = false;
         loadingIndicator.style.display = 'none';
     }
 }
