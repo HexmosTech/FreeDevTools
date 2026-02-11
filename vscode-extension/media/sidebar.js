@@ -20,7 +20,7 @@ const categories = [
     { key: 'cheatsheets', label: 'Cheatsheets' },
     { key: 'png_icons', label: 'PNG Icons' },
     { key: 'svg_icons', label: 'SVG Icons' },
-    { key: 'emoji', label: 'Emojis' },
+    { key: 'emojis', label: 'Emojis' },
     { key: 'mcp', label: 'MCP' },
     { key: 'man_pages', label: 'Man Pages' },
 ];
