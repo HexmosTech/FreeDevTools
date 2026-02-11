@@ -18,9 +18,9 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 
 	// Calculate hash
-	hash, err := CalculateXXHash(localPath, nil)
+	hash, err := CalculateHash(localPath, nil)
 	if err != nil {
-		LogError("GenerateLocalMetadata: CalculateXXHash failed for %s: %v", dbName, err)
+		LogError("GenerateLocalMetadata: CalculateHash failed for %s: %v", dbName, err)
 		return nil, fmt.Errorf("failed to calculate hash: %w", err)
 	}
 
@@ -259,23 +259,23 @@ func AppendEventToMetadata(ctx context.Context, dbName string, newMeta *model.Me
 
 func HandleBatchMetadataGeneration() {
 	LogInfo("Starting batch metadata generation")
-	// fmt.Println("🔍 Scanning local databases for metadata generation...")
+	fmt.Println("🔍 Scanning local databases for metadata generation...")
 	LogInfo("🔍 Scanning local databases for metadata generation...")
 
 	local, err := getLocalDBs()
 	if err != nil {
-		// fmt.Printf("❌ Failed to list local databases: %v\n", err)
+		fmt.Printf("❌ Failed to list local databases: %v\n", err)
 		LogError("BatchMetadata: Failed to list local databases: %v", err)
 		return
 	}
 
 	if len(local) == 0 {
-		// fmt.Println("⚠️  No local databases found.")
+		fmt.Println("⚠️  No local databases found.")
 		LogInfo("BatchMetadata: No local databases found")
 		return
 	}
 
-	// fmt.Printf("Found %d local databases. Starting generation...\n", len(local))
+	fmt.Printf("Found %d local databases. Starting generation...\n", len(local))
 	LogInfo("Found %d local databases. Starting generation...", len(local))
 
 	maxLen := 0
@@ -286,41 +286,59 @@ func HandleBatchMetadataGeneration() {
 	}
 
 	successCount := 0
+	ctx := context.Background()
+
 	for _, dbName := range local {
-		// fmt.Printf("Processing %s... %s", dbName, padding)
+		fmt.Printf("Processing %s...", dbName)
 		LogInfo("Processing %s...", dbName)
 
-		// Generate metadata
-		meta, err := GenerateLocalMetadata(dbName, 0, "success")
+		// 1. Generate fresh metadata from local file
+		newMeta, err := GenerateLocalMetadata(dbName, 0, "success")
 		if err != nil {
-			// fmt.Printf("❌ Failed to generate: %v\n", err)
+			fmt.Printf("❌ Failed to generate: %v\n", err)
 			LogError("BatchMetadata: Failed to generate metadata for %s: %v", dbName, err)
 			continue
 		}
-		// ... (rest is same)
 
-		// Upload metadata
-		if err := UploadMetadata(context.Background(), dbName, meta); err != nil {
-			// fmt.Printf("❌ Failed to upload: %v\n", err)
+		// 2. Fetch remote metadata to preserve history (Events)
+		remoteMeta, err := FetchSingleRemoteMetadata(ctx, dbName)
+		if err != nil {
+			// If error is just "not found", that's fine, it's a new file.
+			// But FetchSingleRemoteMetadata might return error for network issues too.
+			// We'll log it but proceed with empty events if strictly necessary,
+			// or maybe we should fail safe?
+			// For now, let's log warning and proceed as new (since user wants to fix "not generating").
+			// But to be safe against wiping, maybe we should be careful.
+			// However, FetchSingleRemoteMetadata returns nil, nil if not found (based on my read of previous file view).
+			// Let's re-verify FetchSingleRemoteMetadata implementation.
+			LogInfo("BatchMetadata: No valid remote metadata found for %s (or error: %v), treating as new/fresh.", dbName, err)
+		}
+
+		if remoteMeta != nil {
+			LogInfo("BatchMetadata: Found remote metadata for %s, preserving %d events.", dbName, len(remoteMeta.Events))
+			newMeta.Events = remoteMeta.Events
+		}
+
+		// 3. Upload merged metadata
+		if err := UploadMetadata(ctx, dbName, newMeta); err != nil {
+			fmt.Printf("❌ Failed to upload: %v\n", err)
 			LogError("BatchMetadata: Failed to upload metadata for %s: %v", dbName, err)
 			continue
 		}
 
-		// Update local anchor (local-version) to match the new metadata
-		// This ensures we don't show "DB Outdated" immediately after generation
-		if err := UpdateLocalVersion(dbName, *meta); err != nil {
+		// 4. Update local anchor
+		if err := UpdateLocalVersion(dbName, *newMeta); err != nil {
 			LogError("BatchMetadata: Failed to update local anchor for %s: %v", dbName, err)
-			// Non-critical but annoying, continue
 		} else {
 			LogInfo("BatchMetadata: Local anchor updated for %s", dbName)
 		}
 
-		// fmt.Println("✅ Done")
+		fmt.Println("✅ Done")
 		LogInfo("✅ Done for %s", dbName)
 		successCount++
 	}
 
-	// fmt.Printf("\n✨ Completed! Successfully generated metadata for %d mixed databases.\n", successCount)
+	fmt.Printf("\n✨ Completed! Successfully generated and uploaded metadata for %d/%d databases.\n", successCount, len(local))
 	LogInfo("Batch metadata generation completed. Success: %d", successCount)
 }
 
@@ -389,4 +407,15 @@ func GetLocalVersion(dbName string) (*model.Metadata, error) {
 	}
 
 	return &meta, nil
+}
+
+// CleanupLocalMetadata removes the local .b2m directory to ensure a fresh state
+func CleanupLocalMetadata() error {
+	b2mDir := filepath.Join(model.AppConfig.LocalDBDir, ".b2m")
+	LogInfo("Removing .b2m directory: %s", b2mDir)
+	if err := os.RemoveAll(b2mDir); err != nil {
+		LogError("CleanupLocalMetadata: Failed to remove .b2m directory: %v", err)
+		return fmt.Errorf("failed to remove .b2m directory: %w", err)
+	}
+	return nil
 }

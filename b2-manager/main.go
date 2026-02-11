@@ -44,6 +44,11 @@ func main() {
 
 	// Check for metadata generation flag
 	if len(os.Args) > 1 && os.Args[1] == "--generate-metadata" {
+		// Clean up .b2m before generating metadata
+		if err := core.CleanupLocalMetadata(); err != nil {
+			fmt.Printf("Warning: %v\n", err)
+		}
+
 		// Bootstrap system minimal
 		// Use background context for CLI tool mode, or create a handler
 		cliCtx := context.Background()

@@ -16,12 +16,12 @@ The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gatherin
 - **Source**: `core/rclone.go` (`LsfRclone`)
 - **Action**: Executes `rclone lsf -R` on the B2 bucket to list `*.db` files and lock files recursively in a single call.
 
-### D. Download Metadata
+### C. Download Metadata
 
 - **Source**: `core/metadata.go`
-- **Action**: Runs `DownloadAndLoadMetadata` (using `rclone sync`) to update the local metadata cache from B2/`metadata/`.
+- **Action**: Runs `DownloadAndLoadMetadata` (using `rclone sync`) to update the local metadata cache from B2/`version/`.
 
-### E. Load Local-Version Anchors
+### D. Load Local-Version Anchors
 
 - **Source**: `core/status.go` / `core/metadata.go`
 - **Action**: Scans `local-version/` directory for metadata files representing the state of the database _at the time of last sync_. This is crucial for 3-way comparison.
@@ -79,6 +79,7 @@ Checks the valid sync history (`LocalVersion` vs `Remote`).
 Compares the actual Local File against Remote Metadata.
 
 - **Local Hash == Remote Hash**: Returns **"Up to Date ✅"**.
+  - **Integrity Check**: During this phase, if the file is large and not cached, the status will show **"Integrity Check: [filename]"** while calculating the hash.
   - **Auto-Heal**: If the local file matches the remote but has no `local-version` anchor, the system **automatically creates** the anchor. This restores the sync state without user intervention.
 - **Local Hash != Remote Hash**:
   - **Has Anchor**: Means we started from the current remote state but changed the file locally.

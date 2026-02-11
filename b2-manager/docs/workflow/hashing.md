@@ -1,6 +1,6 @@
 # Hashing Workflow & Cache Structure
 
-The application uses xxHash (specifically xxh3) to calculate checksums of local database files. To improve performance, especially for large files that haven't changed, a persistent hash cache is used.
+The application uses **imohash** (specifically the `github.com/kalafut/imohash` library) to calculate checksums of local database files. This algorithm is chosen for its speed and suitability for large files, as it samples the file rather than reading the entire content (default behavior), making it significantly faster than MD5 or SHA256 for large blobs while maintaining high collision resistance for this use case.
 
 ## Cache Logic
 
@@ -9,7 +9,10 @@ The application uses xxHash (specifically xxh3) to calculate checksums of local 
    - The system checks if the file path exists in the in-memory cache.
    - It compares the file's current modification time (`ModTime`) and size (`Size`) against the cached values.
    - **Hit**: If both match, the cached hash is returned immediately (no I/O is performed to read the file content).
-   - **Miss**: If there is no entry or the metadata doesn't match, the file is re-hashed, and the cache is updated.
+   - **Miss**: If there is no entry or the metadata doesn't match, the file is re-hashed.
+     - If an `onProgress` callback is provided, an "Integrity Check" status is reported.
+     - The calculation duration is logged.
+     - The cache is updated with the new hash.
 3. **Shutdown**: The in-memory cache is saved back to `hash.json` when the application acts.
 
 ## hash.json Structure
@@ -21,7 +24,7 @@ The `hash.json` file is a JSON object where keys are absolute file paths and val
 ```json
 {
   "/absolute/path/to/file.db": {
-    "Hash": "string (hex encoded xxh3 checksum)",
+    "Hash": "string (hex encoded imohash checksum)",
     "ModTime": int64 (nanoseconds),
     "Size": int64 (bytes)
   }
@@ -30,7 +33,7 @@ The `hash.json` file is a JSON object where keys are absolute file paths and val
 
 ### Fields
 
-- **Hash**: The computed XXH3 hash of the file content, represented as a hex string.
+- **Hash**: The computed imohash of the file content, represented as a hex string.
 - **ModTime**: The modification time of the file in nanoseconds (Unix timestamp). This is used to detect if the file has been modified since the last hash calculation.
 - **Size**: The size of the file in bytes. This serves as a secondary check for file changes.
 
@@ -53,10 +56,3 @@ The cache is saved to disk (`hash.json`) in the following scenarios to avoid rec
 1.  **Application Shutdown**: Deferred save in `main.go`.
 2.  **Post-Operation**: Immediately after a successful **Upload** or **Download** operation (to capture state of the new file).
 3.  **Hash Calculation**: Whenever a new hash is calculated (cache miss).
-
-```go
-// Example from core/upload.go
-if err := SaveHashCache(); err != nil {
-    LogInfo("PerformUpload: Warning: Failed to save hash cache: %v", err)
-}
-```

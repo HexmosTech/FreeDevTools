@@ -124,7 +124,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// -------------------------------------------------------------------------
 	if db.ExistsLocal && hasRemoteMeta {
 		localPath := filepath.Join(model.AppConfig.LocalDBDir, db.Name)
-		localHash, err := CalculateXXHash(localPath, onProgress)
+		localHash, err := CalculateHash(localPath, onProgress)
 		if err != nil {
 			LogError("Status Check: Failed to verify %s: %v", db.Name, err)
 			return model.StatusCodeErrorReadLocal, model.DBStatuses.ErrorReadLocal.Text, text.Colors{model.DBStatuses.ErrorReadLocal.Color}

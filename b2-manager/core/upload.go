@@ -120,7 +120,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 			// We recalculate the hash of the LOCAL file. CalculateXXHash updates the in-memory cache
 			// with the new ModTime and Size. Then SaveHashCache persists it.
 			localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-			if _, err := CalculateXXHash(localPath, nil); err != nil {
+			if _, err := CalculateHash(localPath, nil); err != nil {
 				LogError("PerformUpload: Failed to recalculate hash for cache update: %v", err)
 			} else {
 				if err := SaveHashCache(); err != nil {
@@ -187,7 +187,7 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 	if localAnchor == nil {
 		// Exception: If hashes match, we are coincidentally in sync (autofixed elsewhere, but here we proceed).
 		localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-		if hash, err := CalculateXXHash(localPath, nil); err == nil && hash == remoteMeta.Hash {
+		if hash, err := CalculateHash(localPath, nil); err == nil && hash == remoteMeta.Hash {
 			LogInfo("CheckUploadSafety: No anchor, but hashes match. Safe to upload (Update).")
 			return nil
 		}

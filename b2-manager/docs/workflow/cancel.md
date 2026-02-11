@@ -23,8 +23,8 @@ The cleanup logic is defined in `CleanupOnCancel` (`core/context.go`) and invoke
 
 - **Metadata Update**:
   - Generates a new metadata event with status `cancelled`.
-  - This informs other users (and the Status Check logic) that the last attempt failed, preventing them from trusting potentially partial data (though B2 is atomic per file, metadata sync allows tracking intent).
-  - Status Check displays this as `Upload Cancelled` (Red).
+  - This informs other users (and the Status Check logic) that the last attempt failed, preventing them from trusting potentially partial data.
+  - Status Check displays this as `Upload Cancelled` (Red) or allows the next user to overwrite/fix it.
 
 ### 3. Release Resources
 

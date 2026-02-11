@@ -3,13 +3,12 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"path/filepath"
 	"sync"
 	"time"
 
-	"github.com/zeebo/xxh3"
+	"github.com/kalafut/imohash"
 
 	"b2m/model"
 )
@@ -26,11 +25,11 @@ var (
 	hashCacheMu sync.RWMutex
 )
 
-// CalculateXXHash calculates the xxHash (as hex string) of a file with caching
-func CalculateXXHash(filePath string, onProgress func(string)) (string, error) {
+// CalculateHash calculates the imohash (as hex string) of a file with caching
+func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	info, err := os.Stat(filePath)
 	if err != nil {
-		LogError("CalculateXXHash: Failed to stat file %s: %v", filePath, err)
+		LogError("CalculateHash: Failed to stat file %s: %v", filePath, err)
 		return "", err
 	}
 
@@ -52,23 +51,16 @@ func CalculateXXHash(filePath string, onProgress func(string)) (string, error) {
 
 	startTime := time.Now()
 
-	// Calculate hash
-	f, err := os.Open(filePath)
+	// Calculate hash using imohash
+	// imohash.SumFile returns [16]byte
+	hashBytes, err := imohash.SumFile(filePath)
 	if err != nil {
-		LogError("CalculateXXHash: Failed to open file %s: %v", filePath, err)
-		return "", err
-	}
-	defer f.Close()
-
-	// Use streaming digest
-	h := xxh3.New()
-	if _, err := io.Copy(h, f); err != nil {
-		LogError("CalculateXXHash: io.Copy failed for %s: %v", filePath, err)
+		LogError("CalculateHash: Failed to calculate hash for %s: %v", filePath, err)
 		return "", err
 	}
 
-	// Sum64 returns uint64, format as hex string for compatibility
-	hash := fmt.Sprintf("%016x", h.Sum64())
+	// Format as hex string
+	hash := fmt.Sprintf("%x", hashBytes)
 
 	duration := time.Since(startTime)
 	LogInfo("Hash calculation for %s took %v", filepath.Base(filePath), duration)

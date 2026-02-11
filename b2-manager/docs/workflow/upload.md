@@ -6,7 +6,7 @@ This document details the multi-step process required to safely upload a databas
 
 The upload process is orchestrated by `PerformUpload` in `core/upload.go`.
 
-> **UI Action**: This workflow is triggered when the user presses **'U'** (or selects "Upload") in the main dashboard.
+> **UI Action**: This workflow is triggered when the user presses **'u'** (or selects "Upload") in the main dashboard.
 
 ### Phase 0: Pre-Upload Safety Check
 
@@ -31,7 +31,7 @@ Before any action, `core.CheckUploadSafety` performs a critical validation to pr
 ### Phase 3: Uploading & Metadata Finalization
 
 1.  **File Upload**: Executes `rclone copy` to transmit the `.db` file to B2.
-2.  **Verification**: Checks checksums to ensure integrity.
+2.  **Verification**: Checks checksums (via rclone) to ensure integrity.
 3.  **Generate Final Metadata**: On success, generates a new metadata block with `status: "success"` and interaction history.
 4.  **Upload Metadata**: Syncs the new metadata file to B2.
 
@@ -44,7 +44,7 @@ Before any action, `core.CheckUploadSafety` performs a critical validation to pr
 ### Phase 5: Finalization
 
 1.  **Unlock**: Removes the `.lock` file from B2.
-2.  **Notify**: Sends a completion webhook (e.g. Discord).
+2.  **Notify**: Sends a completion webhook (Descriptor).
 
 ## Diagram
 
