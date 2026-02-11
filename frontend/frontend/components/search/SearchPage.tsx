@@ -472,13 +472,14 @@ const SearchPage: React.FC = () => {
 
   useEffect(() => {
     if (!query.trim()) {
-      setResults([]);
-      setAllResults([]);
-      setSearchInfo(null);
-      setCurrentPage(1);
-      setActiveCategory('all');
-      setSelectedCategories([]);
-      setAvailableCategories({});
+      // Only update when not already in reset state to avoid effect loop (deps include activeCategory/selectedCategories)
+      if (results.length > 0) setResults([]);
+      if (allResults.length > 0) setAllResults([]);
+      if (searchInfo !== null) setSearchInfo(null);
+      if (currentPage !== 1) setCurrentPage(1);
+      if (activeCategory !== 'all') setActiveCategory('all');
+      if (selectedCategories.length > 0) setSelectedCategories([]);
+      if (Object.keys(availableCategories).length > 0) setAvailableCategories({});
       return;
     }
 
