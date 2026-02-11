@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { CONFIG } from '../config';
 
 export function getWebviewContent(url: string, extensionUri: vscode.Uri, webview: vscode.Webview): string {
     const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'loader.css'));
@@ -17,7 +16,7 @@ export function getWebviewContent(url: string, extensionUri: vscode.Uri, webview
             <div class="loading-text">Loading...</div>
         </div>
 
-        <iframe src="${url}" id="content-frame"></iframe>
+        <iframe src="${url}" id="content-frame" allow="clipboard-read; clipboard-write" style="width: 100%; height: 100%; border: none;"></iframe>
 
         <script>
             const vscode = acquireVsCodeApi();
@@ -26,6 +25,7 @@ export function getWebviewContent(url: string, extensionUri: vscode.Uri, webview
 
             iframe.addEventListener('load', () => {
                 iframe.contentWindow.postMessage({ command: 'init-vscode' }, '*');
+                iframe.focus();
                 
                 loader.style.opacity = '0';
                 setTimeout(() => {
@@ -37,7 +37,7 @@ export function getWebviewContent(url: string, extensionUri: vscode.Uri, webview
                 const message = event.data;
                 if (!message) return;
 
-                if (message.command === 'download' || message.command === 'login' || message.command === 'logout' || message.command === 'open-external') {
+                if (message.command === 'download' || message.command === 'login' || message.command === 'logout' || message.command === 'open-external' || message.command === 'copy') {
                     vscode.postMessage(message);
                     return;
                 }

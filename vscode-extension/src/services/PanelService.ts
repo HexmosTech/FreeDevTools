@@ -62,6 +62,12 @@ export function ensurePanel(context: vscode.ExtensionContext): vscode.WebviewPan
                 return;
             }
 
+            if (message.command === 'copy' && message.text) {
+                vscode.env.clipboard.writeText(message.text);
+                vscode.window.showInformationMessage('Copied to clipboard!');
+                return;
+            }
+
             if (message.command === 'download') {
                 const workspaceFolders = vscode.workspace.workspaceFolders;
                 const defaultUri = workspaceFolders && workspaceFolders[0] ? workspaceFolders[0].uri : undefined;
