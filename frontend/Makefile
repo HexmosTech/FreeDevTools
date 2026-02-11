@@ -204,9 +204,6 @@ kill: ## Kill process running on port (default: 4321)
 	@echo "Done!"
 
 start-prod: ## Start production server on port 4321 using pmdaemon
-	@$(MAKE) generate
-	@$(MAKE) build-css
-	@$(MAKE) build-js
 	@$(MAKE) build
 	@if ! command -v pmdaemon > /dev/null 2>&1; then \
 		echo "❌ Error: pmdaemon is not installed or not in PATH"; \
