@@ -5,7 +5,71 @@ const resultsList = document.getElementById('results-list');
 const loadingIndicator = document.getElementById('loading');
 const noResultsIndicator = document.getElementById('no-results');
 const errorMsg = document.getElementById('error-msg');
-const header = document.getElementById('header');
+const header = document.querySelector('.header');
+
+// Filter Logic
+const filterBtn = document.getElementById('filter-btn');
+const filterMenu = document.getElementById('filter-menu');
+let selectedCategory = 'all';
+
+const categories = [
+    { key: 'all', label: 'All' },
+    { key: 'installerpedia', label: 'InstallerPedia' },
+    { key: 'tools', label: 'Tools' },
+    { key: 'tldr', label: 'TLDR' },
+    { key: 'cheatsheets', label: 'Cheatsheets' },
+    { key: 'png_icons', label: 'PNG Icons' },
+    { key: 'svg_icons', label: 'SVG Icons' },
+    { key: 'emoji', label: 'Emojis' },
+    { key: 'mcp', label: 'MCP' },
+    { key: 'man_pages', label: 'Man Pages' },
+];
+
+function initFilterMenu() {
+    if (!filterMenu) return;
+    filterMenu.innerHTML = '';
+    categories.forEach(cat => {
+        const div = document.createElement('div');
+        div.className = 'filter-option';
+        if (cat.key === selectedCategory) div.classList.add('selected');
+        div.textContent = cat.label;
+        div.onclick = (e) => {
+            e.stopPropagation();
+            selectCategory(cat.key);
+            filterMenu.classList.remove('open');
+        };
+        filterMenu.appendChild(div);
+    });
+}
+
+function selectCategory(key) {
+    selectedCategory = key;
+    initFilterMenu(); // Update selection classes
+
+    if (selectedCategory !== 'all') {
+        filterBtn.classList.add('active');
+    } else {
+        filterBtn.classList.remove('active');
+    }
+
+    const query = searchInput.value.trim();
+    if (query.length >= 2) {
+        performSearch(query);
+    }
+}
+
+if (filterBtn) {
+    filterBtn.onclick = (e) => {
+        e.stopPropagation(); // prevent window click
+        filterMenu.classList.toggle('open');
+    };
+    initFilterMenu();
+}
+
+// Close on outside click
+window.addEventListener('click', () => {
+    if (filterMenu) filterMenu.classList.remove('open');
+});
 
 // Use injected config
 const MEILI_URL = window.vscodeConfig.meiliUrl;
@@ -70,55 +134,67 @@ resultsList.addEventListener('scroll', () => {
     }
 });
 
-async function performSearch(query, isNewSearch = false) {
-    if (isNewSearch) {
-        currentQuery = query;
-        offset = 0;
-        hasMore = true;
-        isLoading = false;
-        resultsList.innerHTML = ''; // Clear for new search
+async function performSearch(query) {
+    if (!query) {
+        resultsList.innerHTML = '';
+        clearBtn.style.display = 'none';
+        filterBtn.style.display = 'none';
+        return;
     }
 
-    if (isLoading) return;
-    isLoading = true;
+    clearBtn.style.display = 'flex';
+    filterBtn.style.display = 'flex';
+    loadingIndicator.style.display = 'block';
+    noResultsIndicator.style.display = 'none';
+    errorMsg.style.display = 'none';
+    resultsList.innerHTML = '';
 
     try {
+        const searchBody = {
+            q: query,
+            limit: 20,
+            attributesToRetrieve: [
+                'id',
+                'name',
+                'title',
+                'description',
+                'category',
+                'path',
+                'image',
+                'code'
+            ]
+        };
+
+        if (selectedCategory && selectedCategory !== 'all') {
+            searchBody.filter = `category = '${selectedCategory}'`;
+        }
+
         const response = await fetch(MEILI_URL, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + MEILI_KEY
+                'Authorization': `Bearer ${MEILI_KEY}`
             },
-            body: JSON.stringify({
-                q: query,
-                limit: LIMIT,
-                offset: offset,
-                attributesToRetrieve: ['name', 'title', 'description', 'path', 'category', 'image', 'code']
-            })
+            body: JSON.stringify(searchBody)
         });
 
-        const data = await response.json();
-        const hits = data.hits || [];
-
-        if (hits.length < LIMIT) {
-            hasMore = false;
+        if (!response.ok) {
+            if (response.status === 403) {
+                throw new Error('Access denied (403). check API Key.');
+            }
+            throw new Error(`Search failed: ${response.statusText}`);
         }
 
-        offset += hits.length;
-        renderResults(hits, isNewSearch);
+        const data = await response.json();
+        renderResults(data.hits, true); // Using renderResults and treating as new search
 
     } catch (error) {
-        console.error('Search error:', error);
-        if (isNewSearch) {
-            loadingIndicator.style.display = 'none';
-            errorMsg.textContent = 'Error fetching results.';
-            errorMsg.style.display = 'block';
-        }
+        console.error(error);
+        loadingIndicator.style.display = 'none';
+        errorMsg.textContent = error.message;
+        errorMsg.style.display = 'block';
     } finally {
-        isLoading = false;
-        if (isNewSearch) {
-            loadingIndicator.style.display = 'none';
-        }
+        loadingIndicator.style.display = 'none';
     }
 }
 
