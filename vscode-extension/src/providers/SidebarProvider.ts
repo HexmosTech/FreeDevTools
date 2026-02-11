@@ -2,6 +2,14 @@ import * as vscode from 'vscode';
 import { getSidebarHtml } from '../templates/sidebarTemplate';
 import { getNonce } from '../utils/nonce';
 
+// Inject environment variables
+declare const process: {
+    env: {
+        NODE_ENV: string;
+        API_BASE_URL: string;
+    };
+};
+
 export class SidebarProvider implements vscode.WebviewViewProvider {
     public static readonly viewType = 'freedevtools.sidebar';
     private _view?: vscode.WebviewView;

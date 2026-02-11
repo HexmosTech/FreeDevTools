@@ -28,7 +28,9 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.window.onDidChangeActiveColorTheme(theme => {
         const panel = getPanel();
         if (panel) {
+            let baseUrl = (process.env.APP_URL || 'https://hexmos.com/') + 'freedevtools/';
             const themeName = (theme.kind === vscode.ColorThemeKind.Light) ? 'light' : 'dark';
+            // Append theme as query param
             panel.webview.postMessage({ command: 'setTheme', theme: themeName });
         }
     });

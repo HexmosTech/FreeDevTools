@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { CONFIG } from '../config';
 
 export function getSidebarHtml(webview: vscode.Webview, extensionUri: vscode.Uri, nonce: string): string {
     const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'sidebar.css'));
@@ -11,7 +10,7 @@ export function getSidebarHtml(webview: vscode.Webview, extensionUri: vscode.Uri
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}; connect-src ${CONFIG.MEILI_SEARCH_URL};">
+            <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src ${webview.cspSource} https:; script-src 'nonce-${nonce}'; style-src ${webview.cspSource}; connect-src ${process.env.MEILI_SEARCH_URL || 'https://search.apps.hexmos.com/indexes/freedevtools/search'};">
             <title>Free DevTools</title>
             <link href="${styleUri}" rel="stylesheet">
         </head>
@@ -33,8 +32,8 @@ export function getSidebarHtml(webview: vscode.Webview, extensionUri: vscode.Uri
 
             <script nonce="${nonce}">
                 window.vscodeConfig = {
-                    meiliUrl: '${CONFIG.MEILI_SEARCH_URL}',
-                    meiliKey: '${CONFIG.MEILI_SEARCH_API_KEY}'
+                    meiliUrl: '${process.env.MEILI_SEARCH_URL || 'https://search.apps.hexmos.com/indexes/freedevtools/search'}',
+                    meiliKey: '${process.env.MEILI_SEARCH_API_KEY || ''}'
                 };
             </script>
             <script nonce="${nonce}" src="${scriptUri}"></script>

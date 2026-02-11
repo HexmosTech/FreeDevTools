@@ -1,5 +1,4 @@
 import * as vscode from 'vscode';
-import { CONFIG } from '../config';
 import { ensurePanel } from '../services/PanelService';
 import { getWebviewContent } from '../templates/webviewTemplate';
 
@@ -37,7 +36,7 @@ export function registerSearchCommands(context: vscode.ExtensionContext) {
 
     // Open Tool Command
     context.subscriptions.push(vscode.commands.registerCommand('freedevtools.openTool', (path: string) => {
-        let baseUrl = CONFIG.APP_URL + 'freedevtools/';
+        let baseUrl = (process.env.APP_URL || 'https://hexmos.com/') + 'freedevtools/';
         if (baseUrl.endsWith('/') && path.startsWith('/')) {
             baseUrl = baseUrl.slice(0, -1);
         } else if (!baseUrl.endsWith('/') && !path.startsWith('/')) {
@@ -61,7 +60,9 @@ export function registerSearchCommands(context: vscode.ExtensionContext) {
 
 function openSearchWebview(context: vscode.ExtensionContext, query: string) {
     const theme = getTheme();
-    let baseUrl = CONFIG.APP_URL + 'freedevtools/';
+    // Use env var or default
+    const appUrl = process.env.APP_URL || 'https://hexmos.com/';
+    let baseUrl = appUrl + 'freedevtools/';
 
     if (baseUrl.includes('?')) {
         baseUrl += `&theme=${theme}&vscode=true`;
