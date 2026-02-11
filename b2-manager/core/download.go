@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"b2m/config"
 	"b2m/model"
 )
 
@@ -41,14 +40,14 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 		}
 	}
 
-	if err := os.MkdirAll(config.AppConfig.LocalDBDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.LocalDBDir, 0755); err != nil {
 		LogError("Failed to create local directory: %v", err)
 		return fmt.Errorf("failed to create local directory: %w", err)
 	}
 
-	remotePath := path.Join(config.AppConfig.RootBucket, dbName)
+	remotePath := path.Join(model.AppConfig.RootBucket, dbName)
 	// Use directory as destination for 'copy'
-	localDir := config.AppConfig.LocalDBDir
+	localDir := model.AppConfig.LocalDBDir
 
 	// -------------------------------------------------------------------------
 	// PHASE 2: EXECUTE DOWNLOAD
@@ -73,10 +72,10 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
-	mirrorMetadataPath := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename)
+	mirrorMetadataPath := filepath.Join(model.AppConfig.LocalVersionDir, metadataFilename)
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
-	localDBPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+	localDBPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 	localHash, err := CalculateXXHash(localDBPath)
 	if err != nil {
 		LogError("DownloadDatabase: Failed to calculate hash of downloaded file %s: %v", dbName, err)
@@ -99,7 +98,7 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 	} else {
 		LogInfo("DownloadDatabase: Warning: Remote mirror missing for %s. Attempting to fetch...", dbName)
 		// Try to fetch specific metadata file
-		remoteMetaPath := config.AppConfig.VersionDir + metadataFilename
+		remoteMetaPath := model.AppConfig.VersionDir + metadataFilename
 		// Copy single file
 		if err := exec.CommandContext(ctx, "rclone", "copyto", remoteMetaPath, mirrorMetadataPath).Run(); err == nil {
 			// Read again

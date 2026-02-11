@@ -3,7 +3,7 @@ package core
 import (
 	"context"
 
-	"b2m/config"
+	"b2m/model"
 )
 
 // AcquireCustomLock acquires a lock for a database and sets its status to "updating"
@@ -16,7 +16,7 @@ func AcquireCustomLock(ctx context.Context, dbName string) error {
 	// The intent ends up in the file content if we look at LockDatabase implementation
 	// User requirement: "User can lock the db... This 'l' command should only create lock and update metadata with status: 'updating'"
 	// We use Force=false here to respect other locks. The LockDatabase function checks validity.
-	if err := LockDatabase(ctx, dbName, config.AppConfig.CurrentUser, config.AppConfig.Hostname, "manual_update", false); err != nil {
+	if err := LockDatabase(ctx, dbName, model.AppConfig.CurrentUser, model.AppConfig.Hostname, "manual_update", false); err != nil {
 		return err
 	}
 
@@ -33,7 +33,7 @@ func AcquireCustomLock(ctx context.Context, dbName string) error {
 		// Assume local DB exists.
 		LogError("AcquireCustomLock: Failed to generate metadata: %v", err)
 		// Undo lock?
-		UnlockDatabase(ctx, dbName, config.AppConfig.CurrentUser, true)
+		UnlockDatabase(ctx, dbName, model.AppConfig.CurrentUser, true)
 		return err
 	}
 
@@ -46,14 +46,14 @@ func AcquireCustomLock(ctx context.Context, dbName string) error {
 	meta, err = AppendEventToMetadata(dbName, meta)
 	if err != nil {
 		LogError("AcquireCustomLock: Failed to append event: %v", err)
-		UnlockDatabase(ctx, dbName, config.AppConfig.CurrentUser, true)
+		UnlockDatabase(ctx, dbName, model.AppConfig.CurrentUser, true)
 		return err
 	}
 
 	// Upload Metadata
 	if err := UploadMetadata(ctx, dbName, meta); err != nil {
 		LogError("AcquireCustomLock: Failed to upload metadata: %v", err)
-		UnlockDatabase(ctx, dbName, config.AppConfig.CurrentUser, true)
+		UnlockDatabase(ctx, dbName, model.AppConfig.CurrentUser, true)
 		return err
 	}
 

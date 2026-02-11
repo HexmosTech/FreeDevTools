@@ -6,6 +6,7 @@ import (
 
 	"b2m/config"
 	"b2m/core"
+	"b2m/model"
 	"b2m/ui"
 )
 
@@ -34,8 +35,8 @@ func main() {
 	}()
 
 	core.LogInfo("Configuration loaded successfully")
-	core.LogInfo("RootBucket: %s", config.AppConfig.RootBucket)
-	core.LogInfo("DiscordWebhookURL: %s", config.AppConfig.DiscordWebhookURL)
+	core.LogInfo("RootBucket: %s", model.AppConfig.RootBucket)
+	core.LogInfo("DiscordWebhookURL: %s", model.AppConfig.DiscordWebhookURL)
 
 	// Check for metadata generation flag
 	if len(os.Args) > 1 && os.Args[1] == "--generate-metadata" {

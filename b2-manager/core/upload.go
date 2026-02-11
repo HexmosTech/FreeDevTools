@@ -6,7 +6,6 @@ import (
 	"path/filepath"
 	"time"
 
-	"b2m/config"
 	"b2m/model"
 )
 
@@ -43,7 +42,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 	// PHASE 1: LOCKING
 	// We acquire a lock file on B2 (e.g., dbname.lock) to signal exclusive access.
 	// -------------------------------------------------------------------------
-	err := LockDatabase(ctx, dbName, config.AppConfig.CurrentUser, config.AppConfig.Hostname, "upload-flow", force)
+	err := LockDatabase(ctx, dbName, model.AppConfig.CurrentUser, model.AppConfig.Hostname, "upload-flow", force)
 	if err != nil {
 		LogError("PerformUpload: Failed to lock database %s: %v", dbName, err)
 		return fmt.Errorf("failed to lock: %w", err)
@@ -120,7 +119,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 			// Update hash cache on disk as we just calculated it and it is fresh
 			// We recalculate the hash of the LOCAL file. CalculateXXHash updates the in-memory cache
 			// with the new ModTime and Size. Then SaveHashCache persists it.
-			localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+			localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 			if _, err := CalculateXXHash(localPath); err != nil {
 				LogError("PerformUpload: Failed to recalculate hash for cache update: %v", err)
 			} else {
@@ -139,7 +138,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 		onStatusUpdate("Finalizing...")
 	}
 
-	err = UnlockDatabase(ctx, dbName, config.AppConfig.CurrentUser, true)
+	err = UnlockDatabase(ctx, dbName, model.AppConfig.CurrentUser, true)
 	if err != nil {
 		LogInfo("Unlock failed for %s: %v", dbName, err)
 		// Non-fatal
@@ -187,7 +186,7 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 	// We risk overwriting something we don't know about.
 	if localAnchor == nil {
 		// Exception: If hashes match, we are coincidentally in sync (autofixed elsewhere, but here we proceed).
-		localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+		localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 		if hash, err := CalculateXXHash(localPath); err == nil && hash == remoteMeta.Hash {
 			LogInfo("CheckUploadSafety: No anchor, but hashes match. Safe to upload (Update).")
 			return nil

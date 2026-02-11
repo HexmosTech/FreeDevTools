@@ -7,34 +7,30 @@ import (
 	"syscall"
 	"time"
 
-	"b2m/config"
+	"b2m/model"
 )
 
 // Global cancellation context
-var (
-	globalCtx    context.Context
-	globalCancel context.CancelFunc
-)
 
 // SetupCancellation sets up signal handling for graceful cancellation
 func SetupCancellation() {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
-	globalCtx = ctx
-	globalCancel = cancel
+	model.GlobalCtx = ctx
+	model.GlobalCancel = cancel
 }
 
 // GetContext returns the global cancellation context
 func GetContext() context.Context {
-	if globalCtx == nil {
+	if model.GlobalCtx == nil {
 		SetupCancellation()
 	}
-	return globalCtx
+	return model.GlobalCtx
 }
 
 // ResetContext resets the cancellation context (for after a cancellation event)
 func ResetContext() {
-	if globalCancel != nil {
-		globalCancel()
+	if model.GlobalCancel != nil {
+		model.GlobalCancel()
 	}
 	SetupCancellation()
 }
@@ -71,7 +67,7 @@ func CleanupOnCancel(dbName string, startTime time.Time) error {
 	// Cleanup runs on a NEW context or a background context usually, since the original might be cancelled.
 	var lastErr error
 	for i := 0; i < 3; i++ {
-		if err := UnlockDatabase(context.Background(), dbName, config.AppConfig.CurrentUser, true); err == nil {
+		if err := UnlockDatabase(context.Background(), dbName, model.AppConfig.CurrentUser, true); err == nil {
 			LogInfo("✅ Lock released successfully on attempt %d", i+1)
 			return nil
 		} else {

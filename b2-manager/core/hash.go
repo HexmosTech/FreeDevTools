@@ -6,23 +6,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
-	"sync"
 
 	"github.com/zeebo/xxh3"
 
-	"b2m/config"
-)
-
-// cachedHash stores the hash and file stat info to avoid re-hashing unchanged files
-type cachedHash struct {
-	Hash    string
-	ModTime int64
-	Size    int64
-}
-
-var (
-	fileHashCache   = make(map[string]cachedHash)
-	fileHashCacheMu sync.RWMutex
+	"b2m/model"
 )
 
 // CalculateXXHash calculates the xxHash (as hex string) of a file with caching
@@ -34,9 +21,10 @@ func CalculateXXHash(filePath string) (string, error) {
 	}
 
 	// Check cache
-	fileHashCacheMu.RLock()
-	cached, ok := fileHashCache[filePath]
-	fileHashCacheMu.RUnlock()
+	// Check cache
+	model.FileHashCacheMu.RLock()
+	cached, ok := model.FileHashCache[filePath]
+	model.FileHashCacheMu.RUnlock()
 
 	if ok && cached.ModTime == info.ModTime().UnixNano() && cached.Size == info.Size() {
 		return cached.Hash, nil
@@ -63,20 +51,20 @@ func CalculateXXHash(filePath string) (string, error) {
 	hash := fmt.Sprintf("%016x", h.Sum64())
 
 	// Update cache
-	fileHashCacheMu.Lock()
-	fileHashCache[filePath] = cachedHash{
+	model.FileHashCacheMu.Lock()
+	model.FileHashCache[filePath] = model.CachedHash{
 		Hash:    hash,
 		ModTime: info.ModTime().UnixNano(),
 		Size:    info.Size(),
 	}
-	fileHashCacheMu.Unlock()
+	model.FileHashCacheMu.Unlock()
 
 	return hash, nil
 }
 
 // LoadHashCache loads the hash cache from disk
 func LoadHashCache() error {
-	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
 	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
 		return nil // No cache exists yet
 	}
@@ -87,35 +75,31 @@ func LoadHashCache() error {
 		return err
 	}
 
-	fileHashCacheMu.Lock()
-	defer fileHashCacheMu.Unlock()
+	model.FileHashCacheMu.Lock()
+	defer model.FileHashCacheMu.Unlock()
 
-	if err := json.Unmarshal(data, &fileHashCache); err != nil {
+	if err := json.Unmarshal(data, &model.FileHashCache); err != nil {
 		LogError("LoadHashCache: Failed to unmarshal cache: %v", err)
 		return fmt.Errorf("failed to unmarshal cache: %w", err)
 	}
 
-	LogInfo("Loaded %d entries from hash cache", len(fileHashCache))
-	// LogInfo("Loaded %d entries from hash cache at %s", len(fileHashCache), cachePath)
-	// for k, v := range fileHashCache {
-	// 	LogInfo(" - Loaded: %s -> %s (Mod: %d, Size: %d)", filepath.Base(k), v.Hash, v.ModTime, v.Size)
-	// }
+	LogInfo("Loaded %d entries from hash cache", len(model.FileHashCache))
 	return nil
 }
 
 // SaveHashCache saves the hash cache to disk
 func SaveHashCache() error {
-	cachePath := filepath.Join(config.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
 
 	// Ensure directory exists
-	if err := os.MkdirAll(config.AppConfig.LocalAnchorDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.LocalAnchorDir, 0755); err != nil {
 		LogError("SaveHashCache: Failed to create directory: %v", err)
 		return err
 	}
 
-	fileHashCacheMu.RLock()
-	data, err := json.MarshalIndent(fileHashCache, "", "  ")
-	fileHashCacheMu.RUnlock()
+	model.FileHashCacheMu.RLock()
+	data, err := json.MarshalIndent(model.FileHashCache, "", "  ")
+	model.FileHashCacheMu.RUnlock()
 
 	if err != nil {
 		LogError("SaveHashCache: Failed to marshal cache: %v", err)
@@ -127,10 +111,7 @@ func SaveHashCache() error {
 		return err
 	}
 
-	LogInfo("Saved %d entries to hash cache", len(fileHashCache))
-	// LogInfo("Saving %d entries to hash cache:", len(fileHashCache))
-	// for k := range fileHashCache {
-	// 	LogInfo(" - Saving: %s", filepath.Base(k))
-	// }
+	LogInfo("Saved %d entries to hash cache", len(model.FileHashCache))
+
 	return nil
 }

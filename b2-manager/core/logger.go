@@ -6,11 +6,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"b2m/config"
+	"b2m/model"
 )
-
-var LogFile *os.File
-var Logger *log.Logger
 
 // InitLogger initializes the global logger
 func InitLogger() error {
@@ -30,34 +27,34 @@ func InitLogger() error {
 		return fmt.Errorf("failed to open log file: %v", err)
 	}
 
-	LogFile = file
-	Logger = log.New(file, "", log.LstdFlags)
+	model.LogFile = file
+	model.Logger = log.New(file, "", log.LstdFlags)
 
 	LogInfo("-------------------------------------------")
-	LogInfo("Application Started - v%s", config.AppConfig.ToolVersion)
+	LogInfo("Application Started - v%s", model.AppConfig.ToolVersion)
 	return nil
 }
 
 // CloseLogger closes the log file
 func CloseLogger() {
-	if LogFile != nil {
+	if model.LogFile != nil {
 		LogInfo("Application Exiting")
-		LogFile.Close()
+		model.LogFile.Close()
 	}
 }
 
 // LogInfo logs an info message
 func LogInfo(format string, v ...interface{}) {
-	if Logger != nil {
+	if model.Logger != nil {
 		msg := fmt.Sprintf(format, v...)
-		Logger.Printf("[INFO] %s", msg)
+		model.Logger.Printf("[INFO] %s", msg)
 	}
 }
 
 // LogError logs an error message
 func LogError(format string, v ...interface{}) {
-	if Logger != nil {
+	if model.Logger != nil {
 		msg := fmt.Sprintf(format, v...)
-		Logger.Printf("[ERROR] %s", msg)
+		model.Logger.Printf("[ERROR] %s", msg)
 	}
 }

@@ -1,17 +1,15 @@
 package core
 
 import (
-	"fmt"
+	"encoding/json"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
 
-	"b2m/config"
 	"b2m/model"
-
-	"github.com/jedib0t/go-pretty/v6/table"
 )
 
 func sortDBs(dbs []model.DBInfo) {
@@ -51,7 +49,7 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 		dbMap[name].ExistsLocal = true
 
 		// Get local file stats
-		info, err := os.Stat(filepath.Join(config.AppConfig.LocalDBDir, name))
+		info, err := os.Stat(filepath.Join(model.AppConfig.LocalDBDir, name))
 		if err == nil {
 			dbMap[name].ModifiedAt = info.ModTime()
 			dbMap[name].CreatedAt = info.ModTime()
@@ -70,12 +68,11 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 	sortDBs(all)
 	return all, nil
 }
-
-func renderHeader() {
-	t := table.NewWriter()
-	t.SetOutputMirror(os.Stdout)
-	t.SetStyle(table.StyleRounded)
-	t.AppendRow(table.Row{"b2m - Interactive DB Control Plane"})
-	t.AppendRow(table.Row{fmt.Sprintf("v1.0 | %s@%s", config.AppConfig.CurrentUser, config.AppConfig.Hostname)})
-	t.Render()
+func sendDiscord(content string) {
+	payload := map[string]string{"content": content}
+	data, _ := json.Marshal(payload)
+	err := exec.CommandContext(GetContext(), "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
+	if err != nil {
+		LogError("Failed to send discord notification: %v", err)
+	}
 }

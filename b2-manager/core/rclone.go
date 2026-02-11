@@ -9,7 +9,6 @@ import (
 	"strings"
 	"time"
 
-	"b2m/config"
 	"b2m/model"
 )
 
@@ -67,8 +66,8 @@ func checkDBDiscoveryAndSync() error {
 	return nil
 }
 func checkFileChanged(dbName string) (bool, error) {
-	localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
-	remotePath := config.AppConfig.RootBucket + dbName
+	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+	remotePath := model.AppConfig.RootBucket + dbName
 
 	cmd := exec.CommandContext(GetContext(), "rclone", "check", localPath, remotePath, "--one-way")
 	LogInfo("checkFileChanged [%s]: Running command: %v", dbName, cmd.Args)
@@ -173,13 +172,13 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 		LogInfo("⬆ Uploading %s to Backblaze B2...", dbName)
 	}
 	LogInfo("Uploading %s to Backblaze B2...", dbName)
-	localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 
 	startTime := time.Now()
 
 	// Use RcloneCopy with flat arguments
 	description := "Uploading " + dbName
-	if err := RcloneCopy(ctx, "copy", localPath, config.AppConfig.RootBucket, description, quiet, onProgress); err != nil {
+	if err := RcloneCopy(ctx, "copy", localPath, model.AppConfig.RootBucket, description, quiet, onProgress); err != nil {
 		LogError("UploadDatabase: RcloneCopy failed: %v", err)
 		return nil, err
 	}
@@ -234,7 +233,6 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 	return meta, nil
 }
 
-
 // RcloneDeleteFile deletes a single file using rclone deletefile
 func RcloneDeleteFile(ctx context.Context, filePath string) error {
 	cmd := exec.CommandContext(ctx, "rclone", "deletefile", filePath)
@@ -248,7 +246,7 @@ func RcloneDeleteFile(ctx context.Context, filePath string) error {
 // LsfRclone lists all files recursively from RootBucket to get DBs and Locks in one go
 func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error) {
 	// recursive list of root bucket
-	cmd := exec.CommandContext(ctx, "rclone", "lsf", "-R", config.AppConfig.RootBucket)
+	cmd := exec.CommandContext(ctx, "rclone", "lsf", "-R", model.AppConfig.RootBucket)
 	out, err := cmd.Output()
 	if err != nil {
 		LogError("LsfRclone input failed: %v", err)
@@ -308,7 +306,7 @@ func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error
 
 // FetchLocks lists all files in LockDir and parses them
 func FetchLocks(ctx context.Context) (map[string]model.LockEntry, error) {
-	cmd := exec.CommandContext(ctx, "rclone", "lsf", config.AppConfig.LockDir)
+	cmd := exec.CommandContext(ctx, "rclone", "lsf", model.AppConfig.LockDir)
 	out, err := cmd.Output()
 	if err != nil {
 		return make(map[string]model.LockEntry), nil

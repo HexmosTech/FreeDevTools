@@ -87,7 +87,7 @@ func (lc *ListController) onUpload(g *gocui.Gui, v *gocui.View) error {
 		err := doUpload(false)
 
 		// Check if error is due to lock
-		if err != nil && errors.Is(err, core.ErrDatabaseLocked) {
+		if err != nil && errors.Is(err, model.ErrDatabaseLocked) {
 			// Create channel to carry user decision back to this background thread
 			confirmCh := make(chan bool, 1)
 
@@ -174,14 +174,14 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 	}
 
 	if err := core.ValidateAction(selectedDB, "download"); err != nil {
-		if err == core.ErrWarningLocalChanges {
+		if err == model.ErrWarningLocalChanges {
 			// Warning: Local changes will be lost
 			lc.app.confirm("Warning: Local Changes", "You have unsaved local changes.\nDownloading will overwrite them.\n\nAre you sure?", func() {
 				startDownload()
 			}, nil)
 			return nil
 		}
-		if err == core.ErrWarningDatabaseUpdating {
+		if err == model.ErrWarningDatabaseUpdating {
 			// Warning: Database is being updated by another user
 			lc.app.confirm("Warning: DB Updating", "This database is currently being updated by another user.\nDownloading now might give you incomplete data.\n\nAre you sure?", func() {
 				startDownload()

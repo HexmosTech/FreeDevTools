@@ -10,13 +10,12 @@ import (
 	"runtime"
 	"strings"
 
-	"b2m/config"
 	"b2m/model"
 )
 
 // GenerateLocalMetadata generates metadata for a local database file
 func GenerateLocalMetadata(dbName string, uploadDuration float64, status string) (*model.Metadata, error) {
-	localPath := filepath.Join(config.AppConfig.LocalDBDir, dbName)
+	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
 
 	// Calculate hash
 	hash, err := CalculateXXHash(localPath)
@@ -43,10 +42,10 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 		Hash:              hash,
 		Timestamp:         timestamp,
 		SizeBytes:         info.Size(),
-		Uploader:          config.AppConfig.CurrentUser,
-		Hostname:          config.AppConfig.Hostname,
+		Uploader:          model.AppConfig.CurrentUser,
+		Hostname:          model.AppConfig.Hostname,
 		Platform:          runtime.GOOS,
-		ToolVersion:       config.AppConfig.ToolVersion,
+		ToolVersion:       model.AppConfig.ToolVersion,
 		UploadDurationSec: uploadDuration,
 		Datetime:          datetime,
 		Status:            status,
@@ -61,16 +60,16 @@ func GenerateLocalMetadata(dbName string, uploadDuration float64, status string)
 func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 	LogInfo("Downloading and loading metadata...")
 	// 1. Ensure local version dir exists
-	if err := os.MkdirAll(config.AppConfig.LocalVersionDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.LocalVersionDir, 0755); err != nil {
 		LogError("DownloadAndLoadMetadata: Failed to create local version dir: %v", err)
 		return nil, fmt.Errorf("failed to create local version dir: %w", err)
 	}
 
 	// 2. Sync remote metadata to local
-	LogInfo("Syncing metadata from %s to %s", config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir)
+	LogInfo("Syncing metadata from %s to %s", model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir)
 
 	// Use RcloneSync helper
-	if err := RcloneSync(config.AppConfig.VersionDir, config.AppConfig.LocalVersionDir); err != nil {
+	if err := RcloneSync(model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir); err != nil {
 		// Log and fail as sync is critical for accurate status
 		LogError("DownloadAndLoadMetadata: RcloneSync failed: %v", err)
 		return nil, fmt.Errorf("failed to sync metadata: %w", err)
@@ -79,7 +78,7 @@ func DownloadAndLoadMetadata() (map[string]*model.Metadata, error) {
 	// 3. Read and parse metadata files sequentially
 	result := make(map[string]*model.Metadata)
 
-	err := filepath.Walk(config.AppConfig.LocalVersionDir, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(model.AppConfig.LocalVersionDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
@@ -127,8 +126,8 @@ func FetchSingleRemoteMetadata(ctx context.Context, dbName string) (*model.Metad
 	metadataFilename := fileID + ".metadata.json"
 
 	// Paths
-	remotePath := filepath.Join(config.AppConfig.VersionDir, metadataFilename)
-	localDir := config.AppConfig.LocalVersionDir // Destination is the directory
+	remotePath := filepath.Join(model.AppConfig.VersionDir, metadataFilename)
+	localDir := model.AppConfig.LocalVersionDir // Destination is the directory
 	localFile := filepath.Join(localDir, metadataFilename)
 
 	// Ensure local dir exists
@@ -179,7 +178,7 @@ func UploadMetadata(ctx context.Context, dbName string, meta *model.Metadata) er
 	}
 
 	// Ensure local version dir exists
-	if err := os.MkdirAll(config.AppConfig.LocalVersionDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.LocalVersionDir, 0755); err != nil {
 		LogError("UploadMetadata: Failed to create local version dir: %v", err)
 		return fmt.Errorf("failed to create local version dir: %w", err)
 	}
@@ -187,7 +186,7 @@ func UploadMetadata(ctx context.Context, dbName string, meta *model.Metadata) er
 	// Create local file path
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
-	localFile := filepath.Join(config.AppConfig.LocalVersionDir, metadataFilename)
+	localFile := filepath.Join(model.AppConfig.LocalVersionDir, metadataFilename)
 
 	if err := os.WriteFile(localFile, data, 0644); err != nil {
 		LogError("UploadMetadata: Failed to write local file %s: %v", localFile, err)
@@ -195,7 +194,7 @@ func UploadMetadata(ctx context.Context, dbName string, meta *model.Metadata) er
 	}
 
 	// Upload to B2
-	cmd := exec.CommandContext(ctx, "rclone", "copyto", localFile, config.AppConfig.VersionDir+metadataFilename)
+	cmd := exec.CommandContext(ctx, "rclone", "copyto", localFile, model.AppConfig.VersionDir+metadataFilename)
 	if err := cmd.Run(); err != nil {
 		LogError("UploadMetadata: rclone copyto failed for %s: %v", dbName, err)
 		return fmt.Errorf("failed to upload metadata: %w", err)
@@ -329,7 +328,7 @@ func HandleBatchMetadataGeneration() {
 // UpdateLocalVersion writes the metadata to db/all_dbs/local-version/<dbname>.metadata.json
 func UpdateLocalVersion(dbName string, meta model.Metadata) error {
 	// Ensure directory exists
-	if err := os.MkdirAll(config.AppConfig.LocalAnchorDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.LocalAnchorDir, 0755); err != nil {
 		return fmt.Errorf("failed to create local version directory: %w", err)
 	}
 
@@ -344,7 +343,7 @@ func UpdateLocalVersion(dbName string, meta model.Metadata) error {
 	}
 
 	filename := fileID + ".metadata.json"
-	path := filepath.Join(config.AppConfig.LocalAnchorDir, filename)
+	path := filepath.Join(model.AppConfig.LocalAnchorDir, filename)
 
 	// User Requirement: Local version files must NOT contain events.
 	// We explicitly strip them here to enforce this globally.
@@ -372,7 +371,7 @@ func GetLocalVersion(dbName string) (*model.Metadata, error) {
 		baseName = baseName[:len(baseName)-3]
 	}
 	filename := baseName + ".metadata.json"
-	path := filepath.Join(config.AppConfig.LocalAnchorDir, filename)
+	path := filepath.Join(model.AppConfig.LocalAnchorDir, filename)
 
 	// 1. Read file
 	data, err := os.ReadFile(path)

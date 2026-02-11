@@ -8,45 +8,22 @@ import (
 	"strings"
 
 	"github.com/BurntSushi/toml"
+
+	"b2m/model"
 )
 
 // Config holds all application configuration
-type Config struct {
-	// Paths
-	RootBucket      string
-	LockDir         string
-	VersionDir      string
-	LocalVersionDir string
-	LocalAnchorDir  string
-	LocalDBDir      string
-
-	// Environment
-	DiscordWebhookURL string
-
-	// User Info
-	CurrentUser string
-	Hostname    string
-	ProjectRoot string
-
-	// Tool Info
-	ToolVersion string
-}
-
-var AppConfig = Config{
-	ToolVersion: "v1.0",
-}
 
 // InitializeConfig sets up global configuration variables
 func InitializeConfig() error {
 	var err error
 
-	AppConfig.ProjectRoot, err = findProjectRoot()
+	model.AppConfig.ProjectRoot, err = findProjectRoot()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
-		AppConfig.ProjectRoot, _ = os.Getwd()
+		model.AppConfig.ProjectRoot, _ = os.Getwd()
 	}
 
-	// Load config from b2m.toml
 	// Load config from b2m.toml
 	if err := loadTOMLConfig(); err != nil {
 		return err
@@ -60,9 +37,11 @@ func InitializeConfig() error {
 	// Fetch user details
 	fetchUserDetails()
 
-	AppConfig.LocalDBDir = filepath.Join(AppConfig.ProjectRoot, "db", "all_dbs")
-	AppConfig.LocalVersionDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "version")
-	AppConfig.LocalAnchorDir = filepath.Join(AppConfig.LocalDBDir, ".b2m", "local-version")
+	if model.AppConfig.LocalDBDir == "" {
+		return fmt.Errorf("⚠️  Warning: LocalDBDir not configured. Please set b2m_db_dir in your config file")
+	}
+	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "version")
+	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "local-version")
 
 	return nil
 }
@@ -76,66 +55,73 @@ func findProjectRoot() (string, error) {
 		if info, err := os.Stat(filepath.Join(dir, "db")); err == nil && info.IsDir() {
 			return dir, nil
 		}
-		if _, err := os.Stat(filepath.Join(dir, "go.mod")); err == nil {
-			return dir, nil
-		}
 		parent := filepath.Dir(dir)
 		if parent == dir {
-			return "", fmt.Errorf("root not found (searched for 'db' dir or 'go.mod')")
+			return "", fmt.Errorf("root not found 'db' dir")
 		}
 		dir = parent
 	}
 }
 
 func loadTOMLConfig() error {
-	tomlPath := filepath.Join(AppConfig.ProjectRoot, "b2m.toml")
+	tomlPath := filepath.Join(model.AppConfig.ProjectRoot, "fdt-dev.toml")
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
 		return fmt.Errorf("couldn't find b2m.toml file at %s: %w", tomlPath, err)
 	}
 
 	var tomlConf struct {
-		Discord    string `toml:"discord"`
-		RootBucket string `toml:"rootbucket"`
+		B2M struct {
+			Discord    string `toml:"b2m_discord_webhook"`
+			RootBucket string `toml:"b2m_remote_root_bucket"`
+			LocalDBDir string `toml:"b2m_db_dir"`
+		} `toml:"b2m"`
 	}
 	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
 		return fmt.Errorf("failed to decode b2m.toml: %w", err)
 	}
 
-	AppConfig.RootBucket = tomlConf.RootBucket
-	AppConfig.DiscordWebhookURL = tomlConf.Discord
+	model.AppConfig.RootBucket = tomlConf.B2M.RootBucket
+	model.AppConfig.DiscordWebhookURL = tomlConf.B2M.Discord
+	if tomlConf.B2M.LocalDBDir != "" {
+		if filepath.IsAbs(tomlConf.B2M.LocalDBDir) {
+			model.AppConfig.LocalDBDir = tomlConf.B2M.LocalDBDir
+		} else {
+			model.AppConfig.LocalDBDir = filepath.Join(model.AppConfig.ProjectRoot, tomlConf.B2M.LocalDBDir)
+		}
+	}
 
 	return nil
 }
 
 func validateAndSetPaths() error {
-	if AppConfig.RootBucket == "" {
-		return fmt.Errorf("rootbucket not defined in b2m.toml file")
+	if model.AppConfig.RootBucket == "" {
+		return fmt.Errorf("b2m_remote_root_bucket not defined in b2m.toml file")
 	}
-	if AppConfig.DiscordWebhookURL == "" {
-		return fmt.Errorf("discord not defined in b2m.toml file")
-	}
-
-	if !strings.HasSuffix(AppConfig.RootBucket, "/") {
-		AppConfig.RootBucket += "/"
+	if model.AppConfig.DiscordWebhookURL == "" {
+		return fmt.Errorf("b2m_discord_webhook not defined in b2m.toml file")
 	}
 
-	AppConfig.LockDir = AppConfig.RootBucket + "lock/"
-	AppConfig.VersionDir = AppConfig.RootBucket + "version/"
+	if !strings.HasSuffix(model.AppConfig.RootBucket, "/") {
+		model.AppConfig.RootBucket += "/"
+	}
+
+	model.AppConfig.LockDir = model.AppConfig.RootBucket + "lock/"
+	model.AppConfig.VersionDir = model.AppConfig.RootBucket + "version/"
 	return nil
 }
 
 func fetchUserDetails() {
 	u, err := user.Current()
 	if err != nil {
-		AppConfig.CurrentUser = "unknown"
+		model.AppConfig.CurrentUser = "unknown"
 	} else {
-		AppConfig.CurrentUser = u.Username
+		model.AppConfig.CurrentUser = u.Username
 	}
 
 	h, err := os.Hostname()
 	if err != nil {
-		AppConfig.Hostname = "unknown"
+		model.AppConfig.Hostname = "unknown"
 	} else {
-		AppConfig.Hostname = h
+		model.AppConfig.Hostname = h
 	}
 }

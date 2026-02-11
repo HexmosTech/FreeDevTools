@@ -7,7 +7,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"b2m/config"
 	"b2m/model"
 
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -41,7 +40,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// -------------------------------------------------------------------------
 	if l, ok := locks[db.Name]; ok {
 		if l.Type == "lock" {
-			if l.Owner != config.AppConfig.CurrentUser {
+			if l.Owner != model.AppConfig.CurrentUser {
 				// CASE 1.1: Locked by Other User
 				// We check the remote metadata to see if they are actively uploading or updating.
 				remoteMeta, hasMeta := remoteMetas[db.Name]
@@ -60,7 +59,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 			}
 
 			// CASE 1.2: Locked by Current User
-			if l.Hostname == config.AppConfig.Hostname {
+			if l.Hostname == model.AppConfig.Hostname {
 				// We hold the lock on THIS machine.
 				// Check metadata status to see if we are in the middle of an operation.
 				remoteMeta, hasRemoteMeta := remoteMetas[db.Name]
@@ -124,7 +123,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
 	if db.ExistsLocal && hasRemoteMeta {
-		localPath := filepath.Join(config.AppConfig.LocalDBDir, db.Name)
+		localPath := filepath.Join(model.AppConfig.LocalDBDir, db.Name)
 		localHash, err := CalculateXXHash(localPath)
 		if err != nil {
 			LogError("Status Check: Failed to verify %s: %v", db.Name, err)
@@ -232,7 +231,7 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	var errLocalVersions error
 
 	// We scan the local-version directory directly.
-	entries, err := os.ReadDir(config.AppConfig.LocalAnchorDir)
+	entries, err := os.ReadDir(model.AppConfig.LocalAnchorDir)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			errLocalVersions = err

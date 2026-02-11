@@ -6,17 +6,6 @@ import (
 	"b2m/model"
 )
 
-// ErrWarningLocalChanges is a special error indicating a warning validation state
-var ErrWarningLocalChanges = fmt.Errorf("WARNING_LOCAL_CHANGES")
-
-// ErrWarningDatabaseUpdating indicates the database is being updated by another user
-var ErrWarningDatabaseUpdating = fmt.Errorf("WARNING_DATABASE_UPDATING")
-
-const (
-	ActionUpload   = "upload"
-	ActionDownload = "download"
-)
-
 // ValidateAction checks if an action (upload/download) is allowed given the DB status.
 func ValidateAction(dbInfo model.DBStatusInfo, action string) error {
 	switch action {
@@ -34,7 +23,7 @@ func ValidateAction(dbInfo model.DBStatusInfo, action string) error {
 	case "download":
 		if dbInfo.StatusCode == model.StatusCodeLocalNewer || dbInfo.StatusCode == model.StatusCodeNewLocal {
 			// If we have local changes (or are new local), downloading will overwrite them.
-			return ErrWarningLocalChanges
+			return model.ErrWarningLocalChanges
 		}
 
 		// Check if locked by other and updating
@@ -47,7 +36,7 @@ func ValidateAction(dbInfo model.DBStatusInfo, action string) error {
 			// We now check dbInfo.RemoteMetaStatus which is populated from raw metadata
 			// If status is "updating" or "uploading", return warning.
 			if dbInfo.StatusCode == model.StatusCodeLockedByOther && (dbInfo.RemoteMetaStatus == "updating" || dbInfo.RemoteMetaStatus == "uploading") {
-				return ErrWarningDatabaseUpdating
+				return model.ErrWarningDatabaseUpdating
 			}
 		}
 	}
