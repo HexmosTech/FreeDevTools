@@ -37,6 +37,11 @@ func (lc *ListController) GetKeybindings() []*Keybinding {
 			Description: "Download",
 		},
 		{
+			Key:         'l',
+			Handler:     lc.onLock,
+			Description: "Lock and Set Updating",
+		},
+		{
 			Key:         'c',
 			Handler:     lc.onCancel,
 			Description: "Cancel",

@@ -21,13 +21,14 @@ const (
 
 // AppUI is the main application UI struct
 type AppUI struct {
-	g        *gocui.Gui
-	dbs      []model.DBStatusInfo
-	selected int
-	loading  bool
-	ctx      context.Context
-	cancel   context.CancelFunc
-	mu       sync.Mutex
+	g         *gocui.Gui
+	dbs       []model.DBStatusInfo
+	selected  int
+	loading   bool
+	statusMsg string
+	ctx       context.Context
+	cancel    context.CancelFunc
+	mu        sync.Mutex
 
 	activeOps map[string]context.CancelFunc
 	dbStatus  map[string]UIStatus
@@ -39,7 +40,7 @@ func NewListController(app *AppUI) *ListController {
 	return &ListController{app: app}
 }
 
-func RunUI() {
+func RunUI(sigHandler *core.SignalHandler) {
 	g, err := gocui.NewGui(gocui.OutputNormal)
 	if err != nil {
 		log.Panicln(err)
@@ -74,7 +75,7 @@ func RunUI() {
 		// handleSignalLoop:
 		for {
 			// Wait for signal
-			<-core.GetContext().Done()
+			<-sigHandler.Context().Done()
 
 			// Check active operations
 			app.mu.Lock()
@@ -135,7 +136,7 @@ func RunUI() {
 			} else {
 				// User said No.
 				// Reset the signal context so we can catch Ctrl+C again
-				core.ResetContext()
+				sigHandler.Reset()
 				// loop runs again
 			}
 		}
@@ -361,6 +362,7 @@ func (app *AppUI) startOperation(opName string, op func(context.Context, string)
 func (app *AppUI) refreshStatus() {
 	app.mu.Lock()
 	app.loading = true
+	app.statusMsg = "Initializing..."
 	app.mu.Unlock()
 
 	// Update immediately to show spinner
@@ -370,13 +372,22 @@ func (app *AppUI) refreshStatus() {
 	})
 
 	go func() {
-		dbs, err := core.FetchDBStatusData(app.ctx)
+		dbs, err := core.FetchDBStatusData(app.ctx, func(msg string) {
+			app.mu.Lock()
+			app.statusMsg = msg
+			app.mu.Unlock()
+			app.g.Update(func(g *gocui.Gui) error {
+				app.renderStatusLine(g)
+				return nil
+			})
+		})
 
 		app.mu.Lock()
 		if err == nil {
 			app.dbs = dbs
 		}
 		app.loading = false
+		app.statusMsg = ""
 		app.mu.Unlock()
 
 		app.g.Update(func(g *gocui.Gui) error {
@@ -441,7 +452,11 @@ func (app *AppUI) renderStatusLine(g *gocui.Gui) {
 		// Calculate frame
 		idx := (time.Now().UnixMilli() / 50) % int64(len(spinnerFrames))
 		spinner := spinnerFrames[idx]
-		fmt.Fprintf(v, " %s Fetching status...", spinner)
+		msg := app.statusMsg
+		if msg == "" {
+			msg = "Fetching status..."
+		}
+		fmt.Fprintf(v, " %s %s", spinner, msg)
 	} else {
 		// Show nothing or 'Ready'
 		// fmt.Fprint(v, " Ready")

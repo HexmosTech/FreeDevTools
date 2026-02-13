@@ -6,11 +6,14 @@ import (
 	"os"
 	"path/filepath"
 
-	"b2m/config"
+	"b2m/model"
 )
 
-var LogFile *os.File
-var Logger *log.Logger
+// Internal logger variables
+var (
+	logFile *os.File
+	logger  *log.Logger
+)
 
 // InitLogger initializes the global logger
 func InitLogger() error {
@@ -24,42 +27,40 @@ func InitLogger() error {
 		return fmt.Errorf("failed to create app config dir: %v", err)
 	}
 
-	logPath := filepath.Join(appConfigDir, "b2m.log")
-	// User requested logs in current directory
-	// logPath := "b2m.log"
+	logPath := "b2m.log"
 	file, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return fmt.Errorf("failed to open log file: %v", err)
 	}
 
-	LogFile = file
-	Logger = log.New(file, "", log.LstdFlags)
+	logFile = file
+	logger = log.New(file, "", log.LstdFlags)
 
 	LogInfo("-------------------------------------------")
-	LogInfo("Application Started - v%s", config.AppConfig.ToolVersion)
+	LogInfo("Application Started - v%s", model.AppConfig.ToolVersion)
 	return nil
 }
 
 // CloseLogger closes the log file
 func CloseLogger() {
-	if LogFile != nil {
+	if logFile != nil {
 		LogInfo("Application Exiting")
-		LogFile.Close()
+		logFile.Close()
 	}
 }
 
 // LogInfo logs an info message
 func LogInfo(format string, v ...interface{}) {
-	if Logger != nil {
+	if logger != nil {
 		msg := fmt.Sprintf(format, v...)
-		Logger.Printf("[INFO] %s", msg)
+		logger.Printf("[INFO] %s", msg)
 	}
 }
 
 // LogError logs an error message
 func LogError(format string, v ...interface{}) {
-	if Logger != nil {
+	if logger != nil {
 		msg := fmt.Sprintf(format, v...)
-		Logger.Printf("[ERROR] %s", msg)
+		logger.Printf("[ERROR] %s", msg)
 	}
 }

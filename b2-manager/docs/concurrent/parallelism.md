@@ -6,7 +6,7 @@ This document details the usage of parallelism and concurrency within the `b2m-c
 
 | Component             | File               | Mechanism          | Purpose                                                                                                 |
 | :-------------------- | :----------------- | :----------------- | :------------------------------------------------------------------------------------------------------ |
-| **Status Collection** | `core/status.go`   | `sync.WaitGroup`   | Fetching local files, remote files, locks, and metadata in parallel to reduce wait times.               |
+| **Status Collection** | `core/status.go`   | Sequential         | Fetching local files, remote files, locks, and metadata sequentially to reduce system load.             |
 | **UI Main Loop**      | `ui/ui.go`         | `gocui` (Internal) | Handles terminal drawing and user input events.                                                         |
 | **UI Updates**        | `ui/ui.go`         | `sync.Mutex`       | Protects shared state (`dbs`, `activeOps`, `dbStatus`) from concurrent access by background operations. |
 | **Operations**        | `ui/ui.go`         | `go func`          | Offloads long-running tasks (Upload/Download) to background threads to keep the UI responsive.          |
@@ -19,13 +19,12 @@ This document details the usage of parallelism and concurrency within the `b2m-c
 
 - **Function**: `FetchDBStatusData`
 - **Implementation**:
-  - Uses `sync.WaitGroup` to wait for 4 concurrent operations:
+  - Executes operations **sequentially** to reduce "thundering herd" effect on CPU and network:
     1.  `getLocalDBs()`
-    2.  `getRemoteDBs()`
-    3.  `FetchLocks()`
-    4.  `DownloadAndLoadMetadata()`
-  - **Safety**: Each goroutine writes to independent variables. Errors are captured independently.
-  - **Verdict**: **Safe**. No race conditions detected.
+    2.  `LsfRclone()` (Fetches DBs and Locks in one go)
+    3.  `DownloadAndLoadMetadata()`
+  - **Reason**: Parallel execution previously caused high system load and rclone instability. Sequential execution relies on optimized single-call fetching (`LsfRclone`) to maintain performance.
+  - **Verdict**: **Safe**. No concurrency issues.
 
 ### 2. UI State Management (`ui/ui.go`)
 
