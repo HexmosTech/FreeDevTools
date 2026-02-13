@@ -19,7 +19,7 @@ The application uses **b3sum** (BLAKE3) to calculate checksums of database files
      - The calculation duration is logged.
      - The cache is updated with the new hash.
 3. **Shutdown/Cleanup**: The in-memory cache is saved back to `hash.json` when:
-   - The application shuts down (via `Cleanup()`).
+   - The application shuts down (via `Cleanup()`, which also closes the logger).
    - A `Reset` or `Reboot` command is issued (cache is explicitly cleared to ensure freshness).
 
 ## hash.json Structure

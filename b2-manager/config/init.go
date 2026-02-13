@@ -57,9 +57,24 @@ func InitSystem() *core.SignalHandler {
 				os.Exit(1)
 			}
 
+			// Warning and Confirmation
+			fmt.Println("\nWARNING: This operation regenerates all metadata from local files.")
+			fmt.Println("Ensure your local databases are synced with remote to avoid data loss.")
+			fmt.Println("This should ONLY be done when changing hashing algorithms or recovering from corruption.")
+			fmt.Print("\nAre you sure you want to proceed? (y/N): ")
+
+			var confirmation string
+			fmt.Scanln(&confirmation)
+			if confirmation != "y" && confirmation != "Y" {
+				fmt.Println("Operation cancelled.")
+				os.Exit(0)
+			}
+
 			// Clean up .b2m before generating metadata
 			if err := core.CleanupLocalMetadata(); err != nil {
-				fmt.Printf("Warning: %v\n", err)
+				fmt.Printf("Error: failed to cleanup metadata: %v\n", err)
+				core.LogError("Generate-Hash: Failed to cleanup metadata: %v", err)
+				os.Exit(1)
 			}
 
 			// Explicitly clear hash cache
@@ -79,8 +94,9 @@ func InitSystem() *core.SignalHandler {
 			fmt.Println("Resetting system state...")
 			// Clean up .b2m before starting normal execution
 			if err := core.CleanupLocalMetadata(); err != nil {
-				fmt.Printf("Warning: failed to cleanup metadata: %v\n", err)
+				fmt.Printf("Error: failed to cleanup metadata: %v\n", err)
 				core.LogError("Reset: Failed to cleanup metadata: %v", err)
+				os.Exit(1)
 			}
 
 			// Explicitly clear hash cache

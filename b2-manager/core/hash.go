@@ -30,7 +30,7 @@ var (
 func CheckB3SumAvailability() error {
 	path, err := exec.LookPath("b3sum")
 	if err != nil {
-		return fmt.Errorf("b3sum not found in PATH: %w", err)
+		return fmt.Errorf("b3sum not found. Please install it using: `cargo install b3sum`")
 	}
 	LogInfo("b3sum found at: %s", path)
 	return nil

@@ -39,7 +39,7 @@ func (lc *ListController) GetKeybindings() []*Keybinding {
 		{
 			Key:         'l',
 			Handler:     lc.onLock,
-			Description: "Lock (Update)",
+			Description: "Lock and Set Updating",
 		},
 		{
 			Key:         'c',
