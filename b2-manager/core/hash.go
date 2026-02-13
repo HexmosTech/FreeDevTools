@@ -1,14 +1,15 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
-
-	"github.com/kalafut/imohash"
 
 	"b2m/model"
 )
@@ -24,6 +25,16 @@ var (
 	hashCache   = make(map[string]cachedHash)
 	hashCacheMu sync.RWMutex
 )
+
+// CheckB3SumAvailability verifies that b3sum is installed and runnable
+func CheckB3SumAvailability() error {
+	path, err := exec.LookPath("b3sum")
+	if err != nil {
+		return fmt.Errorf("b3sum not found in PATH: %w", err)
+	}
+	LogInfo("b3sum found at: %s", path)
+	return nil
+}
 
 // CalculateHash calculates the imohash (as hex string) of a file with caching
 func CalculateHash(filePath string, onProgress func(string)) (string, error) {
@@ -51,16 +62,29 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 
 	startTime := time.Now()
 
-	// Calculate hash using imohash
-	// imohash.SumFile returns [16]byte
-	hashBytes, err := imohash.SumFile(filePath)
+	// Calculate hash using b3sum with timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "b3sum", filePath)
+	output, err := cmd.Output()
 	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			LogError("CalculateHash: b3sum timed out for %s", filePath)
+			return "", fmt.Errorf("b3sum timed out")
+		}
 		LogError("CalculateHash: Failed to calculate hash for %s: %v", filePath, err)
 		return "", err
 	}
 
-	// Format as hex string
-	hash := fmt.Sprintf("%x", hashBytes)
+	// b3sum output format is: <hash>  <filename>\n
+	// We use fields to extract the first element which should be the hash
+	fields := strings.Fields(string(output))
+	if len(fields) < 1 {
+		LogError("CalculateHash: Invalid output from b3sum for %s: %q", filePath, output)
+		return "", fmt.Errorf("invalid output from b3sum")
+	}
+	hash := fields[0]
 
 	duration := time.Since(startTime)
 	LogInfo("Hash calculation for %s took %v", filepath.Base(filePath), duration)
@@ -149,4 +173,13 @@ func SaveHashCache() error {
 	LogInfo("Saved %d entries to hash cache", len(hashCache))
 
 	return nil
+}
+
+// ClearHashCache wipes the in-memory hash cache.
+// Call this when you want to force re-calculation of all hashes.
+func ClearHashCache() {
+	hashCacheMu.Lock()
+	hashCache = make(map[string]cachedHash)
+	hashCacheMu.Unlock()
+	LogInfo("Cleared in-memory hash cache")
 }

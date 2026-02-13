@@ -133,13 +133,15 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 		// At this point, if LocalVersion Existed, we know it matched Remote (Phase 3 passed).
 		// So any mismatch here implies LOCAL changes.
 
+		LogInfo("CalculateDBStatus: Comparing hashes for %s. Local: %s, Remote: %s", db.Name, localHash, remoteMeta.Hash)
+
 		if localHash == remoteMeta.Hash {
 			// CASE 4.1: Up To Date (Local Hash == Remote Hash)
 
 			// Auto-Heal: If we have no local version anchor but hashes match,
 			// it means we are in sync but missing the tracking file. Create it.
 			if !hasLocalVersion {
-				LogInfo("CalculateDBStatus: Auto-healing missing anchor for %s", db.Name)
+				LogInfo("CalculateDBStatus: Auto-healing missing anchor for %s. Hash matched: %s", db.Name, localHash)
 				if err := UpdateLocalVersion(db.Name, *remoteMeta); err != nil {
 					LogError("CalculateDBStatus: Failed to auto-heal anchor for %s: %v", db.Name, err)
 				}

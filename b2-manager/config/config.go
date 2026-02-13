@@ -38,8 +38,9 @@ func InitializeConfig() error {
 	if model.AppConfig.LocalDBDir == "" {
 		return fmt.Errorf("LocalDBDir not configured. Please set b2m_db_dir in your config file")
 	}
-	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "version")
-	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalDBDir, ".b2m", "local-version")
+	model.AppConfig.LocalB2MDir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
+	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalB2MDir, "version")
+	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalB2MDir, "local-version")
 
 	return nil
 }

@@ -198,6 +198,7 @@ type Config struct {
 	VersionDir      string
 	LocalVersionDir string
 	LocalAnchorDir  string
+	LocalB2MDir     string
 	LocalDBDir      string
 
 	// Environment

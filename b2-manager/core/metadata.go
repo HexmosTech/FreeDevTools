@@ -9,6 +9,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"time"
 
 	"b2m/model"
 )
@@ -68,8 +69,12 @@ func DownloadAndLoadMetadata(ctx context.Context) (map[string]*model.Metadata, e
 	// 2. Sync remote metadata to local
 	LogInfo("Syncing metadata from %s to %s", model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir)
 
-	// Use RcloneSync helper
-	if err := RcloneSync(ctx, model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir); err != nil {
+	// Use RcloneSync helper with timeout
+	// 5 minute timeout for sync operations should be sufficient for metadata
+	syncCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	defer cancel()
+
+	if err := RcloneSync(syncCtx, model.AppConfig.VersionDir, model.AppConfig.LocalVersionDir); err != nil {
 		// Log and fail as sync is critical for accurate status
 		LogError("DownloadAndLoadMetadata: RcloneSync failed: %v", err)
 		return nil, fmt.Errorf("failed to sync metadata: %w", err)
@@ -303,14 +308,6 @@ func HandleBatchMetadataGeneration() {
 		// 2. Fetch remote metadata to preserve history (Events)
 		remoteMeta, err := FetchSingleRemoteMetadata(ctx, dbName)
 		if err != nil {
-			// If error is just "not found", that's fine, it's a new file.
-			// But FetchSingleRemoteMetadata might return error for network issues too.
-			// We'll log it but proceed with empty events if strictly necessary,
-			// or maybe we should fail safe?
-			// For now, let's log warning and proceed as new (since user wants to fix "not generating").
-			// But to be safe against wiping, maybe we should be careful.
-			// However, FetchSingleRemoteMetadata returns nil, nil if not found (based on my read of previous file view).
-			// Let's re-verify FetchSingleRemoteMetadata implementation.
 			LogInfo("BatchMetadata: No valid remote metadata found for %s (or error: %v), treating as new/fresh.", dbName, err)
 		}
 
@@ -319,10 +316,10 @@ func HandleBatchMetadataGeneration() {
 			newMeta.Events = remoteMeta.Events
 		}
 
-		// 3. Upload merged metadata
-		if err := UploadMetadata(ctx, dbName, newMeta); err != nil {
-			fmt.Printf("❌ Failed to upload: %v\n", err)
-			LogError("BatchMetadata: Failed to upload metadata for %s: %v", dbName, err)
+		// 3. Save to local version dir (Staging for sync)
+		if err := SaveToLocalVersionDir(dbName, newMeta); err != nil {
+			fmt.Printf("❌ Failed to save local: %v\n", err)
+			LogError("BatchMetadata: Failed to save to local version dir for %s: %v", dbName, err)
 			continue
 		}
 
@@ -338,8 +335,42 @@ func HandleBatchMetadataGeneration() {
 		successCount++
 	}
 
+	// 5. Perform Batch Sync (Local Version Dir -> Remote Version Dir)
+	fmt.Println("🔄 Syncing metadata to remote...")
+	LogInfo("BatchMetadata: Syncing %s to %s", model.AppConfig.LocalVersionDir, model.AppConfig.VersionDir)
+
+	if err := RcloneSync(ctx, model.AppConfig.LocalVersionDir, model.AppConfig.VersionDir); err != nil {
+		fmt.Printf("❌ Batch sync failed: %v\n", err)
+		LogError("BatchMetadata: RcloneSync failed: %v", err)
+	} else {
+		fmt.Println("✅ Batch sync completed successfully.")
+		LogInfo("BatchMetadata: Batch sync completed successfully")
+	}
+
 	fmt.Printf("\n✨ Completed! Successfully generated and uploaded metadata for %d/%d databases.\n", successCount, len(local))
 	LogInfo("Batch metadata generation completed. Success: %d", successCount)
+}
+
+// SaveToLocalVersionDir writes the metadata file to the local version directory (.b2m/version)
+func SaveToLocalVersionDir(dbName string, meta *model.Metadata) error {
+	// Ensure local version dir exists
+	if err := os.MkdirAll(model.AppConfig.LocalVersionDir, 0755); err != nil {
+		return fmt.Errorf("failed to create local version dir: %w", err)
+	}
+
+	data, err := json.MarshalIndent(meta, "", "  ")
+	if err != nil {
+		return fmt.Errorf("failed to marshal metadata: %w", err)
+	}
+
+	fileID := strings.TrimSuffix(dbName, ".db")
+	metadataFilename := fileID + ".metadata.json"
+	localFile := filepath.Join(model.AppConfig.LocalVersionDir, metadataFilename)
+
+	if err := os.WriteFile(localFile, data, 0644); err != nil {
+		return fmt.Errorf("failed to write local metadata file: %w", err)
+	}
+	return nil
 }
 
 // UpdateLocalVersion writes the metadata to db/all_dbs/local-version/<dbname>.metadata.json
@@ -411,11 +442,23 @@ func GetLocalVersion(dbName string) (*model.Metadata, error) {
 
 // CleanupLocalMetadata removes the local .b2m directory to ensure a fresh state
 func CleanupLocalMetadata() error {
-	b2mDir := filepath.Join(model.AppConfig.LocalDBDir, ".b2m")
+	b2mDir := model.AppConfig.LocalB2MDir
 	LogInfo("Removing .b2m directory: %s", b2mDir)
 	if err := os.RemoveAll(b2mDir); err != nil {
 		LogError("CleanupLocalMetadata: Failed to remove .b2m directory: %v", err)
 		return fmt.Errorf("failed to remove .b2m directory: %w", err)
 	}
+
+	// Also clear the hash cache to force re-calculation
+	hashCachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
+	if err := os.Remove(hashCachePath); err != nil && !os.IsNotExist(err) {
+		LogInfo("CleanupLocalMetadata: Failed to remove hash cache (non-critical): %v", err)
+	} else {
+		LogInfo("CleanupLocalMetadata: Removed hash cache %s", hashCachePath)
+	}
+
+	// Important: Clear in-memory cache too!
+	ClearHashCache()
+
 	return nil
 }
