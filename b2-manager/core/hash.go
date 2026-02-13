@@ -1,9 +1,9 @@
 package core
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,6 +13,23 @@ import (
 
 	"b2m/model"
 )
+
+// ProgressReader wraps an io.Reader to report progress
+type ProgressReader struct {
+	io.Reader
+	Total      int64
+	Current    int64
+	OnProgress func(int64)
+}
+
+func (pr *ProgressReader) Read(p []byte) (int, error) {
+	n, err := pr.Reader.Read(p)
+	pr.Current += int64(n)
+	if pr.OnProgress != nil {
+		pr.OnProgress(pr.Current)
+	}
+	return n, err
+}
 
 // cachedHash stores the hash and file stat info to avoid re-hashing unchanged files
 type cachedHash struct {
@@ -62,23 +79,54 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 
 	startTime := time.Now()
 
-	// Calculate hash using b3sum with timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	// Prepare b3sum command reading from Stdin
+	cmd := exec.Command("b3sum")
 
-	cmd := exec.CommandContext(ctx, "b3sum", filePath)
+	// Open file
+	file, err := os.Open(filePath)
+	if err != nil {
+		LogError("CalculateHash: Failed to open file %s: %v", filePath, err)
+		return "", err
+	}
+	defer file.Close()
+
+	// Setup Progress Reader
+	// We'll throttle updates to avoid spamming the callback
+	lastUpdate := time.Now()
+
+	pr := &ProgressReader{
+		Reader: file,
+		Total:  info.Size(),
+		OnProgress: func(current int64) {
+			if onProgress == nil {
+				return
+			}
+			now := time.Now()
+			if now.Sub(lastUpdate) < 500*time.Millisecond && current < info.Size() {
+				return
+			}
+			lastUpdate = now
+
+			duration := time.Since(startTime)
+			if duration.Seconds() > 0 {
+				speedMB := float64(current) / 1024 / 1024 / duration.Seconds()
+				onProgress(fmt.Sprintf("Integrity Check: %s (%.2f MB/s)", filepath.Base(filePath), speedMB))
+			}
+		},
+	}
+
+	cmd.Stdin = pr
+
+	// Run command and get output
+	// cmd.Output() handles starting and waiting
 	output, err := cmd.Output()
 	if err != nil {
-		if ctx.Err() == context.DeadlineExceeded {
-			LogError("CalculateHash: b3sum timed out for %s", filePath)
-			return "", fmt.Errorf("b3sum timed out")
-		}
 		LogError("CalculateHash: Failed to calculate hash for %s: %v", filePath, err)
 		return "", err
 	}
 
-	// b3sum output format is: <hash>  <filename>\n
-	// We use fields to extract the first element which should be the hash
+	// Parse Output
+	// b3sum output format: <hash>  -\n
 	fields := strings.Fields(string(output))
 	if len(fields) < 1 {
 		LogError("CalculateHash: Invalid output from b3sum for %s: %q", filePath, output)
@@ -86,8 +134,25 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	}
 	hash := fields[0]
 
+	// Stats & Logging
 	duration := time.Since(startTime)
-	LogInfo("Hash calculation for %s took %v", filepath.Base(filePath), duration)
+	fileSizeMB := float64(info.Size()) / 1024 / 1024
+
+	var speed float64
+	if duration.Seconds() > 0.001 { // Check for > 1ms to avoid div by zero
+		speed = fileSizeMB / duration.Seconds()
+	} else {
+		// Extremely fast, assume infinite or just use max reasonable
+		speed = 0
+	}
+
+	msg := fmt.Sprintf("Hash calculated for %s in %v (%.2f MB/s)", filepath.Base(filePath), duration, speed)
+	LogInfo(msg)
+
+	// Final progress update
+	if onProgress != nil {
+		onProgress(fmt.Sprintf("%s (%.2f MB/s)", filepath.Base(filePath), speed))
+	}
 
 	// Update cache
 	hashCacheMu.Lock()

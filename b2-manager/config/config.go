@@ -22,7 +22,7 @@ func InitializeConfig() error {
 		model.AppConfig.ProjectRoot, _ = os.Getwd()
 	}
 
-	// Load config from b2m.toml
+	// Load config from fdt-dev.toml
 	if err := loadTOMLConfig(); err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func findProjectRoot() (string, error) {
 func loadTOMLConfig() error {
 	tomlPath := filepath.Join(model.AppConfig.ProjectRoot, "fdt-dev.toml")
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("couldn't find b2m.toml file at %s: %w", tomlPath, err)
+		return fmt.Errorf("couldn't find fdt-dev.toml file at %s: %w", tomlPath, err)
 	}
 
 	var tomlConf struct {
@@ -76,7 +76,7 @@ func loadTOMLConfig() error {
 		} `toml:"b2m"`
 	}
 	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
-		return fmt.Errorf("failed to decode b2m.toml: %w", err)
+		return fmt.Errorf("failed to decode fdt-dev.toml: %w", err)
 	}
 
 	model.AppConfig.RootBucket = tomlConf.B2M.RootBucket
@@ -94,10 +94,10 @@ func loadTOMLConfig() error {
 
 func validateAndSetPaths() error {
 	if model.AppConfig.RootBucket == "" {
-		return fmt.Errorf("b2m_remote_root_bucket not defined in b2m.toml file")
+		return fmt.Errorf("b2m_remote_root_bucket not defined in fdt-dev.toml file")
 	}
 	if model.AppConfig.DiscordWebhookURL == "" {
-		return fmt.Errorf("b2m_discord_webhook not defined in b2m.toml file")
+		return fmt.Errorf("b2m_discord_webhook not defined in fdt-dev.toml file")
 	}
 
 	if !strings.HasSuffix(model.AppConfig.RootBucket, "/") {

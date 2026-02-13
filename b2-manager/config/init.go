@@ -47,12 +47,8 @@ func InitSystem() *core.SignalHandler {
 			os.Exit(0)
 
 		case "--generate-hash":
-			// Dependencies check
-			if err := core.CheckB3SumAvailability(); err != nil {
-				fmt.Printf("Error: %v\n", err)
-				os.Exit(1)
-			}
-			if err := core.CheckRclone(); err != nil {
+			// Common Dependencies check
+			if err := checkDependencies(); err != nil {
 				fmt.Printf("Error: %v\n", err)
 				os.Exit(1)
 			}
@@ -116,22 +112,14 @@ func InitSystem() *core.SignalHandler {
 	// Setup cancellation handling
 	sigHandler := core.NewSignalHandler()
 
-	// Startup checks
-	if err := core.CheckB3SumAvailability(); err != nil {
-		fmt.Printf("Error: %v\n", err)
-		core.LogError("Error: %v", err)
+	// Startup checks for TUI
+	if err := checkDependencies(); err != nil {
+		core.LogError("Startup Error: %v", err)
+		fmt.Printf("Startup Error: %v\n", err)
 		os.Exit(1)
 	}
-	if err := core.CheckRclone(); err != nil {
-		// fmt.Println("Warning: rclone not found or error:", err)
-		core.LogError("Warning: rclone not found or error: %v", err)
-	}
-	if !core.CheckRcloneConfig() {
-		// fmt.Println("Warning: rclone config not found. Run 'init' or check setup.")
-		core.LogError("Warning: rclone config not found. Run 'init' or check setup.")
-	}
+
 	if err := core.BootstrapSystem(sigHandler.Context()); err != nil {
-		// fmt.Println("Startup Warning:", err)
 		core.LogError("Startup Warning: %v", err)
 	}
 
@@ -145,6 +133,19 @@ func Cleanup() {
 		core.LogError("Failed to save hash cache: %v", err)
 	}
 	core.CloseLogger()
+}
+
+func checkDependencies() error {
+	if err := core.CheckB3SumAvailability(); err != nil {
+		return err
+	}
+	if err := core.CheckRclone(); err != nil {
+		return fmt.Errorf("rclone not found or error: %w", err)
+	}
+	if !core.CheckRcloneConfig() {
+		return fmt.Errorf("rclone config not found. Run 'init' or check setup")
+	}
+	return nil
 }
 
 func printUsage() {
