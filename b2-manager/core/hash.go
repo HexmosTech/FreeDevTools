@@ -25,16 +25,6 @@ var (
 	hashCacheMu sync.RWMutex
 )
 
-// CheckB3SumAvailability verifies that b3sum is installed and runnable
-func CheckB3SumAvailability() error {
-	path, err := exec.LookPath("b3sum")
-	if err != nil {
-		return fmt.Errorf("b3sum not found. Please install it using: `cargo install b3sum`")
-	}
-	LogInfo("b3sum found at: %s", path)
-	return nil
-}
-
 // CalculateHash calculates the hash of a file using b3sum directly
 // This is optimized to allow b3sum to use its own parallelism and OS buffer cache
 func CalculateHash(filePath string, onProgress func(string)) (string, error) {

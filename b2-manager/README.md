@@ -19,7 +19,10 @@
 3.  **b3sum**: Install `b3sum` for fast hashing.
     - Rust: `cargo install b3sum`.
     - See also: [BLAKE3](https://github.com/BLAKE3-team/BLAKE3?tab=readme-ov-file).
-
+    - Download binary (Linux x64):
+      `curl -L -o b3sum https://github.com/BLAKE3-team/BLAKE3/releases/download/1.8.3/b3sum_linux_x64_bin`
+    - Make executable & move to path:
+      `chmod +x b3sum && sudo mv b3sum /usr/local/bin/`
 ### Installation
 
 1.  Move the binary to your `frontend` directory (recommended) or add to `/frontend/`.
