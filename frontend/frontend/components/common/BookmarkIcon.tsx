@@ -1,72 +1,64 @@
-import React, { useEffect, useState } from 'react';
 import { checkBookmark, toggleBookmark } from '@/lib/api';
+import React, { useEffect, useState } from 'react';
 
 const BookmarkIcon: React.FC = () => {
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [hasChecked, setHasChecked] = useState<boolean>(false);
+  const [isSidebar, setIsSidebar] = useState<boolean>(false);
+  const [isBreadcrumb, setIsBreadcrumb] = useState<boolean>(false);
+  const [isReady, setIsReady] = useState<boolean>(false);
 
-  // Defer API call until component is actually visible or user interacts
   useEffect(() => {
-    // Use IntersectionObserver to check when component is visible
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !hasChecked) {
-            // Component is visible, now check bookmark status
-            const currentURL = window.location.href;
-            checkBookmarkStatus(currentURL);
-            setHasChecked(true);
-            observer.disconnect();
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
-    const container = document.getElementById('header-bookmark-container');
-    if (container) {
-      observer.observe(container);
-    }
-
-    return () => {
-      observer.disconnect();
+    // Wait for page to fully load
+    const checkPageLoaded = () => {
+      if (document.readyState === 'complete') {
+        initializeComponent();
+      } else {
+        window.addEventListener('load', initializeComponent, { once: true });
+      }
     };
-  }, [hasChecked]);
 
-  const checkBookmarkStatus = async (currentURL: string) => {
-    try {
-      setIsLoading(true);
-      const result = await checkBookmark(currentURL);
-      setIsBookmarked(result.bookmarked);
-    } catch (error) {
-      console.error('[BookmarkIcon] Error checking bookmark status:', error);
-      setIsBookmarked(false);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    const initializeComponent = async () => {
+      // Check if component is in sidebar or breadcrumb
+      const sidebarContainer = document.getElementById('sidebar-bookmark-container');
+      const breadcrumbContainer = document.getElementById('breadcrumb-bookmark-container');
+      const isInSidebar = sidebarContainer?.closest('#sidebar') !== null;
+      const isInBreadcrumb = breadcrumbContainer !== null;
+
+      setIsSidebar(isInSidebar);
+      setIsBreadcrumb(isInBreadcrumb);
+
+      // Make API call to check bookmark status
+      try {
+        const result = await checkBookmark(window.location.href);
+        setIsBookmarked(result.bookmarked);
+      } catch (error) {
+        console.error('[BookmarkIcon] Error checking bookmark status:', error);
+        setIsBookmarked(false);
+      } finally {
+        setIsReady(true);
+      }
+    };
+
+    checkPageLoaded();
+  }, []);
 
   const handleToggle = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    
-    const currentURL = window.location.href;
-    
+
+    if (isLoading) return;
+
     try {
       setIsLoading(true);
-      const result = await toggleBookmark(currentURL);
-      
-      // Check if redirect is needed (non-pro user or not signed in)
+      const result = await toggleBookmark(window.location.href);
+
       if (result.requiresPro && result.redirect) {
-        // Store source URL in sessionStorage before redirecting (cleaner than URL params)
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('bookmark_source_url', currentURL);
-        }
+        sessionStorage.setItem('bookmark_source_url', window.location.href);
         window.location.href = result.redirect;
         return;
       }
-      
+
       if (result.success) {
         setIsBookmarked(result.bookmarked);
       }
@@ -77,7 +69,11 @@ const BookmarkIcon: React.FC = () => {
     }
   };
 
-  // Bookmark icon SVG - filled when bookmarked, outline when not
+  // Don't render anything until page is loaded and API call completes
+  if (!isReady) {
+    return null;
+  }
+
   const BookmarkSVG = ({ filled }: { filled: boolean }) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -85,7 +81,7 @@ const BookmarkIcon: React.FC = () => {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      className="w-6 h-6"
+      className="w-6 h-6 bookmark-icon"
       aria-hidden="true"
     >
       <path
@@ -96,30 +92,129 @@ const BookmarkIcon: React.FC = () => {
     </svg>
   );
 
-  return (
-    <div className="flex-shrink-0 mobile-search-hide" style={{ position: 'relative', zIndex: 100 }}>
-      <button
-        onClick={handleToggle}
-        disabled={isLoading}
-        type="button"
-        className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed w-9 h-9 p-0"
-        style={{ 
-          position: 'relative',
-          zIndex: 100,
-          cursor: isLoading ? 'not-allowed' : 'pointer',
-          pointerEvents: isLoading ? 'none' : 'auto'
-        }}
-        aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-        title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
-      >
-        <div 
-          className={`w-5 h-5 flex items-center justify-center ${isBookmarked ? 'text-yellow-500 dark:text-yellow-400' : 'text-gray-600 dark:text-gray-400'}`}
-          style={{ pointerEvents: 'none' }}
+  const bookmarkStyles = (
+    <style>{`
+      .bookmark-icon-wrapper {
+        color: inherit;
+        transition: color 0.2s;
+      }
+      .bookmark-button:hover .bookmark-icon-wrapper .bookmark-icon {
+        color: #b6b000;
+      }
+      .dark .bookmark-button:hover .bookmark-icon-wrapper .bookmark-icon {
+        color: #d4cb24;
+      }
+      .bookmark-icon-wrapper.bookmarked .bookmark-icon {
+        color: #b6b000;
+      }
+      .dark .bookmark-icon-wrapper.bookmarked .bookmark-icon {
+        color: #d4cb24;
+      }
+    `}</style>
+  );
+
+  if (isSidebar) {
+    return (
+      <>
+        {bookmarkStyles}
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="flex items-center gap-2 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-sm text-slate-700 dark:text-slate-300"
+          style={{
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto',
+            paddingLeft: '1rem',
+            paddingRight: '1rem'
+          }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
         >
-          <BookmarkSVG filled={isBookmarked} />
-        </div>
-      </button>
-    </div>
+          <div
+            className={`w-5 h-5 flex items-center justify-center flex-shrink-0 bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+          <span className="font-medium text-sm">
+            {isBookmarked ? 'Remove Bookmark' : 'Bookmark this page'}
+          </span>
+        </button>
+      </>
+    );
+  }
+
+  // Breadcrumb version with text
+  if (isBreadcrumb) {
+    return (
+      <>
+        {bookmarkStyles}
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="flex items-center gap-2 py-1.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed bookmark-button text-sm text-slate-700 dark:text-slate-300"
+          style={{
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto',
+            paddingLeft: '1rem',
+            paddingRight: '1rem'
+          }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+        >
+          <div
+            className={`w-5 h-5 flex items-center justify-center flex-shrink-0 bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+          <span className="font-medium text-sm">
+            {isBookmarked ? 'Remove bookmark' : 'Bookmark this page'}
+          </span>
+        </button>
+      </>
+    );
+  }
+
+  // Header version (icon only)
+  return (
+    <>
+      {bookmarkStyles}
+      <div className="flex-shrink-0 mobile-search-hide" style={{ position: 'relative', zIndex: 100 }}>
+        <button
+          onClick={handleToggle}
+          disabled={isLoading}
+          type="button"
+          className="flex items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 cursor-pointer transition-all duration-200 hover:bg-gray-200 dark:hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed w-9 h-9 p-0 bookmark-button"
+          style={{
+            position: 'relative',
+            zIndex: 100,
+            cursor: isLoading ? 'not-allowed' : 'pointer',
+            pointerEvents: isLoading ? 'none' : 'auto'
+          }}
+          aria-label={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+          title={isBookmarked ? "Remove bookmark" : "Add bookmark"}
+        >
+          <div
+            className={`w-5 h-5 flex items-center justify-center bookmark-icon-wrapper ${isBookmarked ? 'bookmarked' : ''}`}
+            style={{
+              pointerEvents: 'none',
+              color: 'inherit'
+            }}
+          >
+            <BookmarkSVG filled={isBookmarked} />
+          </div>
+        </button>
+      </div>
+    </>
   );
 };
 
