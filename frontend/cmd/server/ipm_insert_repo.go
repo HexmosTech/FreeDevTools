@@ -2,13 +2,15 @@ package main
 
 import (
 	"crypto/sha256"
-	"database/sql"
 	"encoding/binary"
 	"encoding/json"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
 	"log"
 	"net/http"
+	"os/exec"
+	"path/filepath"
+	"sync"
 
 	"strings"
 	"time"
@@ -16,7 +18,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-
+var updateMu sync.Mutex
 
 type EntryPayload struct {
 	Repo                string      `json:"repo"`
@@ -64,9 +66,20 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 
         w.Header().Set("Content-Type", "application/json")
         if !success {
+            log.Printf("ℹ️ [Installerpedia API] Duplicate entry skipped: %s", payload.Repo) // Add this!
             w.WriteHeader(http.StatusOK)
-            fmt.Fprintf(w, `{"success": false, "message": "Duplicate: %s already exists"}`, payload.Repo)
-            return
+            fmt.Fprintf(w, `{"success": false, "message": "Duplicate..."}`, payload.Repo)
+            return 
+        }
+
+        if success {
+            go func() {
+                if err := TriggerMeiliUpdate(); err != nil {
+                    fmt.Printf("⚠️ Background Meili Update Error: %v\n", err)
+                } else {
+                    fmt.Println("✅ Background Meili Update Successful")
+                }
+            }()
         }
 
         log.Printf("✅ [Installerpedia API] Added: %s", payload.Repo)
@@ -145,4 +158,32 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload) (bool, error
 func hashStringToInt64(s string) int64 {
 	h := sha256.Sum256([]byte(s))
 	return int64(binary.BigEndian.Uint64(h[:8]))
+}
+
+
+func TriggerMeiliUpdate() error {
+    if !updateMu.TryLock() {
+        return fmt.Errorf("update already in progress, skipping")
+    }
+    defer updateMu.Unlock()
+    searchIndexPath, err := filepath.Abs("../search-index")
+    if err != nil {
+        return fmt.Errorf("could not resolve search-index path: %w", err)
+    }
+
+    // Run commands sequentially without invoking 'sh'
+    tasks := [][]string{
+        {"gen-installerpedia"},
+        {"transfer"},
+    }
+
+    for _, args := range tasks {
+        cmd := exec.Command("make", args...) // Executes 'make' directly
+        cmd.Dir = searchIndexPath
+        if output, err := cmd.CombinedOutput(); err != nil {
+            return fmt.Errorf("make %s failed: %s: %w", args[0], string(output), err)
+        }
+    }
+
+    return nil
 }
