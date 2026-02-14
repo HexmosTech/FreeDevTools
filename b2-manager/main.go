@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	model.AppConfig.ToolVersion = "2.1"
+	model.AppConfig.ToolVersion = "2.0"
 	// Initialize system configuration and signal handling
 	sigHandler := config.InitSystem()
 	// Ensure proper cleanup of resources on exit
