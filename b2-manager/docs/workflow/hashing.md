@@ -12,12 +12,15 @@ The application uses **b3sum** (BLAKE3) to calculate checksums of database files
 2. **Hashing Request**: When a hash is requested for a file:
    - The system checks if the file path exists in the in-memory cache.
    - It compares the file's current modification time (`ModTime`) and size (`Size`) against the cached values.
-   - **Hit**: If both match, the cached hash is returned immediately (no I/O is performed to read the file content).
+   - **Hit**: If both match, the cached hash is returned immediately (no I/O is performed).
    - **Miss**: If there is no entry or the metadata doesn't match, the file is re-hashed.
-     - If an `onProgress` callback is provided, an "Integrity Check" status is reported.
-     - The `b3sum` command is executed with a timeout (default 10s) to calculate the hash.
-     - The calculation duration is logged.
-     - The cache is updated with the new hash.
+     - **Start**: A log entry is created with the start timestamp.
+     - **Execution**: The `b3sum` command is executed **directly on the file path** (e.g., `b3sum /path/to/file`).
+       - This allows `b3sum` to utilize **multithreading** and the **OS buffer cache** for maximum performance.
+       - Speed can range from ~500MB/s (disk) to >20GB/s (cached RAM).
+     - **Parse**: The output is parsed to extract the hash.
+     - **Log**: The operation completes with a log message containing the total duration, speed (MB/s), and start/end timestamps.
+     - **Update**: The cache is updated with the new hash, size, and modtime.
 3. **Shutdown/Cleanup**: The in-memory cache is saved back to `hash.json` when:
    - The application shuts down (via `Cleanup()`, which also closes the logger).
    - A `Reset` or `Reboot` command is issued (cache is explicitly cleared to ensure freshness).

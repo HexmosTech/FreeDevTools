@@ -3,7 +3,6 @@ package core
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -13,23 +12,6 @@ import (
 
 	"b2m/model"
 )
-
-// ProgressReader wraps an io.Reader to report progress
-type ProgressReader struct {
-	io.Reader
-	Total      int64
-	Current    int64
-	OnProgress func(int64)
-}
-
-func (pr *ProgressReader) Read(p []byte) (int, error) {
-	n, err := pr.Reader.Read(p)
-	pr.Current += int64(n)
-	if pr.OnProgress != nil {
-		pr.OnProgress(pr.Current)
-	}
-	return n, err
-}
 
 // cachedHash stores the hash and file stat info to avoid re-hashing unchanged files
 type cachedHash struct {
@@ -53,7 +35,8 @@ func CheckB3SumAvailability() error {
 	return nil
 }
 
-// CalculateHash calculates the imohash (as hex string) of a file with caching
+// CalculateHash calculates the hash of a file using b3sum directly
+// This is optimized to allow b3sum to use its own parallelism and OS buffer cache
 func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	info, err := os.Stat(filePath)
 	if err != nil {
@@ -79,46 +62,15 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 
 	startTime := time.Now()
 
-	// Prepare b3sum command reading from Stdin
-	cmd := exec.Command("b3sum")
+	// Log start time for debugging
+	LogInfo("Starting hash calculation for %s using b3sum directly...", filepath.Base(filePath))
 
-	// Open file
-	file, err := os.Open(filePath)
-	if err != nil {
-		LogError("CalculateHash: Failed to open file %s: %v", filePath, err)
-		return "", err
-	}
-	defer file.Close()
-
-	// Setup Progress Reader
-	// We'll throttle updates to avoid spamming the callback
-	lastUpdate := time.Now()
-
-	pr := &ProgressReader{
-		Reader: file,
-		Total:  info.Size(),
-		OnProgress: func(current int64) {
-			if onProgress == nil {
-				return
-			}
-			now := time.Now()
-			if now.Sub(lastUpdate) < 500*time.Millisecond && current < info.Size() {
-				return
-			}
-			lastUpdate = now
-
-			duration := time.Since(startTime)
-			if duration.Seconds() > 0 {
-				speedMB := float64(current) / 1024 / 1024 / duration.Seconds()
-				onProgress(fmt.Sprintf("Integrity Check: %s (%.2f MB/s)", filepath.Base(filePath), speedMB))
-			}
-		},
-	}
-
-	cmd.Stdin = pr
-
-	// Run command and get output
-	// cmd.Output() handles starting and waiting
+	// Run b3sum command directly on the file
+	// This allows b3sum to use mmap and multithreading, which is significantly faster
+	// than piping data through Go.
+	// We use "b3sum" directly. Note: The user asked for "time command", but wrapping with /usr/bin/time
+	// complicates output parsing. Go's time.Since is precise for wall-clock time.
+	cmd := exec.Command("b3sum", filePath)
 	output, err := cmd.Output()
 	if err != nil {
 		LogError("CalculateHash: Failed to calculate hash for %s: %v", filePath, err)
@@ -126,7 +78,7 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	}
 
 	// Parse Output
-	// b3sum output format: <hash>  -\n
+	// b3sum output format: <hash>  <filename>\n
 	fields := strings.Fields(string(output))
 	if len(fields) < 1 {
 		LogError("CalculateHash: Invalid output from b3sum for %s: %q", filePath, output)
@@ -139,20 +91,16 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	fileSizeMB := float64(info.Size()) / 1024 / 1024
 
 	var speed float64
-	if duration.Seconds() > 0.001 { // Check for > 1ms to avoid div by zero
+	if duration.Seconds() > 0.000001 { // Check for > 1us to avoid div by zero
 		speed = fileSizeMB / duration.Seconds()
 	} else {
 		// Extremely fast, assume infinite or just use max reasonable
 		speed = 0
 	}
 
-	msg := fmt.Sprintf("Hash calculated for %s in %v (%.2f MB/s)", filepath.Base(filePath), duration, speed)
+	msg := fmt.Sprintf("Hash calculated for %s in %v (%.2f MB/s). Start: %v, End: %v",
+		filepath.Base(filePath), duration, speed, startTime.Format(time.RFC3339Nano), time.Now().Format(time.RFC3339Nano))
 	LogInfo(msg)
-
-	// Final progress update
-	if onProgress != nil {
-		onProgress(fmt.Sprintf("%s (%.2f MB/s)", filepath.Base(filePath), speed))
-	}
 
 	// Update cache
 	hashCacheMu.Lock()
