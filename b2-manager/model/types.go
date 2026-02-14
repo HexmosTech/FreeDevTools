@@ -1,6 +1,8 @@
 package model
 
 import (
+	"errors"
+	"fmt"
 	"time"
 
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -17,10 +19,11 @@ type DBInfo struct {
 
 // DBStatusInfo represents a database with its calculated status
 type DBStatusInfo struct {
-	DB         DBInfo
-	Status     string
-	StatusCode string // Stable identifier for logic (e.g. "remote_newer")
-	Color      text.Color
+	DB               DBInfo
+	Status           string
+	StatusCode       string // Stable identifier for logic (e.g. "remote_newer")
+	RemoteMetaStatus string // Raw status from remote metadata (e.g. "updating", "uploading")
+	Color            text.Color
 }
 
 // RcloneProgress represents the structure of rclone's JSON stats output
@@ -49,11 +52,10 @@ type RcloneProgress struct {
 
 // LockEntry represents a lock file on B2
 type LockEntry struct {
-	DBName    string
-	Owner     string
-	Hostname  string
-	Type      string // "reserve" or "lock"
-	ExpiresAt time.Time
+	DBName   string
+	Owner    string
+	Hostname string
+	Type     string // "lock"
 }
 
 // Metadata represents the synchronization state of a database
@@ -121,11 +123,11 @@ var (
 
 	// Local-only Logic
 	DBStatusNewLocal        = DBStatusDefinition{StatusCodeNewLocal, "Ready To Upload ⬆️", text.FgCyan} // Exists locally only. Needs upload.
-	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan} 
+	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan}
 
 	// Remote Logic
 	DBStatusRecievedStaleMeta = DBStatusDefinition{StatusCodeRecievedStaleMeta, "Ready To Upload ⬆️", text.FgCyan} // There is no metadata present in new remote db.
-	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow} // Exists remotely only. Needs download.
+	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow}          // Exists remotely only. Needs download.
 
 	// Consistency Checks
 	DBStatusNoMetadata     = DBStatusDefinition{StatusCodeNoMetadata, "Ready To Upload ⬆️", text.FgCyan}
@@ -171,3 +173,44 @@ var (
 		Unknown:           DBStatusUnknown,
 	}
 )
+
+// ErrWarningLocalChanges is a special error indicating a warning validation state
+var ErrWarningLocalChanges = fmt.Errorf("WARNING_LOCAL_CHANGES")
+
+// ErrWarningDatabaseUpdating indicates the database is being updated by another user
+var ErrWarningDatabaseUpdating = fmt.Errorf("WARNING_DATABASE_UPDATING")
+
+const (
+	ActionUpload   = "upload"
+	ActionDownload = "download"
+)
+
+var (
+	// ErrDatabaseLocked indicates the database is locked by another user or process
+	ErrDatabaseLocked = errors.New("database is locked")
+)
+
+// Config holds all application configuration
+type Config struct {
+	// Paths
+	RootBucket      string
+	LockDir         string
+	VersionDir      string
+	LocalVersionDir string
+	LocalAnchorDir  string
+	LocalB2MDir     string
+	LocalDBDir      string
+
+	// Environment
+	DiscordWebhookURL string
+
+	// User Info
+	CurrentUser string
+	Hostname    string
+	ProjectRoot string
+
+	// Tool Info
+	ToolVersion string
+}
+
+var AppConfig = Config{}

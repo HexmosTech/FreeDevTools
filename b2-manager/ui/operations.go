@@ -87,7 +87,7 @@ func (lc *ListController) onUpload(g *gocui.Gui, v *gocui.View) error {
 		err := doUpload(false)
 
 		// Check if error is due to lock
-		if err != nil && errors.Is(err, core.ErrDatabaseLocked) {
+		if err != nil && errors.Is(err, model.ErrDatabaseLocked) {
 			// Create channel to carry user decision back to this background thread
 			confirmCh := make(chan bool, 1)
 
@@ -138,7 +138,7 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 
 			// var bar *progressbar.ProgressBar
 
-			err := core.DownloadDatabase(ctx, dbName, func(p model.RcloneProgress) {
+			err := core.DownloadDatabase(ctx, dbName, false, func(p model.RcloneProgress) {
 				// Remove unused progressbar library usage
 				var percent int
 				var speedMB float64
@@ -174,9 +174,16 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 	}
 
 	if err := core.ValidateAction(selectedDB, "download"); err != nil {
-		if err == core.ErrWarningLocalChanges {
+		if err == model.ErrWarningLocalChanges {
 			// Warning: Local changes will be lost
 			lc.app.confirm("Warning: Local Changes", "You have unsaved local changes.\nDownloading will overwrite them.\n\nAre you sure?", func() {
+				startDownload()
+			}, nil)
+			return nil
+		}
+		if err == model.ErrWarningDatabaseUpdating {
+			// Warning: Database is being updated by another user
+			lc.app.confirm("Warning: DB Updating", "This database is currently being updated by another user.\nDownloading now might give you incomplete data.\n\nAre you sure?", func() {
 				startDownload()
 			}, nil)
 			return nil
@@ -204,5 +211,78 @@ func (lc *ListController) onCancel(g *gocui.Gui, v *gocui.View) error {
 		cancel()
 		lc.app.updateDBStatus(dbName, "Cancelling...", -1, -1, "", "")
 	}
+	return nil
+}
+
+func (lc *ListController) onLock(g *gocui.Gui, v *gocui.View) error {
+	lc.app.mu.Lock()
+	if lc.app.selected < 0 || lc.app.selected >= len(lc.app.dbs) {
+		lc.app.mu.Unlock()
+		return nil
+	}
+	selectedDB := lc.app.dbs[lc.app.selected]
+	lc.app.mu.Unlock()
+
+	// Validation: Check if already locked by other
+	if selectedDB.StatusCode == model.StatusCodeLockedByOther {
+		lc.app.confirm("Error: Cannot Lock", "Database is already locked by another user.\n\n(Press y/n to close)", nil, nil)
+		return nil
+	}
+
+	// Check if already locked by you (status LockedByYou or Uploading)
+	// If it is locked by us, we might want to either re-lock or just warn?
+	// User request: "User can lock the db for update by pressing 'l' key."
+	// If we already lock it, maybe we just want to update status to "updating"?
+	// Use case: I locked it potentially automatically or manually before, now I want to explicitly say "updating".
+	// So we should allow it even if locked by us.
+
+	confirmMsg := fmt.Sprintf("Lock %s for manual update?\n\nThis will prevent others from uploading\nand set status to 'updating'.", selectedDB.DB.Name)
+
+	lc.app.confirm("Lock Database?", confirmMsg, func() {
+		// on Yes
+		lc.app.startOperation("Locking", func(ctx context.Context, dbName string) error {
+			lc.app.updateDBStatus(dbName, "Locking...", 0, 0, "lock", "")
+
+			err := core.AcquireCustomLock(ctx, dbName)
+			if err != nil {
+				lc.app.updateDBStatus(dbName, fmt.Sprintf("Error: %v", err), -1, -1, "error", "")
+				return err
+			}
+
+			// Success
+			lc.app.updateDBStatus(dbName, "Locked (Updating)...", 100, 0, "lock", "")
+			// Refresh to show new status
+			go func() {
+				// Poll for lock propagation to avoid stale state
+				// We verify that the lock is visible remotely before triggering a full refresh
+				pollCtx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+				defer cancel()
+
+				ticker := time.NewTicker(500 * time.Millisecond)
+				defer ticker.Stop()
+
+				for {
+					select {
+					case <-pollCtx.Done():
+						// Timeout, status update might be stale but we proceed
+						lc.app.refreshStatus()
+						return
+					case <-ticker.C:
+						locks, err := core.FetchLocks(pollCtx)
+						if err == nil {
+							if _, ok := locks[dbName]; ok {
+								// Lock is visible, safe to refresh
+								lc.app.refreshStatus()
+								return
+							}
+						}
+					}
+				}
+			}()
+
+			return nil
+		})
+	}, nil)
+
 	return nil
 }
