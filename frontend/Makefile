@@ -151,6 +151,10 @@ build: generate build-css build-js checkpoint-db ## Build the application
 	@echo "Building application..."
 	$(GO_CMD) build -o bin/fdt-binary ./cmd/server
 
+start-b2m: ## Start b2m
+	@echo "Starting b2m..."
+	@./b2m
+
 build-b2m: ## Build b2m CLI
 	@echo "Building b2m..."
 	@if [ ! -d "../b2-manager" ]; then \

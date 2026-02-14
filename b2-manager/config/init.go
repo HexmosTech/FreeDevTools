@@ -46,6 +46,10 @@ func InitSystem() *core.SignalHandler {
 			// We exit here because help is a standalone command
 			os.Exit(0)
 
+		case "--version":
+			fmt.Printf("b2m version %s\n", model.AppConfig.ToolVersion)
+			os.Exit(0)
+
 		case "--generate-hash":
 			// Common Dependencies check
 			if err := checkDependencies(); err != nil {
@@ -154,6 +158,7 @@ func printUsage() {
 	fmt.Println("  b2-manager [command]")
 	fmt.Println("\nCommands:")
 	fmt.Println("  --help            Show this help message")
+	fmt.Println("  --version         Show version information")
 	fmt.Println("  --generate-hash   Generate new hash and create metadata in remote")
 	fmt.Println("  --reset           Remove local metadata caches and start fresh UI session")
 	fmt.Println("\nIf no command is provided, the TUI application starts normally.")
