@@ -43,7 +43,7 @@ func ParseRepoListRow(row RawRepoListRow) RepoData {
 }
 
 // -------------------------
-// DB init (man_pages-inspired)
+// DB init 
 // -------------------------
 func GetDB() (*DB, error) {
 	dbPath := filepath.Join(".", "db", "all_dbs", IPM_DB_FILE)
@@ -68,6 +68,32 @@ func GetDB() (*DB, error) {
 	}
 
 	return &DB{conn: conn}, nil
+}
+
+// GetWriteDB opens the database with write permissions for the API.
+func GetWriteDB() (*DB, error) {
+    dbPath := filepath.Join(".", "db", "all_dbs", IPM_DB_FILE)
+
+    // Remove mode=ro and add WAL for concurrent write/read
+    connStr := "file:" + dbPath + "?_journal=WAL&_sync=NORMAL"
+    conn, err := sql.Open("sqlite3", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+    // Standard write-safe pool settings
+	conn.SetMaxOpenConns(1) // SQLite handles writes best with a single connection
+	conn.SetMaxIdleConns(1)    // Fix: replaced the undefined method
+	if err := conn.Ping(); err != nil {
+		return nil, err
+	}
+
+	return &DB{conn: conn}, nil
+}
+
+// GetConn exported helper to let the API use the internal connection
+func (db *DB) GetConn() *sql.DB {
+    return db.conn
 }
 
 // -------------------------
