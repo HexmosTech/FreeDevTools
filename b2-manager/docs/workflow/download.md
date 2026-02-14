@@ -13,7 +13,7 @@ The download process is executed by `DownloadDatabase` in `core/download.go`.
 Before starting, `core.ValidateAction` enforces safeguards.
 
 - **Local Changes Warning**: If status is "Ready To Upload" (Local Ahead / New Local), the UI warns the user: **"Overwrite local changes?"**. The user must confirm to proceed.
-- **Concurrent Update Warning**: If the database is locked by another user and marked as **"Updating"** or **"Uploading"**, the system warns: **"This database is currently being updated... Are you sure?"**.
+- **Concurrent Update Warning**: If the database is locked by another user and marked as **"Uploading"**, the system warns: **"This database is currently being updated... Are you sure?"**.
 
 ### Phase 1: Lock Check & Safety
 

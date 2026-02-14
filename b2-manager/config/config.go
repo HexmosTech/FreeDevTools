@@ -159,7 +159,7 @@ func Cleanup() {
 	core.CloseLogger()
 }
 
-func checkDependencies() error {
+func CheckDependencies() error {
 	if err := checkB3SumAvailability(); err != nil {
 		return err
 	}
