@@ -3,12 +3,14 @@ package config
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"os/user"
 	"path/filepath"
 	"strings"
 
 	"github.com/BurntSushi/toml"
 
+	"b2m/core"
 	"b2m/model"
 )
 
@@ -41,6 +43,7 @@ func InitializeConfig() error {
 	model.AppConfig.LocalB2MDir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
 	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalB2MDir, "version")
 	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalB2MDir, "local-version")
+	model.AppConfig.MigrationsDir = filepath.Join(model.AppConfig.ProjectRoot, "b2m-migration")
 
 	return nil
 }
@@ -123,4 +126,48 @@ func fetchUserDetails() {
 	} else {
 		model.AppConfig.Hostname = h
 	}
+}
+
+// CheckB3SumAvailability verifies that b3sum is installed and runnable
+// CheckB3SumAvailability verifies that b3sum is installed and runnable.
+// If not found, it attempts to install it automatically.
+func checkB3SumAvailability() error {
+	path, err := exec.LookPath("b3sum")
+	if err == nil {
+		core.LogInfo("b3sum found at: %s", path)
+		return nil
+	}
+	core.LogInfo("b3sum not found.")
+	return fmt.Errorf(`b3sum is missing. Please install it manually:
+
+1. Download binary (Linux x64):
+   curl -L -o b3sum https://github.com/BLAKE3-team/BLAKE3/releases/download/1.8.3/b3sum_linux_x64_bin
+
+2. Make executable & move to path:
+   chmod +x b3sum && sudo mv b3sum /usr/local/bin/
+
+Or use cargo:
+   cargo install b3sum`)
+}
+
+// Cleanup saves the hash cache and closes the logger.
+// This should be called (usually deferred) by the main function.
+func Cleanup() {
+	if err := core.SaveHashCache(); err != nil {
+		core.LogError("Failed to save hash cache: %v", err)
+	}
+	core.CloseLogger()
+}
+
+func checkDependencies() error {
+	if err := checkB3SumAvailability(); err != nil {
+		return err
+	}
+	if err := core.CheckRclone(); err != nil {
+		return fmt.Errorf("rclone not found or error: %w", err)
+	}
+	if !core.CheckRcloneConfig() {
+		return fmt.Errorf("rclone config not found. Run 'init' or check setup")
+	}
+	return nil
 }

@@ -267,3 +267,30 @@ func RcloneSync(ctx context.Context, src, dst string) error {
 	}
 	return nil
 }
+
+// CheckRcloneConfig checks if rclone is configured.
+// It tries to find the config file using `rclone config file`.
+func CheckRcloneConfig() bool {
+	// 1. Try running `rclone config dump` which requires a valid config
+	// This is more robust than parsing the file path string
+	cmd := exec.Command("rclone", "config", "dump")
+	if err := cmd.Run(); err == nil {
+		return true // Config exists and is valid/loadable
+	}
+
+	// 2. Fallback to standard locations if the command output parsing fails but rclone exists
+	homeDir, _ := os.UserHomeDir()
+	configPaths := []string{
+		filepath.Join(homeDir, ".config", "rclone", "rclone.conf"),   // Linux/macOS standard
+		filepath.Join(homeDir, ".rclone.conf"),                       // Linux/macOS old default
+		filepath.Join(os.Getenv("APPDATA"), "rclone", "rclone.conf"), // Windows
+	}
+
+	for _, path := range configPaths {
+		if _, err := os.Stat(path); err == nil {
+			return true
+		}
+	}
+
+	return false
+}

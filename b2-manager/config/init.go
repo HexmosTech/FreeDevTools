@@ -106,6 +106,20 @@ func InitSystem() *core.SignalHandler {
 			fmt.Println("Reset complete. Please restart the application.")
 			os.Exit(0)
 
+		case "migrations":
+			if len(os.Args) > 3 && os.Args[2] == "create" {
+				phrase := os.Args[3]
+				// Config is already initialized by InitSystem
+				if err := core.CreateMigration(phrase); err != nil {
+					fmt.Fprintf(os.Stderr, "Error creating migration: %v\n", err)
+					os.Exit(1)
+				}
+				os.Exit(0)
+			}
+			// If arguments are missing or incorrect
+			fmt.Println("Usage: b2m migrations create <phrase>")
+			os.Exit(1)
+
 		default:
 			fmt.Printf("Unknown command: %s\n", command)
 			printUsage()
@@ -129,29 +143,6 @@ func InitSystem() *core.SignalHandler {
 
 	return sigHandler
 }
-
-// Cleanup saves the hash cache and closes the logger.
-// This should be called (usually deferred) by the main function.
-func Cleanup() {
-	if err := core.SaveHashCache(); err != nil {
-		core.LogError("Failed to save hash cache: %v", err)
-	}
-	core.CloseLogger()
-}
-
-func checkDependencies() error {
-	if err := core.CheckB3SumAvailability(); err != nil {
-		return err
-	}
-	if err := core.CheckRclone(); err != nil {
-		return fmt.Errorf("rclone not found or error: %w", err)
-	}
-	if !core.CheckRcloneConfig() {
-		return fmt.Errorf("rclone config not found. Run 'init' or check setup")
-	}
-	return nil
-}
-
 func printUsage() {
 	fmt.Println("b2-manager - Backblaze B2 Database Manager")
 	fmt.Println("\nUsage:")

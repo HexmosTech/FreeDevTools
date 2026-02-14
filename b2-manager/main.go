@@ -6,9 +6,11 @@ import (
 )
 
 func main() {
+	// Initialize system configuration and signal handling
 	sigHandler := config.InitSystem()
+	// Ensure proper cleanup of resources on exit
 	defer config.Cleanup()
 
-	// Start UI
+	// Start the Terminal User Interface
 	ui.RunUI(sigHandler)
 }

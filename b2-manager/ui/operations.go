@@ -181,13 +181,7 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 			}, nil)
 			return nil
 		}
-		if err == model.ErrWarningDatabaseUpdating {
-			// Warning: Database is being updated by another user
-			lc.app.confirm("Warning: DB Updating", "This database is currently being updated by another user.\nDownloading now might give you incomplete data.\n\nAre you sure?", func() {
-				startDownload()
-			}, nil)
-			return nil
-		}
+
 		// Block error
 		lc.app.confirm("Error: Cannot Download", err.Error()+"\n\n(Press y/n to close)", nil, nil)
 		return nil

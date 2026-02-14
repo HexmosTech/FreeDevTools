@@ -22,7 +22,7 @@ type DBStatusInfo struct {
 	DB               DBInfo
 	Status           string
 	StatusCode       string // Stable identifier for logic (e.g. "remote_newer")
-	RemoteMetaStatus string // Raw status from remote metadata (e.g. "updating", "uploading")
+	RemoteMetaStatus string // Raw status from remote metadata (e.g. "uploading")
 	Color            text.Color
 }
 
@@ -115,70 +115,40 @@ const (
 )
 
 // Global DBStatuses
-var (
-	// Lock-based Statuses
-	DBStatusLockedByOther = DBStatusDefinition{StatusCodeLockedByOther, "%s is Uploading ⬆️", text.FgYellow} // Locked by another user (Dynamic: Owner@Host)
-	DBStatusLockedByYou   = DBStatusDefinition{StatusCodeLockedByYou, "Ready to Upload ⬆️", text.FgGreen}    // Locked by current user on this machine (Idle)
-	DBStatusUploading     = DBStatusDefinition{StatusCodeUploading, "You are Uploading ⬆️", text.FgGreen}    // Locked by current user (uploading)
-
-	// Local-only Logic
-	DBStatusNewLocal        = DBStatusDefinition{StatusCodeNewLocal, "Ready To Upload ⬆️", text.FgCyan} // Exists locally only. Needs upload.
-	DBStatusUploadCancelled = DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan}
-
-	// Remote Logic
-	DBStatusRecievedStaleMeta = DBStatusDefinition{StatusCodeRecievedStaleMeta, "Ready To Upload ⬆️", text.FgCyan} // There is no metadata present in new remote db.
-	DBStatusRemoteOnly        = DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow}          // Exists remotely only. Needs download.
-
-	// Consistency Checks
-	DBStatusNoMetadata     = DBStatusDefinition{StatusCodeNoMetadata, "Ready To Upload ⬆️", text.FgCyan}
-	DBStatusUpToDate       = DBStatusDefinition{StatusCodeUpToDate, "Up to Date ✅", text.FgGreen}       // Hashes match
-	DBStatusErrorReadLocal = DBStatusDefinition{StatusCodeErrorReadLocal, "Error (Read ❌)", text.FgRed} // IO Error
-	DBStatusErrorStatLocal = DBStatusDefinition{StatusCodeErrorStatLocal, "Error (Read ❌)", text.FgRed} // IO Error
-
-	// Mismatches
-	DBStatusLocalNewer  = DBStatusDefinition{StatusCodeLocalNewer, "Ready To Upload ⬆️", text.FgCyan}            // Local changed (Anchor matches remote).
-	DBStatusRemoteNewer = DBStatusDefinition{StatusCodeRemoteNewer, "DB Outdated Download Now 🔽", text.FgYellow} // Remote changed (Anchor Mismatch or Missing).
-	DBStatusUnknown     = DBStatusDefinition{StatusCodeUnknown, "Error (Read ❌)", text.FgRed}
-
-	// Grouping for reference if needed, or just export individual vars
-	DBStatuses = struct {
-		LockedByOther     DBStatusDefinition
-		LockedByYou       DBStatusDefinition
-		Uploading         DBStatusDefinition
-		NewLocal          DBStatusDefinition
-		UploadCancelled   DBStatusDefinition
-		RecievedStaleMeta DBStatusDefinition
-		RemoteOnly        DBStatusDefinition
-		NoMetadata        DBStatusDefinition
-		ErrorReadLocal    DBStatusDefinition
-		UpToDate          DBStatusDefinition
-		ErrorStatLocal    DBStatusDefinition
-		LocalNewer        DBStatusDefinition
-		RemoteNewer       DBStatusDefinition
-		Unknown           DBStatusDefinition
-	}{
-		LockedByOther:     DBStatusLockedByOther,
-		LockedByYou:       DBStatusLockedByYou,
-		Uploading:         DBStatusUploading,
-		NewLocal:          DBStatusNewLocal,
-		UploadCancelled:   DBStatusUploadCancelled,
-		RecievedStaleMeta: DBStatusRecievedStaleMeta,
-		RemoteOnly:        DBStatusRemoteOnly,
-		NoMetadata:        DBStatusNoMetadata,
-		ErrorReadLocal:    DBStatusErrorReadLocal,
-		UpToDate:          DBStatusUpToDate,
-		ErrorStatLocal:    DBStatusErrorStatLocal,
-		LocalNewer:        DBStatusLocalNewer,
-		RemoteNewer:       DBStatusRemoteNewer,
-		Unknown:           DBStatusUnknown,
-	}
-)
+var DBStatuses = struct {
+	LockedByOther     DBStatusDefinition
+	LockedByYou       DBStatusDefinition
+	Uploading         DBStatusDefinition
+	NewLocal          DBStatusDefinition
+	UploadCancelled   DBStatusDefinition
+	RecievedStaleMeta DBStatusDefinition
+	RemoteOnly        DBStatusDefinition
+	NoMetadata        DBStatusDefinition
+	ErrorReadLocal    DBStatusDefinition
+	UpToDate          DBStatusDefinition
+	ErrorStatLocal    DBStatusDefinition
+	LocalNewer        DBStatusDefinition
+	RemoteNewer       DBStatusDefinition
+	Unknown           DBStatusDefinition
+}{
+	LockedByOther:     DBStatusDefinition{StatusCodeLockedByOther, "%s is Uploading ⬆️", text.FgYellow},
+	LockedByYou:       DBStatusDefinition{StatusCodeLockedByYou, "Ready to Upload ⬆️", text.FgGreen},
+	Uploading:         DBStatusDefinition{StatusCodeUploading, "You are Uploading ⬆️", text.FgGreen},
+	NewLocal:          DBStatusDefinition{StatusCodeNewLocal, "Ready To Upload ⬆️", text.FgCyan},
+	UploadCancelled:   DBStatusDefinition{StatusCodeUploadCancelled, "Ready To Upload ⬆️", text.FgCyan},
+	RecievedStaleMeta: DBStatusDefinition{StatusCodeRecievedStaleMeta, "Ready To Upload ⬆️", text.FgCyan},
+	RemoteOnly:        DBStatusDefinition{StatusCodeRemoteOnly, "Download DB ⬇️", text.FgYellow},
+	NoMetadata:        DBStatusDefinition{StatusCodeNoMetadata, "Ready To Upload ⬆️", text.FgCyan},
+	ErrorReadLocal:    DBStatusDefinition{StatusCodeErrorReadLocal, "Error (Read ❌)", text.FgRed},
+	UpToDate:          DBStatusDefinition{StatusCodeUpToDate, "Up to Date ✅", text.FgGreen},
+	ErrorStatLocal:    DBStatusDefinition{StatusCodeErrorStatLocal, "Error (Read ❌)", text.FgRed},
+	LocalNewer:        DBStatusDefinition{StatusCodeLocalNewer, "Ready To Upload ⬆️", text.FgCyan},
+	RemoteNewer:       DBStatusDefinition{StatusCodeRemoteNewer, "DB Outdated Download Now 🔽", text.FgYellow},
+	Unknown:           DBStatusDefinition{StatusCodeUnknown, "Error (Read ❌)", text.FgRed},
+}
 
 // ErrWarningLocalChanges is a special error indicating a warning validation state
 var ErrWarningLocalChanges = fmt.Errorf("WARNING_LOCAL_CHANGES")
-
-// ErrWarningDatabaseUpdating indicates the database is being updated by another user
-var ErrWarningDatabaseUpdating = fmt.Errorf("WARNING_DATABASE_UPDATING")
 
 const (
 	ActionUpload   = "upload"
@@ -200,6 +170,7 @@ type Config struct {
 	LocalAnchorDir  string
 	LocalB2MDir     string
 	LocalDBDir      string
+	MigrationsDir   string
 
 	// Environment
 	DiscordWebhookURL string
