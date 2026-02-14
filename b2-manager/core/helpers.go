@@ -20,6 +20,37 @@ import (
 	"github.com/jedib0t/go-pretty/v6/progress"
 )
 
+// SanitizeDBName checks if the database name contains only allowed characters.
+// Allowed: alphanumeric, hyphen, underscore, dot.
+// This prevents globbing injection and path traversal.
+func SanitizeDBName(name string) error {
+	// Check for empty name
+	if name == "" {
+		return fmt.Errorf("database name cannot be empty")
+	}
+
+	// Check for path separators (basic path traversal)
+	if strings.Contains(name, "/") || strings.Contains(name, "\\") {
+		return fmt.Errorf("database name cannot contain path separators")
+	}
+
+	// Check for globbing characters
+	if strings.ContainsAny(name, "*?[]") {
+		return fmt.Errorf("database name cannot contain globbing characters (*, ?, [, ])")
+	}
+
+	// Validation regex for stricter control allowed: a-zA-Z0-9_-.
+	matched, err := regexp.MatchString(`^[a-zA-Z0-9_\-\.]+$`, name)
+	if err != nil {
+		return fmt.Errorf("regex error: %w", err)
+	}
+	if !matched {
+		return fmt.Errorf("database name contains invalid characters (allowed: alphanumeric, _, -, .)")
+	}
+
+	return nil
+}
+
 func sortDBs(dbs []model.DBInfo) {
 	re := regexp.MustCompile(`^(.*)-v(\d+)(\..*)?$`)
 	sort.Slice(dbs, func(i, j int) bool {
@@ -196,6 +227,11 @@ func TrackProgress(r io.Reader, totalSize int64, description string) error {
 
 // LockDatabase creates a .lock file
 func LockDatabase(ctx context.Context, dbName, owner, host, intent string, force bool) error {
+	if err := SanitizeDBName(dbName); err != nil {
+		LogError("LockDatabase: Invalid DB name: %v", err)
+		return err
+	}
+
 	locks, err := FetchLocks(ctx)
 	if err != nil {
 		LogError("fetchLocks failed in LockDatabase: %v", err)
@@ -246,10 +282,16 @@ func LockDatabase(ctx context.Context, dbName, owner, host, intent string, force
 
 // UnlockDatabase removes the .lock file
 func UnlockDatabase(ctx context.Context, dbName, owner string, force bool) error {
+	if err := SanitizeDBName(dbName); err != nil {
+		LogError("UnlockDatabase: Invalid DB name: %v", err)
+		return err
+	}
+
 	// If force is true, we delete ALL lock files for this DB to ensure a clean slate.
 	if force {
 		// Use rclone delete with include pattern
 		// Pattern: dbName.*.lock
+		// Since dbName is sanitized, it cannot contain glob characters, so this pattern is safe.
 		pattern := fmt.Sprintf("%s.*.lock", dbName)
 		LogInfo("Force unlocking %s: deleting all files matching %s", dbName, pattern)
 
@@ -276,6 +318,12 @@ func UnlockDatabase(ctx context.Context, dbName, owner string, force bool) error
 	if entry.Owner != owner {
 		LogError("Cannot unlock %s: owned by %s", dbName, entry.Owner)
 		return fmt.Errorf("cannot unlock: owned by %s", entry.Owner)
+	}
+
+	// Sanitize components from lock file to prevent path traversal when constructing filename
+	if strings.ContainsAny(entry.Owner, "/\\") || strings.ContainsAny(entry.Hostname, "/\\") || strings.ContainsAny(entry.Type, "/\\") {
+		LogError("Security warning: specific lock entry contains path separators. Refusing to delete.")
+		return fmt.Errorf("security warning: lock entry contains invalid characters")
 	}
 
 	filename := fmt.Sprintf("%s.%s.%s.%s", dbName, entry.Owner, entry.Hostname, entry.Type)

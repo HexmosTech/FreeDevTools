@@ -113,6 +113,40 @@ func HandleCLI() {
 				os.Exit(1)
 			}
 
+		case "unlock":
+			if len(os.Args) < 3 {
+				fmt.Println("Usage: b2m unlock <db_name>")
+				os.Exit(1)
+			}
+			dbName := os.Args[2]
+			if err := core.SanitizeDBName(dbName); err != nil {
+				fmt.Printf("Error: Invalid database name: %v\n", err)
+				os.Exit(1)
+			}
+
+			// Force unlock warning
+			fmt.Printf("WARNING: You are about to FORCE UNLOCK database '%s'.\n", dbName)
+			fmt.Println("This should ONLY be done if the lock is stale due to a crash or network issue.")
+			fmt.Println("If another user is actively writing to this database, forcing an unlock may cause DATA CORRUPTION.")
+			fmt.Print("Are you sure you want to proceed? (y/N): ")
+
+			var confirmation string
+			fmt.Scanln(&confirmation)
+			if confirmation != "y" && confirmation != "Y" {
+				fmt.Println("Operation cancelled.")
+				os.Exit(0)
+			}
+
+			// Perform unlock (using force=true as CLI unlock implies admin override)
+			// Context needed
+			ctx := context.Background()
+			if err := core.UnlockDatabase(ctx, dbName, "CLI-User", true); err != nil {
+				fmt.Printf("Error unlocking database: %v\n", err)
+				os.Exit(1)
+			}
+			fmt.Println("Database unlocked successfully.")
+			os.Exit(0)
+
 		default:
 			fmt.Printf("Unknown command: %s\n", command)
 			printUsage()
@@ -130,5 +164,7 @@ func printUsage() {
 	fmt.Println("  --version         Show version information")
 	fmt.Println("  --generate-hash   Generate new hash and create metadata in remote")
 	fmt.Println("  --reset           Remove local metadata caches and start fresh UI session")
+	fmt.Println("  migrations create <phrase>  Create a new migration script")
+	fmt.Println("  unlock <db_name>            Force unlock a database")
 	fmt.Println("\nIf no command is provided, the TUI application starts normally.")
 }
