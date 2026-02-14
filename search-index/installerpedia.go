@@ -42,7 +42,7 @@ var IPM_DB_FILE = "ipm-db-v5.db"
 func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, error) {
 	var err error
 
-	dbPath := filepath.Join("..", "db", "all_dbs", IPM_DB_FILE)
+	dbPath := filepath.Join("..","frontend", "db", "all_dbs", IPM_DB_FILE)
 	dbPool, err = sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatalf("❌ Failed to open SQLite DB: %v", err)

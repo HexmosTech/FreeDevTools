@@ -821,7 +821,7 @@ check-see-also-empty: ## Check how many see_also rows are not filled in each cat
 ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and index them locally
 	@echo "🚀 Setting up local search environment..."
 	@FDT_ROOT="$$(pwd)"; \
-	SEARCHSYNC_REPO="$$(cd "$$FDT_ROOT/../searchsync" && pwd)"; \
+	SEARCHSYNC_REPO="$$(cd "$$FDT_ROOT/../../searchsync" && pwd)"; \
 	if [ ! -d "$$SEARCHSYNC_REPO" ]; then \
 		echo "❌ Searchsync repository not found at $$SEARCHSYNC_REPO"; \
 		exit 1; \
@@ -884,16 +884,12 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 	echo "📤 Step 4: Transferring JSON files and indexing..."; \
 	cd "$$FDT_ROOT/search-index" && \
 	SEARCHSYNC_REPO_PATH="$$SEARCHSYNC_REPO" \
-	MEILI_MASTER_KEY="$$(grep -E '^meili_master_key\s*=' "$$FDT_ROOT/frontend/fdt-dev.toml" 2>/dev/null | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ' || grep -E '^MEILI_MASTER_KEY=' "$$SEARCHSYNC_REPO/.env" 2>/dev/null | cut -d'=' -f2 | tr -d '"' | tr -d "'" | xargs || echo '')" \
+	MEILI_MASTER_KEY="$$(grep -E '^MEILI_MASTER_KEY=' "$$SEARCHSYNC_REPO/.env" 2>/dev/null | cut -d'=' -f2 | tr -d '"' | tr -d "'" | xargs || echo 'YMO7GeK7x3b0BI3z9OeiqS3-KRtGcv6b3cOGUXgAkqw')" \
 	./transfer-index-files-local.sh; \
 	echo ""; \
 	echo ""; \
 	echo "🔑 Step 5: Creating search API key for local meilisearch..."; \
-	MASTER_KEY="$$(grep -E '^meili_master_key\s*=' "$$FDT_ROOT/frontend/fdt-dev.toml" 2>/dev/null | sed 's/.*=\s*"\(.*\)".*/\1/' | tr -d ' ' || grep -E '^MEILI_MASTER_KEY=' "$$SEARCHSYNC_REPO/.env" 2>/dev/null | cut -d'=' -f2 | tr -d '"' | tr -d "'" | xargs || echo ''); \
-	if [ -z "$$MASTER_KEY" ]; then \
-		echo "❌ Error: meili_master_key not found in fdt-dev.toml or SEARCHSYNC_REPO/.env"; \
-		exit 1; \
-	fi; \
+	MASTER_KEY="$$(grep -E '^MEILI_MASTER_KEY=' "$$SEARCHSYNC_REPO/.env" 2>/dev/null | cut -d'=' -f2 | tr -d '"' | tr -d "'" | xargs || echo 'YMO7GeK7x3b0BI3z9OeiqS3-KRtGcv6b3cOGUXgAkqw')"; \
 	SEARCH_KEY_RESPONSE=$$(curl -s -X POST 'http://localhost:7700/keys' \
 		-H 'Content-Type: application/json' \
 		-H "Authorization: Bearer $$MASTER_KEY" \
@@ -910,7 +906,7 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 		else \
 			echo "MEILI_SEARCH_KEY=$$SEARCH_KEY" > "$$FDT_ROOT/.env"; \
 		fi; \
-		echo "✅ Saved MEILI_SEARCH_KEY to FreeDevTools .env"; \
+		echo "✅ Saved MEILI_SEARCH_KEY to fdt-templ .env"; \
 	else \
 		echo "⚠️  Warning: Failed to create search API key (may already exist)"; \
 		echo "   Response: $$SEARCH_KEY_RESPONSE"; \
