@@ -23,13 +23,15 @@ The cleanup logic is defined in `CleanupOnCancel` (`core/context.go`) and invoke
 
 - **Metadata Update**:
   - Generates a new metadata event with status `cancelled`.
-  - This informs other users (and the Status Check logic) that the last attempt failed, preventing them from trusting potentially partial data (though B2 is atomic per file, metadata sync allows tracking intent).
-  - Status Check displays this as `Upload Cancelled` (Red).
+  - This informs other users (and the Status Check logic) that the last attempt failed, preventing them from trusting potentially partial data.
+  - Status Check displays this as `Upload Cancelled` (Red) or allows the next user to overwrite/fix it.
 
 ### 3. Release Resources
 
 - **Unlock**:
   - Function calls `UnlockDatabase` with `force=true`.
+  - **Retry Logic**: Attempts to release the lock up to **3 times** (with 1s delay) to ensure the lock is cleared even if transient network errors occur.
+  - **Safety Check**: Before deletion, the filename is strictly validated to ensure it ends with `.lock`. This prevents accidental deletion of `.db` files or other critical data if the path construction was malformed.
   - Deletes the `.lock` file from B2, freeing the database for future operations.
 
 ## Diagram

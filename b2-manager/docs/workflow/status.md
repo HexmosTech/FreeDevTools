@@ -2,33 +2,28 @@
 
 This document outlines the structural logic used by the CLI to determine the status of each database. The process is divided into two main phases: **Data Collection** and **Status Calculation**.
 
-## 1. Parallel Data Collection
+## 1. Sequential Data Collection
 
-The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gathering of all necessary information. It executes the following 5 operations in **parallel** using goroutines to minimize latency.
+The `FetchDBStatusData` function (in `core/status.go`) orchestrates the gathering of all necessary information. It executes the following operations **sequentially** to ensure stability and reduce resource usage.
 
 ### A. List Local Databases
 
-- **Source**: `core/helpers.go` (`getLocalDBs`)
+- **Source**: `core/local.go` (`getLocalDBs`)
 - **Action**: Scans `config.LocalDBDir` for `*.db` files.
 
-### B. List Remote Databases
+### B. Fetch Remote State (DBs + Locks)
 
-- **Source**: `core/helpers.go` (`getRemoteDBs`)
-- **Action**: Executes `rclone lsf` on the B2 bucket to list `*.db` files.
+- **Source**: `core/rclone.go` (`LsfRclone`)
+- **Action**: Executes `rclone lsf -R` on the B2 bucket to list `*.db` files and lock files recursively in a single call.
 
-### C. Fetch Locks
-
-- **Source**: `core/rclone.go`
-- **Action**: Lists files in the lock directory (`locks/`) on B2 and parses entries.
-
-### D. Download Metadata
+### C. Download Metadata
 
 - **Source**: `core/metadata.go`
-- **Action**: Runs `DownloadAndLoadMetadata` (using `rclone sync`) to update the local metadata cache from B2/`metadata/`.
+- **Action**: Runs `DownloadAndLoadMetadata` (using `rclone sync`) to update the local metadata cache from B2/`version/`.
 
-### E. Load Local-Version Anchors
+### D. Load Local-Version Anchors
 
-- **Source**: `core/status.go` / `core/helpers.go`
+- **Source**: `core/status.go` / `core/metadata.go`
 - **Action**: Scans `local-version/` directory for metadata files representing the state of the database _at the time of last sync_. This is crucial for 3-way comparison.
 
 ### Aggregation
@@ -84,6 +79,7 @@ Checks the valid sync history (`LocalVersion` vs `Remote`).
 Compares the actual Local File against Remote Metadata.
 
 - **Local Hash == Remote Hash**: Returns **"Up to Date ✅"**.
+  - **Integrity Check**: During this phase, if the file is large and not cached, the status will show **"Integrity Check: [filename]"** while calculating the hash.
   - **Auto-Heal**: If the local file matches the remote but has no `local-version` anchor, the system **automatically creates** the anchor. This restores the sync state without user intervention.
 - **Local Hash != Remote Hash**:
   - **Has Anchor**: Means we started from the current remote state but changed the file locally.
