@@ -9,7 +9,6 @@ VSIX := freedevtools.vsix
 .PHONY: package clean install publish
 
 package:
-	npm install
 	npm run package
 	npx @vscode/vsce package -o $(VSIX)
 
