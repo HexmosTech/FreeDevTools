@@ -159,8 +159,15 @@ function getInitials(userName: string): string {
   return userName.substring(0, 2).toUpperCase();
 }
 
+function isMobileViewport(): boolean {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(max-width: 1023px)').matches;
+}
+
 function getSidebarCollapsed(): boolean {
   if (typeof document === 'undefined') return false;
+  // On mobile, always show expanded profile so "Sign In" is visible when not signed in
+  if (isMobileViewport()) return false;
   const container = document.getElementById('sidebar-profile-container');
   if (container?.getAttribute('data-collapsed') === 'true') return true;
   const sidebar = document.getElementById('sidebar');
@@ -303,11 +310,15 @@ const SidebarProfile: React.FC = () => {
   useEffect(() => {
     setCollapsed(getSidebarCollapsed());
     const handleCollapsedChange = (e: CustomEvent<{ collapsed: boolean }>) => {
-      setCollapsed(e.detail?.collapsed ?? false);
+      setCollapsed(isMobileViewport() ? false : (e.detail?.collapsed ?? false));
     };
     window.addEventListener('sidebar-collapsed-changed', handleCollapsedChange as EventListener);
+    const mql = window.matchMedia('(max-width: 1023px)');
+    const handleResize = () => setCollapsed(getSidebarCollapsed());
+    mql.addEventListener('change', handleResize);
     return () => {
       window.removeEventListener('sidebar-collapsed-changed', handleCollapsedChange as EventListener);
+      mql.removeEventListener('change', handleResize);
     };
   }, []);
 
