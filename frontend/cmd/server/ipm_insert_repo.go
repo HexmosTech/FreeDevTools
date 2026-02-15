@@ -174,7 +174,7 @@ func TriggerMeiliUpdate() error {
     // Run commands sequentially without invoking 'sh'
     tasks := [][]string{
         {"gen-installerpedia"},
-        {"transfer"},
+        {"transfer-server"},
     }
 
     for _, args := range tasks {
