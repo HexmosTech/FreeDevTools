@@ -3,135 +3,154 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
+	"go/ast"
+	"go/parser"
+	"go/token"
 	"log"
-	"regexp"
+	"os"
 	jargon_stemmer "search-index/jargon-stemmer"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func generateToolsData(ctx context.Context) ([]ToolData, error) {
-	fmt.Println("📱 Generating tools data...")
+	fmt.Println("📱 Generating tools data from Go source...")
 
-	// Read the TypeScript tools config file
-	content, err := ioutil.ReadFile("../frontend/components/config/tools.ts")
-	if err != nil {
-		return nil, fmt.Errorf("failed to read tools.ts: %w", err)
+	// Adjust path relative to search-index directory
+	toolsGoPath := "../frontend/internal/db/tools/tools.go"
+
+	// Verify file exists
+	if _, err := os.Stat(toolsGoPath); os.IsNotExist(err) {
+		return nil, fmt.Errorf("tools.go not found at %s", toolsGoPath)
 	}
 
-	tools, err := parseToolsConfig(string(content))
+	fset := token.NewFileSet()
+	node, err := parser.ParseFile(fset, toolsGoPath, nil, parser.ParseComments)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse tools config: %w", err)
+		return nil, fmt.Errorf("failed to parse tools.go: %w", err)
 	}
 
-	fmt.Printf("📱 Parsed %d tools from config\n", len(tools))
-	return tools, nil
-}
-
-func parseToolsConfig(tsContent string) ([]ToolData, error) {
 	var tools []ToolData
 
-	// Find the TOOLS_CONFIG object - simplified approach
-	objectRegex := regexp.MustCompile(`export const TOOLS_CONFIG:[\s\S]*?=\s*\{([\s\S]*?)\}\s*;`)
-	objectMatch := objectRegex.FindStringSubmatch(tsContent)
-	if len(objectMatch) < 2 {
-		fmt.Printf("❌ TOOLS_CONFIG object not found in TypeScript file\n")
-		fmt.Printf("File length: %d characters\n", len(tsContent))
-		previewLen := 200
-		if len(tsContent) < previewLen {
-			previewLen = len(tsContent)
+	// Walk the AST to find ToolsList variable
+	ast.Inspect(node, func(n ast.Node) bool {
+		// Find variable declarations
+		genDecl, ok := n.(*ast.GenDecl)
+		if !ok || genDecl.Tok != token.VAR {
+			return true
 		}
-		fmt.Printf("First 200 chars: %s\n", tsContent[:previewLen])
-		return tools, fmt.Errorf("TOOLS_CONFIG object not found")
-	}
 
-	body := objectMatch[1]
+		for _, spec := range genDecl.Specs {
+			valueSpec, ok := spec.(*ast.ValueSpec)
+			if !ok {
+				continue
+			}
 
-	// Split by tool entries using a simpler approach
-	tools = parseToolEntries(body)
+			// Check if variable name is ToolsList
+			for i, name := range valueSpec.Names {
+				if name.Name == "ToolsList" {
+					// Ensure we have a value at this index (ToolsList = ...)
+					if i < len(valueSpec.Values) {
+						// The value should be a CompositeLit (slice literal)
+						compLit, ok := valueSpec.Values[i].(*ast.CompositeLit)
+						if ok {
+							// Parse the list of tools
+							foundTools := parseToolsList(compLit)
+							tools = append(tools, foundTools...)
+						}
+					}
+				}
+			}
+		}
+		return true
+	})
 
+	fmt.Printf("📱 Parsed %d tools from Go AST\n", len(tools))
 	return tools, nil
 }
 
-func parseToolEntries(body string) []ToolData {
+func parseToolsList(list *ast.CompositeLit) []ToolData {
 	var tools []ToolData
 
-	// Find tool keys first (handle both single and double quotes)
-	keyRegex := regexp.MustCompile(`['"]([^'"]+)['"]\s*:\s*\{`)
-	keyMatches := keyRegex.FindAllStringSubmatch(body, -1)
-	keyIndices := keyRegex.FindAllStringIndex(body, -1)
-
-
-	for i, keyMatch := range keyMatches {
-		if len(keyMatch) < 2 {
+	for _, elt := range list.Elts {
+		// Each element is a Tool struct entries
+		compLit, ok := elt.(*ast.CompositeLit)
+		if !ok {
 			continue
 		}
 
-		key := keyMatch[1]
-		startIdx := keyIndices[i][1] // End of the key match
-
-		// Find the end of this tool object
-		var endIdx int
-		if i+1 < len(keyIndices) {
-			endIdx = keyIndices[i+1][0] // Start of next tool
-		} else {
-			endIdx = len(body) // End of string
+		toolPtr := parseToolStruct(compLit)
+		if toolPtr != nil {
+			tools = append(tools, *toolPtr)
 		}
-
-		// Extract the tool block
-		toolBlock := body[startIdx:endIdx]
-
-		// Find the closing brace for this tool
-		braceCount := 0
-		actualEndIdx := 0
-		for j, char := range toolBlock {
-			if char == '{' {
-				braceCount++
-			} else if char == '}' {
-				if braceCount == 0 {
-					actualEndIdx = j
-					break
-				}
-				braceCount--
-			}
-		}
-
-		if actualEndIdx > 0 {
-			toolBlock = toolBlock[:actualEndIdx]
-		}
-
-		// Extract required fields
-		name := extractStringField(toolBlock, "name")
-		if name == "" {
-			name = extractStringField(toolBlock, "title")
-		}
-		if name == "" {
-			name = key
-		}
-		// Clean name (strip suffixes and trim)
-		name = cleanName(name)
-
-		description := extractStringField(toolBlock, "description")
-		path := extractStringField(toolBlock, "path")
-		
-
-		// Generate ID from path
-		id := generateToolIDFromPath(path)
-
-		// Create simplified tool data with only required fields
-		tool := ToolData{
-			ID:          id,
-			Name:        name,
-			Description: description,
-			Path:        path,
-			Category:    "tools",
-		}
-
-		tools = append(tools, tool)
 	}
 
 	return tools
+}
+
+func parseToolStruct(lit *ast.CompositeLit) *ToolData {
+	var rawName, rawTitle, rawDesc, rawPath string
+
+	for _, elt := range lit.Elts {
+		// Key: Value
+		kv, ok := elt.(*ast.KeyValueExpr)
+		if !ok {
+			continue
+		}
+
+		// Key should be an identifier
+		key, ok := kv.Key.(*ast.Ident)
+		if !ok {
+			continue
+		}
+
+		// Extract string value
+		valStr := ""
+		if litVal, ok := kv.Value.(*ast.BasicLit); ok && litVal.Kind == token.STRING {
+			unquoted, err := strconv.Unquote(litVal.Value)
+			if err == nil {
+				valStr = unquoted
+			} else {
+				// Fallback
+				valStr = strings.Trim(litVal.Value, "\"")
+			}
+		}
+
+		switch key.Name {
+		case "Name":
+			rawName = valStr
+		case "Title":
+			rawTitle = valStr
+		case "Description":
+			rawDesc = valStr
+		case "Path":
+			rawPath = valStr
+		}
+	}
+
+	// Logic to match previous implementation
+	name := rawName
+	if name == "" {
+		name = rawTitle
+	}
+	name = cleanName(name)
+
+	// Skip incomplete entries if necessary, but generally we expect valid entries
+	if rawPath == "" {
+		return nil
+	}
+
+	// Generate ID from path to maintain consistency with old indexer
+	id := generateToolIDFromPath(rawPath)
+
+	return &ToolData{
+		ID:          id,
+		Name:        name,
+		Description: rawDesc,
+		Path:        rawPath,
+		Category:    "tools",
+	}
 }
 
 func generateToolIDFromPath(path string) string {
@@ -139,7 +158,7 @@ func generateToolIDFromPath(path string) string {
 		return ""
 	}
 
-	// Extract the tool suffix from path like "/freedevtools/t/har-file-viewer/" -> "har-file-viewer"
+	// Extract the tool suffix from path like "/freedevtools/t/har-file-viewer/" -> "tools-har-file-viewer"
 	// Remove leading and trailing slashes
 	cleanPath := strings.Trim(path, "/")
 
@@ -150,7 +169,7 @@ func generateToolIDFromPath(path string) string {
 		return fmt.Sprintf("tools-%s", toolSuffix)
 	}
 
-	// Fallback: if path doesn't match expected format, try to extract from end
+	// Fallback
 	if len(parts) > 0 {
 		toolSuffix := parts[len(parts)-1]
 		if toolSuffix != "" {
@@ -161,33 +180,6 @@ func generateToolIDFromPath(path string) string {
 	// Final fallback
 	return "tools-unknown"
 }
-
-func extractStringField(block, field string) string {
-	// Handle both single and double quotes, and multiline values
-	patterns := []string{
-		// Single quotes
-		fmt.Sprintf(`%s\s*:\s*'([^']*)'`, field),
-		// Double quotes  
-		fmt.Sprintf(`%s\s*:\s*"([^"]*)"`, field),
-		// Multiline single quotes
-		fmt.Sprintf(`%s\s*:\s*'([^']*(?:'[^']*)*)'`, field),
-		// Multiline double quotes
-		fmt.Sprintf(`%s\s*:\s*"([^"]*(?:"[^"]*)*)"`, field),
-	}
-
-	for _, pattern := range patterns {
-		regex := regexp.MustCompile(pattern)
-		match := regex.FindStringSubmatch(block)
-		if len(match) > 1 {
-			value := strings.TrimSpace(match[1])
-			if value != "" {
-				return value
-			}
-		}
-	}
-	return ""
-}
-
 
 func RunToolsOnly(ctx context.Context, start time.Time) {
 	fmt.Println("📱 Generating tools data only...")
@@ -207,7 +199,7 @@ func RunToolsOnly(ctx context.Context, start time.Time) {
 	fmt.Printf("📊 Generated %d tools\n", len(tools))
 
 	fmt.Printf("💾 Data saved to output/tools.json\n")
-	
+
 	// Automatically run stem processing
 	fmt.Println("\n🔍 Running stem processing...")
 	if err := jargon_stemmer.ProcessJSONFile("output/tools.json"); err != nil {
