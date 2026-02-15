@@ -12,7 +12,6 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <style type="text/css">
           body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
             color: #333;
             max-width: 1200px;
             margin: 0 auto;
@@ -124,4 +123,3 @@
     </html>
   </xsl:template>
 </xsl:stylesheet>
-

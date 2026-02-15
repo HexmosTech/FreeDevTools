@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { hasActiveProLicence } from '@/lib/api';
 import ShowPlans from './ShowPlans';
 
 // Extract category from URL path
@@ -7,16 +6,16 @@ function extractCategoryFromURL(urlStr: string): string {
   try {
     const url = new URL(urlStr);
     const path = url.pathname;
-    
+
     // Remove leading /freedevtools/ if present
     const cleanPath = path.replace(/^\/freedevtools\//, '');
-    
+
     // Extract first segment as category
     const segments = cleanPath.split('/').filter(s => s);
     if (segments.length === 0) return 'page';
-    
+
     const category = segments[0];
-    
+
     // Normalize category names
     const categoryMap: Record<string, string> = {
       'emojis': 'emoji',
@@ -28,7 +27,7 @@ function extractCategoryFromURL(urlStr: string): string {
       'man-pages': 'Man Pages',
       'installerpedia': 'Installerpedia',
     };
-    
+
     return categoryMap[category] || category.charAt(0).toUpperCase() + category.slice(1);
   } catch {
     return 'page';
@@ -40,21 +39,28 @@ function extractItemName(urlStr: string): string {
   try {
     const url = new URL(urlStr);
     const path = url.pathname;
-    
+
     // Remove leading /freedevtools/ if present
     const cleanPath = path.replace(/^\/freedevtools\//, '');
-    
+
     // Extract last segment as item name
     const segments = cleanPath.split('/').filter(s => s);
     if (segments.length === 0) return 'this page';
-    
+
     const itemName = segments[segments.length - 1];
-    
+
     // Remove file extension if present
     return itemName.replace(/\.(svg|png|md|txt)$/i, '') || 'this page';
   } catch {
     return 'this page';
   }
+}
+
+function formatItemLabel(slug: string): string {
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
 }
 
 // Check if URL is a category page (only one segment after /freedevtools/)
@@ -105,7 +111,7 @@ const Pro: React.FC = () => {
     const checkBookmarkInfo = () => {
       const urlParams = new URLSearchParams(window.location.search);
       const feature = urlParams.get('feature');
-      
+
       // Get source URL from sessionStorage (preferred) or query param (fallback)
       let source = sessionStorage.getItem('bookmark_source_url');
       if (!source) {
@@ -114,7 +120,7 @@ const Pro: React.FC = () => {
           source = decodeURIComponent(source);
         }
       }
-      
+
       if (feature === 'bookmark' && source) {
         const jwt = localStorage.getItem('hexmos-one');
         // Check pro status from cookie (set by getLicences in ShowPlans)
@@ -128,7 +134,7 @@ const Pro: React.FC = () => {
             break;
           }
         }
-        
+
         // Only show bookmark message if user is NOT pro
         if (!isPro || !jwt) {
           const isProPageCheck = isProPage(source);
@@ -142,17 +148,17 @@ const Pro: React.FC = () => {
         }
       }
     };
-    
+
     // Check immediately
     checkBookmarkInfo();
-    
+
     // Also listen for active-licence-changed event in case licences are fetched later
     const handleLicenceChange = () => {
       checkBookmarkInfo();
     };
-    
+
     window.addEventListener('active-licence-changed', handleLicenceChange);
-    
+
     return () => {
       window.removeEventListener('active-licence-changed', handleLicenceChange);
     };
@@ -160,10 +166,10 @@ const Pro: React.FC = () => {
 
   return (
     <>
-      <div className="max-w-6xl mx-auto px-2 md:px-6 mb-10 mt-12">
-        <div className="flex flex-col items-center gap-8">
+      <div className="flex justify-center w-full">
+        <div className="flex flex-col gap-8 w-full max-w-4xl mx-auto px-4">
           {bookmarkInfo && (
-            <div className="w-full max-w-xl bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+            <div className="w-full max-w-xl mx-auto bg-yellow-50/70 dark:bg-slate-900 border border-fdt-yellow-dark dark:border-yellow-700 rounded-lg p-4 mb-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0">
                   <span className="text-2xl">🔖</span>
@@ -171,42 +177,43 @@ const Pro: React.FC = () => {
                 <div className="flex-1">
                   {(bookmarkInfo.isProPage || bookmarkInfo.isHomePage) ? (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                        Looks like you just discovered a premium feature
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
+                        Bookmarking is a premium feature.
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   ) : bookmarkInfo.isCategoryPage ? (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                        Looks like you were trying to bookmark{' '}
-                        <a 
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
+                        It looks like you're trying to bookmark{' '}
+                        <a
                           href={bookmarkInfo.source}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
+                          className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
                           {bookmarkInfo.category}
                         </a>
+                        .
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   ) : (
                     <>
-                      <h3 className="text-base font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                        Looks like you were trying to bookmark{' '}
-                        <a 
+                      <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
+                        It looks like you're trying to bookmark{' '}
+                        <a
                           href={bookmarkInfo.source}
-                          className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline cursor-pointer"
+                          className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
-                          {bookmarkInfo.itemName}
+                          {bookmarkInfo.itemName ? formatItemLabel(bookmarkInfo.itemName) : 'this item'}
                         </a>
-                        {' '}of {bookmarkInfo.category}
+                        {' '}({bookmarkInfo.category}).
                       </h3>
-                      <p className="text-sm text-blue-800 dark:text-blue-200 mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                      <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   )}
@@ -214,7 +221,9 @@ const Pro: React.FC = () => {
               </div>
             </div>
           )}
-          <ShowPlans />
+          <div className="flex justify-center w-full">
+            <ShowPlans />
+          </div>
         </div>
       </div>
     </>

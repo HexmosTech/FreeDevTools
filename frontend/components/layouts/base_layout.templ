@@ -21,16 +21,52 @@ templ BaseLayout(props BaseLayoutProps) {
 			<link rel="preconnect" href="https://hexmos.com"/>
 
 			<link rel="preconnect" href="https://www.googletagmanager.com">
-			<link rel="preconnect" href="https://www.google-analytics.com">
 			<link rel="preconnect" href="https://pagead2.googlesyndication.com" crossorigin>
 			<link rel="preconnect" href="https://googleads.g.doubleclick.net" crossorigin>
  
 			<!-- Critical CSS - loaded early and render-blocking -->
 			<!-- Inline Critical CSS -->
 			@templ.Raw("<style>" + assets.CriticalCSS + "</style>")
-			<!-- Defer non-critical CSS -->
-			<link rel="preload" href="/freedevtools/static/css/output.css" as="style" onload="this.onload=null;this.rel='stylesheet'"/>
-			<noscript><link rel="stylesheet" href="/freedevtools/static/css/output.css"/></noscript>
+			<!-- Sidebar collapsed state - prevent CLS on nav (class applied by sync script before paint) -->
+			<style>
+				/* Hide pro-gated ad slots before paint (prevents CLS) */
+				html[data-pro="1"] [data-hide-when-pro="true"] { display: none !important; }
+
+				/* Desktop: sidebar is fixed, so reserve space for main content */
+				@media (min-width:1024px){
+					#layout-main{margin-left:16rem}
+					#layout-container.sidebar-collapsed-layout #layout-main{margin-left:5rem!important}
+				}
+				@media (max-width:1023px){
+					#layout-main{margin-left:0!important}
+					#sidebar{display:none!important}
+					#sidebar.sidebar-open{display:flex!important}
+				}
+
+				@media (min-width:1024px){
+					#sidebar{transition:width .2s ease}
+					#sidebar.sidebar-collapsed{width:5rem!important}
+					#sidebar.sidebar-collapsed #sidebar-logo-text-container,
+					#sidebar.sidebar-collapsed .nav-link-text span,
+					#sidebar.sidebar-collapsed #sidebar-theme-switcher-section,
+					#sidebar.sidebar-collapsed #sidebar-search-section #searchbar-container{display:none!important}
+					#sidebar.sidebar-collapsed #sidebar-search-icon-wrap{display:flex!important}
+					#sidebar.sidebar-collapsed .nav-link-text{justify-content:center;padding-left:.5rem;padding-right:.5rem}
+					#sidebar.sidebar-collapsed #sidebar-nav-group-top,
+					#sidebar.sidebar-collapsed #sidebar-nav-group-1,
+					#sidebar.sidebar-collapsed #sidebar-nav-group-2,
+					#sidebar.sidebar-collapsed #sidebar-nav-group-3{padding-left:.5rem!important;padding-right:.5rem!important}
+					#sidebar.sidebar-collapsed #sidebar-logo-section{justify-content:center;gap:0}
+					#sidebar.sidebar-collapsed #sidebar-collapse-toggle{display:none!important}
+					#sidebar.sidebar-collapsed #sidebar-collapsed-expand-hint{display:none}
+					#sidebar.sidebar-collapsed #sidebar-logo-section:hover #sidebar-logo-img{display:none!important}
+					#sidebar.sidebar-collapsed #sidebar-logo-section:hover #sidebar-collapsed-expand-hint{display:block!important;padding-top:.375rem;padding-bottom:.375rem;box-sizing:content-box}
+					#sidebar.sidebar-collapsed #sidebar-logo-link{justify-content:center;min-height:2rem}
+					#sidebar:not(.sidebar-collapsed) #sidebar-collapse-toggle{display:flex!important}
+				}
+			</style>
+			<!-- Main CSS (render-blocking to prevent CLS from late style application) -->
+			<link rel="stylesheet" href="/freedevtools/static/css/output.css"/>
 			
 			<!-- Theme initialization script -->
 			<script>
@@ -83,6 +119,21 @@ templ BaseLayout(props BaseLayoutProps) {
 					}
 					return false;
 				};
+
+				// Set a pre-paint flag for CSS gating (prevents CLS from late hide/show)
+				(function () {
+					function setProFlag(isPro) {
+						document.documentElement.setAttribute('data-pro', isPro ? '1' : '0');
+					}
+					setProFlag(window.getProStatusCookie());
+					window.addEventListener('pro-status-changed', function (e) {
+						if (e && e.detail && typeof e.detail.isPro === 'boolean') {
+							setProFlag(e.detail.isPro);
+						} else {
+							setProFlag(window.getProStatusCookie());
+						}
+					});
+				})();
 				
 				// Check cookie immediately and prevent Google AdSense loading
 				(function() {
@@ -304,21 +355,16 @@ templ BaseLayout(props BaseLayoutProps) {
 			</script>
 		</head>
 		<body class="m-0 p-0 bg-slate-50 text-slate-800 leading-relaxed dark:bg-slate-900 dark:text-slate-200 min-h-screen flex flex-col" aria-hidden="false">
-			<!-- Skip Links for Accessibility -->
-			<a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-				Skip to main content
-			</a>
-			<a href="#search" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-64 bg-blue-600 text-white px-4 py-2 rounded-md z-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-				Skip to search
-			</a>
-			<div class="flex flex-1 flex-col" style="height: auto !important;">
-				if props.ShowHeader {
-					@common.Header()
-				}
-
-				<main class="flex-1 overflow-auto bg-background min-h-[85vh]" id="main-content" role="main" aria-labelledby="main-content-heading">
-					<div id="main-page">
-						<div id="search-container" style="display: none;" class="max-w-6xl mx-auto px-2 md:px-6"> </div>
+			if props.ShowHeader {
+				@common.Header()
+			}
+			<div id="layout-container" class="flex flex-1" style="min-height: 100vh;">
+				@common.Sidebar()
+				<div id="layout-main" class="flex flex-1 flex-col" style="height: auto !important;">
+					<main class="flex-1 overflow-auto bg-background" id="main-content" role="main" aria-labelledby="main-content-heading">
+					<div id="main-page" class="p-2 md:p-4 max-w-6xl mx-auto">
+					<div id="search-container" style="display: none; max-w-6xl mx-auto"> </div>
+					<div id="pro-banner-container" style="display: none;"> </div>
 						<div id="slot-container" style="display: block; min-height: 100vh;">
 							if !props.HideBanner {
 								@banner.AdBanner()
@@ -361,10 +407,13 @@ templ BaseLayout(props BaseLayoutProps) {
 							if (!searchContainer || !slotContainer) return;
 
 							const searchQuery = window.searchState?.getQuery?.() || '';
+							const isSearchHash = window.location.hash.startsWith('#search');
 
-							if (searchQuery.trim()) {
+							// Show search page if there's a query OR if hash is #search?q= (empty search state)
+							if (searchQuery.trim() || (isSearchHash && window.location.hash === '#search?q=')) {
 								searchContainer.style.display = 'block';
-								slotContainer.style.display = 'none';
+								slotContainer.style.opacity = '0.3';
+								slotContainer.style.pointerEvents = 'none';
 								
 								// Only mount if not already mounted
 								if (!window.searchMounted) {
@@ -378,49 +427,209 @@ templ BaseLayout(props BaseLayoutProps) {
 								}
 							} else {
 								searchContainer.style.display = 'none';
-								slotContainer.style.display = 'block';
+								slotContainer.style.opacity = '1';
+								slotContainer.style.pointerEvents = 'auto';
+							}
+						}
+
+						let proBannerMounted = false;
+						
+						async function loadProBannerModule() {
+							if (proBannerMounted) return Promise.resolve();
+							try {
+								await loadSearchModule(); // Reuse the same module loader
+								if (window.renderTool && !proBannerMounted) {
+									const container = document.getElementById('pro-banner-container');
+									if (container) {
+										window.renderTool('pro-banner', 'pro-banner-container');
+										proBannerMounted = true;
+									}
+								}
+							} catch (error) {
+								console.error('Failed to load ProBanner module:', error);
+							}
+						}
+						
+						function trackPageVisit() {
+							// Exclude search and pro pages from visit counting
+							const hash = window.location.hash;
+							const pathname = window.location.pathname;
+							
+							if (hash.startsWith('#search') || pathname.includes('/pro/')) {
+								return 0; // Don't count these pages
+							}
+							
+							const storageKey = 'fdt_pro_banner_visits';
+							const lastPageKey = 'fdt_pro_banner_last_page';
+							const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+							
+							try {
+								// Get current page (pathname only, ignore hash)
+								const currentPage = pathname;
+								
+								// Get last visited page
+								const lastPage = localStorage.getItem(lastPageKey);
+								
+								// Only count if this is a different page (not just hash change)
+								if (lastPage === currentPage) {
+									// Same page, just return current count without incrementing
+									const stored = localStorage.getItem(storageKey);
+									if (stored) {
+										try {
+											const visitData = JSON.parse(stored);
+											if (visitData.date === today) {
+												return visitData.count;
+											}
+										} catch (e) {
+											// Invalid data
+										}
+									}
+									return 0;
+								}
+								
+								// Store current page for next check
+								localStorage.setItem(lastPageKey, currentPage);
+								
+								const stored = localStorage.getItem(storageKey);
+								let visitData = { date: today, count: 0 };
+								
+								if (stored) {
+									try {
+										visitData = JSON.parse(stored);
+										// Reset if date doesn't match today
+										if (visitData.date !== today) {
+											visitData = { date: today, count: 0 };
+											// Also reset last page on date change
+											localStorage.removeItem(lastPageKey);
+										}
+									} catch (e) {
+										// Invalid data, reset
+										visitData = { date: today, count: 0 };
+										localStorage.removeItem(lastPageKey);
+									}
+								}
+								
+								// Increment visit count (new page visited)
+								visitData.count += 1;
+								
+								// Store updated count
+								localStorage.setItem(storageKey, JSON.stringify(visitData));
+								
+								return visitData.count;
+							} catch (e) {
+								// localStorage not available or error, return 0
+								return 0;
+							}
+						}
+						
+						function toggleProBanner() {
+							const proBannerContainer = document.getElementById('pro-banner-container');
+							if (!proBannerContainer) return;
+
+							const urlParams = new URLSearchParams(window.location.search);
+							const buyParam = urlParams.get('buy');
+							const hash = window.location.hash;
+							
+							// Manual trigger (query param or hash) takes priority
+							const manualTrigger = buyParam === 'pro' || hash === '#pro-banner';
+							
+							let shouldShow = false;
+							if (manualTrigger) {
+								// Manual trigger - show immediately, don't track visit
+								shouldShow = true;
+							} else {
+								// Auto-show logic: every 3rd visit (3, 6, 9, 12) up to 12 visits
+								// Only track visits when not manually triggered
+								const visitCount = trackPageVisit();
+								if (visitCount > 0 && visitCount <= 12 && visitCount % 3 === 0) {
+									// Check if we've already shown the banner for this count
+									const lastShownKey = 'fdt_pro_banner_last_shown';
+									const lastShownDateKey = 'fdt_pro_banner_last_shown_date';
+									const today = new Date().toISOString().split('T')[0];
+									
+									// Reset if date changed
+									const lastShownDate = localStorage.getItem(lastShownDateKey);
+									if (!lastShownDate || lastShownDate !== today) {
+										localStorage.removeItem(lastShownKey);
+										localStorage.setItem(lastShownDateKey, today);
+									}
+									
+									const lastShown = localStorage.getItem(lastShownKey);
+									
+									// Only show if this is a new count (not a page refresh)
+									if (lastShown !== visitCount.toString()) {
+										shouldShow = true;
+										// Remember we showed it for this count
+										localStorage.setItem(lastShownKey, visitCount.toString());
+									}
+								}
+							}
+
+							// Don't show if user is in pro plan
+							if (shouldShow && window.getProStatusCookie()) {
+								shouldShow = false;
+							}
+
+							if (shouldShow) {
+								proBannerContainer.style.display = 'block';
+								if (!proBannerMounted) {
+									loadProBannerModule();
+								}
+							} else {
+								proBannerContainer.style.display = 'none';
 							}
 						}
 
 						document.addEventListener('DOMContentLoaded', function () {
 							toggleSearchView();
+							toggleProBanner();
 							window.addEventListener('searchQueryChanged', toggleSearchView);
+							window.addEventListener('hashchange', function() {
+								toggleSearchView();
+								toggleProBanner();
+							});
+							window.addEventListener('popstate', function() {
+								toggleProBanner();
+							});
 							
 							// Check for initial hash param for search
 							if (window.location.hash.startsWith('#search')) {
 								const params = new URLSearchParams(window.location.hash.substring(1)); // remove #
                                 // search?q=... -> we need to parse properly.
-                                // The hash is like #search?q=foo
+                                // The hash is like #search?q=foo or #search?q=
                                 const hash = window.location.hash;
                                 const qIndex = hash.indexOf('q=');
                                 if (qIndex !== -1) {
                                     const q = decodeURIComponent(hash.substring(qIndex + 2));
-                                    if (q) {
-                                        window.searchState.setQuery(q);
-                                    }
-                                }
+                                    // Set query even if empty (for empty search state)
+                                    window.searchState.setQuery(q || '');
+                                } else if (hash === '#search?q=') {
+									// Empty search state
+									window.searchState.setQuery('');
+								}
 							}
-							
-							// Preload search module in the background after page load
-							// Use requestIdleCallback if available, otherwise setTimeout
+						});
+						
+						// Preload SearchPage chunk after window load, in idle time - avoids CLS/FCP impact
+						window.addEventListener('load', function () {
+							var schedulePreload = function () {
+								loadSearchModule().then(function () {
+									if (window.preloadSearchPage) {
+										window.preloadSearchPage().catch(function () {});
+									}
+								}).catch(function () {});
+							};
 							if ('requestIdleCallback' in window) {
-								requestIdleCallback(() => {
-									loadSearchModule().catch(() => {
-										// Silently fail preload, will load on demand
-									});
-								}, { timeout: 2000 });
+								requestIdleCallback(schedulePreload, { timeout: 3000 });
 							} else {
-								setTimeout(() => {
-									loadSearchModule().catch(() => {
-										// Silently fail preload, will load on demand
-									});
-								}, 1000);
+								setTimeout(schedulePreload, 1500);
 							}
 						});
 					</script>
-				</main>
+					</main>
 
-				@common.Footer()
+					@common.Footer()
+				</div>
 			</div>
 		</body>
 	</html>

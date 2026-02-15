@@ -9,20 +9,19 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os/exec"
-	"path/filepath"
 	"sync"
 
 	"strings"
 	"time"
+
+	"os"
+	"regexp"
 
 	"github.com/clipperhouse/jargon"
 	"github.com/clipperhouse/jargon/filters/ascii"
 	"github.com/clipperhouse/jargon/filters/contractions"
 	"github.com/clipperhouse/jargon/filters/stemmer"
 	_ "github.com/mattn/go-sqlite3"
-	"os"
-	"regexp"
 )
 
 var updateMu sync.Mutex
