@@ -321,12 +321,25 @@ const ShowPlans: React.FC = () => {
           className="text-sm mt-4"
           variant="default"
           onClick={() => {
-            window.location.href = PURCHASE_URL;
+            handlePurchaseClick(PURCHASE_URL);
           }}
         >
           Buy New Subscription
         </Button>
       );
+    }
+  };
+
+  const handlePurchaseClick = (url: string) => {
+    const isVSCode = typeof window !== 'undefined' &&
+      (window.location.search.includes('vscode=true') ||
+        window.location.hash.includes('vscode=true') ||
+        sessionStorage.getItem('isVSCode') === 'true');
+
+    if (isVSCode && window.parent) {
+      window.parent.postMessage({ command: 'open-external', url }, '*');
+    } else {
+      window.location.href = url;
     }
   };
 
@@ -481,7 +494,7 @@ const ShowPlans: React.FC = () => {
                         const purchaseUrl = plan.objectId
                           ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
                           : PURCHASE_URL;
-                        window.location.href = purchaseUrl;
+                        handlePurchaseClick(purchaseUrl);
                       }}
                       className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2"
                     >
@@ -636,7 +649,7 @@ const ShowPlans: React.FC = () => {
                               const purchaseUrl = plan.objectId
                                 ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
                                 : PURCHASE_URL;
-                              window.location.href = purchaseUrl;
+                              handlePurchaseClick(purchaseUrl);
                             }}
                             className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2"
                           >

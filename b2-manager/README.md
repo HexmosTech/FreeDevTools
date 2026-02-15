@@ -10,16 +10,24 @@
 - **Discord Notifications**: Notifies the team channel when a database is updated.
 - **Conflict Detection**: Checks for version mismatches and warns if local changes are out of sync with remote.
 
-## Installation
+## Setup
 
-1.  Ensure you have `go` installed.
-2.  Clone the repository.
-3.  Build the tool:
-    ```bash
-    cd b2m-cli
-    go build -o b2m .
-    ```
-4.  (Optional) Add to your PATH.
+### Prerequisites
+
+1.  **Go**: Ensure you have `go` installed (for building).
+2.  **Rclone**: The tool uses `rclone` for syncing.
+3.  **b3sum**: Install `b3sum` for fast hashing.
+    - Rust: `cargo install b3sum`.
+    - See also: [BLAKE3](https://github.com/BLAKE3-team/BLAKE3?tab=readme-ov-file).
+    - Download binary (Linux x64):
+      `curl -L -o b3sum https://github.com/BLAKE3-team/BLAKE3/releases/download/1.8.3/b3sum_linux_x64_bin`
+    - Make executable & move to path:
+      `chmod +x b3sum && sudo mv b3sum /usr/local/bin/`
+### Installation
+
+1.  Move the binary to your `frontend` directory (recommended) or add to `/frontend/`.
+2.  `Make build` in `frontend/` to build the frontend.
+3.  `./b2m` to run the tool.
 
 ### Logging
 
@@ -30,17 +38,23 @@ The application logs its operations and errors to `b2m.log` in the current worki
 
 ## Configuration
 
-The tool requires a `.env` file in the project root with the following credentials:
+The tool uses `fdt-dev.toml` for configuration. This file should be present in the `frontend` directory where you run the tool.
 
-```env
-B2_ACCOUNT_ID="<your-b2-account-id>"
-B2_APPLICATION_KEY="<your-b2-app-key>"
-DISCORD_WEBHOOK_URL="<your-discord-webhook-url>"
+Example `fdt-dev.toml`:
+
+```toml
+[b2m]
+# Hexmos
+b2m_discord_webhook = "<your-discord-webhook-url>"
+b2m_remote_root_bucket = "<your-b2-root-bucket>"
+b2m_db_dir = "db/all_dbs"
 ```
 
 It also relies on `rclone`. The `init` checks will attempt to install and configure `rclone` automatically if missing.
 
 ## Usage
+
+The tool is designed to be run from the `frontend` directory of the FreeDevTools project. This ensures it can correctly locate the local database directory (`db/all_dbs/`).
 
 Start the interactive shell:
 
@@ -48,65 +62,27 @@ Start the interactive shell:
 ./b2m
 ```
 
-### Core Workflow
+### CLI Arguments
 
-The typical workflow for editing a database is:
+In addition to the interactive shell, `b2m` supports the following command-line arguments:
 
-1.  **Check Status**: verify you have the latest data.
-2.  **Sync**: `Download DB's` if you are behind.
-3.  **Lock & Upload** (from `Upload` menu):
-    - Select the database you want to edit.
-    - The tool acquires a **LOCK** on B2.
-    - The tool **PAUSES** and waits for you.
-4.  **Edit**: Open the SQLite database in `db/all_dbs/` using your preferred SQLite editor (e.g., DB Browser for SQLite) and make changes.
-5.  **Commit**: Return to the `b2m` terminal and select **Proceed**.
-    - The tool uploads the changed database to B2.
-    - It releases the lock.
-    - It notifies Discord.
+- `--help`: Show help message.
+- `--version`: Show version information.
+- `--generate-hash`: Generate new hash and create metadata in remote (use with caution).
+- `--reset`: Remove local metadata caches and start a fresh session.
 
-### Commands Breakdown
+## Documentation
 
-#### `Status`
+For detailed information on how the tool works, please refer to the following documentation:
 
-Displays the current state of all managed databases.
+- **[Architecture & Internal Structure](docs/architecture.md)**: Project layout and code organization.
+- **[Locking Mechanism](docs/locking.md)**: How distributed locking works on B2.
+- **[Core Rclone Functions](docs/core.md)**: Low-level rclone interactions.
 
-- **Sync Status**: Shows if local DB is `Synced`, `Outdated` (remote is newer), `New DB` (local only), or `Missing`.
-- **Lock Status**: Shows if a DB is locked by you or a teammate.
+### Workflows
 
-#### `Upload`
-
-Access the upload and locking sub-menu:
-
-- **Lock and Upload Selected DB's**: The main flow for editing. Locks -> Waits -> Uploads -> Unlocks.
-- **Upload Locked DB's**: Use this if you already have a lock (e.g., from a previous session or manual lock) and want to upload changes.
-- **Lock/Unlock DB**: Manually acquire or release locks without uploading. Useful for reserving a DB or clearing a stale lock.
-
-#### `Download DB's`
-
-Downloads the latest state of all databases from B2 to your local `db/all_dbs/` directory.
-
-## Internal Structure
-
-The tool is built in Go and acts as a high-level wrapper around `rclone` and local file operations.
-
-### Project Layout
-
-- **`main.go`**: Entry point. Handles the main event loop, keyboard input initialization, and top-level menu routing.
-- **`status.go`**: Responsible for gathering the state of the world. It:
-  - Queries B2 for existing databases and lock files (`rclone lsf`).
-  - Checks local `db/all_dbs/` state.
-  - Compares local vs remote checksums (`rclone check`) to determine sync status.
-  - Renders the status table.
-- **`handleupload.go`**: Manages the critical "Edit Loop". It handles the UI flows for selecting databases, locking them, waiting for user input, and then executing the upload/unlock sequence.
-- **`rclone.go`**: The storage backend layer. It provides Go functions that shell out to `rclone` commands (`sync`, `copyto`, `lsf`, `deletefile`). It abstracts the B2 interaction.
-- **`ui.go`**: Contains UI helpers for the interactive terminal interface (spinners, clear screen, common input handling).
-
-### Locking Mechanism
-
-Distributed locking is implemented via **Lock Files** stored in a dedicated B2 prefix (`b2-config:hexmos/freedevtools/content/db/lock/`).
-
-- **Lock Acquisition**: When you lock `dbname.db`, the tool writes a file named `<dbname>.<user>.<hostname>.lock` to the lock directory on B2.
-- **Lock Check**: Before allowing operations, the tool lists files in the lock directory. If a lock file exists for a DB, it blocks others from locking or syncing it.
-- **Lock Release**: Upon successful upload (or manual cancel), the tool deletes the specific lock file.
-
-This ensures that only one person can edit a database at a time, preventing overwrite conflicts.
+- **[Status Workflow](docs/workflow/status.md)**: How the tool determines file status (sync/lock check).
+- **[Upload Workflow](docs/workflow/upload.md)**: The upload process, safety checks, and locking.
+- **[Download Workflow](docs/workflow/download.md)**: Downloading databases and anchor verification.
+- **[Hashing & Cache](docs/workflow/hashing.md)**: How `b3sum` hashing and caching works.
+- **[Cancellation](docs/workflow/cancel.md)**: Handling interruptions and cleanup.

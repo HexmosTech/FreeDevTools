@@ -240,6 +240,9 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 	setupInstallerpediaRoutes(mux, installerpediaDB)
 	setupInstallerpediaPagesRoutes(mux, installerpediaDB)
 
+	writeDB, _ := installerpedia.GetWriteDB() 
+	setupInstallerpediaApiRoutes(mux, writeDB) 
+
 	// TLDR routes
 	setupTldrRoutes(mux, tldrDB)
 

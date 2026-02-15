@@ -13,6 +13,7 @@ The download process is executed by `DownloadDatabase` in `core/download.go`.
 Before starting, `core.ValidateAction` enforces safeguards.
 
 - **Local Changes Warning**: If status is "Ready To Upload" (Local Ahead / New Local), the UI warns the user: **"Overwrite local changes?"**. The user must confirm to proceed.
+- **Concurrent Update Warning**: If the database is locked by another user and marked as **"Uploading"**, the system warns: **"This database is currently being updated... Are you sure?"**.
 
 ### Phase 1: Lock Check & Safety
 
@@ -28,29 +29,10 @@ Before starting, `core.ValidateAction` enforces safeguards.
 
 Once the download is successful, we anchor the local state to the remote state.
 
-1.  **Calculate Local Hash**: Computes SHA256 of the newly downloaded file.
-2.  **Fetch Remote Context**: Reads the latest metadata from the local mirror (`db/all_dbs/version/`) to get the `Timestamp` and `Uploader`.
+1.  **Calculate Local Hash**: The system calculates the hash of the newly downloaded file.
+2.  **Fetch Remote Context**: Reads the latest metadata from the local mirror (`db/all_dbs/.b2m/version/`).
 3.  **Construct Anchor**: Creates a new metadata object combining the **Local Hash** + **Remote Timestamp**.
 4.  **Save**: Writes to `local-versions/`.
-5.  **Result**: Status becomes **"Up to Date ✅"**.
+5.  **Update Cache**: The persistent `hash.json` cache is updated with the new file's hash and statistics.
+6.  **Result**: Status becomes **"Up to Date ✅"**.
 
-## Diagram
-
-```mermaid
-graph TD
-    Start[User Presses 'd'] --> Validate{Check: Local Changes?}
-    Validate -- Yes --> Confirm[Dialog: Overwrite?]
-    Confirm -- No --> Abort[Cancel]
-
-    Confirm -- Yes --> LockCheck{Is DB Locked/Uploading?}
-    Validate -- No --> LockCheck
-
-    LockCheck -- Yes --> Error[Error: DB is Locked]
-    LockCheck -- No --> Download[1. Execute Download]
-
-    Download -- Success --> CalcHash[2. Calculate Local Hash]
-    CalcHash --> ReadMirror[3. Read Remote Mirror]
-    ReadMirror -- Get Timestamp --> Construct[4. Construct Anchor]
-    Construct --> Save[5. Save Local Version]
-    Save --> Done[Status: Up to Date]
-```

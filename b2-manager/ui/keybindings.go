@@ -36,6 +36,7 @@ func (lc *ListController) GetKeybindings() []*Keybinding {
 			Handler:     lc.onDownload,
 			Description: "Download",
 		},
+
 		{
 			Key:         'c',
 			Handler:     lc.onCancel,

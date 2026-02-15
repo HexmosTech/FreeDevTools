@@ -87,7 +87,7 @@ func (lc *ListController) onUpload(g *gocui.Gui, v *gocui.View) error {
 		err := doUpload(false)
 
 		// Check if error is due to lock
-		if err != nil && errors.Is(err, core.ErrDatabaseLocked) {
+		if err != nil && errors.Is(err, model.ErrDatabaseLocked) {
 			// Create channel to carry user decision back to this background thread
 			confirmCh := make(chan bool, 1)
 
@@ -138,7 +138,7 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 
 			// var bar *progressbar.ProgressBar
 
-			err := core.DownloadDatabase(ctx, dbName, func(p model.RcloneProgress) {
+			err := core.DownloadDatabase(ctx, dbName, false, func(p model.RcloneProgress) {
 				// Remove unused progressbar library usage
 				var percent int
 				var speedMB float64
@@ -174,13 +174,14 @@ func (lc *ListController) onDownload(g *gocui.Gui, v *gocui.View) error {
 	}
 
 	if err := core.ValidateAction(selectedDB, "download"); err != nil {
-		if err == core.ErrWarningLocalChanges {
+		if err == model.ErrWarningLocalChanges {
 			// Warning: Local changes will be lost
 			lc.app.confirm("Warning: Local Changes", "You have unsaved local changes.\nDownloading will overwrite them.\n\nAre you sure?", func() {
 				startDownload()
 			}, nil)
 			return nil
 		}
+
 		// Block error
 		lc.app.confirm("Error: Cannot Download", err.Error()+"\n\n(Press y/n to close)", nil, nil)
 		return nil

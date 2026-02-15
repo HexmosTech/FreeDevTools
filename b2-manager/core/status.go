@@ -6,9 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"sync"
 
-	"b2m/config"
 	"b2m/model"
 
 	"github.com/jedib0t/go-pretty/v6/text"
@@ -19,7 +17,7 @@ import (
 // 1. Lock Status (Highest Priority):
 //   - Checks if the database is currently locked in the lock map.
 //   - If Locked by Other: Returns "LockedByOther" (Yellow/Red), potentially showing "Uploading" if active.
-//   - If Locked by You (Local): Returns "Ready to Upload" or "Uploading/Updating" based on remote metadata.
+//   - If Locked by You (Local): Returns "Ready to Upload" or "Uploading" based on remote metadata.
 //
 // 2. Existence Check (If Unlocked):
 //   - Checks physical presence of files locally and remotely.
@@ -35,44 +33,38 @@ import (
 //   - Matches Remote Hash -> "Up to Date".
 //   - Mismatch + Anchor Matches -> "Ready To Upload" (Local changes).
 //   - Mismatch + No Anchor -> "DB Outdated" (Safety fallback).
-func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remoteMetas map[string]*model.Metadata, localVersions map[string]*model.Metadata) (string, string, text.Colors) {
+func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remoteMetas map[string]*model.Metadata, localVersions map[string]*model.Metadata, onProgress func(string)) (string, string, text.Colors) {
 	// -------------------------------------------------------------------------
 	// PHASE 1: LOCK STATUS CHECK
 	// Priority 1: If a database is locked, the lock state overrides everything.
 	// -------------------------------------------------------------------------
 	if l, ok := locks[db.Name]; ok {
 		if l.Type == "lock" {
-			if l.Owner != config.AppConfig.CurrentUser {
+			if l.Owner != model.AppConfig.CurrentUser {
 				// CASE 1.1: Locked by Other User
-				// We check the remote metadata to see if they are actively uploading or updating.
+				// We check the remote metadata to see if they are actively uploading.
 				remoteMeta, hasMeta := remoteMetas[db.Name]
 				if hasMeta {
 					if remoteMeta.Status == "uploading" {
 						return model.StatusCodeLockedByOther, fmt.Sprintf("%s is Uploading ⬆️", l.Hostname), text.Colors{model.DBStatuses.LockedByOther.Color}
 					}
-					if remoteMeta.Status == "updating" {
-						return model.StatusCodeLockedByOther, fmt.Sprintf("%s is Updating 🔄", l.Hostname), text.Colors{model.DBStatuses.LockedByOther.Color}
-					}
 				}
-
-				// Fallback: Default dynamic message showing Owner and Hostname
 				who := fmt.Sprintf("%s@%s", l.Owner, l.Hostname)
 				return model.StatusCodeLockedByOther, fmt.Sprintf(model.DBStatuses.LockedByOther.Text, who), text.Colors{model.DBStatuses.LockedByOther.Color}
 			}
 
 			// CASE 1.2: Locked by Current User
-			if l.Hostname == config.AppConfig.Hostname {
+			if l.Hostname == model.AppConfig.Hostname {
 				// We hold the lock on THIS machine.
 				// Check metadata status to see if we are in the middle of an operation.
+
 				remoteMeta, hasRemoteMeta := remoteMetas[db.Name]
 				if hasRemoteMeta {
 					if remoteMeta.Status == "uploading" {
 						return model.StatusCodeUploading, model.DBStatuses.Uploading.Text, text.Colors{model.DBStatuses.Uploading.Color}
 					}
-					if remoteMeta.Status == "updating" {
-						return model.StatusCodeUploading, "You are Updating 🔄", text.Colors{model.DBStatuses.Uploading.Color}
-					}
 				}
+
 				// Default status when locked by us but idle: "Ready to Upload"
 				return model.StatusCodeLockedByYou, model.DBStatuses.LockedByYou.Text, text.Colors{model.DBStatuses.LockedByYou.Color}
 			} else {
@@ -123,9 +115,10 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// PHASE 4: CONSISTENCY CHECK (CONTENT)
 	// We compare the actual Local File Hash vs Remote Metadata Hash.
 	// -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
 	if db.ExistsLocal && hasRemoteMeta {
-		localPath := filepath.Join(config.AppConfig.LocalDBDir, db.Name)
-		localHash, err := CalculateSHA256(localPath)
+		localPath := filepath.Join(model.AppConfig.LocalDBDir, db.Name)
+		localHash, err := CalculateHash(localPath, onProgress)
 		if err != nil {
 			LogError("Status Check: Failed to verify %s: %v", db.Name, err)
 			return model.StatusCodeErrorReadLocal, model.DBStatuses.ErrorReadLocal.Text, text.Colors{model.DBStatuses.ErrorReadLocal.Color}
@@ -134,13 +127,15 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 		// At this point, if LocalVersion Existed, we know it matched Remote (Phase 3 passed).
 		// So any mismatch here implies LOCAL changes.
 
+		LogInfo("CalculateDBStatus: Comparing hashes for %s. Local: %s, Remote: %s", db.Name, localHash, remoteMeta.Hash)
+
 		if localHash == remoteMeta.Hash {
 			// CASE 4.1: Up To Date (Local Hash == Remote Hash)
 
 			// Auto-Heal: If we have no local version anchor but hashes match,
 			// it means we are in sync but missing the tracking file. Create it.
 			if !hasLocalVersion {
-				LogInfo("CalculateDBStatus: Auto-healing missing anchor for %s", db.Name)
+				LogInfo("CalculateDBStatus: Auto-healing missing anchor for %s. Hash matched: %s", db.Name, localHash)
 				if err := UpdateLocalVersion(db.Name, *remoteMeta); err != nil {
 					LogError("CalculateDBStatus: Failed to auto-heal anchor for %s: %v", db.Name, err)
 				}
@@ -168,8 +163,8 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	return model.StatusCodeUnknown, model.DBStatuses.Unknown.Text, text.Colors{model.DBStatuses.Unknown.Color}
 }
 
-// FetchDBStatusData fetches all databases, locks, and metadata in parallel, then calculates status for each
-func FetchDBStatusData(ctx context.Context) ([]model.DBStatusInfo, error) {
+// FetchDBStatusData fetches all databases, locks, and metadata sequentially, then calculates status for each
+func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DBStatusInfo, error) {
 	// Check for cancellation
 	select {
 	case <-ctx.Done():
@@ -177,60 +172,67 @@ func FetchDBStatusData(ctx context.Context) ([]model.DBStatusInfo, error) {
 	default:
 	}
 
-	var (
-		wg          sync.WaitGroup
-		localDBs    []string
-		remoteDBs   []string
-		locks       map[string]model.LockEntry
-		remoteMetas map[string]*model.Metadata
-		errLocal    error
-		errRemote   error
-		errLocks    error
-		errMetas    error
-	)
-
-	wg.Add(4)
-
 	// 1. Get Local DBs (Fast)
-	go func() {
-		defer wg.Done()
-		localDBs, errLocal = getLocalDBs()
-	}()
+	if onProgress != nil {
+		onProgress("Scanning local databases...")
+	}
+	localDBs, errLocal := getLocalDBs()
+	if errLocal != nil {
+		LogError("Failed to get local DBs: %v", errLocal)
+		return nil, errLocal
+	}
+	LogInfo("FetchDBStatusData: Found %d local DBs", len(localDBs))
 
-	// 2. Get Remote DBs (Network)
-	go func() {
-		defer wg.Done()
-		remoteDBs, errRemote = getRemoteDBs()
-	}()
+	select {
+	case <-ctx.Done():
+		return nil, fmt.Errorf("cancelled")
+	default:
+	}
 
-	// 3. Fetch Locks (Network)
-	go func() {
-		defer wg.Done()
-		locks, errLocks = FetchLocks(ctx)
-	}()
+	// 2. Fetch Remote State (DBs + Locks) - Optimized
+	if onProgress != nil {
+		onProgress("Fetching remote state...")
+	}
+	remoteDBs, locks, errRemote := LsfRclone(ctx)
+	if errRemote != nil {
+		LogError("Failed to fetch remote state: %v", errRemote)
+		return nil, fmt.Errorf("failed to fetch remote state: %w", errRemote)
+	}
+	LogInfo("FetchDBStatusData: Found %d remote DBs and %d active locks", len(remoteDBs), len(locks))
+
+	select {
+	case <-ctx.Done():
+		return nil, fmt.Errorf("cancelled")
+	default:
+	}
+
+	// 3. (Skipped - Combined above)
 
 	// 4. Download Metadata (Network)
-	go func() {
-		defer wg.Done()
-		remoteMetas, errMetas = DownloadAndLoadMetadata()
-	}()
+	if onProgress != nil {
+		onProgress("Syncing metadata...")
+	}
+	remoteMetas, errMetas := DownloadAndLoadMetadata(ctx)
+	if errMetas != nil {
+		LogError("Failed to sync/load metadata: %v", errMetas)
+		return nil, fmt.Errorf("failed to download metadata: %w", errMetas)
+	}
+	LogInfo("FetchDBStatusData: Loaded metadata for %d databases", len(remoteMetas))
 
 	// 5. Load Local-Version Metadata (Local IO)
-	var localVersions map[string]*model.Metadata
+	if onProgress != nil {
+		onProgress("Reading local history...")
+	}
+	localVersions := make(map[string]*model.Metadata)
 	var errLocalVersions error
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		localVersions = make(map[string]*model.Metadata)
-		// Iterate over local DBs list (wait, we don't have it here yet, it runs in parallel)
-		// We can scan the local-version directory directly.
-		entries, err := os.ReadDir(config.AppConfig.LocalAnchorDir)
-		if err != nil {
-			if !os.IsNotExist(err) {
-				errLocalVersions = err
-			}
-			return
+
+	// We scan the local-version directory directly.
+	entries, err := os.ReadDir(model.AppConfig.LocalAnchorDir)
+	if err != nil {
+		if !os.IsNotExist(err) {
+			errLocalVersions = err
 		}
+	} else {
 		for _, entry := range entries {
 			if !entry.IsDir() && filepath.Ext(entry.Name()) == ".json" {
 				// Construct DB name from metadata filename (helper does logic, but we need dbname for map key)
@@ -248,49 +250,17 @@ func FetchDBStatusData(ctx context.Context) ([]model.DBStatusInfo, error) {
 				}
 			}
 		}
-	}()
-
-	// Wait for all
-	doneCh := make(chan struct{})
-	go func() {
-		wg.Wait()
-		close(doneCh)
-	}()
-
-	select {
-	case <-ctx.Done():
-		return nil, fmt.Errorf("cancelled")
-	case <-doneCh:
-		// Completed
 	}
 
-	// Check errors
-	if errLocal != nil {
-		LogError("Failed to get local DBs: %v", errLocal)
-		return nil, errLocal
+	if errLocalVersions != nil {
+		LogInfo("FetchDBStatusData: Failed to read local versions: %v", errLocalVersions)
+		// Non-critical, just means we can't do smart status
 	}
-	LogInfo("FetchDBStatusData: Found %d local DBs", len(localDBs))
-
-	if errRemote != nil {
-		LogError("Failed to get remote DBs: %v", errRemote)
-		// Critical failure: Without remote list, we cannot determine sync status accurately.
-		return nil, fmt.Errorf("failed to list remote databases: %w", errRemote)
-	}
-	LogInfo("FetchDBStatusData: Found %d remote DBs", len(remoteDBs))
-
-	if errLocks != nil {
-		LogError("Failed to fetch locks: %v", errLocks)
-		return nil, fmt.Errorf("failed to fetch locks: %w", errLocks)
-	}
-	LogInfo("FetchDBStatusData: Found %d active locks", len(locks))
-
-	if errMetas != nil {
-		LogError("Failed to sync/load metadata: %v", errMetas)
-		return nil, fmt.Errorf("failed to download metadata: %w", errMetas)
-	}
-	LogInfo("FetchDBStatusData: Loaded metadata for %d databases", len(remoteMetas))
 
 	// Aggregate
+	if onProgress != nil {
+		onProgress("Calculating status...")
+	}
 	allDBs, err := AggregateDBs(localDBs, remoteDBs)
 	if err != nil {
 		LogError("Aggregation failed: %v", err)
@@ -298,26 +268,27 @@ func FetchDBStatusData(ctx context.Context) ([]model.DBStatusInfo, error) {
 	}
 	LogInfo("FetchDBStatusData: Aggregated total %d databases", len(allDBs))
 
-	if errLocalVersions != nil {
-		LogInfo("FetchDBStatusData: Failed to read local versions: %v", errLocalVersions)
-		// Non-critical, just means we can't do smart status
-	}
-
 	// Calculate status for each database
 	var statusData []model.DBStatusInfo
 	for _, db := range allDBs {
-		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions)
+		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions, onProgress)
 
 		colorVal := text.FgWhite
 		if len(statusColor) > 0 {
 			colorVal = statusColor[0]
 		}
 
+		var rawMetaStatus string
+		if meta, ok := remoteMetas[db.Name]; ok {
+			rawMetaStatus = meta.Status
+		}
+
 		statusData = append(statusData, model.DBStatusInfo{
-			DB:         db,
-			Status:     statusText,
-			StatusCode: statusCode,
-			Color:      colorVal,
+			DB:               db,
+			Status:           statusText,
+			StatusCode:       statusCode,
+			RemoteMetaStatus: rawMetaStatus,
+			Color:            colorVal,
 		})
 	}
 
