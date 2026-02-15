@@ -56,6 +56,13 @@ function extractItemName(urlStr: string): string {
   }
 }
 
+function formatItemLabel(slug: string): string {
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 // Check if URL is a category page (only one segment after /freedevtools/)
 function isCategoryPage(urlStr: string): boolean {
   try {
@@ -171,41 +178,42 @@ const Pro: React.FC = () => {
                   {(bookmarkInfo.isProPage || bookmarkInfo.isHomePage) ? (
                     <>
                       <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
-                        Looks like you just discovered a premium feature
+                        Bookmarking is a premium feature.
                       </h3>
                       <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   ) : bookmarkInfo.isCategoryPage ? (
                     <>
                       <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
-                        Looks like you were trying to bookmark{' '}
+                        It looks like you're trying to bookmark{' '}
                         <a
                           href={bookmarkInfo.source}
                           className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
                           {bookmarkInfo.category}
                         </a>
+                        .
                       </h3>
                       <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   ) : (
                     <>
                       <h3 className="text-base font-semibold text-fdt-yellow-dark dark:text-fdt-yellow mb-1">
-                        Looks like you were trying to bookmark{' '}
+                        It looks like you're trying to bookmark{' '}
                         <a
                           href={bookmarkInfo.source}
                           className="text-fdt-yellow-dark dark:text-fdt-yellow hover:opacity-80 underline cursor-pointer"
                         >
-                          {bookmarkInfo.itemName}
+                          {bookmarkInfo.itemName ? formatItemLabel(bookmarkInfo.itemName) : 'this item'}
                         </a>
-                        {' '}of {bookmarkInfo.category}
+                        {' '}({bookmarkInfo.category}).
                       </h3>
                       <p className="text-sm text-fdt-yellow-dark dark:text-fdt-yellow mb-0">
-                        Buy our Pro plan and enjoy many more benefits with Pro!
+                        Upgrade to Pro to unlock bookmarking and many more benefits.
                       </p>
                     </>
                   )}

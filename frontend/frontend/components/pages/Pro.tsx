@@ -57,6 +57,13 @@ function extractItemName(urlStr: string): string {
   }
 }
 
+function formatItemLabel(slug: string): string {
+  return slug
+    .split('-')
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(' ');
+}
+
 const Pro: React.FC = () => {
   const [bookmarkInfo, setBookmarkInfo] = useState<{ source?: string; category?: string; itemName?: string } | null>(null);
 
@@ -87,10 +94,10 @@ const Pro: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                    Looks like you were trying to bookmark {bookmarkInfo.itemName} of {bookmarkInfo.category}
+                    It looks like you're trying to bookmark {formatItemLabel(bookmarkInfo.itemName || 'this item')} ({bookmarkInfo.category}).
                   </h3>
                   <p className="text-blue-800 dark:text-blue-200 mb-4">
-                    Buy our Pro plan and enjoy many more benefits with Pro!
+                    Upgrade to Pro to unlock bookmarking and many more benefits.
                   </p>
                 </div>
               </div>
