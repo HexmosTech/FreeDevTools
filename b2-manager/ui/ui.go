@@ -181,7 +181,7 @@ func (app *AppUI) layout(g *gocui.Gui) error {
 		if err != gocui.ErrUnknownView {
 			return err
 		}
-		v.Title = " b2m "
+		v.Title = " b2m " + model.AppConfig.ToolVersion
 		v.Frame = true
 		v.Highlight = true
 		v.SelBgColor = gocui.ColorGreen

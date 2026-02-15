@@ -17,7 +17,7 @@ import (
 // 1. Lock Status (Highest Priority):
 //   - Checks if the database is currently locked in the lock map.
 //   - If Locked by Other: Returns "LockedByOther" (Yellow/Red), potentially showing "Uploading" if active.
-//   - If Locked by You (Local): Returns "Ready to Upload" or "Uploading/Updating" based on remote metadata.
+//   - If Locked by You (Local): Returns "Ready to Upload" or "Uploading" based on remote metadata.
 //
 // 2. Existence Check (If Unlocked):
 //   - Checks physical presence of files locally and remotely.
@@ -42,18 +42,13 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 		if l.Type == "lock" {
 			if l.Owner != model.AppConfig.CurrentUser {
 				// CASE 1.1: Locked by Other User
-				// We check the remote metadata to see if they are actively uploading or updating.
+				// We check the remote metadata to see if they are actively uploading.
 				remoteMeta, hasMeta := remoteMetas[db.Name]
 				if hasMeta {
 					if remoteMeta.Status == "uploading" {
 						return model.StatusCodeLockedByOther, fmt.Sprintf("%s is Uploading ⬆️", l.Hostname), text.Colors{model.DBStatuses.LockedByOther.Color}
 					}
-					if remoteMeta.Status == "updating" {
-						return model.StatusCodeLockedByOther, fmt.Sprintf("%s is Updating 🔄", l.Hostname), text.Colors{model.DBStatuses.LockedByOther.Color}
-					}
 				}
-
-				// Fallback: Default dynamic message showing Owner and Hostname
 				who := fmt.Sprintf("%s@%s", l.Owner, l.Hostname)
 				return model.StatusCodeLockedByOther, fmt.Sprintf(model.DBStatuses.LockedByOther.Text, who), text.Colors{model.DBStatuses.LockedByOther.Color}
 			}
@@ -62,15 +57,14 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 			if l.Hostname == model.AppConfig.Hostname {
 				// We hold the lock on THIS machine.
 				// Check metadata status to see if we are in the middle of an operation.
+
 				remoteMeta, hasRemoteMeta := remoteMetas[db.Name]
 				if hasRemoteMeta {
 					if remoteMeta.Status == "uploading" {
 						return model.StatusCodeUploading, model.DBStatuses.Uploading.Text, text.Colors{model.DBStatuses.Uploading.Color}
 					}
-					if remoteMeta.Status == "updating" {
-						return model.StatusCodeUploading, "You are Updating 🔄", text.Colors{model.DBStatuses.Uploading.Color}
-					}
 				}
+
 				// Default status when locked by us but idle: "Ready to Upload"
 				return model.StatusCodeLockedByYou, model.DBStatuses.LockedByYou.Text, text.Colors{model.DBStatuses.LockedByYou.Color}
 			} else {

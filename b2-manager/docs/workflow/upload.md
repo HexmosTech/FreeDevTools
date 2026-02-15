@@ -46,23 +46,3 @@ Before any action, `core.CheckUploadSafety` performs a critical validation to pr
 1.  **Unlock**: Removes the `.lock` file from B2.
 2.  **Notify**: Sends a completion webhook (Descriptor).
 
-## Diagram
-
-```mermaid
-graph TD
-    Start[User Presses 'U'] --> SafetyCheck{0. Safety Check}
-    SafetyCheck -- Fail --> Abort[Abort: Remote Newer]
-    SafetyCheck -- Pass --> Lock[1. Acquire Lock]
-
-    Lock --> SetMeta[2. Set Meta: 'uploading']
-    SetMeta --> Upload[3. Upload File]
-
-    Upload -- Success --> GenMeta[Generate 'Success' Meta]
-    GenMeta --> UpMeta[Upload Meta]
-    UpMeta --> Anchor[4. Update Anchor]
-    Anchor --> Cache[Update Cache]
-    Cache --> Unlock[5. Release Lock]
-    Unlock --> Done[Done]
-
-    Upload -- Fail --> Cleanup[Cleanup & Unlock]
-```
