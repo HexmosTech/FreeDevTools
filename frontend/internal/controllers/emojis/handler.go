@@ -859,6 +859,11 @@ func HandleEmojisIndex(w http.ResponseWriter, r *http.Request, db *emojis.DB, pa
 		"unicode emojis",
 	}
 
+	var textBanner *banner.Banner
+	if config.GetAdsEnabled() && config.GetEnabledAdTypes("emojis")["bannerdb"] {
+		textBanner, _ = banner.GetRandomBannerByType("text")
+	}
+
 	data := emojis_components.IndexData{
 		Categories:      paginatedCategories,
 		TotalCategories: totalCategories,
@@ -866,6 +871,7 @@ func HandleEmojisIndex(w http.ResponseWriter, r *http.Request, db *emojis.DB, pa
 		CurrentPage:     page,
 		TotalPages:      totalPages,
 		BreadcrumbItems: breadcrumbItems,
+		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:        title,
 			Description:  description,
