@@ -439,10 +439,10 @@ const ShowPlans: React.FC = () => {
         {/* ═══════════════════ FEATURES GRID ═══════════════════ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-10 px-4 animate-fade-in-up-1">
           {[
-            { icon: <Ban className="w-5 h-5 text-primary flex-shrink-0" />, title: 'No Ads', desc: 'Browse and use all resources without any distracting advertisements.' },
-            { icon: <Puzzle className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Extensions & Plugins', desc: 'Use Free DevTools right inside VS Code, Chrome, and more.' },
-            { icon: <BookmarkPlus className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Unlimited Bookmarks', desc: 'Save as many resources to your personal collection as you need.' },
-            { icon: <Search className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Unlimited Search', desc: 'Search across all categories — icons, cheatsheets, man pages, and more.' },
+            { icon: <Ban className="w-5 h-5 text-primary flex-shrink-0" />, title: 'No Ads', desc: 'Explore all resources without distractions — zero ads, pop-ups, or banners' },
+            { icon: <Puzzle className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Extensions & Plugins', desc: 'Search, download, and explore resources right within your VS Code editor and more.' },
+            { icon: <BookmarkPlus className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Unlimited Bookmarks', desc: 'Save and easily access your favorite resources for future reference — no limits' },
+            { icon: <Search className="w-5 h-5 text-primary flex-shrink-0" />, title: 'Unlimited Search', desc: 'Instant, unlimited search across 350K+ resources' },
           ].map((item, idx) => (
             <div
               key={idx}
@@ -576,35 +576,58 @@ const ShowPlans: React.FC = () => {
             </p>
 
             {/* Two GIFs side by side */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-              <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 sm:gap-10 mb-8">
+              <div className="space-y-6 sm:space-y-3">
                 <div className="gif-placeholder benefit-card rounded-2xl border border-border h-36 md:h-48 flex items-center justify-center">
-                  <span className="text-muted-foreground text-base font-medium tracking-wide">gif</span>
+                  <div className="benefit-card rounded-2xl border border-border overflow-hidden">
+                    <video
+                      className="w-full h-auto"
+                      src="/freedevtools/public/videos/bookmark.mp4"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  </div>
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-foreground">Unlimited Bookmarks</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">Save any tool or resource to your personal collection without limits.</p>
+                  <p className="text-sm md:text-base font-semibold text-foreground">Unlimited Bookmarks</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Save any resource to your bookmarks and pull it up whenever you need it.</p>
                 </div>
               </div>
-              <div className="space-y-3">
+              <div className="space-y-6 sm:space-y-3">
                 <div className="gif-placeholder benefit-card rounded-2xl border border-border h-36 md:h-48 flex items-center justify-center">
-                  <span className="text-muted-foreground text-base font-medium tracking-wide">gif</span>
+                  <div className="benefit-card rounded-2xl border border-border overflow-hidden">
+                    <video
+                      className="w-full h-auto"
+                      src="/freedevtools/public/videos/downloads.mp4"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                  </div>
                 </div>
                 <div>
-                  <p className="text-base font-semibold text-foreground">Unlimited Downloads</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">Export and download any output — icons, code, data — without restrictions.</p>
+                  <p className="text-sm md:text-base font-semibold text-foreground">Unlimited Downloads</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Download any icon in different sizes and formats — save SVG or PNG instantly.</p>
                 </div>
               </div>
             </div>
 
             {/* Full-width GIF */}
-            <div className="space-y-3">
-              <div className="gif-placeholder benefit-card rounded-2xl border border-border h-44 md:h-56 flex items-center justify-center">
-                <span className="text-muted-foreground text-base font-medium tracking-wide">gif</span>
+            <div className="space-y-6 sm:space-y-3">
+              <div className="benefit-card rounded-2xl border border-border overflow-hidden">
+                <img
+                  className="w-full h-auto object-cover"
+                  style={{ maxHeight: '14rem' }}
+                  src="/freedevtools/public/videos/search.gif"
+                  alt="Unlimited Search Demo"
+                />
               </div>
               <div>
-                <p className="text-base font-semibold text-foreground">Unlimited Search</p>
-                <p className="text-sm text-muted-foreground mt-0.5">Search across all resources, icons, cheatsheets, and more — no daily limits.</p>
+                <p className="text-sm md:text-base font-semibold text-foreground">Unlimited Search</p>
+                <p className="text-sm text-muted-foreground mt-0.5">Unlimited instant search across 350K+ resources — icons, man pages, cheatsheets, MCPs, and more.</p>
               </div>
             </div>
           </div>
@@ -616,7 +639,7 @@ const ShowPlans: React.FC = () => {
               Extensions & Plugins
             </div>
             <p className="text-base text-muted-foreground mb-6">
-              Use Free DevTools right inside your favorite editor.
+              Use Free DevTools right inside your favorite editor or plugin.
             </p>
 
             {/* VS Code Extension - Clickable card */}
@@ -642,7 +665,7 @@ const ShowPlans: React.FC = () => {
                 />
                 <div>
                   <p className="text-base font-semibold text-foreground">VS Code Extension</p>
-                  <p className="text-sm text-muted-foreground mt-0.5">Access icons, cheatsheets, and resources directly from your editor sidebar.</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Search, download Access icons, cheatsheets, and resources directly from your editor sidebar.</p>
                 </div>
               </div>
             </a>
