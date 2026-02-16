@@ -44,7 +44,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
           <h2 className="text-2xl font-semibold mb-4">Active Licence</h2>
           <Card>
             <CardHeader>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
                 <CardTitle>{activeLicence.name}</CardTitle>
                 {activeLicence.activeStatus === true ||
                 activeLicence.activeStatus === 'active' ? (
@@ -56,7 +56,7 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">Status:</span>
                   <span
                     className={`font-medium px-3 py-1 rounded-full text-sm ${
@@ -72,53 +72,53 @@ const PurchaseHistory: React.FC<PurchaseHistoryProps> = ({
                       : 'Inactive'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">Platform:</span>
                   <span className="font-medium capitalize">{activeLicence.platform}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">Expiration Date:</span>
                   <span className="font-medium">
                     {activeLicence.expirationDate || 'N/A'}
                   </span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">Expire At:</span>
                   <span className="font-medium">{activeLicence.expireAt || 'N/A'}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">
                     Licence Plans Pointer:
                   </span>
                   <span className="font-mono text-sm">{activeLicence.licencePlansPointer}</span>
                 </div>
-                <div className="flex justify-between items-center">
+                <div className="flex items-center gap-4">
                   <span className="text-gray-600 dark:text-gray-400">Licence ID:</span>
                   <span className="font-mono text-sm">{activeLicence.licenceId}</span>
                 </div>
                 {licenceDetails && (
                   <>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
                       <span className="text-gray-600 dark:text-gray-400">Type:</span>
                       <span className="font-medium capitalize">{licenceDetails.type}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
                       <span className="text-gray-600 dark:text-gray-400">
                         Number of Purchased:
                       </span>
                       <span className="font-medium">{licenceDetails.numberOfPurchased}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
                       <span className="text-gray-600 dark:text-gray-400">Number of Used:</span>
                       <span className="font-medium">{licenceDetails.numberOfUsed}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
                       <span className="text-gray-600 dark:text-gray-400">
                         Users Left to Attach:
                       </span>
                       <span className="font-medium">{licenceDetails.usersLeftToAttach}</span>
                     </div>
-                    <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-4">
                       <span className="text-gray-600 dark:text-gray-400">Paid At:</span>
                       <span className="font-medium">
                         {licenceDetails.createdAt?.iso

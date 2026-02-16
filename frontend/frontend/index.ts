@@ -128,7 +128,14 @@ const toolLoaders: Record<string, (e: HTMLElement) => void> = {
     "bookmarkIcon": (e) => {
         renderDynamic(e, () => import('./components/common/BookmarkIcon'));
     },
+    "sidebarProfile": (e) => {
+        renderDynamic(e, () => import('./components/common/SidebarProfile'));
+    },
+    "pro-banner": (e) => renderDynamic(e, () => import('./components/common/ProBanner')),
 };
+
+// Preload SearchPage chunk in background (call after window load + requestIdleCallback)
+(window as any).preloadSearchPage = () => import('./components/search/SearchPage');
 
 // Expose render functions globally
 (window as any).renderTool = (toolKey: string, elementId: string) => {

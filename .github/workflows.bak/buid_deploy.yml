@@ -1,0 +1,411 @@
+# name: Build and Deploy
+
+# on:
+#   push:
+#     branches: [main]
+#   workflow_dispatch: # Allows manual triggering
+
+# jobs:
+#   build-and-deploy:
+#     # Prod
+#     # runs-on: ubuntu-latest
+#     # Self hosted
+#     runs-on: self-hosted
+#     environment: production # This tells GitHub to use the production environment secrets
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#         with:
+#           # fetch-depth: 0 is recommended for a more reliable diff across multiple commits in a push
+#           fetch-depth: 0
+#           # lfs: true  # Commented out - using B2 instead
+
+#       # - name: Verify LFS and database file
+#       #   run: |
+#       #     echo "🔎 Verifying Git LFS and SQLite DB presence..."
+#       #     git lfs version || true
+#       #     echo "LFS-tracked files:"
+#       #     git lfs ls-files || true
+#       #     echo "Listing DB directories:"
+#       #     ls -l ./db || true
+#       #     ls -l ./frontend/db || true
+#       #     echo "File type of DB files (if present):"
+#       #     for f in ./db/*.db ./frontend/db/*.db; do
+#       #       if [ -f "$f" ]; then file "$f" || true; fi
+#       #     done
+
+#       # - name: Pull LFS objects explicitly (workaround)
+#       #   run: |
+#       #     echo "⬇️  Pulling LFS objects explicitly..."
+#       #     git lfs pull --include="db/**,frontend/db/**" || git lfs pull || true
+
+#       - name: Install rclone
+#         run: |
+#           echo "📦 Checking rclone installation..."
+#           if command -v rclone &> /dev/null; then
+#             echo "✅ rclone is already installed"
+#             rclone version
+#           else
+#             echo "⬇️  Installing rclone..."
+#             sudo -v
+#             curl https://rclone.org/install.sh | sudo bash
+#             echo "✅ rclone installed successfully"
+#             rclone version
+#           fi
+
+#       - name: Setup rclone configuration
+#         run: |
+#           echo "🔧 Setting up rclone configuration..."
+
+#           # B2 credentials from GitHub secrets
+#           B2_ACCOUNT_ID="${{ secrets.B2_ACCOUNT_ID }}"
+#           B2_APPLICATION_KEY="${{ secrets.B2_APPLICATION_KEY }}"
+
+#           # Verify credentials are set
+#           if [ -z "$B2_ACCOUNT_ID" ] || [ -z "$B2_APPLICATION_KEY" ]; then
+#             echo "❌ B2 credentials are missing. Please check GitHub secrets."
+#             exit 1
+#           fi
+
+#           # Create rclone config directory
+#           mkdir -p ~/.config/rclone
+
+#           # Create rclone config file
+#           cat > ~/.config/rclone/rclone.conf << EOF
+#           [b2-config]
+#           type = b2
+#           account = ${B2_ACCOUNT_ID}
+#           key = ${B2_APPLICATION_KEY}
+#           hard_delete = false
+#           EOF
+
+#           echo "✅ rclone configuration created"
+
+#       - name: Detect changed sections
+#         id: detect-changes
+#         run: |
+#           echo "🔍 Detecting changes based on custom build rules..."
+
+#           # Use a more robust diff command that covers all commits in a push
+#           all_changed=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} || git diff --name-only HEAD~1 HEAD)
+
+#           if [ -z "$all_changed" ]; then
+#             echo "❌ No changes detected. Skipping build and deploy."
+#             echo "should_deploy=false" >> $GITHUB_OUTPUT
+#             exit 0
+#           fi
+
+#           echo "📁 All changed files:"
+#           echo "$all_changed" | sed 's/^/ - /'
+
+#           changed_dirs=""
+#           requires_full_rebuild=false
+
+#           # Helper function to add a directory to the list if it's not already there
+#           add_dir() {
+#             if [[ ! "$changed_dirs" =~ (^|[[:space:]])$1($|[[:space:]]) ]]; then
+#               changed_dirs="$changed_dirs $1"
+#             fi
+#           }
+
+#           for file in $all_changed; do
+#             case "$file" in
+#               frontend/src/pages/t/*)
+#                 add_dir "t"
+#                 ;;
+#               frontend/src/pages/markdown_pages/tldr/*|frontend/src/pages/tldr/*)
+#                 add_dir "markdown_pages"
+#                 add_dir "tldr"
+#                 ;;
+#               frontend/src/pages/html_pages/cheatsheets/*|frontend/src/pages/c/*)
+#                 add_dir "html_pages"
+#                 add_dir "c"
+#                 ;;
+#               frontend/src/pages/svg_icons/*)
+#                 add_dir "svg_icons"
+#                 ;;
+#               frontend/src/pages/png_icons/*)
+#                 # If png_icons changes, we build both png_icons and svg_icons
+#                 add_dir "png_icons"
+#                 add_dir "svg_icons"
+#                 ;;
+#               frontend/src/pages/emojis/*)
+#                 add_dir "emojis"
+#                 ;;
+#               frontend/src/pages/cars/*)
+#                 add_dir "cars"
+#                 ;;
+#               frontend/src/pages/mcp/*)
+#                 add_dir "mcp"
+#                 ;;
+#               frontend/src/pages/man-pages/*)
+#                 add_dir "man-pages"
+#                 ;;
+#               frontend/public/mcp/*)
+#                 add_dir "mcp"
+#                 ;;
+#               frontend/src/pages/installerpedia/*)
+#                 add_dir "installerpedia"
+#                 ;;
+#               frontend/src/pages/index.astro)
+#                 # Index page changes only need to rebuild the index page
+#                 add_dir "index_only"
+#                 ;;
+#               frontend/public/*)
+#                 # Public assets are served directly, just sync without rebuild
+#                 add_dir "public_assets_only"
+#                 ;;
+#               frontend/src/*)
+#                 # Other src changes (components, layouts, styles, etc.) need full rebuild
+#                 requires_full_rebuild=true
+#                 ;;
+#               *)
+#                 # You can add a default case here if needed, for example, to build everything
+#                 # echo "Change detected in unhandled path: $file"
+#                 ;;
+#             esac
+#           done
+
+#           # Clean up leading/trailing whitespace
+#           changed_dirs=$(echo "$changed_dirs" | xargs)
+
+#           # Determine final build strategy
+#           if [ "$requires_full_rebuild" = true ]; then
+#             echo "🔧 Components/layouts/styles changed - requires full rebuild"
+#             echo "📦 Build strategy: full_rebuild"
+#             echo "should_deploy=true" >> $GITHUB_OUTPUT
+#             echo "changed_sections=full_rebuild" >> $GITHUB_OUTPUT
+#           elif [ -n "$changed_dirs" ]; then
+#             echo "📦 Changed sections to build: $changed_dirs"
+#             echo "should_deploy=true" >> $GITHUB_OUTPUT
+#             echo "changed_sections=$changed_dirs" >> $GITHUB_OUTPUT
+#           else
+#             echo "❌ No changes matched the build rules. Skipping deployment."
+#             echo "should_deploy=false" >> $GITHUB_OUTPUT
+#           fi
+
+#       # - name: Setup Bun
+#       #   if: steps.detect-changes.outputs.should_deploy == 'true'
+#       #   uses: oven-sh/setup-bun@v1
+#       #   with:
+#       #     bun-version: "1.1.34"
+
+#       # - name: Cache Bun dependencies
+#       #   if: steps.detect-changes.outputs.should_deploy == 'true'
+#       #   uses: actions/cache@v4
+#       #   with:
+#       #     path: ~/.bun
+#       #     key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+#       #     restore-keys: |
+#       #       ${{ runner.os }}-bun-
+
+#       - name: Setup Node.js
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: '22.17.0'
+
+#       - name: Exclude unchanged sections from build
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         run: |
+#           echo "🔧 Excluding unchanged sections from build..."
+#           cd frontend/src/pages
+
+#           changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+#           echo "Building strategy: $changed_sections"
+
+#           # Only exclude sections if we're doing selective page builds
+#           if [[ "$changed_sections" != "full_rebuild" && "$changed_sections" != "public_assets_only" && "$changed_sections" != "index_only" ]]; then
+#             echo "🎯 Selective build mode"
+#             for dir in */; do
+#               if [ -d "$dir" ]; then
+#                 dir_name=${dir%/}
+#                 if [[ "$changed_sections" =~ (^|[[:space:]])$dir_name($|[[:space:]]) ]] || [[ "$dir_name" == _* ]]; then
+#                   echo "✅ Including: $dir_name"
+#                 else
+#                   echo "❌ Excluding: $dir_name -> _$dir_name"
+#                   mv "$dir" "_$dir"
+#                 fi
+#               fi
+#             done
+#           elif [[ "$changed_sections" == "full_rebuild" ]]; then
+#             echo "🔧 Full rebuild mode - building all sections"
+#             for dir in */; do
+#               if [ -d "$dir" ]; then
+#                 dir_name=${dir%/}
+#                 echo "✅ Including: $dir_name"
+#               fi
+#             done
+#           elif [[ "$changed_sections" == "index_only" ]]; then
+#             echo "🏠 Index page only mode - excluding all other pages"
+#             for dir in */; do
+#               if [ -d "$dir" ]; then
+#                 dir_name=${dir%/}
+#                 if [[ "$dir_name" == _* ]]; then
+#                   echo "✅ Keeping excluded: $dir_name"
+#                 else
+#                   echo "❌ Excluding: $dir_name -> _$dir_name"
+#                   mv "$dir" "_$dir"
+#                 fi
+#               fi
+#             done
+#           else
+#             echo "🔧 Public assets only mode - no page exclusions needed"
+#           fi
+
+#       - name: Restore database cache
+#         id: cache-all-dbs-restore
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         uses: actions/cache/restore@v4
+#         with:
+#           path: frontend/db/all_dbs
+#           key: ${{ runner.os }}-all-dbs-v1
+#           restore-keys: |
+#             ${{ runner.os }}-all-dbs-
+
+#       - name: Sync database files from Backblaze B2
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         run: |
+#           echo "⬇️  Syncing database files from Backblaze B2 using rclone..."
+
+#           # Create database directory
+#           mkdir -p frontend/db/all_dbs
+
+#           # Sync all databases from B2
+#           # --checksum flag compares file checksums and only transfers if files differ
+#           # This ensures we get updates from B2 even if cache exists
+#           # If checksums match, no transfer occurs (fast)
+#           echo "🔄 Syncing all databases..."
+#           rclone sync \
+#             b2-config:hexmos/freedevtools/content/db/ \
+#             frontend/db/all_dbs/ \
+#             --checksum \
+#             --retries 20 \
+#             --low-level-retries 30 \
+#             --retries-sleep 10s \
+#             --progress
+
+#           # Verify sync
+#           echo "✅ Sync complete. Verifying files..."
+#           ls -lh frontend/db/all_dbs/ 2>/dev/null || true
+
+#           # Check if any database files exist
+#           db_count=$(find frontend/db/all_dbs -name "*.db" 2>/dev/null | wc -l)
+#           if [ "$db_count" -eq 0 ]; then
+#             echo "⚠️  No database files found after sync"
+#             exit 1
+#           else
+#             echo "✅ Found $db_count database file(s)"
+#           fi
+
+#       - name: Save database cache
+#         id: cache-all-dbs-save
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         uses: actions/cache/save@v4
+#         with:
+#           path: frontend/db/all_dbs
+#           key: ${{ runner.os }}-all-dbs-v1
+
+#           # - name: Install dependencies
+#           # if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#           # run: |
+#           #   echo "📦 Installing dependencies with Bun..."
+#           #   cd frontend
+#           #   bun install
+
+#       - name: Install dependencies
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         run: |
+#           echo "📦 Installing dependencies..."
+#           cd frontend
+#           npm install
+
+#       - name: Clean dist directory
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         run: |
+#           echo "🧹 Cleaning dist directory before build..."
+#           cd frontend
+#           rm -rf dist
+#           mkdir -p dist
+
+#       - name: Build project
+#         if: steps.detect-changes.outputs.should_deploy == 'true' && steps.detect-changes.outputs.changed_sections != 'public_assets_only'
+#         run: |
+#           echo "🔨 Building project..."
+#           cd frontend
+#           npx astro build
+#         env:
+#           NODE_OPTIONS: '--max-old-space-size=16384'
+#           UV_THREADPOOL_SIZE: '16'
+#           PUBLIC_GA_ID: ${{ secrets.PUBLIC_GA_ID }}
+#           MEILISEARCH_API_KEY: ${{ secrets.MEILISEARCH_API_KEY }}
+
+#       - name: Restore original folder structure
+#         if: always() && steps.detect-changes.outputs.should_deploy == 'true'
+#         run: |
+#           echo "🔄 Restoring original folder structure..."
+#           cd frontend/src/pages
+
+#           for dir in _*/; do
+#             if [ -d "$dir" ]; then
+#               original_name=${dir#_}
+#               original_name=${original_name%/}
+#               echo "Restoring _$original_name to $original_name"
+#               mv "$dir" "$original_name/"
+#             fi
+#           done
+
+#       - name: Setup SSH
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         uses: webfactory/ssh-agent@v0.8.0
+#         with:
+#           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+#       - name: Add server to known hosts
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         run: |
+#           ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+#       - name: Deploy to server
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         run: |
+#           echo "🚀 Deploying to server..."
+#           echo "Deployed sections: ${{ steps.detect-changes.outputs.changed_sections }}"
+
+#           changed_sections="${{ steps.detect-changes.outputs.changed_sections }}"
+
+#           if [[ "$changed_sections" == "public_assets_only" ]]; then
+#             echo "📁 Only public assets changed - syncing files only"
+#             rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+#           elif [[ "$changed_sections" == "full_rebuild" ]]; then
+#             echo "📦 Full deployment - deleting old files on server"
+#             rsync -rvz --delete --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+#           else
+#             echo "📦 Partial deployment - keeping existing files on server"
+#             rsync -rvz --no-perms --no-owner --no-group --no-times --progress ./frontend/dist/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:/tools/
+#           fi
+
+#       - name: Purge entire Cloudflare cache
+#         if: steps.detect-changes.outputs.should_deploy == 'true'
+#         run: |
+#           echo "Purging entire Cloudflare cache..."
+#           RESPONSE=$(curl -s -X POST "https://api.cloudflare.com/client/v4/zones/${{ secrets.CLOUDFLARE_ZONE_ID }}/purge_cache" \
+#             -H "Authorization: Bearer ${{ secrets.CLOUDFLARE_CACHE_PURGE_API_KEY }}" \
+#             -H "Content-Type: application/json" \
+#             --data '{"purge_everything":true}')
+
+#           echo "Response:"
+#           echo "$RESPONSE"
+
+#       # - name: Generate search index data and deploy to server
+#       #   run: |
+#       #     echo "🔍 Generating search index data..."
+#       #     cd search-index
+#       #     make sync-search-index
+#       #     echo "✅ Search index generation completed"
+
+#       - name: Skip deployment message
+#         if: steps.detect-changes.outputs.should_deploy == 'false'
+#         run: |
+#           echo "⏭️ Skipping deployment - no changes matched the build rules."

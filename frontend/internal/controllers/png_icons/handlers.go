@@ -89,7 +89,9 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *png_icons_db.DB, pa
 	totalPages := (totalCategories + itemsPerPage - 1) / itemsPerPage
 	if page > totalPages && totalPages > 0 {
 		if page > 1 {
-			http.NotFound(w, r)
+			// Redirect invalid pagination pages to home
+			basePath := config.GetBasePath()
+			http.Redirect(w, r, basePath+"/png_icons/", http.StatusMovedPermanently)
 			return
 		}
 	}
@@ -101,6 +103,13 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *png_icons_db.DB, pa
 	categories, ok := categoriesResult.([]png_icons_db.ClusterTransformed)
 	if !ok {
 		// Fallback or error?
+	}
+
+	// If home page (page 1) has no items, redirect to store
+	if page == 1 && (totalCategories == 0 || len(categories) == 0) {
+		basePath := config.GetBasePath()
+		http.Redirect(w, r, basePath+"/png_icons/store/", http.StatusMovedPermanently)
+		return
 	}
 
 	basePath := config.GetBasePath()
@@ -180,7 +189,7 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *png_icons_db.DB,
 	if page < 1 {
 		page = 1
 	}
-	limit := 10 // Show 10 icons per page
+	limit := 30 // Show 30 icons per page
 	offset := (page - 1) * limit
 
 	icons, err := db.GetIconsByCluster(cluster.SourceFolder, &categoryName, limit, offset)
@@ -199,6 +208,13 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *png_icons_db.DB,
 	}
 
 	totalPages := (cluster.Count + limit - 1) / limit
+
+	// Redirect invalid pagination pages to category page
+	if page > totalPages && totalPages > 0 {
+		basePath := config.GetBasePath()
+		http.Redirect(w, r, fmt.Sprintf("%s/png_icons/%s/", basePath, category), http.StatusMovedPermanently)
+		return
+	}
 
 	title := cluster.Title
 	if title == "" {
