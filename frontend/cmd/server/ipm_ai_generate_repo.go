@@ -23,29 +23,6 @@ type GitHubRelease struct {
 	} `json:"assets"`
 }
 
-func fetchLatestRelease(repoName string) (*GitHubRelease, error) {
-	u, err := url.Parse("https://api.github.com/repos/")
-	if err != nil {
-		return nil, err
-	}
-	finalURL := u.JoinPath(repoName, "releases", "latest").String()
-
-	resp, err := http.Get(finalURL)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("GitHub returned status: %d", resp.StatusCode)
-	}
-
-	var release GitHubRelease
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
-		return nil, err
-	}
-	return &release, nil
-}
 
 const mockData = `{
 	"repo": "BLAKE3-team/BLAKE3-13",
@@ -151,6 +128,61 @@ const mockData = `{
   }
   `
 
+func fetchLatestRelease(repoName string) (*GitHubRelease, error) {
+	u, err := url.Parse("https://api.github.com/repos/")
+	if err != nil {
+		return nil, err
+	}
+	finalURL := u.JoinPath(repoName, "releases", "latest").String()
+
+	resp, err := http.Get(finalURL)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("GitHub returned status: %d", resp.StatusCode)
+	}
+
+	var release GitHubRelease
+	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
+		return nil, err
+	}
+	return &release, nil
+}
+
+func fetchReadme(repoName string) (string, error) {
+	// Try 'main' then 'master' branches for raw content
+	branches := []string{"main", "master"}
+	var lastErr error
+
+	for _, branch := range branches {
+		url, err := url.JoinPath("https://raw.githubusercontent.com", repoName, branch, "README.md")
+		if err != nil {
+			lastErr = err
+			continue
+		}
+		resp, err := http.Get(url)
+		if err != nil {
+			lastErr = err
+			continue
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode == http.StatusOK {
+			body, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return "", err
+			}
+			return string(body), nil
+		}
+		lastErr = fmt.Errorf("status %d", resp.StatusCode)
+	}
+	return "", fmt.Errorf("tried main/master: %v", lastErr)
+}
+
+
 func handleGenerateRepo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		SetNoCacheHeaders(w)
@@ -200,35 +232,6 @@ func handleGenerateRepo() http.HandlerFunc {
 	}
 }
 
-func fetchReadme(repoName string) (string, error) {
-	// Try 'main' then 'master' branches for raw content
-	branches := []string{"main", "master"}
-	var lastErr error
-
-	for _, branch := range branches {
-		url, err := url.JoinPath("https://raw.githubusercontent.com", repoName, branch, "README.md")
-		if err != nil {
-			lastErr = err
-			continue
-		}
-		resp, err := http.Get(url)
-		if err != nil {
-			lastErr = err
-			continue
-		}
-		defer resp.Body.Close()
-
-		if resp.StatusCode == http.StatusOK {
-			body, err := io.ReadAll(resp.Body)
-			if err != nil {
-				return "", err
-			}
-			return string(body), nil
-		}
-		lastErr = fmt.Errorf("status %d", resp.StatusCode)
-	}
-	return "", fmt.Errorf("tried main/master: %v", lastErr)
-}
 
 func generateIPMJson(repoName, readme, releaseInfo string) (string, error) {
 	// Define the strict structure
