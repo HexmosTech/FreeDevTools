@@ -15,7 +15,6 @@ import (
 	"strings"
 	"time"
 
-	"os"
 	"regexp"
 
 	"github.com/clipperhouse/jargon"
