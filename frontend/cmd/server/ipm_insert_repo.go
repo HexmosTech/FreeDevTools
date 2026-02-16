@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"encoding/binary"
 	"encoding/json"
+	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
 	"log"
@@ -16,13 +17,14 @@ import (
 	"strings"
 	"time"
 
+	"os"
+	"regexp"
+
 	"github.com/clipperhouse/jargon"
 	"github.com/clipperhouse/jargon/filters/ascii"
 	"github.com/clipperhouse/jargon/filters/contractions"
 	"github.com/clipperhouse/jargon/filters/stemmer"
 	_ "github.com/mattn/go-sqlite3"
-	"os"
-	"regexp"
 )
 
 var updateMu sync.Mutex
@@ -194,7 +196,8 @@ func ProcessText(text string) string {
 }
 
 func SyncSingleRepoToMeili(p EntryPayload) error {
-	apiKey := os.Getenv("MEILI_WRITE_KEY")
+	cfg := config.GetConfig()
+	apiKey := cfg.MeiliWriteKey
 	if apiKey == "" {
 		return fmt.Errorf("MEILI_WRITE_KEY not found in environment")
 	}
