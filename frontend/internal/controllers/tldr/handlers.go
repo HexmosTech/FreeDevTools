@@ -92,6 +92,11 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, page in
 		description = fmt.Sprintf("Browse page %d of our TLDR command documentation. Learn command-line tools across different platforms.", page)
 	}
 
+	var textBanner *banner.Banner
+	if config.GetAdsEnabled() && config.GetEnabledAdTypes("tldr")["bannerdb"] {
+		textBanner, _ = banner.GetRandomBannerByType("text")
+	}
+
 	data := tldr.TLDRIndexData{
 		Platforms:       currentPlatforms,
 		CurrentPage:     page,
@@ -99,6 +104,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, page in
 		TotalPlatforms:  totalPlatforms,
 		TotalCommands:   totalCommands,
 		BreadcrumbItems: breadcrumbItems,
+		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:       title,
 			Description: description,

@@ -93,12 +93,17 @@ func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.D
 		"commands",
 	}
 
+	var textBanner *banner.Banner
+	if config.GetAdsEnabled() && config.GetEnabledAdTypes("man-pages")["bannerdb"] {
+		textBanner, _ = banner.GetRandomBannerByType("text")
+	}
 
 	data := man_pages_components.IndexData{
 		Categories:      categories,
 		TotalCategories: len(categories),
 		TotalManPages:   totalManPages,
 		BreadcrumbItems: breadcrumbItems,
+		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:        title,
 			Description:  description,
