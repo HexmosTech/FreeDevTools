@@ -726,7 +726,7 @@ const ShowPlans: React.FC = () => {
                   Ready to go Premium?
                 </div>
                 <p className="text-base md:text-lg text-muted-foreground mb-6 max-w-md">
-                  One payment. Lifetime access. No subscriptions, no surprises.
+                  One payment. Lifetime access. No subscriptions, No surprises.
                 </p>
                 <button
                   onClick={() => {
