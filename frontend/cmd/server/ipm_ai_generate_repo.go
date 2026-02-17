@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -22,7 +23,6 @@ type GitHubRelease struct {
 		BrowseUrl string `json:"browser_download_url"`
 	} `json:"assets"`
 }
-
 
 const mockData = `{
 	"repo": "BLAKE3-team/BLAKE3-13",
@@ -182,58 +182,40 @@ func fetchReadme(repoName string) (string, error) {
 	return "", fmt.Errorf("tried main/master: %v", lastErr)
 }
 
+func fetchRepologyContext(projectName string) (string, error) {
+	targetURL := fmt.Sprintf("https://repology.org/api/v1/project/%s", url.QueryEscape(projectName))
 
-func handleGenerateRepo() http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
-
-		if r.Method != http.MethodPost {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-			return
-		}
-
-		// FIX: Define payload structure and decode
-		var payload struct {
-			Repo string `json:"repo"`
-		}
-		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-			log.Printf("⚠️ [Installerpedia API] Bad JSON: %v", err)
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
-
-		selectedRepo := payload.Repo
-
-		// 1. Fetch Context
-		readmeBody, _ := fetchReadme(selectedRepo)
-		release, _ := fetchLatestRelease(selectedRepo)
-
-		releaseText := "No release assets found."
-		if release != nil {
-			releaseText = fmt.Sprintf("Tag: %s, Assets: ", release.TagName)
-			for _, a := range release.Assets {
-				releaseText += fmt.Sprintf("[%s : %s] ", a.Name, a.BrowseUrl)
-			}
-		}
-
-		// 2. Call Generation Logic
-		log.Printf("\nAnalyzing %s to generate installation steps...\n", selectedRepo)
-
-		rawJson, err := generateIPMJson(selectedRepo, readmeBody, releaseText)
-		if err != nil {
-			log.Printf("❌ AI Analysis failed: %v\n", err)
-			http.Error(w, "Generation failed", http.StatusInternalServerError)
-			return
-		}
-
-		// FIX: Return the generated JSON data
-		w.Header().Set("Content-Type", "application/json")
-		fmt.Fprint(w, rawJson)
+	client := &http.Client{Timeout: 10 * time.Second}
+	req, err := http.NewRequest("GET", targetURL, nil)
+	if err != nil {
+		log.Printf("error creating Repology request for %s: %v", projectName, err)
+		return "", fmt.Errorf("failed to create Repology request: %w", err)
 	}
+
+	// Adding the User-Agent to prevent 403 Forbidden errors
+	req.Header.Set("User-Agent", "Mozilla/5.0 (IPM-CLI-Tool; contact@example.com)")
+
+	resp, err := client.Do(req)
+	if err != nil {
+		log.Printf("error performing Repology request for %s: %v", projectName, err)
+		return "", fmt.Errorf("Repology network error: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		log.Printf("Repology returned non-OK status for %s: %d", projectName, resp.StatusCode)
+		return "", fmt.Errorf("Repology HTTP status %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Printf("error reading Repology response body for %s: %v", projectName, err)
+		return "", fmt.Errorf("failed to read Repology response: %w", err)
+	}
+	return string(body), nil
 }
 
-
-func generateIPMJson(repoName, readme, releaseInfo string) (string, error) {
+func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (string, error) {
 	// Define the strict structure
 	schema := map[string]interface{}{
 		"type": "object",
@@ -292,52 +274,158 @@ func generateIPMJson(repoName, readme, releaseInfo string) (string, error) {
 		"required": []string{"repo", "repo_type", "has_installation", "installation_methods"},
 	}
 
-	prompt := fmt.Sprintf(`
-	  You are an Expert Installation instruction extractor. Analyze the repository '%s' to generate a precise Installation Plan.
-	  
-	  ### DATA SOURCES
-	  - **README CONTENT:** %s
-	  - **RELEASE ASSETS:** %s
-	  
-	  ### MANDATORY EXTRACTION RULES
-	  1. **REPO CLASSIFICATION (Strict):**
-		 - Determine 'repo_type'. Use 'server' or 'tool' for persistent services/deployments.
-		 - 'library' is ONLY for code meant to be imported.
-		 - 'has_installation' is true only if there are build/run/deploy steps.
-	  
-	  2. **ATOMIC INSTALLATION METHODS (Sequential):**
-		 - Every method must be EXECUTABLE and ATOMIC.
-		 - **Crucial:** If source code is required, the first command MUST be 'git clone [url]', the second MUST be 'cd [folder]'.
-		 - Order by convenience: Binary > Container > Package Manager > Source.
-		 - For Binary methods: Look at RELEASE ASSETS. If a URL exists, use 'curl -L [URL] -o [file]'.
-	  
-	  3. **PREREQUISITE ATOMicity:**
-		 - Extract distinct dependencies (Docker, Go, Python) as individual objects.
-		 - Use proper nouns for 'name' (e.g., 'Node.js', 'PostgreSQL').
-	  
-	  4. **STRING CLEANLINESS (Post-Installation):**
-		 - NO markdown fences , NO HTML tags, NO stray characters.
-		 - Include only critical next steps: starting services, migrations, or verification commands.
-	  
+	// Build data sources section with availability indicators
+	dataSourcesNote := ""
+	if readme == "" {
+		dataSourcesNote += "\n      - **NOTE:** README/CONTEXT CONTENT is unavailable for this repository."
+	}
+	if releaseInfo == "" || releaseInfo == "No release assets found." {
+		dataSourcesNote += "\n      - **NOTE:** RELEASE/REPO ASSETS information is unavailable for this repository."
+	}
+
+	promptHeader := fmt.Sprintf(`
+      You are an Expert Installation instruction extractor. Analyze the repository '%s' to generate a precise Installation Plan.
+      
+      ### DATA SOURCES%s
+      - **README/CONTEXT CONTENT:** %s
+      - **RELEASE/REPO ASSETS:** %s`, repoName, dataSourcesNote, readme, releaseInfo)
+
+	// Conditional Repology Section
+	repologyContext := ""
+	if sourceType == "repology" {
+		repologyContext = `
+      ### REPOLOGY SPECIFIC RULES
+      The 'README/CONTEXT CONTENT' provided is a Repology JSON array.
+      1. **Package Identification:** Map the 'repo' field (e.g., "aur", "debian", "nix_pkgs") to its corresponding package manager.
+      2. **Command Construction:** Use the 'srcname' or 'binname' to create the installation command.
+         - If repo is 'aur': "yay -S [binname]"
+         - If repo is 'debian' or 'ubuntu': "sudo apt install [binname]"
+         - If repo is 'nix_pkgs': "nix-env -iA nixpkgs.[binname]"
+         - If repo is 'pip': "pip install [srcname]"
+      3. **Title Format:** Use "Install via [Repository Name]" (e.g., "Install via AUR").
+      4. **Accuracy:** Ensure the 'version' from the Repology data is noted if relevant.`
+	}
+
+	// Extraction Rules (Merged with your existing rules)
+	extractionRules := `
+      ### MANDATORY EXTRACTION RULES
+      1. **REPO CLASSIFICATION (Strict):**
+         - Determine 'repo_type'. Use 'server' or 'tool' for persistent services/deployments.
+         - 'library' is ONLY for code meant to be imported.
+         - 'has_installation' is true only if there are build/run/deploy steps.
+      
+      2. **ATOMIC INSTALLATION METHODS (Sequential):**
+         - Every method must be EXECUTABLE and ATOMIC.
+         - If source code is required, the first command MUST be 'git clone [url]', the second MUST be 'cd [folder]'.
+         - Order by convenience: Package Manager > Binary > Container > Source.
+      
+      3. **PREREQUISITE ATOMicity:**
+         - Extract distinct dependencies (Docker, Go, Python) as individual objects.
+      
+      4. **STRING CLEANLINESS:**
+         - NO markdown fences, NO backticks. Output ONLY raw JSON.
+
 	  5. **CROSS-PLATFORM:**
-		 - If Windows, macOS, or Linux specific steps are found in README or Releases, include them as separate installation methods.
-	  
+	   	 - If Windows, macOS, or Linux specific steps are found in README or Releases, include them as separate installation methods.
+	   
 	  6. **RESOURCES OF INTEREST:**
-		 - Identify relevant links such as Official Docs, Wiki, or specific Release pages found in the README.
-		 - For 'url_or_path', use absolute URLs.
-	  ### OUTPUT FORMAT
-	  Output ONLY valid JSON matching the provided schema. No prose, no markdown artifacts, no backticks.
-	  `, repoName, readme, releaseInfo)
+		- Identify relevant links such as Official Docs, Wiki, or specific Release pages found in the README.
+		- For 'url_or_path', use absolute URLs.
+      
+      ### OUTPUT FORMAT
+      Output ONLY valid JSON matching the provided schema.`
+
+	// Final Prompt Assembly
+	fullPrompt := promptHeader + repologyContext + extractionRules
 
 	if USE_MOCK {
 		return mockData, nil
 	}
 
+	// DEBUG --------------
+	// fmt.Println(prompt)
+	// --------------------
+
 	// Call Gemini
-	result, err := QueryGemini(prompt, schema)
+	result, err := QueryGemini(fullPrompt, schema)
 	if err != nil {
 		return "", err
 	}
 
 	return result, nil
+}
+
+func handleGenerateRepo() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		SetNoCacheHeaders(w)
+
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// FIX: Define payload structure and decode
+		var payload struct {
+			Repo       string `json:"repo"`
+			SourceType string `json:"source_type"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			log.Printf("⚠️ [Installerpedia API] Bad JSON: %v", err)
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		selectedRepo := payload.Repo
+		sourceType := payload.SourceType
+
+		var contextData string
+		var releaseText string
+
+		if sourceType == "repology" {
+			repologyData, err := fetchRepologyContext(selectedRepo)
+			if err != nil {
+				log.Printf("error fetching Repology context for %s: %v", selectedRepo, err)
+				contextData = ""
+			} else {
+				contextData = repologyData
+			}
+			releaseText = "Source: Repology Package Repository"
+		} else {
+			// Default GitHub logic
+			readmeBody, err := fetchReadme(selectedRepo)
+			if err != nil {
+				log.Printf("error fetching README for %s: %v", selectedRepo, err)
+				contextData = ""
+			} else {
+				contextData = readmeBody
+			}
+
+			release, err := fetchLatestRelease(selectedRepo)
+			if err != nil {
+				log.Printf("error fetching latest release for %s: %v", selectedRepo, err)
+				releaseText = ""
+			} else if release != nil {
+				releaseText = fmt.Sprintf("Tag: %s, Assets: ", release.TagName)
+				for _, a := range release.Assets {
+					releaseText += fmt.Sprintf("[%s : %s] ", a.Name, a.BrowseUrl)
+				}
+			} else {
+				releaseText = ""
+			}
+		}
+
+		// 2. Call Generation Logic
+		log.Printf("\nAnalyzing %s to generate installation steps...\n", selectedRepo)
+
+		rawJson, err := generateIPMJson(selectedRepo, contextData, releaseText, sourceType)
+		if err != nil {
+			log.Printf("❌ AI Analysis failed: %v\n", err)
+			http.Error(w, "Generation failed", http.StatusInternalServerError)
+			return
+		}
+
+		// FIX: Return the generated JSON data
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprint(w, rawJson)
+	}
 }
