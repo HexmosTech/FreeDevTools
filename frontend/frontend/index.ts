@@ -120,6 +120,7 @@ const toolLoaders: Record<string, (e: HTMLElement) => void> = {
     "search-page": (e) => renderDynamic(e, () => import('./components/search/SearchPage')),
     "pro": (e) => renderDynamic(e, () => import('./components/pages/pro/Pro')),
     "bookmarks": (e) => renderDynamic(e, () => import('./components/pages/pro/Bookmarks')),
+    "pro-search": (e) => renderDynamic(e, () => import('./components/search/ProSearchPage')),
     "profile": (e) => {
         const isProAttr = e.getAttribute('data-is-pro');
         const isPro = isProAttr === 'true';
