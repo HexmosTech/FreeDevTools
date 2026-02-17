@@ -277,6 +277,12 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 		handler.ServeHTTP(w, r)
 	})
 
+	// Pro search page (mobile-optimized)
+	mux.HandleFunc(basePath+"/pro/search/", func(w http.ResponseWriter, r *http.Request) {
+		handler := templ.Handler(pro_pages.Search())
+		handler.ServeHTTP(w, r)
+	})
+
 	// Profiling routes
 	mux.HandleFunc("/debug/pprof/", pprof.Index)
 	mux.HandleFunc("/debug/pprof/cmdline", pprof.Cmdline)
