@@ -30,7 +30,6 @@ import (
 	"fdt-templ/components/layouts"
 	mcp_pages "fdt-templ/components/pages/mcp"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	mcp_db "fdt-templ/internal/db/mcp"
 
 	"github.com/a-h/templ"
@@ -99,16 +98,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int
 	title := fmt.Sprintf("Awesome MCP Servers Directory – Discover %d Model Context Protocol Tools & Categories (Page %d) | Free DevTools by Hexmos", totalCategories, page)
 	description := fmt.Sprintf("Browse %s+ MCP repositories instantly with our comprehensive directory. Find Model Context Protocol servers, tools, and clients by category. Free, no registration required.", mcp_pages.FormatNumber(totalRepos))
 
-	// Get enabled ad types from config
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("mcp")
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	layoutProps := layouts.BaseLayoutProps{
 		Title:       title,
 		Description: description,
@@ -125,7 +114,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
 		PageURL:         basePath + "/mcp/",
-		TextBanner:      textBanner,
 	}
 
 	templ.Handler(mcp_pages.Index(data)).ServeHTTP(w, r)
@@ -197,16 +185,6 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categ
 	title := fmt.Sprintf("%s MCP Servers & Repositories – %d Model Context Protocol Tools (Page %d of %d) | Free DevTools by Hexmos", cat.Name, cat.Count, page, totalPages)
 	description := fmt.Sprintf("Discover %d %s MCP servers and repositories for Model Context Protocol integrations. Browse tools compatible with Claude, Cursor, and Windsurf — free, open source, and easy to explore.", cat.Count, cat.Name)
 
-	// Get enabled ad types from config
-	enabledAdTypes := config.GetEnabledAdTypes("mcp")
-	adsEnabled := config.GetAdsEnabled()
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	layoutProps := layouts.BaseLayoutProps{
 		Title:       title,
 		Description: description,
@@ -223,7 +201,6 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categ
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
 		PageURL:         fmt.Sprintf("%s/mcp/%s/", basePath, categorySlug),
-		TextBanner:      textBanner,
 	}
 
 	templ.Handler(mcp_pages.Category(data)).ServeHTTP(w, r)
@@ -270,10 +247,6 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 		description = fmt.Sprintf("%s's %s MCP server helps your AI generate more accurate and context-aware responses.", ownerName, repo.Name)
 	}
 
-	// Get enabled ad types from config
-	enabledAdTypes := config.GetEnabledAdTypes("mcp")
-
-	adsEnabled := config.GetAdsEnabled()
 	layoutProps := layouts.BaseLayoutProps{
 		Title:       title,
 		Description: description,
@@ -293,12 +266,6 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 			Slug: categorySlug,
 			Name: categoryName,
 		}
-	}
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
 	}
 
 	// Keywords for Ethical Ads
@@ -338,7 +305,6 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 		Category:        partialCat,
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
-		TextBanner:      textBanner,
 		Keywords:        keywords,
 		SeeAlsoItems:    seeAlsoItems,
 	}

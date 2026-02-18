@@ -30,7 +30,6 @@ import (
 	"fdt-templ/components/layouts"
 	svg_icons_pages "fdt-templ/components/pages/svg_icons"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	svg_icons_db "fdt-templ/internal/db/svg_icons"
 
 	"github.com/a-h/templ"
@@ -236,16 +235,6 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB,
 	// Use site banner for category pages
 	siteBannerUrl := "https://hexmos.com/freedevtools/public/site-banner.png"
 
-	// Get enabled ad types from config
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("svg_icons")
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	layoutProps := layouts.BaseLayoutProps{
 		Title:        title,
 		Description:  description,
@@ -268,7 +257,6 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB,
 		TotalPages:      totalPages,
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
-		TextBanner:      textBanner,
 	}
 
 	handler := templ.Handler(svg_icons_pages.Category(data))
@@ -338,10 +326,6 @@ func HandleIcon(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB, cat
 	// Build SVG image URL
 	svgImageUrl := fmt.Sprintf("https://hexmos.com/freedevtools/svg_icons/%s/%s.svg", category, iconNameForURL)
 
-	// Get enabled ad types from config
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("svg_icons")
-
 	layoutProps := layouts.BaseLayoutProps{
 		Name:           icon.Name,
 		Title:          title,
@@ -355,12 +339,6 @@ func HandleIcon(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB, cat
 		ImgWidth:       128,
 		ImgHeight:      128,
 		EncodingFormat: "image/svg+xml",
-	}
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
 	}
 
 	// Parse SeeAlso JSON
@@ -382,7 +360,6 @@ func HandleIcon(w http.ResponseWriter, r *http.Request, db *svg_icons_db.DB, cat
 		Category:        category,
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
-		TextBanner:      textBanner,
 		Keywords:        keywords,
 		SeeAlsoItems:    seeAlsoItems,
 	}
