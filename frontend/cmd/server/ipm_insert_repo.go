@@ -231,7 +231,7 @@ func SyncSingleRepoToMeili(p EntryPayload) error {
 
 	url := "https://search.apps.hexmos.com/indexes/freedevtools/documents"
 
-	// 4. POST to your production Meili instance
+	// 4. POST to production Meili instance
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(payload))
 	if err != nil {
 		return err
