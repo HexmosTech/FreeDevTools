@@ -125,12 +125,26 @@ function getBadgeVariant(category: string): string {
 
 function updateUrlHash(searchQuery: string): void {
   if (searchQuery.trim()) {
+    console.log('[SearchPage] updateUrlHash → setting hash to query:', JSON.stringify(searchQuery));
     window.location.hash = `search?q=${encodeURIComponent(searchQuery)}`;
   } else {
-    // Keep search page open with empty query
-    if (window.location.hash.startsWith('#search')) {
-      window.location.hash = 'search?q=';
+    // Never overwrite URL when it already has a query (popup mount would otherwise set #search?q=, trigger hashchange, and clear homepage/sidebar input)
+    if (!window.location.hash.startsWith('#search?q=')) {
+      console.log('[SearchPage] updateUrlHash(empty) → skip, hash not search');
+      return;
     }
+    try {
+      const hashParams = new URLSearchParams(window.location.hash.substring(8));
+      const currentQ = hashParams.get('q') || '';
+      if (currentQ.trim()) {
+        console.log('[SearchPage] updateUrlHash(empty) → skip, URL already has query:', JSON.stringify(currentQ));
+        return;
+      }
+    } catch {
+      /* ignore */
+    }
+    console.log('[SearchPage] updateUrlHash(empty) → setting hash to #search?q=');
+    window.location.hash = 'search?q=';
   }
 }
 
@@ -240,18 +254,28 @@ async function searchUtilities(
   }
 }
 
+function getQueryFromHash(): string {
+  if (typeof window === 'undefined' || !window.location.hash.startsWith('#search?q=')) {
+    console.log('[SearchPage] getQueryFromHash → no hash or not search, hash:', typeof window !== 'undefined' ? window.location.hash : '(ssr)');
+    return '';
+  }
+  try {
+    const hashParams = new URLSearchParams(window.location.hash.substring(8));
+    const q = hashParams.get('q') || '';
+    console.log('[SearchPage] getQueryFromHash →', JSON.stringify(q));
+    return q;
+  } catch {
+    return '';
+  }
+}
+
 // Hook
 function useSearchQuery() {
   const [query, setQuery] = useState(() => {
-    if (
-      typeof window !== 'undefined' &&
-      window.searchState &&
-      window.searchState.getQuery()
-    ) {
-      const initialQuery = window.searchState.getQuery();
-      return initialQuery;
-    }
-    return '';
+    if (typeof window === 'undefined') return '';
+    const initial = getQueryFromHash();
+    console.log('[SearchPage] useState initial query:', JSON.stringify(initial), 'hash:', window.location.hash);
+    return initial;
   });
 
   useEffect(() => {
@@ -262,6 +286,7 @@ function useSearchQuery() {
             window.location.hash.substring(8)
           );
           const searchParam = hashParams.get('q');
+          console.log('[SearchPage] checkHashForSearch → setQuery + searchState.setQuery:', JSON.stringify(searchParam || ''));
           // Set query even if empty (for empty search state)
           setQuery(searchParam || '');
           if (window.searchState) {
@@ -273,6 +298,7 @@ function useSearchQuery() {
       }
     };
 
+    console.log('[SearchPage] mount: running checkHashForSearch, hash:', window.location.hash);
     checkHashForSearch();
     window.addEventListener('hashchange', checkHashForSearch);
     return () => {
@@ -283,6 +309,7 @@ function useSearchQuery() {
   useEffect(() => {
     const handleSearchQueryChange = (event: CustomEvent) => {
       const newQuery = event.detail.query;
+      console.log('[SearchPage] searchQueryChanged received → setQuery + updateUrlHash:', JSON.stringify(newQuery));
       setQuery(newQuery);
       updateUrlHash(newQuery);
     };
@@ -294,6 +321,7 @@ function useSearchQuery() {
 
     if (window.searchState && window.searchState.getQuery()) {
       const initialQuery = window.searchState.getQuery();
+      console.log('[SearchPage] mount: searchState had query, updateUrlHash:', JSON.stringify(initialQuery));
       updateUrlHash(initialQuery);
     }
 
@@ -306,6 +334,12 @@ function useSearchQuery() {
   }, []);
 
   useEffect(() => {
+    const fromHash = getQueryFromHash();
+    if (fromHash !== query && fromHash.length > 0) {
+      // URL has a different non-empty query (e.g. user typed in sidebar while we had stale "a") - don't overwrite URL, sync state from URL
+      setQuery(fromHash);
+      return;
+    }
     updateUrlHash(query);
   }, [query]);
 
