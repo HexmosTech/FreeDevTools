@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"fdt-templ/components/layouts"
+	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/bookmarks"
 )
 
@@ -197,7 +197,7 @@ func extractCategoryFromURL(urlStr string) string {
 	}
 
 	// Use the same logic as GetAdPageTypeFromPath
-	return layouts.GetAdPageTypeFromPath(path)
+	return config.GetAdPageTypeFromPath(path)
 }
 
 // normalizeCategory normalizes category names
