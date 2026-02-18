@@ -21,6 +21,7 @@ type Config struct {
 	B2AccountID      string              `toml:"b2_account_id"`
 	B2ApplicationKey string              `toml:"b2_application_key"`
 	MeiliWriteKey    string              `toml:"meili_write_key"`
+	GeminiKeys		 string              `toml:"gemini_keys"`
 	EnableAds        bool                `toml:"enable_ads"`
 	Ads              map[string][]string `toml:"ads"`
 	FdtPgDB       FdtPgDBConfig    `toml:"fdt_pg_db"`
@@ -105,6 +106,7 @@ func LoadConfig() (*Config, error) {
 			B2AccountID:      "",
 			B2ApplicationKey: "",
 			MeiliWriteKey: "",
+			GeminiKeys: "",
 			EnableAds:        false,
 			Ads:              make(map[string][]string),
 		FdtPgDB: FdtPgDBConfig{
@@ -162,6 +164,7 @@ func GetConfig() *Config {
 				B2AccountID:      "",
 				B2ApplicationKey: "",
 				MeiliWriteKey: "",
+				GeminiKeys: "",
 				EnableAds:        false,
 			}
 		} else {
