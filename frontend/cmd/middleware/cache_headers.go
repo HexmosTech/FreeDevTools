@@ -3,6 +3,7 @@ package middleware
 import (
 	"net/http"
 	"strings"
+	"time"
 )
 
 // noCachePath returns true if path is /pro/* or /api/*.
@@ -15,9 +16,12 @@ func noCachePath(path string) bool {
 func CacheHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if noCachePath(r.URL.Path) {
+			now := time.Now().UTC().Format(http.TimeFormat)
 			w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0")
+			w.Header().Set("ETag", "W/\""+now+"\"")
+			w.Header().Set("Last-Modified", now)
 			w.Header().Set("Pragma", "no-cache")
-			w.Header().Set("Expires", "0")
+      w.Header().Set("Expires", "0")
 		} else {
 			w.Header().Set("Cache-Control", "public, max-age=31536000, no-transform")
 		}
