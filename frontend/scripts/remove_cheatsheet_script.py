@@ -1,7 +1,7 @@
-import sqlite3
 import os
+import sqlite3
 
-DB_PATH = 'db/all_dbs/cheatsheets-db-v4.db'
+DB_PATH = 'db/all_dbs/cheatsheets-db-v5.db'
 
 def remove_script_tags():
     if not os.path.exists(DB_PATH):

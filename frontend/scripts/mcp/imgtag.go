@@ -12,7 +12,7 @@ import (
 )
 
 // DefaultDBPath points to the standard location
-const DefaultDBPath = "/home/gk/hex/fdt-templ/db/all_dbs/mcp-db-v5.db"
+const DefaultDBPath = "/home/gk/hex/fdt-templ/db/all_dbs/mcp-db-v6.db"
 
 func main() {
 	dbPathPtr := flag.String("db", DefaultDBPath, "Path to the SQLite database")

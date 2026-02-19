@@ -17,7 +17,7 @@ type CheatsheetProcessor struct {
 
 // NewCheatsheetProcessor creates a new Cheatsheet processor
 func NewCheatsheetProcessor() (*CheatsheetProcessor, error) {
-	dbPath := filepath.Join("db", "all_dbs", "cheatsheets-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "cheatsheets-db-v5.db")
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)

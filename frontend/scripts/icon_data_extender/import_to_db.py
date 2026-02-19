@@ -12,7 +12,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent
 JSON_FILE = BASE_DIR / "icons_data.json"
 SVG_DIR = BASE_DIR / "svgs"
-DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db-v4.db"
+DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "png-icons-db-v5.db"
 PUBLIC_DIR = Path(__file__).parent.parent.parent / "public" / "svg_icons"
 
 

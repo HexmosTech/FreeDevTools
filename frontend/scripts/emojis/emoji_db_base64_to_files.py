@@ -20,7 +20,7 @@ import os
 import csv
 
 # Database and output paths
-DB_PATH = 'db/all_dbs/emoji-db-v4.db'
+DB_PATH = 'db/all_dbs/emoji-db-v5.db'
 OUTPUT_DIR = 'public/emojis'
 SKIPPED_CSV = 'skipped.csv'
 

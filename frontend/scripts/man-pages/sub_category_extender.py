@@ -6,15 +6,15 @@ This script adds subcategories to the man-pages database from URLs in 404.txt.
 It creates subcategories even if they don't have any pages (count = 0).
 """
 
-import sqlite3
 import hashlib
+import sqlite3
 import struct
-from pathlib import Path
 from datetime import datetime
+from pathlib import Path
 from typing import List, Tuple
 
 # Database path
-DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "man-pages-db-v4.db"
+DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "man-pages-db-v5.db"
 
 # Input file path
 INPUT_FILE = Path(__file__).parent.parent / "404.txt"
