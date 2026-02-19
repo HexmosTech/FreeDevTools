@@ -1,4 +1,4 @@
-.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version
+.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search
 
 # Variables
 PORT ?= 4321
@@ -21,30 +21,6 @@ help: ## Show this help message
 	@echo ''
 	@echo 'Available targets:'
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-15s %s\n", $$1, $$2}'
-
-bump-version: ## Bump version in internal/version/version.go (patch/minor/major)
-	@bash -c ' \
-		version_file="internal/version/version.go"; \
-		latest=$$(grep -E "const Version = " "$$version_file" | sed "s/.*\"\(.*\)\".*/\1/"); \
-		if [ -z "$$latest" ]; then echo "Could not read version from $$version_file"; exit 1; fi; \
-		echo "Current version: $$latest"; \
-		echo "Select bump type:"; \
-		echo "[1] patch"; \
-		echo "[2] minor"; \
-		echo "[3] major"; \
-		read -p "Enter choice (1/2/3): " choice; \
-		IFS=. read major minor patch <<< "$$latest"; \
-		case $$choice in \
-			1) new_version="$$major.$$minor.$$((patch+1))" ;; \
-			2) new_version="$$major.$$((minor+1)).0" ;; \
-			3) new_version="$$((major+1)).0.0" ;; \
-			*) echo "Invalid choice"; exit 1 ;; \
-		esac; \
-		echo "New version: $$new_version"; \
-		sed -i.bak "s/const Version = \".*\"/const Version = \"$$new_version\"/" "$$version_file"; \
-		rm -f "$$version_file.bak"; \
-		echo "Updated $$version_file to $$new_version"; \
-	'
 
 install: ## Install all dependencies
 	@echo "Installing Go dependencies..."
