@@ -347,7 +347,7 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
       ### OUTPUT FORMAT
       Output ONLY valid JSON matching the provided schema.`
 
-	  autoConfirmRules := `
+	autoConfirmRules := `
       ### UNIVERSAL NON-INTERACTIVE RULES
       Every command generated MUST be capable of running in a CI/CD pipeline without human input:
       - ALWAYS append -y, --noconfirm, or --non-interactive based on the specific package manager.
