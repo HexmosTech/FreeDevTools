@@ -17,7 +17,7 @@ type EmojisProcessor struct {
 
 // NewEmojisProcessor creates a new Emojis processor
 func NewEmojisProcessor() (*EmojisProcessor, error) {
-	dbPath := filepath.Join("db", "all_dbs", "emoji-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "emoji-db-v5.db")
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)

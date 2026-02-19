@@ -2,7 +2,7 @@
 """
 remove_image_data_column.py
 
-Removes the image_data column from the images table in emoji-db-v4.db.
+Removes the image_data column from the images table in emoji-db-v5.db.
 SQLite doesn't support DROP COLUMN directly, so we need to:
 1. Create a new table without image_data
 2. Copy all data (except image_data) to the new table
@@ -14,7 +14,7 @@ import sqlite3
 import sys
 from pathlib import Path
 
-DB_PATH = "db/all_dbs/emoji-db-v4.db"
+DB_PATH = "db/all_dbs/emoji-db-v5.db"
 
 
 def get_current_schema(cur: sqlite3.Cursor) -> str:

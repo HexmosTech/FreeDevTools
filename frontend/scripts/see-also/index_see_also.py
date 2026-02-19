@@ -4,19 +4,20 @@ Script to index and find "See Also" related content for MCP pages.
 Replicates the keyword extraction and search logic from SeeAlso.tsx
 """
 
-import sqlite3
-import re
-import json
-import sys
 import argparse
-from typing import List, Dict, Optional
-from html import unescape
-from html.parser import HTMLParser
-import requests
-
+import json
 # Meilisearch API configuration
 import os
+import re
+import sqlite3
+import sys
+from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
+from typing import Dict, List, Optional
+
+import requests
+
 
 def load_meili_config():
     """Load Meilisearch config from fdt-dev.toml"""
@@ -310,7 +311,7 @@ def main():
     if num_items != args.items:
         print(f"Warning: items clamped to {num_items} (must be between 1 and 10)", file=sys.stderr)
     
-    db_path = "db/all_dbs/mcp-db-v5.db"
+    db_path = "db/all_dbs/mcp-db-v6.db"
     
     # Query pages with hash_id and category_id
     query = """

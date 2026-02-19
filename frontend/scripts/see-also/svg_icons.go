@@ -17,7 +17,7 @@ type SvgIconsProcessor struct {
 
 // NewSvgIconsProcessor creates a new SVG icons processor
 func NewSvgIconsProcessor() (*SvgIconsProcessor, error) {
-	dbPath := filepath.Join("db", "all_dbs", "svg-icons-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "svg-icons-db-v5.db")
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)

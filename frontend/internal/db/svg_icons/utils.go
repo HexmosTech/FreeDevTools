@@ -52,5 +52,5 @@ func HashClusterToKeyInt(cluster string) int64 {
 // GetDBPath returns the path to the SVG icons database
 func GetDBPath() string {
 	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "svg-icons-db-v4.db")
+	return filepath.Join("db", "all_dbs", "svg-icons-db-v5.db")
 }

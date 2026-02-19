@@ -8,7 +8,7 @@ import (
 
 // GetDBPath returns the path to the mcp database
 func GetDBPath() string {
-	return filepath.Join("db", "all_dbs", "mcp-db-v5.db")
+	return filepath.Join("db", "all_dbs", "mcp-db-v6.db")
 }
 
 // HashToID generates a hash ID from a string key

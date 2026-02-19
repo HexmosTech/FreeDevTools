@@ -9,7 +9,7 @@ import (
 
 	_ "github.com/mattn/go-sqlite3"
 )
-var IPM_DB_FILE = "ipm-db-v5.db"
+var IPM_DB_FILE = "ipm-db-v6.db"
 // IpmProcessor implements Processor for IPM (Installerpedia) pages
 type IpmProcessor struct {
 	db *sql.DB

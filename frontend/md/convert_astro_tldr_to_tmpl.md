@@ -6,7 +6,7 @@ Port the Astro-based TLDR (Command Line Documentation) application to Go + Templ
 
 ## Database Setup
 
-1. **Verify database file**: Ensure `tldr-db-v4.db` is present in `db/all_dbs/`.
+1. **Verify database file**: Ensure `tldr-db-v5.db` is present in `db/all_dbs/`.
 2. **Create Go database package** at `internal/db/tldr/`:
 
 - `schema.go` - Define Go structs matching TypeScript interfaces (Command, Cluster, Page, etc.)

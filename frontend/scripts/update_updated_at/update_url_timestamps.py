@@ -1,23 +1,23 @@
 #!/usr/bin/env python3
+import argparse
+import os
 import sqlite3
 import sys
-import os
-from urllib.parse import urlparse
 from datetime import datetime, timezone
-import argparse
+from urllib.parse import urlparse
 
 # Database paths
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB_DIR = os.path.join(BASE_DIR, 'db', 'all_dbs')
 
-EMOJI_DB_PATH = os.path.join(DB_DIR, 'emoji-db-v4.db')
-CHEATSHEET_DB_PATH = os.path.join(DB_DIR, 'cheatsheets-db-v4.db')
-PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v4.db')
-SVG_ICONS_DB_PATH = os.path.join(DB_DIR, 'svg-icons-db-v4.db')
-TLDR_DB_PATH = os.path.join(DB_DIR, 'tldr-db-v4.db')
-MCP_DB_PATH = os.path.join(DB_DIR, 'mcp-db-v5.db')
-MAN_PAGES_DB_PATH = os.path.join(DB_DIR, 'man-pages-db-v4.db')
-IPM_DB_PATH = os.path.join(DB_DIR, 'ipm-db-v5.db')
+EMOJI_DB_PATH = os.path.join(DB_DIR, 'emoji-db-v5.db')
+CHEATSHEET_DB_PATH = os.path.join(DB_DIR, 'cheatsheets-db-v5.db')
+PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v5.db')
+SVG_ICONS_DB_PATH = os.path.join(DB_DIR, 'svg-icons-db-v5.db')
+TLDR_DB_PATH = os.path.join(DB_DIR, 'tldr-db-v5.db')
+MCP_DB_PATH = os.path.join(DB_DIR, 'mcp-db-v6.db')
+MAN_PAGES_DB_PATH = os.path.join(DB_DIR, 'man-pages-db-v5.db')
+IPM_DB_PATH = os.path.join(DB_DIR, 'ipm-db-v6.db')
 
 def get_current_time_str():
     """Returns current UTC time in ISO format with Z suffix."""

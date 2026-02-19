@@ -70,7 +70,7 @@ print_category_summary() {
 }
 
 # 1. MCP Pages - category_id is a hash, show category_id values
-print_category_summary "mcp-db-v5.db" "mcp_pages" "category" \
+print_category_summary "mcp-db-v6.db" "mcp_pages" "category" \
     "SELECT 'category_id: ' || category_id, COUNT(*) 
      FROM mcp_pages 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -78,7 +78,7 @@ print_category_summary "mcp-db-v5.db" "mcp_pages" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 2. Cheatsheets
-print_category_summary "cheatsheets-db-v4.db" "cheatsheet" "category" \
+print_category_summary "cheatsheets-db-v5.db" "cheatsheet" "category" \
     "SELECT category, COUNT(*) 
      FROM cheatsheet 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -86,7 +86,7 @@ print_category_summary "cheatsheets-db-v4.db" "cheatsheet" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 3. TLDR Pages - extract platform from URL (format: /freedevtools/tldr/{platform}/{command}/)
-print_category_summary "tldr-db-v4.db" "pages" "platform" \
+print_category_summary "tldr-db-v5.db" "pages" "platform" \
     "SELECT 
         replace(replace(url, '/freedevtools/tldr/', ''), '/' || substr(replace(url, '/freedevtools/tldr/', ''), instr(replace(url, '/freedevtools/tldr/', ''), '/') + 1), '') as platform,
         COUNT(*) 
@@ -96,7 +96,7 @@ print_category_summary "tldr-db-v4.db" "pages" "platform" \
      ORDER BY COUNT(*) DESC;"
 
 # 4. SVG Icons
-print_category_summary "svg-icons-db-v4.db" "icon" "cluster" \
+print_category_summary "svg-icons-db-v5.db" "icon" "cluster" \
     "SELECT cluster, COUNT(*) 
      FROM icon 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -104,7 +104,7 @@ print_category_summary "svg-icons-db-v4.db" "icon" "cluster" \
      ORDER BY COUNT(*) DESC;"
 
 # 5. PNG Icons
-print_category_summary "png-icons-db-v4.db" "icon" "cluster" \
+print_category_summary "png-icons-db-v5.db" "icon" "cluster" \
     "SELECT cluster, COUNT(*) 
      FROM icon 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -112,7 +112,7 @@ print_category_summary "png-icons-db-v4.db" "icon" "cluster" \
      ORDER BY COUNT(*) DESC;"
 
 # 6. Installerpedia (IPM)
-print_category_summary "ipm-db-v5.db" "ipm_data" "category" \
+print_category_summary "ipm-db-v6.db" "ipm_data" "category" \
     "SELECT COALESCE(c.repo_type, 'Unknown'), COUNT(*) 
      FROM ipm_data i 
      LEFT JOIN ipm_category c ON i.category_hash = c.category_hash 
@@ -121,7 +121,7 @@ print_category_summary "ipm-db-v5.db" "ipm_data" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 7. Man Pages
-print_category_summary "man-pages-db-v4.db" "man_pages" "category" \
+print_category_summary "man-pages-db-v5.db" "man_pages" "category" \
     "SELECT main_category || '/' || sub_category, COUNT(*) 
      FROM man_pages 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -129,7 +129,7 @@ print_category_summary "man-pages-db-v4.db" "man_pages" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 8. Emojis
-print_category_summary "emoji-db-v4.db" "emojis" "category" \
+print_category_summary "emoji-db-v5.db" "emojis" "category" \
     "SELECT COALESCE(category, 'Uncategorized'), COUNT(*) 
      FROM emojis 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'

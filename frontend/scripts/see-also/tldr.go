@@ -16,7 +16,7 @@ type TldrProcessor struct {
 
 // NewTldrProcessor creates a new TLDR processor
 func NewTldrProcessor() (*TldrProcessor, error) {
-	dbPath := filepath.Join("db", "all_dbs", "tldr-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "tldr-db-v5.db")
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)

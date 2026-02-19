@@ -37,7 +37,7 @@ type RawInstallerpediaRow struct {
 	Note                string
 }
 
-var IPM_DB_FILE = "ipm-db-v5.db"
+var IPM_DB_FILE = "ipm-db-v6.db"
 
 func generateInstallerpediaData(ctx context.Context) ([]InstallerpediaData, error) {
 	var err error

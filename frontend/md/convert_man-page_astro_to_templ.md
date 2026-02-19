@@ -6,7 +6,7 @@ Port the Astro-based man pages application to Go + Templ, maintaining server-sid
 
 ## Database Setup
 
-1. **Database already exists** at `db/all_dbs/man-pages-db-v4.db`
+1. **Database already exists** at `db/all_dbs/man-pages-db-v5.db`
 2. **Create Go database package** at `internal/db/man_pages/`:
 
 - `schema.go` - Define Go structs matching TypeScript interfaces (ManPage, Category, SubCategory, Overview, ManPageContent)
@@ -294,7 +294,7 @@ Create in `components/pages/man_pages/sitemap.go`:
 - Use `database/sql` with `github.com/mattn/go-sqlite3` driver
 - SQLite connection string: `mode=ro&_immutable=1&_cache_size=-128000&_mmap_size=468435456`
 - Connection pool: 20 max open/idle connections
-- Database path: `db/all_dbs/man-pages-db-v4.db`
+- Database path: `db/all_dbs/man-pages-db-v5.db`
 - JSON columns need explicit unmarshaling
 - Man page content contains HTML - use `templ.Raw()` carefully
 - Route matching must distinguish between numeric (pagination) and non-numeric (category/subcategory/slug) segments

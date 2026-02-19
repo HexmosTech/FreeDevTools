@@ -19,7 +19,7 @@ func generateCheatsheetsData(ctx context.Context) ([]CheatsheetData, error) {
 	fmt.Println("📖 Generating cheatsheets data...")
 
 	// Path to the SQLite database
-	dbPath := filepath.Join("..", "db", "all_dbs", "cheatsheets-db-v4.db")
+	dbPath := filepath.Join("..", "db", "all_dbs", "cheatsheets-db-v5.db")
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Copy missing 3D, Color, and Flat image variants from emoji-db.db to emoji-db-v4.db
+Copy missing 3D, Color, and Flat image variants from emoji-db.db to emoji-db-v5.db
 and extract the image files to the public directory.
 """
 
@@ -11,7 +11,7 @@ from pathlib import Path
 
 # Database paths
 OLD_DB = "db/all_dbs/emoji-db.db"
-NEW_DB = "db/all_dbs/emoji-db-v4.db"
+NEW_DB = "db/all_dbs/emoji-db-v5.db"
 PUBLIC_DIR = "public/emojis"
 
 def hash_string_to_int64(s):

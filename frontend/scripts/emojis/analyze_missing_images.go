@@ -153,11 +153,11 @@ func fileExists(path string) bool {
 func getDBPath() string {
 	// Try common database locations
 	possiblePaths := []string{
-		"db/all_dbs/emoji-db-v4.db",
-		"../db/all_dbs/emoji-db-v4.db",
-		"../../db/all_dbs/emoji-db-v4.db",
-		"./emoji-db-v4.db",
-		"scripts/emojis/../db/all_dbs/emoji-db-v4.db",
+		"db/all_dbs/emoji-db-v5.db",
+		"../db/all_dbs/emoji-db-v5.db",
+		"../../db/all_dbs/emoji-db-v5.db",
+		"./emoji-db-v5.db",
+		"scripts/emojis/../db/all_dbs/emoji-db-v5.db",
 	}
 
 	for _, path := range possiblePaths {
