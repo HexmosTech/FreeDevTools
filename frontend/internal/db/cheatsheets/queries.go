@@ -3,7 +3,9 @@ package cheatsheets
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"path/filepath"
+	"time"
 
 	db_config "fdt-templ/db/config"
 
@@ -58,6 +60,7 @@ func (db *DB) GetTotalCheatsheets() (int, error) {
 
 	var total int
 	// Attempt to get from overview table first
+	queryStart := time.Now()
 	err := db.conn.QueryRow("SELECT total_count FROM overview WHERE id = 1").Scan(&total)
 	if err != nil {
 		// Fallback to count query
@@ -66,6 +69,7 @@ func (db *DB) GetTotalCheatsheets() (int, error) {
 			return 0, err
 		}
 	}
+	log.Printf("[DB] GetTotalCheatsheets query took %v", time.Since(queryStart))
 
 	globalCache.Set(cacheKey, total, CacheTTLTotalCheatsheets)
 	return total, nil
@@ -80,7 +84,9 @@ func (db *DB) GetOverview() (*Overview, error) {
 
 	var overview Overview
 	query := `SELECT total_count, category_count, last_updated_at FROM overview WHERE id = 1`
+	queryStart := time.Now()
 	err := db.conn.QueryRow(query).Scan(&overview.TotalCount, &overview.CategoryCount, &overview.LastUpdatedAt)
+	log.Printf("[DB] GetOverview query took %v", time.Since(queryStart))
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return &Overview{}, nil
@@ -100,7 +106,9 @@ func (db *DB) GetTotalCategories() (int, error) {
 	}
 
 	var total int
+	queryStart := time.Now()
 	err := db.conn.QueryRow("SELECT COUNT(*) FROM category").Scan(&total)
+	log.Printf("[DB] GetTotalCategories query took %v", time.Since(queryStart))
 	if err != nil {
 		return 0, err
 	}
@@ -124,7 +132,9 @@ func (db *DB) GetCategoriesWithPreviews(page, itemsPerPage int) ([]CategoryWithP
 			  ORDER BY name 
 			  LIMIT ? OFFSET ?`
 
+	queryStart := time.Now()
 	rows, err := db.conn.Query(query, itemsPerPage, offset)
+	log.Printf("[DB] GetCategoriesWithPreviews main query took %v", time.Since(queryStart))
 	if err != nil {
 		return nil, err
 	}
@@ -182,7 +192,9 @@ func (db *DB) GetCategoryBySlug(slug string) (*Category, error) {
 
 	query := `SELECT id, name, slug, description, keywords, features FROM category WHERE slug = ?`
 	var r rawCategoryRow
+	queryStart := time.Now()
 	err := db.conn.QueryRow(query, slug).Scan(&r.ID, &r.Name, &r.Slug, &r.Description, &r.Keywords, &r.Features)
+	log.Printf("[DB] GetCategoryBySlug query took %v (slug=%s)", time.Since(queryStart), slug)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -210,7 +222,9 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 
 	// Get total count for pagination
 	var total int
+	queryStart := time.Now()
 	err := db.conn.QueryRow("SELECT COUNT(*) FROM cheatsheet WHERE category = ?", categorySlug).Scan(&total)
+	log.Printf("[DB] GetCheatsheetsByCategory count query took %v (category=%s)", time.Since(queryStart), categorySlug)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -222,7 +236,9 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 			  ORDER BY slug 
 			  LIMIT ? OFFSET ?`
 
+	queryStart = time.Now()
 	rows, err := db.conn.Query(query, categorySlug, itemsPerPage, offset)
+	log.Printf("[DB] GetCheatsheetsByCategory list query took %v (category=%s)", time.Since(queryStart), categorySlug)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -255,7 +271,9 @@ func (db *DB) GetUpdatedAtForCategory(categorySlug string) (string, error) {
 	}
 	query := `SELECT updated_at FROM category WHERE slug = ?`
 	var updatedAt string
+	queryStart := time.Now()
 	err := db.conn.QueryRow(query, categorySlug).Scan(&updatedAt)
+	log.Printf("[DB] GetUpdatedAtForCategory query took %v (category=%s)", time.Since(queryStart), categorySlug)
 	if err != nil {
 		return "", err
 	}
@@ -277,9 +295,11 @@ func (db *DB) GetCheatsheet(hashID int64) (*Cheatsheet, error) {
 			  WHERE hash_id = ?`
 
 	var r rawCheatsheetRow
+	queryStart := time.Now()
 	err := db.conn.QueryRow(query, hashID).Scan(
 		&r.HashID, &r.Category, &r.Slug, &r.Content, &r.Title, &r.Description, &r.Keywords, &r.SeeAlso,
 	)
+	log.Printf("[DB] GetCheatsheet query took %v (hash_id=%d)", time.Since(queryStart), hashID)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -302,7 +322,9 @@ func (db *DB) GetUpdatedAtForCheatsheet(hashID int64) (string, error) {
 
 	query := `SELECT updated_at FROM cheatsheet WHERE hash_id = ?`
 	var updatedAt string
+	queryStart := time.Now()
 	err := db.conn.QueryRow(query, hashID).Scan(&updatedAt)
+	log.Printf("[DB] GetUpdatedAtForCheatsheet query took %v (hash_id=%d)", time.Since(queryStart), hashID)
 	if err != nil {
 		return "", err
 	}
@@ -324,7 +346,9 @@ func (db *DB) GetAllCategoriesSitemap() ([]SitemapItem, error) {
 	}
 
 	query := `SELECT slug, updated_at FROM category ORDER BY slug`
+	queryStart := time.Now()
 	rows, err := db.conn.Query(query)
+	log.Printf("[DB] GetAllCategoriesSitemap query took %v", time.Since(queryStart))
 	if err != nil {
 		return nil, err
 	}
@@ -351,7 +375,9 @@ func (db *DB) GetCheatsheetsByCategorySitemap(categorySlug string) ([]SitemapIte
 	}
 
 	query := `SELECT slug, updated_at FROM cheatsheet WHERE category = ? ORDER BY slug`
+	queryStart := time.Now()
 	rows, err := db.conn.Query(query, categorySlug)
+	log.Printf("[DB] GetCheatsheetsByCategorySitemap query took %v (category=%s)", time.Since(queryStart), categorySlug)
 	if err != nil {
 		return nil, err
 	}
