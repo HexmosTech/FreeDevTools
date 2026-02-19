@@ -19,7 +19,7 @@ func generateSVGIconsData(ctx context.Context) ([]SVGIconData, error) {
 	fmt.Println("🎨 Generating SVG icons data...")
 
 	// Path to the SQLite database
-	dbPath := filepath.Join("..", "db", "all_dbs", "svg-icons-db-v4.db")
+	dbPath := filepath.Join("..", "db", "all_dbs", "svg-icons-db-v5.db")
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)

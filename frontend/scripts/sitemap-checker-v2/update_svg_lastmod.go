@@ -83,7 +83,7 @@ func parseLine(line string) *UpdateRecord {
 }
 
 func main() {
-	dbPath := flag.String("db", "/home/lince/hexmos/fdt-templ/db/all_dbs/svg-icons-db-v4.db", "Path to SQLite database")
+	dbPath := flag.String("db", "/home/lince/hexmos/fdt-templ/db/all_dbs/svg-icons-db-v5.db", "Path to SQLite database")
 	logFile := flag.String("log", "", "Path to log file")
 	verbose := flag.Bool("verbose", false, "Show log for each insertion")
 	flag.Parse()

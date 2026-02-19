@@ -29,7 +29,7 @@ type ManPageData struct {
 // generateManPagesData queries the database and returns all man page entries
 func generateManPagesData(ctx context.Context) ([]ManPageData, error) {
 	// Path to the SQLite database
-	dbPath := filepath.Join("..", "db", "all_dbs", "man-pages-db-v4.db")
+	dbPath := filepath.Join("..", "db", "all_dbs", "man-pages-db-v5.db")
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)

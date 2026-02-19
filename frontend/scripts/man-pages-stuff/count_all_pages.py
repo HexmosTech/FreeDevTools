@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import sqlite3
 import os
+import sqlite3
 from pathlib import Path
 
 db_dir = Path("../db/all_dbs")
@@ -8,13 +8,13 @@ total_pages = 0
 
 # Database configurations: (db_file, table_name, description)
 databases = [
-    ("man-pages-db-v4.db", "man_pages", "Man Pages"),
-    ("emoji-db-v4.db", "images", "Emojis"),
-    ("mcp-db-v5.db", "mcp_pages", "MCP Pages"),
-    ("cheatsheets-db-v4.db", "cheatsheet", "Cheatsheets"),
-    ("tldr-db-v4.db", "pages", "TLDR Pages"),
-    ("svg-icons-db-v4.db", None, "SVG Icons"),  # Will auto-detect
-    ("png-icons-db-v4.db", None, "PNG Icons"),  # Will auto-detect
+    ("man-pages-db-v5.db", "man_pages", "Man Pages"),
+    ("emoji-db-v5.db", "images", "Emojis"),
+    ("mcp-db-v6.db", "mcp_pages", "MCP Pages"),
+    ("cheatsheets-db-v5.db", "cheatsheet", "Cheatsheets"),
+    ("tldr-db-v5.db", "pages", "TLDR Pages"),
+    ("svg-icons-db-v5.db", None, "SVG Icons"),  # Will auto-detect
+    ("png-icons-db-v5.db", None, "PNG Icons"),  # Will auto-detect
 ]
 
 print("Counting detail pages from all databases:\n")

@@ -25,7 +25,6 @@ import (
 	"fdt-templ/components/layouts"
 	man_pages_components "fdt-templ/components/pages/man_pages"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	"fdt-templ/internal/db/man_pages"
 	"fmt"
 	"log"
@@ -93,17 +92,11 @@ func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.D
 		"commands",
 	}
 
-	var textBanner *banner.Banner
-	if config.GetAdsEnabled() && config.GetEnabledAdTypes("man-pages")["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	data := man_pages_components.IndexData{
 		Categories:      categories,
 		TotalCategories: len(categories),
 		TotalManPages:   totalManPages,
 		BreadcrumbItems: breadcrumbItems,
-		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:        title,
 			Description:  description,
@@ -789,15 +782,6 @@ func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB
 	title := fmt.Sprintf("%s - Manual Page | Free DevTools by Hexmos", manPage.Title)
 	description := fmt.Sprintf("Read the manual page for %s", manPage.Title)
 
-	// Get enabled ad types from config
-	enabledAdTypes := config.GetEnabledAdTypes("man-pages")
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	adsEnabled := config.GetAdsEnabled()
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-	}
-
 	// Keywords for Ethical Ads
 	keywords := []string{
 		"man pages",
@@ -844,7 +828,6 @@ func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB
 			PageType:     "TechArticle",
 			ShowHeader:   true,
 		},
-		TextBanner:   textBanner,
 		Keywords:     keywords,
 		SeeAlsoItems: seeAlsoItems,
 	}

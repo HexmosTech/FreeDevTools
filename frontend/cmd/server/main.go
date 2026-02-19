@@ -23,6 +23,7 @@ import (
 	"fdt-templ/internal/db/png_icons"
 	"fdt-templ/internal/db/svg_icons"
 
+	"fdt-templ/cmd/middleware"
 	"fdt-templ/internal/db/tldr"
 	"fdt-templ/internal/db/tools"
 	"fdt-templ/internal/pro"
@@ -177,7 +178,7 @@ func main() {
 
 	// Wrap mux with pro middleware first, then logging middleware
 	// Note: nginx handles compression, so gzip middleware is not needed
-	handler := loggingMiddleware(pro.ProMiddleware(mux))
+	handler := middleware.Logging(pro.ProMiddleware(middleware.CacheHeaders(mux)))
 
 	port := GetPort()
 	addr := ":" + port

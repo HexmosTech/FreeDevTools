@@ -16,7 +16,7 @@ type ManPagesProcessor struct {
 
 // NewManPagesProcessor creates a new Man Pages processor
 func NewManPagesProcessor() (*ManPagesProcessor, error) {
-	dbPath := filepath.Join("db", "all_dbs", "man-pages-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "man-pages-db-v5.db")
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get absolute path: %w", err)

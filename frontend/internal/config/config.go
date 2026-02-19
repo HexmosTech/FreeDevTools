@@ -279,6 +279,61 @@ func GetEnabledAdTypes(pageType string) map[string]bool {
 	return result
 }
 
+// GetAdPageTypeFromPath extracts the ad page type from a URL path or full URL.
+// Examples: "/freedevtools/" -> "index", "/freedevtools/svg_icons/" -> "svg_icons"
+func GetAdPageTypeFromPath(path string) string {
+	if path == "" {
+		return "index"
+	}
+	if strings.HasPrefix(path, "http://") || strings.HasPrefix(path, "https://") {
+		idx := strings.Index(path, "/freedevtools/")
+		if idx == -1 {
+			idx = strings.Index(path, "freedevtools/")
+			if idx == -1 {
+				return "index"
+			}
+			path = path[idx:]
+		} else {
+			path = path[idx+1:]
+		}
+	}
+	path = strings.Trim(path, "/")
+	parts := strings.Split(path, "/")
+	if len(parts) == 0 || parts[0] == "" {
+		return "index"
+	}
+	if parts[0] == "freedevtools" {
+		if len(parts) == 1 {
+			return "index"
+		}
+		parts = parts[1:]
+	}
+	switch parts[0] {
+	case "c":
+		return "c"
+	case "t":
+		return "t"
+	case "mcp":
+		return "mcp"
+	case "tldr":
+		return "tldr"
+	case "emojis":
+		return "emojis"
+	case "svg_icons":
+		return "svg_icons"
+	case "png_icons":
+		return "png_icons"
+	case "man-pages":
+		return "man-pages"
+	case "installerpedia":
+		return "installerpedia"
+	case "pro":
+		return "pro"
+	default:
+		return "index"
+	}
+}
+
 // LoadConfigFromPath loads config from a specific file path (for testing)
 func LoadConfigFromPath(path string) (*Config, error) {
 	absPath, err := filepath.Abs(path)

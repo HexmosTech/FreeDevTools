@@ -4,7 +4,6 @@ import (
 	"fdt-templ/components"
 	"fdt-templ/components/common"
 	"fdt-templ/components/layouts"
-	banner_db "fdt-templ/internal/db/banner"
 	"fdt-templ/internal/db/mcp"
 )
 
@@ -17,7 +16,6 @@ type IndexData struct {
 	BreadcrumbItems []components.BreadcrumbItem
 	LayoutProps     layouts.BaseLayoutProps
 	PageURL         string
-	TextBanner      *banner_db.Banner
 }
 
 type CategoryData struct {
@@ -29,7 +27,6 @@ type CategoryData struct {
 	BreadcrumbItems []components.BreadcrumbItem
 	LayoutProps     layouts.BaseLayoutProps
 	PageURL         string
-	TextBanner      *banner_db.Banner
 }
 
 type RepoData struct {
@@ -37,7 +34,6 @@ type RepoData struct {
 	Category        *mcp.McpCategory
 	BreadcrumbItems []components.BreadcrumbItem
 	LayoutProps     layouts.BaseLayoutProps
-	TextBanner      *banner_db.Banner
 	Keywords        []string
 	SeeAlsoItems    []common.SeeAlsoItem
 }

@@ -66,7 +66,7 @@ function getBadgeVariant(category: string): string {
 }
 
 const SEARCH_COUNT_KEY = 'freedevtools-search-count';
-const MAX_SEARCHES = 99;
+const MAX_SEARCHES = 20;
 
 function getSearchCount(): number {
   if (typeof window === 'undefined') return 0;

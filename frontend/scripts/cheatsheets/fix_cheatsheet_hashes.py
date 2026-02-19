@@ -3,13 +3,13 @@
 Fix hash mismatches in cheatsheets database by recalculating hash_id.
 """
 
-import sqlite3
 import hashlib
+import sqlite3
 import sys
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.parent.parent
-DB_PATH = BASE_DIR / "db" / "all_dbs" / "cheatsheets-db-v4.db"
+DB_PATH = BASE_DIR / "db" / "all_dbs" / "cheatsheets-db-v5.db"
 
 def calculate_hash(category: str, slug: str) -> int:
     """Calculate hash using current method"""

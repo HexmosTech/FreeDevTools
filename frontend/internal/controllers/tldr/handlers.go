@@ -29,7 +29,6 @@ import (
 	"fdt-templ/components/layouts"
 	"fdt-templ/components/pages/tldr"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	tldr_db "fdt-templ/internal/db/tldr"
 
 	"github.com/a-h/templ"
@@ -92,11 +91,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, page in
 		description = fmt.Sprintf("Browse page %d of our TLDR command documentation. Learn command-line tools across different platforms.", page)
 	}
 
-	var textBanner *banner.Banner
-	if config.GetAdsEnabled() && config.GetEnabledAdTypes("tldr")["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	data := tldr.TLDRIndexData{
 		Platforms:       currentPlatforms,
 		CurrentPage:     page,
@@ -104,7 +98,6 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, page in
 		TotalPlatforms:  totalPlatforms,
 		TotalCommands:   totalCommands,
 		BreadcrumbItems: breadcrumbItems,
-		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:       title,
 			Description: description,
@@ -219,16 +212,6 @@ func HandleCommand(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, platf
 		description = fmt.Sprintf("Documentation for %s command", command)
 	}
 
-	// Get enabled ad types from config
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("tldr")
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	// Keywords for Ethical Ads
 	var keywords []string
 	if len(page.Metadata.Keywords) > 0 {
@@ -269,7 +252,6 @@ func HandleCommand(w http.ResponseWriter, r *http.Request, db *tldr_db.DB, platf
 			Keywords:    keywords,
 			ShowHeader:  true,
 		},
-		TextBanner:   textBanner,
 		Keywords:     keywords,
 		SeeAlsoItems: seeAlsoItems,
 	}
