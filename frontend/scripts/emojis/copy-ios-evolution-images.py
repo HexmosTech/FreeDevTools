@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Copy iOS evolution images from emoji-db.db to emoji-db-v4.db
+Copy iOS evolution images from emoji-db.db to emoji-db-v5.db
 This script copies all iOS images that are missing in v1 db, calculating
 the required hash columns (emoji_slug_hash and emoji_slug_only_hash).
 """
@@ -12,7 +12,7 @@ import os
 
 # Database paths
 source_db = '/home/lovestaco/hex/fdt-templ/db/all_dbs/emoji-db.db'
-target_db = '/home/lovestaco/hex/fdt-templ/db/all_dbs/emoji-db-v4.db'
+target_db = '/home/lovestaco/hex/fdt-templ/db/all_dbs/emoji-db-v5.db'
 
 def hash_to_key(value):
     """Hash a string to int64 using SHA256 (first 8 bytes as big-endian int64)"""
@@ -34,7 +34,7 @@ def hash_image_key_with_filename(emoji_slug, filename):
     return hash_to_key(combined)
 
 def main():
-    print('🔄 Copying iOS evolution images from emoji-db.db to emoji-db-v4.db\n')
+    print('🔄 Copying iOS evolution images from emoji-db.db to emoji-db-v5.db\n')
     
     # Connect to both databases
     source_conn = sqlite3.connect(source_db)

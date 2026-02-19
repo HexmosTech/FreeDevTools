@@ -92,7 +92,7 @@ generate-critical: ## Generate Critical CSS (requires server running on port 432
 
 checkpoint-db: ## Checkpoint SQLite WAL (required before shipping with immutable mode)
 	@echo "Checkpointing SQLite WAL..."
-	@DB_PATH="db/all_dbs/svg-icons-db-v4.db"; \
+	@DB_PATH="db/all_dbs/svg-icons-db-v5.db"; \
 	if [ ! -f "$$DB_PATH" ]; then \
 		echo "Warning: Database file not found at $$DB_PATH"; \
 		echo "Skipping checkpoint..."; \
@@ -109,7 +109,7 @@ checkpoint-db: ## Checkpoint SQLite WAL (required before shipping with immutable
 
 man-pages-index-slug: ## Add index on slug column to man_pages table
 	@echo "Adding index on slug column to man_pages table..."
-	@DB_PATH="db/all_dbs/man-pages-db-v4.db"; \
+	@DB_PATH="db/all_dbs/man-pages-db-v5.db"; \
 	if [ ! -f "$$DB_PATH" ]; then \
 		echo "❌ Error: Database file not found at $$DB_PATH"; \
 		exit 1; \
@@ -129,7 +129,7 @@ man-pages-index-slug: ## Add index on slug column to man_pages table
 
 undo-man-pages-index-slug: ## Remove index on slug column from man_pages table
 	@echo "Removing index on slug column from man_pages table..."
-	@DB_PATH="db/all_dbs/man-pages-db-v4.db"; \
+	@DB_PATH="db/all_dbs/man-pages-db-v5.db"; \
 	if [ ! -f "$$DB_PATH" ]; then \
 		echo "❌ Error: Database file not found at $$DB_PATH"; \
 		exit 1; \

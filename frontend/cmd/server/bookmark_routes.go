@@ -7,7 +7,7 @@ import (
 	"net/url"
 	"strings"
 
-	"fdt-templ/components/layouts"
+	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/bookmarks"
 )
 
@@ -38,7 +38,6 @@ func setupBookmarkRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
 
 	// GET endpoint to check bookmark status
 	mux.HandleFunc(basePath+"/api/pro/bookmark/check", func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -81,7 +80,6 @@ func setupBookmarkRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
 
 	// POST endpoint to toggle bookmark
 	mux.HandleFunc(basePath+"/api/pro/bookmark/toggle", func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -142,7 +140,6 @@ func setupBookmarkRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
 
 	// GET endpoint to get all bookmarks for a user
 	mux.HandleFunc(basePath+"/api/pro/bookmark/list", func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
 		if r.Method != http.MethodGet {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
@@ -197,7 +194,7 @@ func extractCategoryFromURL(urlStr string) string {
 	}
 
 	// Use the same logic as GetAdPageTypeFromPath
-	return layouts.GetAdPageTypeFromPath(path)
+	return config.GetAdPageTypeFromPath(path)
 }
 
 // normalizeCategory normalizes category names

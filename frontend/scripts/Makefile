@@ -1,4 +1,11 @@
-.PHONY: emoji-blob-to-files add-emoji-indexes verify-indexes optimize-order-by-indexes optimize-man-pages-indexes create_html_content drop_content_column categorize-urls add-see-also-column man-page-sub-category-extender insert-emojis
+.PHONY: emoji-blob-to-files add-emoji-indexes verify-indexes optimize-order-by-indexes optimize-man-pages-indexes create_html_content drop_content_column categorize-urls add-see-also-column man-page-sub-category-extender insert-emojis bump-etag
+
+# Bump DB version and etag: copy each DB to next version, set updated_at to now.
+# Usage: make bump-etag DB=all   or   make bump-etag DB=mcp
+DB ?= all
+bump-etag:
+	@cd .. && python3 scripts/update_updated_at/bump_etag.py etag --db=$(DB)
+	@echo "✅ Bump done!"
 
 emoji-blob-to-files:
 	@echo "📦 Extracting emoji images from database to public/emojis/..."
@@ -6,22 +13,22 @@ emoji-blob-to-files:
 
 add-emoji-indexes:
 	@echo "🔧 Adding composite indexes for Apple and Discord images query optimization..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v4.db < scripts/emojis/add_apple_images_index.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/add_apple_images_index.sql
 	@echo "✅ Indexes created!"
 
 verify-indexes:
 	@echo "🔍 Verifying and creating emoji indexes..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v4.db < scripts/emojis/verify_and_create_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/verify_and_create_indexes.sql
 	@echo "✅ Index verification complete!"
 
 optimize-order-by-indexes:
 	@echo "🔧 Adding indexes to optimize ORDER BY performance..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v4.db < scripts/emojis/optimize_order_by_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/optimize_order_by_indexes.sql
 	@echo "✅ Order BY indexes created!"
 
 optimize-man-pages-indexes:
 	@echo "🔧 Adding indexes to optimize man pages queries..."
-	@cd .. && sqlite3 db/all_dbs/man-pages-db-v4.db < scripts/man-pages/optimize_man_pages_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/man-pages-db-v5.db < scripts/man-pages/optimize_man_pages_indexes.sql
 	@echo "✅ Man pages indexes created!"
 
 create_html_content:

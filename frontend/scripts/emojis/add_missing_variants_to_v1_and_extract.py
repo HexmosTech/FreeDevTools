@@ -5,7 +5,7 @@ Add missing image variant records to v1 database and extract image files to publ
 This script:
 1. Queries old database (emoji-db.db) for missing variants (3d, color, flat)
 2. Calculates proper hashes (emoji_slug_hash, emoji_slug_only_hash) matching Go implementation
-3. Inserts records into v1 database (emoji-db-v4.db) WITHOUT image_data column
+3. Inserts records into v1 database (emoji-db-v5.db) WITHOUT image_data column
 4. Extracts image files from old database to public/emojis/{emoji_slug}/
 """
 import sqlite3
@@ -15,7 +15,7 @@ from pathlib import Path
 
 # Database paths
 OLD_DB_PATH = 'db/all_dbs/emoji-db.db'
-V1_DB_PATH = 'db/all_dbs/emoji-db-v4.db'
+V1_DB_PATH = 'db/all_dbs/emoji-db-v5.db'
 OUTPUT_DIR = 'public/emojis'
 
 # Emoji slugs to check (can be extended)

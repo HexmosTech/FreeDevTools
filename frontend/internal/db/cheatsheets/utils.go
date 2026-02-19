@@ -8,7 +8,7 @@ import (
 
 // GetDBPath returns the path to the cheatsheets database
 func GetDBPath() string {
-	return filepath.Join("db", "all_dbs", "cheatsheets-db-v4.db")
+	return filepath.Join("db", "all_dbs", "cheatsheets-db-v5.db")
 }
 
 // HashURLToKeyInt generates a hash ID from category and slug.

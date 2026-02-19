@@ -31,7 +31,7 @@ type ManPageRecord struct {
 }
 
 func main() {
-	dbPath := filepath.Join("db", "all_dbs", "man-pages-db-v4.db")
+	dbPath := filepath.Join("db", "all_dbs", "man-pages-db-v5.db")
 	if len(os.Args) > 1 {
 		dbPath = os.Args[1]
 	}

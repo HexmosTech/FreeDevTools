@@ -29,7 +29,6 @@ import (
 	"fdt-templ/components/layouts"
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	"fdt-templ/internal/db/installerpedia"
 
 	"github.com/a-h/templ"
@@ -212,20 +211,6 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 
 	title := repo.Repo + " Installation Guide | Installerpedia"
 
-	// Get enabled ad types from config
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("installerpedia")
-
-	// Get banner if bannerdb is enabled
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		var err error
-		textBanner, err = banner.GetRandomBannerByType("text")
-		if err != nil {
-			log.Printf("Error getting random banner: %v", err)
-		}
-	}
-
 	// Keywords for Ethical Ads
 	keywords := []string{
 		"installerpedia",
@@ -263,7 +248,6 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 			TwitterImage: defaultOgImage,
 			ShowHeader:   true,
 		},
-		TextBanner:   textBanner,
 		Keywords:     keywords,
 		SeeAlsoItems: seeAlsoItems,
 	}

@@ -93,7 +93,7 @@ This will:
 
 - Read `icons_data.json`
 - Ensure the database schema has the `url_hash` column
-- Insert all icons into the PNG icons database at `db/all_dbs/png-icons-db-v4.db`
+- Insert all icons into the PNG icons database at `db/all_dbs/png-icons-db-v5.db`
 
 ## File Structure
 

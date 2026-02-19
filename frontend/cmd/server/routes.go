@@ -19,8 +19,6 @@ import (
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
 	static_pages "fdt-templ/components/pages/static"
 	pro_pages "fdt-templ/components/pages/static/pro"
-	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	"fdt-templ/internal/db/bookmarks"
 	"fdt-templ/internal/db/cheatsheets"
 	"fdt-templ/internal/db/emojis"
@@ -192,14 +190,7 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 			http.NotFound(w, r)
 			return
 		}
-		// Get banner if bannerdb is enabled
-		adsEnabled := GetAdsEnabled()
-		enabledAdTypes := config.GetEnabledAdTypes("index")
-		var bannerData *banner.Banner
-		if adsEnabled && enabledAdTypes["bannerdb"] {
-			bannerData, _ = banner.GetRandomBannerByType("text")
-		}
-		handler := templ.Handler(pages.Index(bannerData))
+		handler := templ.Handler(pages.Index())
 		handler.ServeHTTP(w, r)
 	})
 

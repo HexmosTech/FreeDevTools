@@ -51,8 +51,6 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 // handleAddEntry handles the HTTP concerns (parsing, headers, logging)
 func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
-
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return

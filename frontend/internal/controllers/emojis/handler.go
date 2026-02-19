@@ -35,7 +35,6 @@ import (
 	apple_components "fdt-templ/components/pages/emojis/apple"
 	discord_components "fdt-templ/components/pages/emojis/discord"
 	"fdt-templ/internal/config"
-	"fdt-templ/internal/db/banner"
 	"fdt-templ/internal/db/emojis"
 	"github.com/a-h/templ"
 )
@@ -204,15 +203,6 @@ func HandleEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.DB, slug
 		seoDescription = fmt.Sprintf("Learn about the %s emoji %s. Find meanings, shortcodes, and usage information.", emoji.Title, emoji.Code)
 	}
 
-	var textBanner, bannerBanner *banner.Banner
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("emojis")
-
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-		bannerBanner, _ = banner.GetRandomBannerByType("banner")
-	}
-
 	keywords := []string{
 		"emoji",
 		"emojis",
@@ -257,8 +247,6 @@ func HandleEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.DB, slug
 			Keywords:     keywords,
 			PageType:     "Article",
 		},
-		TextBanner:   textBanner,
-		BannerBanner: bannerBanner,
 		Keywords:     keywords,
 		SeeAlsoItems: seeAlsoItems,
 	}
@@ -351,14 +339,6 @@ func HandleAppleEmojisCategory(w http.ResponseWriter, r *http.Request, db *emoji
 		})
 	}
 
-	adsEnabled := config.GetAdsEnabled()
-	enabledAdTypes := config.GetEnabledAdTypes("emojis")
-
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	keywords := []string{
 		strings.ToLower(categoryName) + " apple emojis",
 		"apple emoji set",
@@ -384,7 +364,6 @@ func HandleAppleEmojisCategory(w http.ResponseWriter, r *http.Request, db *emoji
 			OgImage:      "https://hexmos.com/freedevtools/public/site-banner.png",
 			TwitterImage: "https://hexmos.com/freedevtools/public/site-banner.png",
 		},
-		TextBanner: textBanner,
 	}
 
 	handler := templ.Handler(apple_components.Category(data))
@@ -475,14 +454,6 @@ func HandleDiscordEmojisCategory(w http.ResponseWriter, r *http.Request, db *emo
 		canonical = fmt.Sprintf("%s/emojis/discord-emojis/%s/%d/", config.GetSiteURL(), categorySlug, page)
 	}
 
-	enabledAdTypes := config.GetEnabledAdTypes("emojis")
-	adsEnabled := config.GetAdsEnabled()
-
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	keywords := []string{
 		strings.ToLower(categoryName) + " discord emojis",
 		"discord emoji set",
@@ -507,7 +478,6 @@ func HandleDiscordEmojisCategory(w http.ResponseWriter, r *http.Request, db *emo
 			TwitterImage: "https://hexmos.com/freedevtools/public/site-banner.png",
 			Keywords:     keywords,
 		},
-		TextBanner: textBanner,
 	}
 
 	handler := templ.Handler(discord_components.Category(data))
@@ -611,14 +581,6 @@ func HandleAppleEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.DB,
 		description = fmt.Sprintf("Learn about the %s emoji in Apple's style: meaning, usage, and evolution.", emoji.Title)
 	}
 
-	enabledAdTypes := config.GetEnabledAdTypes("emojis")
-	adsEnabled := config.GetAdsEnabled()
-
-	var textBanner *banner.Banner
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	data := apple_components.EmojiData{
 		Emoji:           emoji,
 		LatestImage:     latestImage,
@@ -633,7 +595,6 @@ func HandleAppleEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.DB,
 			OgImage:      "https://hexmos.com/freedevtools/public/site-banner.png",
 			TwitterImage: "https://hexmos.com/freedevtools/public/site-banner.png",
 		},
-		TextBanner: textBanner,
 	}
 
 	handler := templ.Handler(apple_components.Emoji(data))
@@ -733,14 +694,6 @@ func HandleDiscordEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.D
 		description = fmt.Sprintf("Learn about the %s emoji in Discord's style: meaning, usage, and evolution.", emoji.Title)
 	}
 
-	enabledAdTypes := config.GetEnabledAdTypes("emojis")
-
-	var textBanner *banner.Banner
-	adsEnabled := config.GetAdsEnabled()
-	if adsEnabled && enabledAdTypes["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	data := discord_components.EmojiData{
 		Emoji:           emoji,
 		LatestImage:     latestImage,
@@ -755,7 +708,6 @@ func HandleDiscordEmojiSlug(w http.ResponseWriter, r *http.Request, db *emojis.D
 			OgImage:      "https://hexmos.com/freedevtools/public/site-banner.png",
 			TwitterImage: "https://hexmos.com/freedevtools/public/site-banner.png",
 		},
-		TextBanner: textBanner,
 	}
 
 	handler := templ.Handler(discord_components.Emoji(data))
@@ -859,11 +811,6 @@ func HandleEmojisIndex(w http.ResponseWriter, r *http.Request, db *emojis.DB, pa
 		"unicode emojis",
 	}
 
-	var textBanner *banner.Banner
-	if config.GetAdsEnabled() && config.GetEnabledAdTypes("emojis")["bannerdb"] {
-		textBanner, _ = banner.GetRandomBannerByType("text")
-	}
-
 	data := emojis_components.IndexData{
 		Categories:      paginatedCategories,
 		TotalCategories: totalCategories,
@@ -871,7 +818,6 @@ func HandleEmojisIndex(w http.ResponseWriter, r *http.Request, db *emojis.DB, pa
 		CurrentPage:     page,
 		TotalPages:      totalPages,
 		BreadcrumbItems: breadcrumbItems,
-		TextBanner:      textBanner,
 		LayoutProps: layouts.BaseLayoutProps{
 			Title:        title,
 			Description:  description,

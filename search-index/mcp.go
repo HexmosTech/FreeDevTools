@@ -29,7 +29,7 @@ func generateMCPData(ctx context.Context) ([]MCPData, error) {
 	fmt.Println("🔧 Generating MCP data...")
 
 	// Path to the SQLite database
-	dbPath := filepath.Join("..", "db", "all_dbs", "mcp-db-v5.db")
+	dbPath := filepath.Join("..", "db", "all_dbs", "mcp-db-v6.db")
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)

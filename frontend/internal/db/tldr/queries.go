@@ -48,7 +48,7 @@ func (db *DB) Close() error {
 // GetDB returns a database instance
 func GetDB() (*DB, error) {
 	// Standard path for tldr db
-	dbPath, err := filepath.Abs("db/all_dbs/tldr-db-v4.db")
+	dbPath, err := filepath.Abs("db/all_dbs/tldr-db-v5.db")
 	if err != nil {
 		return nil, err
 	}

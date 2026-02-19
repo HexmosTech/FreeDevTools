@@ -357,8 +357,6 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 
 func handleGenerateRepo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		SetNoCacheHeaders(w)
-
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return

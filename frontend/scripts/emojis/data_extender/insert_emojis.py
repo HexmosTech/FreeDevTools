@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Insert emojis from JSON file into the database.
-Reads from emojis.json and inserts into emoji-db-v4.db.
+Reads from emojis.json and inserts into emoji-db-v5.db.
 """
 
 import json
@@ -11,7 +11,7 @@ import hashlib
 from pathlib import Path
 
 # Database path (relative to project root)
-DB_PATH = "db/all_dbs/emoji-db-v4.db"
+DB_PATH = "db/all_dbs/emoji-db-v5.db"
 JSON_FILE = Path(__file__).parent / "emojis.json"
 
 

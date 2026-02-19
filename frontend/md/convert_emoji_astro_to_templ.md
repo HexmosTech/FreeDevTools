@@ -10,7 +10,7 @@ Port the Astro-based emoji application to Go + Templ, maintaining server-side re
 
 ## Database Setup
 
-1. **Database file**: `emoji-db-v4.db` (2.3G) already exists in `db/all_dbs/`
+1. **Database file**: `emoji-db-v5.db` (2.3G) already exists in `db/all_dbs/`
 2. **Create Go database package** at `internal/db/emojis/`:
 
 - `schema.go` - Define Go structs matching TypeScript interfaces (EmojiData, EmojiImageVariants, CategoryWithPreview, etc.)
@@ -350,7 +350,7 @@ Create sitemap handlers in `components/pages/emojis/sitemap.go`, `components/pag
 - Use `database/sql` with `github.com/mattn/go-sqlite3` driver
 - SQLite connection string: Use `EmojiDBConfig` from `db/config/db_config.go` (similar to SVG/man-pages)
 - Connection pool: 4 max open/idle connections (matching current setup)
-- Database path: `db/all_dbs/emoji-db-v4.db`
+- Database path: `db/all_dbs/emoji-db-v5.db`
 - JSON columns need explicit unmarshaling
 - Route matching must distinguish between numeric (pagination) and non-numeric (category/slug) segments
 - Vendor exclusion lists are in `emojis-consts.ts` - port to Go constants
