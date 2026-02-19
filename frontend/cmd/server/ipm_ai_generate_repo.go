@@ -295,15 +295,27 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 	if sourceType == "repology" {
 		repologyContext = `
       ### REPOLOGY SPECIFIC RULES
-      The 'README/CONTEXT CONTENT' provided is a Repology JSON array.
-      1. **Package Identification:** Map the 'repo' field (e.g., "aur", "debian", "nix_pkgs") to its corresponding package manager.
-      2. **Command Construction:** Use the 'srcname' or 'binname' to create the installation command.
-         - If repo is 'aur': "yay -S [binname]"
-         - If repo is 'debian' or 'ubuntu': "sudo apt install [binname]"
-         - If repo is 'nix_pkgs': "nix-env -iA nixpkgs.[binname]"
-         - If repo is 'pip': "pip install [srcname]"
-      3. **Title Format:** Use "Install via [Repository Name]" (e.g., "Install via AUR").
-      4. **Accuracy:** Ensure the 'version' from the Repology data is noted if relevant.`
+      	The 'README/CONTEXT CONTENT' provided is a Repology JSON array.
+		1. **Package Identification:** Map the 'repo' field (e.g., "aur", "debian", "nix_pkgs") to its corresponding package manager.
+		2. **Command Construction:** Use the 'srcname' or 'binname' to create the installation command.
+		3. **Title Format:** Use "Install via [Repository Name]" (e.g., "Install via AUR").
+		4. **Accuracy:** Ensure the 'version' from the Repology data is noted if relevant.
+
+	  ### REPOLOGY AUTO-CONFIRMATION MAPPING
+		Map the Repology 'repo' field to these EXACT non-interactive commands:
+		Some examples:
+		1.  **Alpine (alpine_*)**: "apk add [binname]" (Note: apk is non-interactive by default, but use --no-cache for efficiency).
+		2.  **Arch/AUR (arch, aur)**: "yay -S --noconfirm [binname]" or "sudo pacman -S --noconfirm [binname]".
+		3.  **Debian/Ubuntu/Devuan/Kali/PureOS (debian_*, ubuntu_*, kali_*, etc.)**: "sudo apt-get install -y [binname]".
+		4.  **Fedora/CentOS/AlmaLinux/Rocky/openEuler (fedora_*, centos_*, ammalinux_*, openeuler_*)**: "sudo dnf install -y [binname]".
+		5.  **openSUSE (opensuse_*)**: "sudo zypper --non-interactive install [binname]".
+		6.  **FreeBSD/MidnightBSD (freebsd, midnightbsd)**: "sudo pkg install -y [binname]".
+		7.  **Nix (nixpkgs_*)**: "nix-env -iA nixpkgs.[binname]".
+		8.  **macOS (homebrew)**: "brew install [binname]".
+		9.  **Windows (scoop, chocolatey)**: "scoop install [binname]" or "choco install -y [binname]".
+		10. **Solus (solus)**: "sudo eopkg install -y [binname]".
+		11. **Void Linux (void)**: "sudo xbps-install -y [binname]".
+		12. **Gentoo (gentoo)**: "sudo emerge --ask=n [binname]".`
 	}
 
 	// Extraction Rules (Merged with your existing rules)
@@ -335,8 +347,14 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
       ### OUTPUT FORMAT
       Output ONLY valid JSON matching the provided schema.`
 
+	  autoConfirmRules := `
+      ### UNIVERSAL NON-INTERACTIVE RULES
+      Every command generated MUST be capable of running in a CI/CD pipeline without human input:
+      - ALWAYS append -y, --noconfirm, or --non-interactive based on the specific package manager.
+      - If a command requires sudo, include 'sudo ' at the start.
+      - If multiple commands are needed (like adding a repo before installing), provide them as sequential objects in the instructions array.`
 	// Final Prompt Assembly
-	fullPrompt := promptHeader + repologyContext + extractionRules
+	fullPrompt := promptHeader + "\n" + repologyContext + "\n" + autoConfirmRules + "\n" + extractionRules
 
 	if USE_MOCK {
 		return mockData, nil
