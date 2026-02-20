@@ -11,6 +11,24 @@ const ProBanner: React.FC = () => {
     setTimeout(() => setIsVisible(true), 10);
   }, []);
 
+  // Re-show when URL says show (hash or buy param) – fixes re-open after close
+  useEffect(() => {
+    const checkShow = () => {
+      const hash = window.location.hash;
+      const buy = new URLSearchParams(window.location.search).get('buy');
+      if (hash === '#pro-banner' || buy === 'pro') {
+        setIsVisible(true);
+      }
+    };
+    checkShow();
+    window.addEventListener('hashchange', checkShow);
+    window.addEventListener('popstate', checkShow);
+    return () => {
+      window.removeEventListener('hashchange', checkShow);
+      window.removeEventListener('popstate', checkShow);
+    };
+  }, []);
+
   const benefits = [
     {
       icon: Shield,
