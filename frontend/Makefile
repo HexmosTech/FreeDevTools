@@ -227,8 +227,12 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@echo "Test: curl http://localhost:4321/freedevtools/"
 	@echo "Use 'make stop-prod' to stop the server"
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
-	@echo "Generating sitemaps in background..."
-	@$(MAKE) generate-sitemaps > sitemap-generation.log 2>&1 &
+	@if [ "$(SKIP_SITEMAP)" != "1" ] && [ "$(SKIP_SITEMAP)" != "true" ]; then \
+		echo "Generating sitemaps in background..."; \
+		$(MAKE) generate-sitemaps > sitemap-generation.log 2>&1 & \
+	else \
+		echo "Skipping sitemap generation."; \
+	fi
 
 start-prod-binary: ## Start production server using existing binary (no build)
 	@if [ ! -f bin/fdt-binary ]; then \
