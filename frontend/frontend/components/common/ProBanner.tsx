@@ -11,6 +11,24 @@ const ProBanner: React.FC = () => {
     setTimeout(() => setIsVisible(true), 10);
   }, []);
 
+  // Re-show when URL says show (hash or buy param) – fixes re-open after close
+  useEffect(() => {
+    const checkShow = () => {
+      const hash = window.location.hash;
+      const buy = new URLSearchParams(window.location.search).get('buy');
+      if (hash === '#pro-banner' || buy === 'pro') {
+        setIsVisible(true);
+      }
+    };
+    checkShow();
+    window.addEventListener('hashchange', checkShow);
+    window.addEventListener('popstate', checkShow);
+    return () => {
+      window.removeEventListener('hashchange', checkShow);
+      window.removeEventListener('popstate', checkShow);
+    };
+  }, []);
+
   const benefits = [
     {
       icon: Shield,
@@ -186,7 +204,7 @@ const ProBanner: React.FC = () => {
                 {/* CTA Button */}
                 <button
                   onClick={handleBuyNow}
-                  className="w-full font-bold py-3 px-10 mb-4 md:mb-10 rounded-xl transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
+                  className="w-full font-bold py-3 px-10 mb-2 rounded-xl transition-all duration-200 hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2 shadow-lg hover:shadow-xl transform hover:scale-[1.02]"
                   style={{
                     backgroundColor: '#1e293b',
                     color: '#d4cb24'
@@ -197,6 +215,12 @@ const ProBanner: React.FC = () => {
                     Claim Deal - $29
                   </span>
                 </button>
+                <a
+                  href="/freedevtools/pro/"
+                  className="inline-block text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300 hover:border-fdt-yellow-dark dark:hover:border-yellow-700 border-b border-transparent transition-colors"
+                >
+                  View all benefits
+                </a>
               </div>
             </div>
           </div>

@@ -143,6 +143,16 @@ A curated collection of 1,25,000+ free resources, icons, cheat sheets, and TLDRs
    make run
    ```
 
+4. **Run production server**
+
+   ```bash
+   make start-prod
+   ```
+   To skip sitemap generation in the background when starting the production server, use:
+   ```bash
+   make start-prod SKIP_SITEMAP=1
+   ```
+
 ---
 
 

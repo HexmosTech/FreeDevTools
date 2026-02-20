@@ -268,9 +268,9 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 		handler.ServeHTTP(w, r)
 	})
 
-	// Pro search page (mobile-optimized)
+	// Pro search page (templ-wrapped; React mounts into #pro-search-root)
 	mux.HandleFunc(basePath+"/pro/search/", func(w http.ResponseWriter, r *http.Request) {
-		handler := templ.Handler(pro_pages.Search())
+		handler := templ.Handler(pro_pages.ProSearch())
 		handler.ServeHTTP(w, r)
 	})
 
