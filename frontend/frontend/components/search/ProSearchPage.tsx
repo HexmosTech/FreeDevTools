@@ -370,7 +370,7 @@ const ProSearchPage: React.FC = () => {
         <h1 className="text-lg font-semibold text-foreground truncate flex-1">Search</h1>
         {!isPro && searchesLeft >= 0 && (
           <a
-            href="/freedevtools/pro/#pro-banner"
+            href="#pro-banner"
             className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl border border-fdt-yellow-dark dark:border-yellow-700 bg-fdt-yellow-dark/5 dark:bg-yellow-700/10 shrink-0"
           >
             {searchesLeft === 0 ? <ExclamationTriangleIcon className="w-5 h-5 text-fdt-yellow-dark dark:text-yellow-700 shrink-0" /> : <MagnifyingGlassIcon className="w-5 h-5 text-fdt-yellow-dark dark:text-yellow-700 shrink-0" />}
