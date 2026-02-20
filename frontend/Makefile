@@ -53,11 +53,6 @@ generate-sitemaps: ## Generate static sitemaps
 	@echo "Generating sitemaps..."
 	@$(LOAD_ENV) $(GO_CMD) run scripts/sitemap-generator/main.go -section all
 
-generate-sitemap-installerpedia: ## Generate Installerpedia sitemap only
-	@echo "Generating Installerpedia sitemap..."
-	@$(LOAD_ENV) $(GO_CMD) run scripts/sitemap-generator/main.go -section installerpedia
-
-
 build-css: ## Build Tailwind CSS
 	@echo "Building CSS..."
 	@if [ ! -d "node_modules" ]; then \
@@ -232,6 +227,8 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@echo "Test: curl http://localhost:4321/freedevtools/"
 	@echo "Use 'make stop-prod' to stop the server"
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
+	@echo "Generating sitemaps in background..."
+	@$(MAKE) generate-sitemaps > sitemap-generation.log 2>&1 &
 
 start-prod-binary: ## Start production server using existing binary (no build)
 	@if [ ! -f bin/fdt-binary ]; then \
