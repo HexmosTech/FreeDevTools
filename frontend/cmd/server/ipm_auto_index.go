@@ -390,9 +390,7 @@ func handleAutoIndex(db *installerpedia.DB) http.HandlerFunc {
 		}
 
 		// Set repo field if not present
-		if entryPayload.Repo == "" {
-			entryPayload.Repo = bestMatch.Name
-		}
+		entryPayload.Repo = bestMatch.Name
 
 		// Insert into database
 		log.Printf("💾 [Auto-Index] Inserting entry for: %s", entryPayload.Repo)
