@@ -366,6 +366,11 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 
 	// Call Gemini
 	result, err := QueryGemini(fullPrompt, schema)
+
+	// DEBUG --------------
+	// fmt.Println(result)
+	// --------------------
+
 	if err != nil {
 		return "", err
 	}
