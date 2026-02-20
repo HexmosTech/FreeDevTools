@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useState } from 'react';
 import toast from '@/components/ToastProvider';
 import { MEILI_SEARCH_API_KEY } from '@/config';
 import { getProStatusFromCookie } from '@/lib/api';
@@ -7,6 +6,7 @@ import {
   ExclamationTriangleIcon,
   MagnifyingGlassIcon,
 } from '@radix-ui/react-icons';
+import React, { useCallback, useEffect, useState } from 'react';
 
 interface SearchResult {
   id?: string;
@@ -358,29 +358,34 @@ const ProSearchPage: React.FC = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background pb-safe">
       {/* Sticky header: back + title + searches left */}
-      <header className="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 bg-background/95 backdrop-blur border-b border-border safe-area-inset-top">
+      <header className="sticky top-0 z-10 flex items-center gap-3 px-2 py-3 bg-background/95 backdrop-blur border-b border-border safe-area-inset-top">
         <button
           type="button"
           onClick={() => window.history.back()}
           className="flex items-center justify-center w-11 h-11 rounded-xl border border-border bg-muted/50 hover:bg-muted focus:border-fdt-yellow-dark dark:focus:border-yellow-700 focus:outline-none focus:ring-2 focus:ring-fdt-yellow-dark/30 dark:focus:ring-yellow-700/30"
           aria-label="Go back"
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7" /></svg>
         </button>
         <h1 className="text-lg font-semibold text-foreground truncate flex-1">Search</h1>
         {!isPro && searchesLeft >= 0 && (
           <a
             href="#pro-banner"
-            className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl border border-fdt-yellow-dark dark:border-yellow-700 bg-fdt-yellow-dark/5 dark:bg-yellow-700/10 shrink-0"
+            className="flex items-center gap-2 min-h-[44px] px-3 rounded-xl shrink-0"
+            style={{
+              borderWidth: '1px',
+              borderColor: '#d4cb24',
+              color: '#d4cb24',
+            }}
           >
-            {searchesLeft === 0 ? <ExclamationTriangleIcon className="w-5 h-5 text-fdt-yellow-dark dark:text-yellow-700 shrink-0" /> : <MagnifyingGlassIcon className="w-5 h-5 text-fdt-yellow-dark dark:text-yellow-700 shrink-0" />}
-            <span className="text-sm font-medium text-fdt-yellow-dark dark:text-yellow-700 whitespace-nowrap">{searchesLeft} left</span>
+            {searchesLeft === 0 ? <ExclamationTriangleIcon className="w-5 h-5 shrink-0" style={{ color: '#d4cb24' }} /> : <MagnifyingGlassIcon className="w-5 h-5 shrink-0" style={{ color: '#d4cb24' }} />}
+            <span className="text-sm font-medium whitespace-nowrap" style={{ color: '#d4cb24' }}>{searchesLeft} left</span>
           </a>
         )}
       </header>
 
       {/* Search bar - touch friendly (type="text" to avoid native clear; inputMode="search" keeps mobile keyboard) */}
-      <div className="px-4 pt-4 pb-3">
+      <div className="px-2 pt-4 pb-3">
         <div className="relative flex-1 flex gap-2">
           <input
             ref={searchInputRef}
@@ -392,8 +397,8 @@ const ProSearchPage: React.FC = () => {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             className="flex-1 min-h-[48px] pl-4 pr-12 rounded-xl border border-border bg-white dark:bg-slate-800 text-foreground placeholder:text-muted-foreground
-              focus:outline-none focus:border-fdt-yellow-dark dark:focus:border-yellow-700 focus:ring-2 focus:ring-fdt-yellow-dark/20 dark:focus:ring-yellow-700/20
-              hover:border-fdt-yellow-dark/80 dark:hover:border-yellow-700/80"
+              focus:outline-none focus:border-fdt-yellow-dark  focus:ring-2 focus:ring-fdt-yellow-dark/20 dark:focus:ring-yellow-700/20
+              hover:border-fdt-yellow-dark/80"
           />
           {query.trim() && (
             <button
@@ -409,7 +414,7 @@ const ProSearchPage: React.FC = () => {
       </div>
 
       {/* Category tabs - horizontal scroll */}
-      <div className="flex items-center gap-1 px-4 pb-2 border-b border-border overflow-x-auto scrollbar-none -webkit-overflow-scrolling-touch">
+      <div className="flex items-center gap-1 px-2 pb-2 border-b border-border overflow-x-auto scrollbar-none -webkit-overflow-scrolling-touch">
         <button
           onClick={() => handleCategoryClick('all')}
           onContextMenu={(e) => handleCategoryRightClick(e, 'all')}
@@ -434,7 +439,7 @@ const ProSearchPage: React.FC = () => {
       </div>
 
       {/* Results - single column, generous spacing */}
-      <main className="flex-1 px-4 py-4 overflow-auto">
+      <main className="flex-1 px-2 py-4 overflow-auto">
         {loading && (
           <div className="flex flex-col items-center justify-center py-16">
             <div className="w-10 h-10 border-2 border-primary border-t-transparent rounded-full animate-spin" />
