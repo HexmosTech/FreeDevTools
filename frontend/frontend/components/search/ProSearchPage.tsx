@@ -358,7 +358,7 @@ const ProSearchPage: React.FC = () => {
   return (
     <div className="min-h-[100dvh] flex flex-col bg-background pb-safe">
       {/* Sticky header: back + title + searches left */}
-      <header className="sticky top-0 z-10 flex items-center gap-3 px-2 py-3 bg-background/95 backdrop-blur border-b border-border safe-area-inset-top">
+      <header className="sticky top-0 z-10 flex items-center gap-3 px-2 pb-3 bg-background/95 backdrop-blur border-b border-border safe-area-inset-top">
         <button
           type="button"
           onClick={() => window.history.back()}
