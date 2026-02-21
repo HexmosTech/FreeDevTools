@@ -46,9 +46,32 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/add-entry", handleAddEntry(db))
 	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
+	mux.HandleFunc(base+"/featured", handleGetFeatured())
 
 }
 
+
+func handleGetFeatured() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        // --- Configuration Variables (Change these anytime) ---
+        title := "Featured: Git-LRC"
+        tagline := "Free, unlimited AI code reviews that run on commit"
+        link := "https://www.producthunt.com/products/git-lrc"
+        // ------------------------------------------------------
+
+        w.Header().Set("Content-Type", "application/json")
+
+        // Constructing the message
+        // This format is clean, descriptive, and very easy for terminals to auto-link
+        msg := fmt.Sprintf("%s: %s %s ", title, tagline, link)
+
+        resp := map[string]string{"message": msg}
+        
+        if err := json.NewEncoder(w).Encode(resp); err != nil {
+            http.Error(w, err.Error(), http.StatusInternalServerError)
+        }
+    }
+}
 // handleAddEntry handles the HTTP concerns (parsing, headers, logging)
 func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
