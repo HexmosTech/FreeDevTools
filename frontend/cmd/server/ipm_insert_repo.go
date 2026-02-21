@@ -57,13 +57,14 @@ func handleGetFeatured() http.HandlerFunc {
         title := "Featured: Git-LRC"
         tagline := "Free, unlimited AI code reviews that run on commit"
         link := "https://www.producthunt.com/products/git-lrc"
+        cta := "Upvote and support us on Product Hunt!" 
         // ------------------------------------------------------
 
         w.Header().Set("Content-Type", "application/json")
 
         // Constructing the message
-        // This format is clean, descriptive, and very easy for terminals to auto-link
-        msg := fmt.Sprintf("%s: %s %s ", title, tagline, link)
+        // Added the CTA at the end for maximum visibility
+        msg := fmt.Sprintf("%s - %s. %s: %s", title, tagline, cta, link)
 
         resp := map[string]string{"message": msg}
         
