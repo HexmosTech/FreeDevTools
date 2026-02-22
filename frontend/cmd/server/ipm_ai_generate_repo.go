@@ -378,6 +378,121 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 	return result, nil
 }
 
+func generateSingleMethodJson(repoName, readme, releaseInfo, osFamily, sourceType string) (string, error) {
+    schema := map[string]interface{}{
+        "type": "object",
+        "properties": map[string]interface{}{
+            "installation_methods": map[string]interface{}{
+                "type": "array",
+                "items": map[string]interface{}{
+                    "type": "object",
+                    "properties": map[string]interface{}{
+                        "title": map[string]interface{}{"type": "string"},
+                        "instructions": map[string]interface{}{
+                            "type": "array",
+                            "items": map[string]interface{}{
+                                "type": "object",
+                                "properties": map[string]interface{}{
+                                    "command": map[string]interface{}{"type": "string"},
+                                },
+                                "required": []string{"command"},
+                            },
+                        },
+                    },
+                    "required": []string{"title", "instructions"},
+                },
+            },
+        },
+        "required": []string{"installation_methods"},
+    }
+
+    // Build header with source context
+    promptHeader := fmt.Sprintf(`
+      You are an Expert DevOps Engineer. Provide exactly ONE high-quality installation method for '%s'.
+      
+      ### TARGET ENVIRONMENT
+      - **Operating System / Linux Family:** %s
+      
+      ### DATA SOURCES
+      - **README/CONTEXT:** %s
+      - **RELEASE ASSETS:** %s`, repoName, osFamily, readme, releaseInfo)
+
+    repologyContext := ""
+    if sourceType == "repology" {
+        repologyContext = `
+      ### REPOLOGY RULES
+      The context is a Repology JSON array. 
+      1. Map the 'repo' field to the package manager for %s.
+      2. Use 'srcname'/'binname' for the command.
+      3. Use EXACT non-interactive commands (apt-get install -y, etc).`
+    }
+
+    extractionRules := fmt.Sprintf(`
+      ### MANDATORY RULES
+      1. **OS SPECIFICITY:** Commands MUST be tailored for %s.
+      2. **PREFERENCE:** Package Manager > Binary > Source.
+      3. **NON-INTERACTIVE:** Include -y, --noconfirm, etc.
+      4. **ATOMICITY:** Each command object is a single step (git clone then cd).
+      5. **OUTPUT:** Raw JSON only.`, osFamily)
+
+    return QueryGemini(promptHeader+"\n"+repologyContext+"\n"+extractionRules, schema)
+}
+
+func handleGenerateRepoMethod() http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost {
+            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+            return
+        }
+
+        var payload struct {
+            Repo       string `json:"repo"`
+            OsFamily   string `json:"os_family"`
+            SourceType string `json:"source_type"`
+        }
+
+        if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+            http.Error(w, "Invalid JSON", http.StatusBadRequest)
+            return
+        }
+
+        var contextData string
+        var releaseText string
+
+        // Replicating your SourceType logic
+        if payload.SourceType == "repology" {
+            repologyData, err := fetchRepologyContext(payload.Repo)
+            if err != nil {
+                log.Printf("error fetching Repology context: %v", err)
+            } else {
+                contextData = repologyData
+            }
+            releaseText = "Source: Repology Package Repository"
+        } else {
+            readmeBody, _ := fetchReadme(payload.Repo)
+            contextData = readmeBody
+
+            release, _ := fetchLatestRelease(payload.Repo)
+            if release != nil {
+                releaseText = fmt.Sprintf("Tag: %s, Assets: ", release.TagName)
+                for _, a := range release.Assets {
+                    releaseText += fmt.Sprintf("[%s : %s] ", a.Name, a.BrowseUrl)
+                }
+            }
+        }
+
+        rawJson, err := generateSingleMethodJson(payload.Repo, contextData, releaseText, payload.OsFamily, payload.SourceType)
+        if err != nil {
+            log.Printf("❌ Method Generation failed: %v", err)
+            http.Error(w, "Generation failed", http.StatusInternalServerError)
+            return
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        fmt.Fprint(w, rawJson)
+    }
+}
+
 func handleGenerateRepo() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
