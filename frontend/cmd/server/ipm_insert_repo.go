@@ -39,6 +39,16 @@ type EntryPayload struct {
 	Stars               int         `json:"stars"`
 }
 
+type InstallMethod struct {
+	Title        string        `json:"title"`
+	Instructions []Instruction `json:"instructions"`
+}
+
+type Instruction struct {
+	Command string `json:"command"`
+	Meaning string `json:"meaning"`
+}
+
 func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	base := GetBasePath() + "/api/installerpedia"
 
@@ -46,6 +56,7 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/add-entry", handleAddEntry(db))
 	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
 	mux.HandleFunc(base+"/generate_ipm_repo_method",handleGenerateRepoMethod())
+	mux.HandleFunc(base+"/update-entry",handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 
@@ -284,4 +295,220 @@ func SyncSingleRepoToMeili(p EntryPayload) error {
 
 	log.Printf("[Installerpedia API] ✅ Synced '%s' to Meili successfully\n", cleanedName)
 	return nil
+}
+
+
+
+// Updating new installation methods
+
+func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost {
+            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+            return
+        }
+
+        var payload struct {
+            Repo       string                 `json:"repo"`
+            NewMethods []InstallMethod  `json:"new_methods"`
+        }
+
+        if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+            http.Error(w, "Invalid JSON", http.StatusBadRequest)
+            return
+        }
+
+        // 1. Fetch current full entry from DB to get metadata (Stars, RepoType, etc.)
+        // This is necessary because Meili and the DB logic expect a full EntryPayload or metadata
+        entry, err := fetchFullEntryFromDB(db,payload.Repo)
+        if err != nil {
+            log.Printf("❌ Update failed: Repo %s not found in DB: %v", payload.Repo, err)
+            http.Error(w, "Repository not found", http.StatusNotFound)
+            return
+        }
+
+        // 2. Update the Local SQLite DB (Append logic)
+        log.Printf("Updating DB for %s...", payload.Repo)
+        err = appendInstallerpediaMethods(db, payload.Repo, payload.NewMethods)
+        if err != nil {
+            log.Printf("❌ DB Update error: %v", err)
+            http.Error(w, "Internal DB error", http.StatusInternalServerError)
+            return
+        }
+
+        // 3. Update Meilisearch (Append logic)
+        log.Printf("Syncing better methods to Meilisearch for %s...", payload.Repo)
+        err = UpdateRepoMethodsInMeili(entry, payload.NewMethods)
+        if err != nil {
+            log.Printf("⚠️ Meili Sync partial failure: %v", err)
+            // We don't necessarily return 500 here if the DB update succeeded, 
+            // but we log the warning.
+        }
+
+        w.WriteHeader(http.StatusOK)
+        fmt.Fprintf(w, "Successfully updated installation methods for %s", payload.Repo)
+    }
+}
+
+func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
+    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+    updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
+
+    tx, err := db.GetConn().Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    // 1. Extract existing methods
+    var existingJson string
+    err = tx.QueryRow(`SELECT installation_methods FROM ipm_data WHERE slug_hash = ?`, slugHash).Scan(&existingJson)
+    if err != nil {
+        return fmt.Errorf("failed to fetch existing methods: %w", err)
+    }
+
+    var methods []InstallMethod
+    if existingJson != "" && existingJson != "null" {
+        if err := json.Unmarshal([]byte(existingJson), &methods); err != nil {
+            return fmt.Errorf("failed to unmarshal existing methods: %w", err)
+        }
+    }
+
+    // 2. Add the new methods into the list
+    methods = append(methods, newMethods...)
+
+    // 3. Re-marshal and update back
+    updatedJson, err := json.Marshal(methods)
+    if err != nil {
+        return err
+    }
+
+    _, err = tx.Exec(`
+        UPDATE ipm_data 
+        SET installation_methods = ?, 
+            updated_at = ?
+        WHERE slug_hash = ?
+    `, string(updatedJson), updatedAt, slugHash)
+
+    if err != nil {
+        return err
+    }
+
+    return tx.Commit()
+}
+
+
+func UpdateRepoMethodsInMeili(p EntryPayload, newMethods []InstallMethod) error {
+    cfg := config.GetConfig()
+    apiKey := cfg.MeiliWriteKey
+    if apiKey == "" {
+        return fmt.Errorf("MEILI_WRITE_KEY not found in environment")
+    }
+
+    // 1. Re-calculate ID to target the correct document
+    repoSlug := strings.ReplaceAll(strings.ToLower(p.Repo), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+    docID := fmt.Sprintf("installerpedia-%d", slugHash)
+
+    // 2. Fetch existing document from Meili to get current methods
+    // Meili supports partial updates via POST, but to "Append" in Go, 
+    // we fetch current state first.
+    fetchURL := fmt.Sprintf("https://search.apps.hexmos.com/indexes/freedevtools/documents/%s", docID)
+    
+    reqFetch, _ := http.NewRequest("GET", fetchURL, nil)
+    reqFetch.Header.Set("Authorization", "Bearer "+apiKey)
+    
+    var httpClient = &http.Client{Timeout: time.Second * 10}
+    respFetch, err := httpClient.Do(reqFetch)
+    
+    var currentMethods []InstallMethod
+    if err == nil && respFetch.StatusCode == http.StatusOK {
+        var existingDoc struct {
+            Methods []InstallMethod `json:"installation_methods"`
+        }
+        json.NewDecoder(respFetch.Body).Decode(&existingDoc)
+        currentMethods = existingDoc.Methods
+        respFetch.Body.Close()
+    }
+
+    // 3. Append new methods (with a simple duplicate title check)
+    for _, nm := range newMethods {
+        exists := false
+        for _, em := range currentMethods {
+            if em.Title == nm.Title {
+                exists = true
+                break
+            }
+        }
+        if !exists {
+            currentMethods = append(currentMethods, nm)
+        }
+    }
+
+    // 4. Prepare the partial document for the update
+    // Meili only updates the fields provided in the map
+    meiliDoc := map[string]interface{}{
+        "id":                   docID,
+        "installation_methods": currentMethods,
+    }
+
+    payload, err := json.Marshal([]interface{}{meiliDoc})
+    if err != nil {
+        return fmt.Errorf("marshal failed: %w", err)
+    }
+
+    // 5. POST back to Meili
+    updateURL := "https://search.apps.hexmos.com/indexes/freedevtools/documents"
+    reqUpdate, err := http.NewRequest("POST", updateURL, bytes.NewBuffer(payload))
+    if err != nil {
+        return err
+    }
+
+    reqUpdate.Header.Set("Content-Type", "application/json")
+    reqUpdate.Header.Set("Authorization", "Bearer "+apiKey)
+
+    respUpdate, err := httpClient.Do(reqUpdate)
+    if err != nil {
+        return fmt.Errorf("update request failed: %w", err)
+    }
+    defer respUpdate.Body.Close()
+
+    if respUpdate.StatusCode >= 300 {
+        return fmt.Errorf("[Meili Update] status %d", respUpdate.StatusCode)
+    }
+
+    log.Printf("[Installerpedia API] ✅ Appended methods for '%s' in Meili\n", p.Repo)
+    return nil
+}
+
+func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, error) {
+    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+
+    var p EntryPayload
+    var prereqJson, methodsJson, postJson, resourceJson, keywordsJson string
+
+    err := db.GetConn().QueryRow(`
+        SELECT repo, repo_type, has_installation, description, stars, 
+               prerequisites, installation_methods, post_installation, 
+               resources_of_interest, keywords
+        FROM ipm_data WHERE slug_hash = ?
+    `, slugHash).Scan(
+        &p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
+        &prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson,
+    )
+
+    if err != nil {
+        return p, err
+    }
+
+    // Unmarshal JSON fields into the payload structure
+    json.Unmarshal([]byte(prereqJson), &p.Prerequisites)
+    json.Unmarshal([]byte(methodsJson), &p.InstallationMethods)
+    json.Unmarshal([]byte(postJson), &p.PostInstallation)
+    json.Unmarshal([]byte(resourceJson), &p.ResourcesOfInterest)
+    json.Unmarshal([]byte(keywordsJson), &p.Keywords)
+
+    return p, nil
 }
