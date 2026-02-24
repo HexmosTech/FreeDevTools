@@ -200,6 +200,12 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 		return
 	}
 
+    if repo.IsDeleted {
+        parentURL := config.GetBasePath() + "/installerpedia/" + category + "/"
+        http.Redirect(w, r, parentURL, http.StatusMovedPermanently)
+        return
+    }
+
 	basePath := config.GetBasePath()
 
 	breadcrumbs := []components.BreadcrumbItem{
