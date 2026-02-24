@@ -42,5 +42,5 @@ func HashClusterToKey(cluster string) int64 {
 // GetDBPath returns the path to the PNG icons database
 func GetDBPath() string {
 	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "png-icons-db-v5.db")
+	return filepath.Join("db", "all_dbs", "png-icons-db-v6.db")
 }
