@@ -145,6 +145,34 @@ def verify_schema(conn, table_cols):
     return valid
 
 
+def filter_table_cols(table_cols, column_arg):
+    if not column_arg:
+        return table_cols
+    # Ensure column_arg is a list if it's passed as a single string (for safety) or append
+    if isinstance(column_arg, str):
+        column_arg = [column_arg]
+
+    filtered = []
+    # Deduplicate in case they pass the same arg multiple times
+    for table, col in table_cols:
+        matched = False
+        for arg in column_arg:
+            if arg == "overview" and table == "overview":
+                matched = True
+            elif arg == "category" and table in ("category", "cluster", "ipm_category"):
+                matched = True
+            elif arg == "subcategory" and table == "sub_category":
+                matched = True
+            elif arg == "end_page" and table not in ("overview", "category", "sub_category", "cluster", "ipm_category"):
+                matched = True
+        
+        if matched:
+            filtered.append((table, col))
+            
+    # Deduplicate the output list
+    return list(dict.fromkeys(filtered))
+
+
 def update_timestamps_in_db(db_path, table_cols, time_str):
     conn = sqlite3.connect(db_path)
     conn.execute("PRAGMA busy_timeout = 30000")
@@ -165,6 +193,7 @@ def main():
     parser = argparse.ArgumentParser(description="Bump DB version and set all updated_at to now.")
     parser.add_argument("etag", nargs="?", default="etag", help="Subcommand (etag)")
     parser.add_argument("--db", required=True, help="DB to bump: all, mcp, emoji, cheatsheets, png-icons, svg-icons, man-pages, tldr, ipm (or aliases: cheatsheet, png, svg, man)")
+    parser.add_argument("--column", action="append", choices=["overview", "category", "subcategory", "end_page"], help="Specific table type to update (optional, can be passed multiple times)")
     parser.add_argument("--check", action="store_true", help="Only verify schema (tables/columns) in latest DBs, do not copy or update")
     args = parser.parse_args()
 
@@ -186,6 +215,10 @@ def main():
         errors = []
         for key in selected:
             base_name, table_cols = DB_CONFIG[key]
+            table_cols = filter_table_cols(table_cols, args.column)
+            if not table_cols:
+                print(f"[{key}] No tables matched --column={args.column}")
+                continue
             src_path, ver = find_latest_db_path(base_name)
             if not src_path:
                 print(f"[{key}] No DB found for {base_name}-db-v*.db")
@@ -207,6 +240,10 @@ def main():
 
     for key in selected:
         base_name, table_cols = DB_CONFIG[key]
+        table_cols = filter_table_cols(table_cols, args.column)
+        if not table_cols:
+            print(f"[{key}] No tables matched --column={args.column}, skip")
+            continue
         src_path, ver = find_latest_db_path(base_name)
         if not src_path:
             print(f"[{key}] No DB found for {base_name}-db-v*.db, skip")

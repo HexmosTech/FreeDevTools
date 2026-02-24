@@ -1,4 +1,4 @@
-[![FreeDevTools](frontend/public/site-banner.png)](https://hexmos.com/freedevtools/)
+[![FreeDevTools](https://hexmos.com/freedevtools/public/site-banner.png)](https://hexmos.com/freedevtools/)
 
 ![GitHub stars](https://img.shields.io/github/stars/HexmosTech/FreeDevTools?style=social)  
 ![GitHub forks](https://img.shields.io/github/forks/HexmosTech/FreeDevTools)  

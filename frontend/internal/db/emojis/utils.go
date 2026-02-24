@@ -7,5 +7,5 @@ import (
 // GetDBPath returns the path to the emoji database
 func GetDBPath() string {
 	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "emoji-db-v5.db")
+	return filepath.Join("db", "all_dbs", "emoji-db-v6.db")
 }
