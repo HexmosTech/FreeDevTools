@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 
 	"strings"
 	"time"
@@ -24,7 +23,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var updateMu sync.Mutex
 
 type EntryPayload struct {
 	Repo                string      `json:"repo"`
@@ -39,12 +37,24 @@ type EntryPayload struct {
 	Stars               int         `json:"stars"`
 }
 
+type InstallMethod struct {
+	Title        string        `json:"title"`
+	Instructions []Instruction `json:"instructions"`
+}
+
+type Instruction struct {
+	Command string `json:"command"`
+	Meaning string `json:"meaning"`
+}
+
 func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	base := GetBasePath() + "/api/installerpedia"
 
 	// Clean routing table
 	mux.HandleFunc(base+"/add-entry", handleAddEntry(db))
 	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
+	mux.HandleFunc(base+"/generate_ipm_repo_method",handleGenerateRepoMethod())
+	mux.HandleFunc(base+"/update-entry",handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 
@@ -283,4 +293,140 @@ func SyncSingleRepoToMeili(p EntryPayload) error {
 
 	log.Printf("[Installerpedia API] ✅ Synced '%s' to Meili successfully\n", cleanedName)
 	return nil
+}
+
+
+
+// Updating new installation methods
+
+func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var payload struct {
+			Repo       string          `json:"repo"`
+			NewMethods []InstallMethod `json:"new_methods"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		// 1. Update the Local SQLite DB first (Append logic)
+		// We do this first so that the DB contains the latest installation methods
+		log.Printf("[Installerpedia API] Updating DB for %s...", payload.Repo)
+		err := appendInstallerpediaMethods(db, payload.Repo, payload.NewMethods)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] DB Update error: %v", err)
+			http.Error(w, "Internal DB error", http.StatusInternalServerError)
+			return
+		}
+
+		// 2. Fetch the FULL, REFRESHED entry from the DB
+		// This ensures we have the full metadata (stars, description, etc.) + the new methods
+		updatedEntry, err := fetchFullEntryFromDB(db, payload.Repo)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] Post-update fetch failed for %s: %v", payload.Repo, err)
+			http.Error(w, "Failed to retrieve updated record", http.StatusInternalServerError)
+			return
+		}
+
+		// 3. Perform a Full Rewrite to Meilisearch
+		// By using SyncSingleRepoToMeili, we send all fields.
+		// If Meili had a "ruined" version, this will overwrite it with the correct full data.
+		go func() {
+			log.Printf("[Installerpedia API] Syncing full record to Meilisearch for %s...", payload.Repo)
+			if err := SyncSingleRepoToMeili(updatedEntry); err != nil {
+				log.Printf("⚠️ [Installerpedia API] Meili Sync failure: %v", err)
+			} else {
+				log.Printf("✅ [Installerpedia API] Meili fully restored/updated for %s", payload.Repo)
+			}
+		}()
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Successfully updated and synced full record for %s", payload.Repo)
+	}
+}
+func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
+    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+    updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
+
+    tx, err := db.GetConn().Begin()
+    if err != nil {
+        return err
+    }
+    defer tx.Rollback()
+
+    // 1. Extract existing methods
+    var existingJson string
+    err = tx.QueryRow(`SELECT installation_methods FROM ipm_data WHERE slug_hash = ?`, slugHash).Scan(&existingJson)
+    if err != nil {
+        return fmt.Errorf("failed to fetch existing methods: %w", err)
+    }
+
+    var methods []InstallMethod
+    if existingJson != "" && existingJson != "null" {
+        if err := json.Unmarshal([]byte(existingJson), &methods); err != nil {
+            return fmt.Errorf("failed to unmarshal existing methods: %w", err)
+        }
+    }
+
+    // 2. Add the new methods into the list
+    methods = append(methods, newMethods...)
+
+    // 3. Re-marshal and update back
+    updatedJson, err := json.Marshal(methods)
+    if err != nil {
+        return err
+    }
+
+    _, err = tx.Exec(`
+        UPDATE ipm_data 
+        SET installation_methods = ?, 
+            updated_at = ?
+        WHERE slug_hash = ?
+    `, string(updatedJson), updatedAt, slugHash)
+
+    if err != nil {
+        return err
+    }
+
+    return tx.Commit()
+}
+
+
+func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, error) {
+    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+
+    var p EntryPayload
+    var prereqJson, methodsJson, postJson, resourceJson, keywordsJson string
+
+    err := db.GetConn().QueryRow(`
+        SELECT repo, repo_type, has_installation, description, stars, 
+               prerequisites, installation_methods, post_installation, 
+               resources_of_interest, keywords
+        FROM ipm_data WHERE slug_hash = ?
+    `, slugHash).Scan(
+        &p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
+        &prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson,
+    )
+
+    if err != nil {
+        return p, err
+    }
+
+    // Unmarshal JSON fields into the payload structure
+    json.Unmarshal([]byte(prereqJson), &p.Prerequisites)
+    json.Unmarshal([]byte(methodsJson), &p.InstallationMethods)
+    json.Unmarshal([]byte(postJson), &p.PostInstallation)
+    json.Unmarshal([]byte(resourceJson), &p.ResourcesOfInterest)
+    json.Unmarshal([]byte(keywordsJson), &p.Keywords)
+
+    return p, nil
 }
