@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 
 	"strings"
 	"time"
@@ -24,7 +23,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var updateMu sync.Mutex
 
 type EntryPayload struct {
 	Repo                string      `json:"repo"`
@@ -302,54 +300,57 @@ func SyncSingleRepoToMeili(p EntryPayload) error {
 // Updating new installation methods
 
 func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        if r.Method != http.MethodPost {
-            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-            return
-        }
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
 
-        var payload struct {
-            Repo       string                 `json:"repo"`
-            NewMethods []InstallMethod  `json:"new_methods"`
-        }
+		var payload struct {
+			Repo       string          `json:"repo"`
+			NewMethods []InstallMethod `json:"new_methods"`
+		}
 
-        if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
-            http.Error(w, "Invalid JSON", http.StatusBadRequest)
-            return
-        }
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
 
-        // 1. Fetch current full entry from DB to get metadata (Stars, RepoType, etc.)
-        // This is necessary because Meili and the DB logic expect a full EntryPayload or metadata
-        entry, err := fetchFullEntryFromDB(db,payload.Repo)
-        if err != nil {
-            log.Printf("❌ Update failed: Repo %s not found in DB: %v", payload.Repo, err)
-            http.Error(w, "Repository not found", http.StatusNotFound)
-            return
-        }
+		// 1. Update the Local SQLite DB first (Append logic)
+		// We do this first so that the DB contains the latest installation methods
+		log.Printf("[Installerpedia API] Updating DB for %s...", payload.Repo)
+		err := appendInstallerpediaMethods(db, payload.Repo, payload.NewMethods)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] DB Update error: %v", err)
+			http.Error(w, "Internal DB error", http.StatusInternalServerError)
+			return
+		}
 
-        // 2. Update the Local SQLite DB (Append logic)
-        log.Printf("Updating DB for %s...", payload.Repo)
-        err = appendInstallerpediaMethods(db, payload.Repo, payload.NewMethods)
-        if err != nil {
-            log.Printf("❌ DB Update error: %v", err)
-            http.Error(w, "Internal DB error", http.StatusInternalServerError)
-            return
-        }
+		// 2. Fetch the FULL, REFRESHED entry from the DB
+		// This ensures we have the full metadata (stars, description, etc.) + the new methods
+		updatedEntry, err := fetchFullEntryFromDB(db, payload.Repo)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] Post-update fetch failed for %s: %v", payload.Repo, err)
+			http.Error(w, "Failed to retrieve updated record", http.StatusInternalServerError)
+			return
+		}
 
-        // 3. Update Meilisearch (Append logic)
-        log.Printf("Syncing better methods to Meilisearch for %s...", payload.Repo)
-        err = UpdateRepoMethodsInMeili(entry, payload.NewMethods)
-        if err != nil {
-            log.Printf("⚠️ Meili Sync partial failure: %v", err)
-            // We don't necessarily return 500 here if the DB update succeeded, 
-            // but we log the warning.
-        }
+		// 3. Perform a Full Rewrite to Meilisearch
+		// By using SyncSingleRepoToMeili, we send all fields.
+		// If Meili had a "ruined" version, this will overwrite it with the correct full data.
+		go func() {
+			log.Printf("[Installerpedia API] Syncing full record to Meilisearch for %s...", payload.Repo)
+			if err := SyncSingleRepoToMeili(updatedEntry); err != nil {
+				log.Printf("⚠️ [Installerpedia API] Meili Sync failure: %v", err)
+			} else {
+				log.Printf("✅ [Installerpedia API] Meili fully restored/updated for %s", payload.Repo)
+			}
+		}()
 
-        w.WriteHeader(http.StatusOK)
-        fmt.Fprintf(w, "Successfully updated installation methods for %s", payload.Repo)
-    }
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Successfully updated and synced full record for %s", payload.Repo)
+	}
 }
-
 func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
     repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
     slugHash := hashStringToInt64(repoSlug)
@@ -398,89 +399,6 @@ func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMeth
     return tx.Commit()
 }
 
-
-func UpdateRepoMethodsInMeili(p EntryPayload, newMethods []InstallMethod) error {
-    cfg := config.GetConfig()
-    apiKey := cfg.MeiliWriteKey
-    if apiKey == "" {
-        return fmt.Errorf("MEILI_WRITE_KEY not found in environment")
-    }
-
-    // 1. Re-calculate ID to target the correct document
-    repoSlug := strings.ReplaceAll(strings.ToLower(p.Repo), "/", "-")
-    slugHash := hashStringToInt64(repoSlug)
-    docID := fmt.Sprintf("installerpedia-%d", slugHash)
-
-    // 2. Fetch existing document from Meili to get current methods
-    // Meili supports partial updates via POST, but to "Append" in Go, 
-    // we fetch current state first.
-    fetchURL := fmt.Sprintf("https://search.apps.hexmos.com/indexes/freedevtools/documents/%s", docID)
-    
-    reqFetch, _ := http.NewRequest("GET", fetchURL, nil)
-    reqFetch.Header.Set("Authorization", "Bearer "+apiKey)
-    
-    var httpClient = &http.Client{Timeout: time.Second * 10}
-    respFetch, err := httpClient.Do(reqFetch)
-    
-    var currentMethods []InstallMethod
-    if err == nil && respFetch.StatusCode == http.StatusOK {
-        var existingDoc struct {
-            Methods []InstallMethod `json:"installation_methods"`
-        }
-        json.NewDecoder(respFetch.Body).Decode(&existingDoc)
-        currentMethods = existingDoc.Methods
-        respFetch.Body.Close()
-    }
-
-    // 3. Append new methods (with a simple duplicate title check)
-    for _, nm := range newMethods {
-        exists := false
-        for _, em := range currentMethods {
-            if em.Title == nm.Title {
-                exists = true
-                break
-            }
-        }
-        if !exists {
-            currentMethods = append(currentMethods, nm)
-        }
-    }
-
-    // 4. Prepare the partial document for the update
-    // Meili only updates the fields provided in the map
-    meiliDoc := map[string]interface{}{
-        "id":                   docID,
-        "installation_methods": currentMethods,
-    }
-
-    payload, err := json.Marshal([]interface{}{meiliDoc})
-    if err != nil {
-        return fmt.Errorf("marshal failed: %w", err)
-    }
-
-    // 5. POST back to Meili
-    updateURL := "https://search.apps.hexmos.com/indexes/freedevtools/documents"
-    reqUpdate, err := http.NewRequest("POST", updateURL, bytes.NewBuffer(payload))
-    if err != nil {
-        return err
-    }
-
-    reqUpdate.Header.Set("Content-Type", "application/json")
-    reqUpdate.Header.Set("Authorization", "Bearer "+apiKey)
-
-    respUpdate, err := httpClient.Do(reqUpdate)
-    if err != nil {
-        return fmt.Errorf("update request failed: %w", err)
-    }
-    defer respUpdate.Body.Close()
-
-    if respUpdate.StatusCode >= 300 {
-        return fmt.Errorf("[Meili Update] status %d", respUpdate.StatusCode)
-    }
-
-    log.Printf("[Installerpedia API] ✅ Appended methods for '%s' in Meili\n", p.Repo)
-    return nil
-}
 
 func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, error) {
     repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
