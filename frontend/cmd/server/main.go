@@ -187,9 +187,9 @@ func main() {
 	server := &http.Server{
 		Addr:              addr,
 		Handler:           handler,
-		ReadTimeout:       300 * time.Second,
-		WriteTimeout:      300 * time.Second,
-		IdleTimeout:       120 * time.Second,
+		ReadTimeout:       15 * time.Second,
+		WriteTimeout:      15 * time.Second,
+		IdleTimeout:       30 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
 		MaxHeaderBytes:    1 << 20, // 1MB
 	}
