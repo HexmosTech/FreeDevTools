@@ -5,7 +5,7 @@ import subprocess
 def db_status(db_name):
     print(f"Executing: {db_name}")
     try:
-        result = subprocess.run(["../b2m", "--status", db_name], capture_output=True, text=True, check=True)
+        result = subprocess.run(["../b2m", "status", db_name], capture_output=True, text=True, check=True)
         # Assuming b2m outputs the status to stdout. We might want to return it.
         # But based on the template, we'll return the stdout stripped.
         # Wait, the spec doesn't explicitly return it in the provided code snippet, but the template code expects return:
@@ -23,7 +23,7 @@ def db_status(db_name):
 def db_upload(db_name):
     print(f"Executing: {db_name}")
     try:
-        subprocess.run(["../b2m", "--upload", db_name], check=True)
+        subprocess.run(["../b2m", "upload", db_name], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error uploading {db_name}: {e}")
 
@@ -33,6 +33,6 @@ def db_download(db_name):
     """
     print(f"Executing: {db_name}")
     try:
-        subprocess.run(["../b2m", "--download", db_name], check=True)
+        subprocess.run(["../b2m", "download", db_name], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error downloading {db_name}: {e}")
