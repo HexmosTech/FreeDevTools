@@ -8,7 +8,9 @@ import (
 	"fdt-templ/internal/config"
 	"fmt"
 	"io"
+	"math/rand"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -44,64 +46,92 @@ type geminiResponse struct {
 	} `json:"error"`
 }
 
+
 func QueryGemini(prompt string, schema interface{}) (string, error) {
-	cfg := config.GetConfig()
-	apiKey := cfg.GeminiKeys
-	if apiKey == "" {
-		return "", errors.New("environment variable GEMINI_API_KEY not set")
-	}
+    cfg := config.GetConfig()
+    if cfg.GeminiKeys == "" {
+        return "", errors.New("environment variable GEMINI_API_KEY not set")
+    }
 
-	reqBody := geminiRequest{}
-	reqBody.Contents = []struct {
-		Parts []struct {
-			Text string `json:"text"`
-		} `json:"parts"`
-	}{{
-		Parts: []struct {
-			Text string `json:"text"`
-		}{{Text: prompt}},
-	}}
+    // Split and shuffle keys to ensure randomness
+    keys := strings.Split(cfg.GeminiKeys, ",")
+    rand.Seed(time.Now().UnixNano())
+    rand.Shuffle(len(keys), func(i, j int) { keys[i], keys[j] = keys[j], keys[i] })
 
-	// Strict Enforcement
-	reqBody.GenerationConfig.ResponseMimeType = "application/json"
-	reqBody.GenerationConfig.ResponseSchema = schema
+    var lastErr error
+    for _, apiKey := range keys {
+		fmt.Println("Key Tried =>",apiKey)
+        apiKey = strings.TrimSpace(apiKey)
+        if apiKey == "" {
+            continue
+        }
 
-	bodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		return "", err
-	}
+        result, err := executeGeminiRequest(prompt, schema, apiKey)
+        if err == nil {
+            return result, nil
+        }
+        
+        lastErr = err
+        // Optional: Log the error here to see which key failed
+    }
 
-	ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
-	defer cancel()
+    return "", fmt.Errorf("all Gemini keys failed. Last error: %w", lastErr)
+}
 
-	req, err := http.NewRequestWithContext(ctx, "POST", geminiAPIURL, bytes.NewReader(bodyBytes))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("x-goog-api-key", apiKey)
+// Helper to handle the actual HTTP logic
+func executeGeminiRequest(prompt string, schema interface{}, apiKey string) (string, error) {
+    reqBody := geminiRequest{}
+    reqBody.Contents = []struct {
+        Parts []struct {
+            Text string `json:"text"`
+        } `json:"parts"`
+    }{{
+        Parts: []struct {
+            Text string `json:"text"`
+        }{{Text: prompt}},
+    }}
 
-	resp, err := http.DefaultClient.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-	respBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
+    reqBody.GenerationConfig.ResponseMimeType = "application/json"
+    reqBody.GenerationConfig.ResponseSchema = schema
 
-	var jr geminiResponse
-	if err := json.Unmarshal(respBytes, &jr); err != nil {
-		return "", fmt.Errorf("failed to parse Gemini response: %w, raw: %s", err, string(respBytes))
-	}
+    bodyBytes, err := json.Marshal(reqBody)
+    if err != nil {
+        return "", err
+    }
 
-	if jr.Error.Code != 0 {
-		return "", fmt.Errorf("Gemini API returned error: %d – %s", jr.Error.Code, jr.Error.Message)
-	}
-	if len(jr.Candidates) == 0 || len(jr.Candidates[0].Content.Parts) == 0 {
-		return "", fmt.Errorf("no content from Gemini, raw response: %s", string(respBytes))
-	}
+    ctx, cancel := context.WithTimeout(context.Background(), requestTimeout)
+    defer cancel()
 
-	return jr.Candidates[0].Content.Parts[0].Text, nil
+    req, err := http.NewRequestWithContext(ctx, "POST", geminiAPIURL, bytes.NewReader(bodyBytes))
+    if err != nil {
+        return "", err
+    }
+    req.Header.Set("Content-Type", "application/json")
+    req.Header.Set("x-goog-api-key", apiKey)
+
+    resp, err := http.DefaultClient.Do(req)
+    if err != nil {
+        return "", err
+    }
+    defer resp.Body.Close()
+
+    respBytes, err := io.ReadAll(resp.Body)
+    if err != nil {
+        return "", err
+    }
+
+    var jr geminiResponse
+    if err := json.Unmarshal(respBytes, &jr); err != nil {
+        return "", fmt.Errorf("failed to parse Gemini response: %w", err)
+    }
+
+    if jr.Error.Code != 0 {
+        return "", fmt.Errorf("API Error %d: %s", jr.Error.Code, jr.Error.Message)
+    }
+    
+    if len(jr.Candidates) == 0 || len(jr.Candidates[0].Content.Parts) == 0 {
+        return "", errors.New("no content from Gemini")
+    }
+
+    return jr.Candidates[0].Content.Parts[0].Text, nil
 }

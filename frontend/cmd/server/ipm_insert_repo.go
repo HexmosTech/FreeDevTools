@@ -57,6 +57,7 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/update-entry",handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
+	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
 
 }
 
@@ -429,4 +430,41 @@ func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, 
     json.Unmarshal([]byte(keywordsJson), &p.Keywords)
 
     return p, nil
+}
+
+
+func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        repoName := r.URL.Query().Get("repo")
+        if repoName == "" {
+            http.Error(w, "Missing repo parameter", http.StatusBadRequest)
+            return
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+
+        // Reuse your existing helper to fetch the data
+        entry, err := fetchFullEntryFromDB(db, repoName)
+        
+        if err != nil {
+            // If the error is "no rows", it just doesn't exist
+            if strings.Contains(err.Error(), "no rows in result set") {
+                json.NewEncoder(w).Encode(map[string]interface{}{
+                    "exists": false,
+                    "repo":   repoName,
+                })
+                return
+            }
+            log.Printf("❌ [Installerpedia API] DB Check Error: %v", err)
+            http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+            return
+        }
+
+        // If we reached here, it exists. Return 'exists: true' + the full data
+        resp := map[string]interface{}{
+            "exists": true,
+            "data":   entry,
+        }
+        json.NewEncoder(w).Encode(resp)
+    }
 }

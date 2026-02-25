@@ -325,22 +325,35 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
          - Determine 'repo_type'. Use 'server' or 'tool' for persistent services/deployments.
          - 'library' is ONLY for code meant to be imported.
          - 'has_installation' is true only if there are build/run/deploy steps.
-      
-      2. **ATOMIC INSTALLATION METHODS (Sequential):**
-         - Every method must be EXECUTABLE and ATOMIC.
-         - If source code is required, the first command MUST be 'git clone [url]', the second MUST be 'cd [folder]'.
-         - Order by convenience: Package Manager > Binary > Container > Source.
-      
-      3. **PREREQUISITE ATOMicity:**
+	  2. **ATOMIC INSTALLATION METHODS (Sequential & Self-Contained):**
+         - Every method must be a complete, "zero-to-running" sequence.
+         - **STRICT SOURCE REQUIREMENT:** Every 'Source' method MUST begin with:
+            1. git clone <url> 
+            2. cd <folder_name> (Determine <folder_name> from the URL or repository title; do not use placeholders).
+         - Do not assume the user is already in the repository.
+         - Every command must be a valid, executable shell command. No descriptive sentences or placeholders like "then run the installer."
+		 - Order by convenience: Package Manager > Binary > Container > Source.
+      3. **THE "WORST-CASE" FALLBACK (Mandatory):**
+         - If NO installation instructions are found in the README, DO NOT hallucinate commands or guess file names.
+         - **FALLBACK ONLY:** Provide exactly two steps: git clone <url> followed by cd <folder_name>.
+         - This is the "Safe Default." If you cannot find build/run steps, output ONLY these two commands.
+
+		### NEGATIVE CONSTRAINTS (DO NOT DO THESE):
+		- **NO PLACEHOLDER FOLDERS:** Never output generic folder placeholders like <folder>, [repo], or your-repo-name. Use the actual slug from the repository URL.
+		- **NO HALLUCINATED EXECUTABLES:** Never output commands referencing local files (e.g., ./setup.sh, make install, npm install) unless those specific files or instructions are explicitly found in the repository metadata/README.
+		- **NO COMMENTARY:** If a step cannot be automated into a command, do not explain it. Omit it or use the "Safe Default."
+		- **NO DANGLING COMMANDS:** Never reference a file (like python main.py) without a preceding command that fetches or creates that file in the same sequence.
+		
+      4. **PREREQUISITE ATOMicity:**
          - Extract distinct dependencies (Docker, Go, Python) as individual objects.
       
-      4. **STRING CLEANLINESS:**
+      5. **STRING CLEANLINESS:**
          - NO markdown fences, NO backticks. Output ONLY raw JSON.
 
-	  5. **CROSS-PLATFORM:**
+	  6. **CROSS-PLATFORM:**
 	   	 - If Windows, macOS, or Linux specific steps are found in README or Releases, include them as separate installation methods.
 	   
-	  6. **RESOURCES OF INTEREST:**
+	  7. **RESOURCES OF INTEREST:**
 		- Identify relevant links such as Official Docs, Wiki, or specific Release pages found in the README.
 		- For 'url_or_path', use absolute URLs.
       
