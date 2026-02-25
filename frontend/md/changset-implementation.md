@@ -473,3 +473,44 @@ frontend/
 4. `changeset.py`: Common functions used in changeset script. 
     1. Such as `b2m upload <db_path>`, `b2m download <db_path>`, `b2m status <db_path>`, etc.
 
+### Phase 1.2: Implementing b2m cli
+
+Currently b2m interative cli is done here
+
+@b2-manager/
+
+refer Docs @b2-manager/docs 
+
+for any integration 
+
+All cli functions should setup and called via @b2-manager/ui/cli.go 
+
+New deps like template and others should be added in @b2-manager/go.mod 
+and make sure template stayes under this @b2-manager/templates folder
+
+Still any doubts as in me before implementing this.
+
+**Integration with b2m cli**
+1. `b2m` cli will be used to create, execute, and manage changeset script.
+2. `b2m` cli will be placed in `frontend` directory.
+3. `b2m` cli will be having following commands. There are 2 types of commands.
+    1. User specific commands: These commands are used regurly by us. 
+        1. `b2m create-changeset <phrase>`: Create a changeset script.
+            1. This will create a changeset script in `changeset/scripts` directory. (Added Detailed Description Above)
+        2. `b2m execute-changeset <script_name>`: Execute a changeset script.
+            1. This will execute the changeset script. It can also be done by `python <script_name>` just adding for making it easy to execute.
+    2. Db specific commands: These commands are used and predifned in `changeset.py`. (Added Detailed Descript Above)
+        1. `b2m status <db_path>`: Check status of db.
+            1. This will check the status of db.
+            2. It will check the status of db.
+        2. `b2m upload <db_path>`: Upload db to b2.
+            1. This will upload the db to b2 form `changeset/dbs/<phrase>/<db_name>_b2.db`. (Added Detailed Description Above)
+        3. `b2m download <db_path>`: Download db from b2.
+            1. This will download the db from b2 to `changeset/dbs/<phrase>/<db_name>_b2.db`. (Added Detailed Description Above)
+        4. `b2m fetch-db-toml`: Fetch db.toml from b2.
+            1. This will fetch db.toml from b2 to `db/all_dbs/db.toml`. 
+
+
+Any New function implemented should be having test cases and should be tested properly merging also make sure take clarification from me to do anything before creating tests
+
+

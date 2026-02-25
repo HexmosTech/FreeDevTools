@@ -172,6 +172,11 @@ type Config struct {
 	LocalDBDir      string
 	MigrationsDir   string
 
+	ChangesetScriptsDir string
+	ChangesetLogsDir    string
+	ChangesetDBsDir     string
+	FrontendTomlPath    string
+
 	// Environment
 	DiscordWebhookURL string
 
