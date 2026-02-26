@@ -535,8 +535,3 @@ we use frontend/internal/config/config.go for defining all the other configs. No
 I have added in context where all the templ server has deps of db
 
 all db version should defined same as it is present in thec ode
-
-
-
-
-1. Any generation should be in b2m.  
