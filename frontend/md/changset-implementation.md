@@ -8,10 +8,10 @@ Any Update in the db should be bumped to new version as default which will be ha
 
 This Consist of 5 main parts.
 1. `changeset` directory
-2. `b2m` cli
-3. `db.toml` file
-4. `changeset_script` template
-5. `changeset.py` common function
+2. `b2m` cli (Need to do testing)
+3. `db.toml` file  (Need to use in all the scripts.)
+4. `changeset_script` template Iterations needed
+5. `changeset.py` common function Iterations needed
 
 ###   Create changeset script
 
@@ -514,3 +514,22 @@ Still any doubts as in me before implementing this.
 Any New function implemented should be having test cases and should be tested properly merging also make sure take clarification from me to do anything before creating tests
 
 
+
+
+> Note: Not tested yet
+
+### Phase 1.3: Implementing db.toml
+
+`db.toml` file will present in `db/all_dbs/db.toml`.
+
+This file will be used to define the db versions and paths.
+
+```toml
+[db]
+ipmdb = "ipm-db-v2.db"
+emojidb = "emoji-db-v2.db"
+path = "/frontend/db/all_dbs/"
+```
+we use frontend/internal/config/config.go for defining all the other configs. Now i want to define db.toml in frontend/internal/config/config.go and and use the same config data for all db related path location.
+
+I have added in context where all the templ server has deps of db

@@ -50,9 +50,11 @@ func InitializeConfig() error {
 	model.AppConfig.MigrationsDir = filepath.Join(model.AppConfig.ProjectRoot, "b2m-migration")
 
 	// Changeset Paths
-	model.AppConfig.ChangesetScriptsDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset", "scripts")
-	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset", "logs")
-	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset", "dbs")
+	model.AppConfig.ChangesetDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
+	model.AppConfig.ChangesetScriptsDir = filepath.Join(model.AppConfig.ChangesetDir, "scripts")
+	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ChangesetDir, "logs")
+	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs")
+
 	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db", "all_dbs", "db.toml")
 
 	return nil
