@@ -171,7 +171,7 @@ type Config struct {
 	LocalB2MDir     string
 	LocalDBDir      string
 	MigrationsDir   string
-
+	ChangesetDir    string
 	ChangesetScriptsDir string
 	ChangesetLogsDir    string
 	ChangesetDBsDir     string

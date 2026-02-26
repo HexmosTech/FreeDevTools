@@ -141,8 +141,8 @@ func RunCLIDownload(dbName string) error {
 // RunCLIFetchDBToml downloads db.toml from backblaze
 func RunCLIFetchDBToml() error {
 	ctx := context.Background()
-	remotePath := model.AppConfig.RootBucket + "db.toml" // Assuming it sits at root or specify correctly
 	localPath := model.AppConfig.FrontendTomlPath
+	remotePath := model.AppConfig.RootBucket + filepath.Base(localPath)
 
 	if err := os.MkdirAll(filepath.Dir(localPath), 0755); err != nil {
 		return fmt.Errorf("failed to create directory for db.toml: %w", err)

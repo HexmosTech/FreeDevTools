@@ -25,8 +25,9 @@ func HandleCLI() {
 		Version: model.AppConfig.ToolVersion,
 		Commands: []*cli.Command{
 			{
-				Name:  "generate-hash",
-				Usage: "Generate new hash and create metadata in remote",
+				Name:     "generate-hash",
+				Category: "User Commands",
+				Usage:    "Generate new hash and create metadata in remote",
 				Action: func(cCtx *cli.Context) error {
 					if err := config.CheckDependencies(); err != nil {
 						return cli.Exit(fmt.Sprintf("Error: %v", err), 1)
@@ -60,8 +61,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "reset",
-				Usage: "Remove local metadata caches and start fresh UI session",
+				Name:     "reset",
+				Category: "User Commands",
+				Usage:    "Remove local metadata caches and start fresh UI session",
 				Action: func(cCtx *cli.Context) error {
 					fmt.Println("Resetting system state...")
 					if err := core.CleanupLocalMetadata(); err != nil {
@@ -75,28 +77,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "migrations",
-				Usage: "Manage migration scripts",
-				Subcommands: []*cli.Command{
-					{
-						Name:  "create",
-						Usage: "Create a new migration script",
-						Action: func(cCtx *cli.Context) error {
-							if cCtx.NArg() == 0 {
-								return cli.Exit("Error: missing required argument <phrase>", 1)
-							}
-							phrase := cCtx.Args().First()
-							if err := core.CreateMigration(phrase); err != nil {
-								return cli.Exit(fmt.Sprintf("Error creating migration: %v", err), 1)
-							}
-							return nil
-						},
-					},
-				},
-			},
-			{
-				Name:  "unlock",
-				Usage: "Force unlock a database",
+				Name:     "unlock",
+				Category: "User Commands",
+				Usage:    "Force unlock a database",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m unlock <db_name>", 1)
@@ -127,8 +110,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "create-changeset",
-				Usage: "Create a new changeset python script",
+				Name:     "create-changeset",
+				Category: "User Commands",
+				Usage:    "Create a new changeset python script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m create-changeset <phrase>", 1)
@@ -141,8 +125,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "execute-changeset",
-				Usage: "Execute a given changeset script",
+				Name:     "execute-changeset",
+				Category: "User Commands",
+				Usage:    "Execute a given changeset script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m execute-changeset <script_name>", 1)
@@ -155,8 +140,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "status",
-				Usage: "Check status of a database (for scripting)",
+				Name:     "status",
+				Category: "Changeset Commands",
+				Usage:    "Check status of a database (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m status <db_name>", 1)
@@ -169,8 +155,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "upload",
-				Usage: "Upload database directly (for scripting)",
+				Name:     "upload",
+				Category: "Changeset Commands",
+				Usage:    "Upload database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m upload <db_name>", 1)
@@ -183,8 +170,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "download",
-				Usage: "Download database directly (for scripting)",
+				Name:     "download",
+				Category: "Changeset Commands",
+				Usage:    "Download database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
 						return cli.Exit("Usage: b2m download <db_name>", 1)
@@ -197,8 +185,9 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:  "fetch-db-toml",
-				Usage: "Fetch db.toml from B2 (for scripting)",
+				Name:     "fetch-db-toml",
+				Category: "Changeset Commands",
+				Usage:    "Fetch db.toml from B2 (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if err := core.RunCLIFetchDBToml(); err != nil {
 						return cli.Exit(fmt.Sprintf("Error fetching db.toml: %v", err), 1)
