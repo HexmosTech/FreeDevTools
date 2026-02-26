@@ -8,6 +8,7 @@ import (
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -607,13 +608,25 @@ func (db *DB) GetManPageUpdatedAt(hashID int64) (string, error) {
 	return updatedAt, nil
 }
 
-// GetDB returns a database instance using the default path
+// GetDB returns a database instance
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Man Pages DB: %w", err)
+	}
+	dbPath := config.DBConfig.ManPagesDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Man Pages DB path is empty in db.toml")
+	}
+
 	// Resolve to absolute path
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve absolute path for Man Pages DB: %w", err)
 	}
-	return NewDB(absPath)
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Man Pages DB: %w", err)
+	}
+	return db, nil
 }

@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -472,13 +473,25 @@ func (db *DB) GetIconUpdatedAt(sourceFolder string, iconName string) (string, er
 	return updatedAt, nil
 }
 
-// GetDB returns a database instance using the default path
+// GetDB returns a database instance
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for PNG Icons DB: %w", err)
+	}
+	dbPath := config.DBConfig.PngIconsDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("PNG Icons DB path is empty in db.toml")
+	}
+
 	// Resolve to absolute path
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve absolute path for PNG Icons DB: %w", err)
 	}
-	return NewDB(absPath)
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open PNG Icons DB: %w", err)
+	}
+	return db, nil
 }

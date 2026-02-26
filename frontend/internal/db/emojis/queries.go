@@ -12,6 +12,7 @@ import (
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -468,13 +469,24 @@ func (db *DB) GetSitemapEmojis() ([]SitemapEmoji, error) {
 
 // GetDB returns a database instance using the default path
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
-	// Resolve to absolute path
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Emoji DB: %w", err)
+	}
+	dbPath := config.DBConfig.EmojiDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Emoji DB path is empty in db.toml")
+	}
+
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve absolute path for Emoji DB: %w", err)
 	}
-	return NewDB(absPath)
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Emoji DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetEmojiCategoryUpdatedAt returns the updated_at timestamp for a category

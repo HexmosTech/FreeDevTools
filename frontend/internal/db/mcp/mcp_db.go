@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -41,10 +42,22 @@ func (db *DB) Close() error {
 
 // GetDB returns a database instance using the default path
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for MCP DB: %w", err)
+	}
+	dbPath := config.DBConfig.McpDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("MCP DB path is empty in db.toml")
+	}
+
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve absolute path for MCP DB: %w", err)
 	}
-	return NewDB(absPath)
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open MCP DB: %w", err)
+	}
+	return db, nil
 }

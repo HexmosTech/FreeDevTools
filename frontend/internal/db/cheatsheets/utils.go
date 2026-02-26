@@ -3,12 +3,21 @@ package cheatsheets
 import (
 	"crypto/sha256"
 	"encoding/binary"
-	"path/filepath"
+	"fdt-templ/internal/config"
+	"fmt"
 )
 
 // GetDBPath returns the path to the cheatsheets database
-func GetDBPath() string {
-	return filepath.Join("db", "all_dbs", "cheatsheets-db-v5.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.CheatsheetsDB == "" {
+		return "", fmt.Errorf("Cheatsheets DB path is empty in db.toml")
+	}
+	return config.DBConfig.CheatsheetsDB, nil
 }
 
 // HashURLToKeyInt generates a hash ID from category and slug.

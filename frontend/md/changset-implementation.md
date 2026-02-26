@@ -533,3 +533,5 @@ path = "/frontend/db/all_dbs/"
 we use frontend/internal/config/config.go for defining all the other configs. Now i want to define db.toml in frontend/internal/config/config.go and and use the same config data for all db related path location.
 
 I have added in context where all the templ server has deps of db
+
+all db version should defined same as it is present in thec ode

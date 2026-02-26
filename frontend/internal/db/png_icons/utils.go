@@ -3,8 +3,9 @@ package png_icons
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"fdt-templ/internal/config"
+	"fmt"
 	"net/url"
-	"path/filepath"
 	"strings"
 )
 
@@ -40,7 +41,14 @@ func HashClusterToKey(cluster string) int64 {
 }
 
 // GetDBPath returns the path to the PNG icons database
-func GetDBPath() string {
-	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "png-icons-db-v6.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.PngIconsDB == "" {
+		return "", fmt.Errorf("PNG Icons DB path is empty in db.toml")
+	}
+	return config.DBConfig.PngIconsDB, nil
 }

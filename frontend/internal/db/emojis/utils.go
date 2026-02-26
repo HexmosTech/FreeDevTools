@@ -1,11 +1,19 @@
 package emojis
 
 import (
-	"path/filepath"
+	"fdt-templ/internal/config"
+	"fmt"
 )
 
 // GetDBPath returns the path to the emoji database
-func GetDBPath() string {
-	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "emoji-db-v6.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.EmojiDB == "" {
+		return "", fmt.Errorf("Emoji DB path is empty in db.toml")
+	}
+	return config.DBConfig.EmojiDB, nil
 }

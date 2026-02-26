@@ -6,6 +6,7 @@ import (
 	"path/filepath"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -47,12 +48,24 @@ func (db *DB) Close() error {
 
 // GetDB returns a database instance
 func GetDB() (*DB, error) {
-	// Standard path for tldr db
-	dbPath, err := filepath.Abs("db/all_dbs/tldr-db-v6.db")
-	if err != nil {
-		return nil, err
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for TLDR DB: %w", err)
 	}
-	return NewDB(dbPath)
+	dbPath := config.DBConfig.TldrDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("TLDR DB path is empty in db.toml")
+	}
+
+	absPath, err := filepath.Abs(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to resolve absolute path for TLDR DB: %w", err)
+	}
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open TLDR DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetAllClusters retrieves all clusters (platforms)
