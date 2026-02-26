@@ -8,6 +8,7 @@ import (
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -43,12 +44,24 @@ func (db *DB) Close() error {
 
 // GetDB returns a database instance
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Cheatsheets DB: %w", err)
+	}
+	dbPath := config.DBConfig.CheatsheetsDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Cheatsheets DB path is empty in db.toml")
+	}
+
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to resolve absolute path for Cheatsheets DB: %w", err)
 	}
-	return NewDB(absPath)
+
+	db, err := NewDB(absPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Cheatsheets DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetTotalCheatsheets returns the total number of cheatsheets

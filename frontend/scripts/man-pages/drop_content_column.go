@@ -13,7 +13,10 @@ import (
 
 func main() {
 	// Get database path
-	dbPath := man_pages_db.GetDBPath()
+	dbPath, err := man_pages_db.GetDBPath()
+	if err != nil {
+		log.Fatalf("Error getting DB path: %v", err)
+	}
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		log.Fatalf("Failed to resolve database path: %v", err)
@@ -61,4 +64,3 @@ func main() {
 
 	log.Println("✓ Successfully dropped 'content' column")
 }
-

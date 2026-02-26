@@ -3,13 +3,21 @@ package man_pages
 import (
 	"crypto/sha256"
 	"encoding/binary"
-	"path/filepath"
+	"fdt-templ/internal/config"
+	"fmt"
 )
 
 // GetDBPath returns the path to the man pages database
-func GetDBPath() string {
-	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "man-pages-db-v6.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.ManPagesDB == "" {
+		return "", fmt.Errorf("Man Pages DB path is empty in db.toml")
+	}
+	return config.DBConfig.ManPagesDB, nil
 }
 
 // HashURLToKey generates a hash ID from mainCategory, subCategory, and slug

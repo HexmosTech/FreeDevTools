@@ -67,7 +67,7 @@ func renderContentToHTML(content man_pages_db.ManPageContent) string {
 	}
 
 	htmlBuilder.WriteString(`</div></div>`)
-	
+
 	// Minify HTML by removing unnecessary whitespace between tags
 	return minifyHTML(htmlBuilder.String())
 }
@@ -77,16 +77,19 @@ func minifyHTML(html string) string {
 	// Remove whitespace between tags (but preserve whitespace inside text nodes)
 	// This regex matches > followed by whitespace followed by <
 	html = regexp.MustCompile(`>\s+<`).ReplaceAllString(html, "><")
-	
+
 	// Remove leading/trailing whitespace from the entire string
 	html = strings.TrimSpace(html)
-	
+
 	return html
 }
 
 func main() {
 	// Get database path
-	dbPath := man_pages_db.GetDBPath()
+	dbPath, err := man_pages_db.GetDBPath()
+	if err != nil {
+		log.Fatalf("Error getting DB path: %v", err)
+	}
 	absPath, err := filepath.Abs(dbPath)
 	if err != nil {
 		log.Fatalf("Failed to resolve database path: %v", err)
@@ -244,4 +247,3 @@ func updateBatch(conn *sql.DB, batch []struct {
 
 	return nil
 }
-
