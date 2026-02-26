@@ -3,9 +3,9 @@ package svg_icons
 import (
 	"crypto/sha256"
 	"encoding/binary"
+	"fdt-templ/internal/config"
 	"fmt"
 	"net/url"
-	"path/filepath"
 	"strings"
 )
 
@@ -50,7 +50,14 @@ func HashClusterToKeyInt(cluster string) int64 {
 }
 
 // GetDBPath returns the path to the SVG icons database
-func GetDBPath() string {
-	// Assuming we're running from project root
-	return filepath.Join("db", "all_dbs", "svg-icons-db-v5.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.SvgIconsDB == "" {
+		return "", fmt.Errorf("SVG Icons DB path is empty in db.toml")
+	}
+	return config.DBConfig.SvgIconsDB, nil
 }
