@@ -1,13 +1,15 @@
 package main
+
 import (
 	"encoding/json"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 
-	"time"
 	"os"
+	"time"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -209,22 +211,26 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
             return
         }
 
-        // 4. Save/Overwrite in DB
-        success, err := saveInstallerpediaEntry(db, updatedPayload, true)
-        if err != nil || !success {
-            log.Printf("[UpdateCheck] ❌ Failed to save updated payload for %s to DB", req.Repo)
+		err = updateRepoMethodsOnly(db, req.Repo, updatedPayload.InstallationMethods)
+        if err != nil {
+            log.Printf("[UpdateCheck] ❌ Failed to update methods for %s: %v", req.Repo, err)
             http.Error(w, "Failed to persist update", http.StatusInternalServerError)
             return
+        }
+        
+        // Refresh the payload from DB to ensure we have the full object for Meili sync
+        finalEntry, err := fetchFullEntryFromDB(db, req.Repo)
+        if err != nil {
+             log.Printf("[UpdateCheck] ⚠️ Refetch failed: %v", err)
+             finalEntry = updatedPayload // Fallback
         }
         log.Printf("[UpdateCheck] 💾 Successfully saved updated data for %s to local DB.", req.Repo)
 
         // 5. Sync to Meili in background
         go func() {
             log.Printf("[UpdateCheck] 🚀 Starting MeiliSearch sync for %s...", req.Repo)
-            if err := SyncSingleRepoToMeili(updatedPayload); err != nil {
-                log.Printf("[UpdateCheck] ⚠️ Meili Sync Error for %s: %v", req.Repo, err)
-            } else {
-                log.Printf("[UpdateCheck] ✅ MeiliSearch sync complete for %s.", req.Repo)
+            if err := SyncSingleRepoToMeili(finalEntry); err != nil {
+                log.Printf("[UpdateCheck] ⚠️ Meili Sync Error: %v", err)
             }
         }()
 
@@ -235,4 +241,26 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
             "data":       updatedPayload,
         })
     }
+}
+
+
+func updateRepoMethodsOnly(db *installerpedia.DB, repoName string, methods interface{}) error {
+    // Generate the slug/hash exactly as your DB schema expects
+    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+    slugHash := hashStringToInt64(repoSlug)
+    updatedAt := time.Now().UTC().Format(time.RFC3339)
+
+    methodsJSON, err := json.Marshal(methods)
+    if err != nil {
+        return err
+    }
+
+    _, err = db.GetConn().Exec(`
+        UPDATE ipm_data 
+        SET installation_methods = ?, 
+            updated_at = ?
+        WHERE slug_hash = ?
+    `, string(methodsJSON), updatedAt, slugHash)
+
+    return err
 }
