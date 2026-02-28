@@ -176,9 +176,11 @@ func main() {
 
 	setupRoutes(mux, svgIconsDB, manPagesDB, emojisDB, mcpDB, pngIconsDB, cheatsheetsDB, tldrDB, installerpediaDB, toolsConfig, fdtPgDB)
 
-	// Wrap mux with pro middleware first, then logging middleware
+	// Wrap mux with StaticCache (innermost), then cache headers, then pro middleware, then logging middleware
 	// Note: nginx handles compression, so gzip middleware is not needed
-	handler := middleware.Logging(pro.ProMiddleware(middleware.CacheHeaders(mux)))
+	cachedMux := middleware.StaticCache("./static", mux)
+	handler := middleware.Logging(pro.ProMiddleware(middleware.CacheHeaders(cachedMux)))
+
 
 	port := GetPort()
 	addr := ":" + port
