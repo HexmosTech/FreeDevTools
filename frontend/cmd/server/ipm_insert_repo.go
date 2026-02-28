@@ -59,6 +59,7 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
+	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
 
 }
 
