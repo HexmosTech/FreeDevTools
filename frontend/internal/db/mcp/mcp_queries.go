@@ -90,7 +90,7 @@ func (db *DB) GetMcpPagesByCategory(categorySlug string, page, itemsPerPage int)
 
 	offset := (page - 1) * itemsPerPage
 	// Select all fields needed for RepoCard
-	query := `SELECT "key", name, description, owner, stars, image_url, license, npm_downloads
+	query := `SELECT hash_id, "key", name, description, owner, stars, image_url, license, npm_downloads
 		FROM mcp_pages WHERE category_id = ? LIMIT ? OFFSET ?`
 
 	rows, err := db.conn.Query(query, categoryID, itemsPerPage, offset)
@@ -103,7 +103,7 @@ func (db *DB) GetMcpPagesByCategory(categorySlug string, page, itemsPerPage int)
 	for rows.Next() {
 		var r McpPage
 		err := rows.Scan(
-			&r.Key, &r.Name, &r.Description, &r.Owner, &r.Stars, &r.ImageURL, &r.License, &r.NpmDownloads,
+			&r.HashID, &r.Key, &r.Name, &r.Description, &r.Owner, &r.Stars, &r.ImageURL, &r.License, &r.NpmDownloads,
 		)
 		if err != nil {
 			continue

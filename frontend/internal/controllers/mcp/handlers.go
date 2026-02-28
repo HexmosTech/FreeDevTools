@@ -1,24 +1,8 @@
-// Package mcp - MCP (Model Context Protocol) Handlers
-//
-// This file contains all business logic and database operations for MCP pages.
-// All handlers in this file are called from cmd/server/mcp_routes.go after
-// routing logic determines which handler to invoke.
-//
-// IMPORTANT: All database operations for MCP MUST be performed in this file.
-// The route files (cmd/server/mcp_routes.go) should only handle URL routing
-// and delegate to these handlers. This separation ensures:
-// - Single responsibility: routes handle routing, handlers handle business logic
-// - Maintainability: all DB logic is centralized in one place
-// - Testability: handlers can be tested independently of routing
-//
-// Each handler function performs the following:
-// 1. Database queries to fetch required data
-// 2. Business logic processing (data transformation, validation, etc.)
-// 3. Response rendering (HTML templates, JSON, etc.)
 package mcp
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
@@ -35,11 +19,18 @@ import (
 	"github.com/a-h/templ"
 )
 
-func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int) {
+var ErrNotFound = errors.New("not found")
+
+type RepoRedirectError struct {
+	RedirectURL string
+}
+
+func (e *RepoRedirectError) Error() string { return "redirect: " + e.RedirectURL }
+
+func FetchIndexData(db *mcp_db.DB, page int) (*mcp_pages.IndexData, error) {
 	itemsPerPage := 30
 	basePath := config.GetBasePath()
 
-	// Channels for parallel fetching
 	categoriesChan := make(chan []mcp_db.McpCategory)
 	overviewChan := make(chan *mcp_db.Overview)
 	errChan := make(chan error, 2)
@@ -62,14 +53,12 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int
 		overviewChan <- overview
 	}()
 
-	// Wait for results
 	var categories []mcp_db.McpCategory
 	select {
 	case categories = <-categoriesChan:
 	case err := <-errChan:
 		log.Printf("Error fetching MCP categories: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("Internal Server Error")
 	}
 
 	overview := <-overviewChan
@@ -83,8 +72,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int
 
 	totalPages := (totalCategories + itemsPerPage - 1) / itemsPerPage
 	if page > totalPages && totalPages > 0 {
-		http.NotFound(w, r)
-		return
+		return nil, ErrNotFound
 	}
 
 	breadcrumbItems := []components.BreadcrumbItem{
@@ -116,14 +104,26 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int
 		PageURL:         basePath + "/mcp/",
 	}
 
-	templ.Handler(mcp_pages.Index(data)).ServeHTTP(w, r)
+	return &data, nil
 }
 
-func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categorySlug string, page int) {
+func HandleIndex(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, page int) {
+	data, err := FetchIndexData(db, page)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			http.NotFound(w, r)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	templ.Handler(mcp_pages.Index(*data)).ServeHTTP(w, r)
+}
+
+func FetchCategoryData(db *mcp_db.DB, categorySlug string, page int) (*mcp_pages.CategoryData, error) {
 	itemsPerPage := 30
 	basePath := config.GetBasePath()
 
-	// Channels for parallel fetching
 	catChan := make(chan *mcp_db.McpCategory)
 	reposChan := make(chan []mcp_db.McpPage)
 	errChan := make(chan error, 2)
@@ -146,34 +146,28 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categ
 		reposChan <- repos
 	}()
 
-	// Wait for category (needed for validation)
 	var cat *mcp_db.McpCategory
 	select {
 	case cat = <-catChan:
 		if cat == nil {
-			http.NotFound(w, r)
-			return
+			return nil, ErrNotFound
 		}
 	case err := <-errChan:
 		log.Printf("Error fetching category: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("Internal Server Error")
 	}
 
-	// Wait for repos
 	var repos []mcp_db.McpPage
 	select {
 	case repos = <-reposChan:
 	case err := <-errChan:
 		log.Printf("Error fetching repos: %v", err)
-		http.Error(w, "Error fetching repositories", http.StatusInternalServerError)
-		return
+		return nil, fmt.Errorf("Error fetching repositories")
 	}
 
 	totalPages := (cat.Count + itemsPerPage - 1) / itemsPerPage
 	if page > totalPages && totalPages > 0 {
-		http.NotFound(w, r)
-		return
+		return nil, ErrNotFound
 	}
 
 	breadcrumbItems := []components.BreadcrumbItem{
@@ -197,31 +191,39 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categ
 		Repos:           repos,
 		CurrentPage:     page,
 		TotalPages:      totalPages,
-		TotalRepos:      cat.Count, // or totalRepos
+		TotalRepos:      cat.Count,
 		BreadcrumbItems: breadcrumbItems,
 		LayoutProps:     layoutProps,
 		PageURL:         fmt.Sprintf("%s/mcp/%s/", basePath, categorySlug),
 	}
 
-	templ.Handler(mcp_pages.Category(data)).ServeHTTP(w, r)
+	return &data, nil
 }
 
-func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categorySlug string, repoKey string, hashID int64) {
+func HandleCategory(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categorySlug string, page int) {
+	data, err := FetchCategoryData(db, categorySlug, page)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			http.NotFound(w, r)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	templ.Handler(mcp_pages.Category(*data)).ServeHTTP(w, r)
+}
+
+func FetchRepoData(db *mcp_db.DB, categorySlug string, repoKey string, hashID int64) (*mcp_pages.RepoData, error) {
 	basePath := config.GetBasePath()
 
 	repo, err := db.GetMcpPage(hashID)
 	if err != nil || repo == nil {
-		// Fallback 1: Repo not found, check if category exists and redirect to it
 		cat, err := db.GetMcpCategory(categorySlug)
 		if err == nil && cat != nil {
-			// Category exists, redirect to category page
 			redirectURL := fmt.Sprintf("%s/mcp/%s/1/", basePath, url.PathEscape(categorySlug))
-			http.Redirect(w, r, redirectURL, http.StatusMovedPermanently)
-			return
+			return nil, &RepoRedirectError{RedirectURL: redirectURL}
 		}
-		// Neither repo nor category exists
-		http.NotFound(w, r)
-		return
+		return nil, ErrNotFound
 	}
 	categoryName := strings.Title(strings.ReplaceAll(categorySlug, "-", " "))
 
@@ -235,10 +237,8 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 	ownerName := repo.Owner
 	if ownerName == "" {
 		ownerName = "Unknown"
-	} else {
-		if len(ownerName) > 0 {
-			ownerName = strings.ToUpper(ownerName[:1]) + ownerName[1:]
-		}
+	} else if len(ownerName) > 0 {
+		ownerName = strings.ToUpper(ownerName[:1]) + ownerName[1:]
 	}
 
 	title := fmt.Sprintf("%s – %s MCP Server by %s Model Context Protocol Tool | Free DevTools by Hexmos", repo.Name, categoryName, ownerName)
@@ -255,28 +255,19 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 		OgImage:     repo.ImageURL,
 	}
 
-	// Fetch category for full details (name, slug, etc.)
 	partialCat, err := db.GetMcpCategory(categorySlug)
 	if err != nil || partialCat == nil {
 		if err != nil {
 			log.Printf("Error fetching category for repo view (slug: %s): %v", categorySlug, err)
 		}
-		// Fallback if category fetch fails (unlikely if repo exists, but safe)
 		partialCat = &mcp_db.McpCategory{
 			Slug: categorySlug,
 			Name: categoryName,
 		}
 	}
 
-	// Keywords for Ethical Ads
-	keywords := []string{
-		"mcp",
-		"model context protocol",
-		categoryName,
-		repo.Name,
-	}
+	keywords := []string{"mcp", "model context protocol", categoryName, repo.Name}
 	if repo.Keywords != "" {
-		// Parse keywords from comma-separated string
 		keywordParts := strings.Split(repo.Keywords, ",")
 		for _, kw := range keywordParts {
 			kw = strings.TrimSpace(kw)
@@ -286,12 +277,10 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 		}
 	}
 
-	// Parse SeeAlso JSON
 	var seeAlsoItems []common.SeeAlsoItem
 	if repo.SeeAlso != "" {
 		var seeAlsoData []common.SeeAlsoJSONItem
 		if err := json.Unmarshal([]byte(repo.SeeAlso), &seeAlsoData); err != nil {
-			// Log error but don't fail the page
 			log.Printf("Error parsing see_also JSON for %s: %v", repo.Key, err)
 		} else {
 			for _, item := range seeAlsoData {
@@ -309,15 +298,36 @@ func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categoryS
 		SeeAlsoItems:    seeAlsoItems,
 	}
 
-	templ.Handler(mcp_pages.Repo(data)).ServeHTTP(w, r)
+	return &data, nil
 }
 
-func HandleCredits(w http.ResponseWriter, r *http.Request) {
-	layoutProps := layouts.BaseLayoutProps{
+func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categorySlug string, repoKey string, hashID int64) {
+	data, err := FetchRepoData(db, categorySlug, repoKey, hashID)
+	if err != nil {
+		if redirectErr, ok := err.(*RepoRedirectError); ok {
+			http.Redirect(w, r, redirectErr.RedirectURL, http.StatusMovedPermanently)
+			return
+		}
+		if errors.Is(err, ErrNotFound) {
+			http.NotFound(w, r)
+		} else {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		return
+	}
+	templ.Handler(mcp_pages.Repo(*data)).ServeHTTP(w, r)
+}
+
+func FetchCreditsData() layouts.BaseLayoutProps {
+	return layouts.BaseLayoutProps{
 		Title:       "MCP Directory Credits & Acknowledgments | Online Free DevTools by Hexmos",
 		Description: "Credits and acknowledgments for the MCP (Model Context Protocol) repositories available on Free DevTools. Learn about the sources, contributors, and data sources.",
 		ShowHeader:  true,
 		Canonical:   config.GetSiteURL() + "/mcp/credits/",
 	}
+}
+
+func HandleCredits(w http.ResponseWriter, r *http.Request) {
+	layoutProps := FetchCreditsData()
 	templ.Handler(mcp_pages.Credits(layoutProps)).ServeHTTP(w, r)
 }

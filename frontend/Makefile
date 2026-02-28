@@ -941,3 +941,14 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 	echo ""; \
 	echo "✅ Local search environment setup complete!"
  
+
+clear-cache: ## Clear the generated static/ directory
+	@echo "Clearing static/ directory..."
+	@rm -rf static/
+	@echo "✅ static/ directory cleared!"
+
+generate-mcp: ## Generate static pages for the MCP section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/main.go cmd/static-generator/mcp.go cmd/static-generator/utils.go
+	@echo "Running static generator for MCP..."
+	@./static-gen --section mcp
