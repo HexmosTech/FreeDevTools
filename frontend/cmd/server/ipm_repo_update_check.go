@@ -14,26 +14,37 @@ import (
 
 
 func getReadmeLastModified(repoName string) (time.Time, error) {
-	url := fmt.Sprintf("https://api.github.com/repos/%s/contents/README.md", repoName)
-	client := &http.Client{Timeout: 5 * time.Second}
-	req, _ := http.NewRequest("GET", url, nil)
+    url := fmt.Sprintf("https://api.github.com/repos/%s/readme", repoName)
+    log.Printf("[GH-Check] Fetching README metadata for: %s", repoName)
+    
+    client := &http.Client{Timeout: 5 * time.Second}
+    req, _ := http.NewRequest("GET", url, nil)
 
-	if token := os.Getenv("GITHUB_TOKEN"); token != "" {
-		req.Header.Set("Authorization", "Bearer "+token)
-	}
+    if token := os.Getenv("GITHUB_TOKEN"); token != "" {
+        req.Header.Set("Authorization", "Bearer "+token)
+    }
 
-	resp, err := client.Do(req)
-	if err != nil {
-		return time.Time{}, err
-	}
-	defer resp.Body.Close()
+    resp, err := client.Do(req)
+    if err != nil {
+        log.Printf("[GH-Check] ❌ Request failed for %s: %v", repoName, err)
+        return time.Time{}, err
+    }
+    defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return time.Time{}, fmt.Errorf("GitHub status: %d", resp.StatusCode)
-	}
+    if resp.StatusCode != http.StatusOK {
+        log.Printf("[GH-Check] ⚠️ Non-200 status for %s: %d", repoName, resp.StatusCode)
+        return time.Time{}, fmt.Errorf("GitHub status: %d", resp.StatusCode)
+    }
 
-	// GitHub returns RFC1123 in headers (e.g., "Wed, 21 Oct 2015 07:28:00 GMT")
-	return time.Parse(time.RFC1123, resp.Header.Get("Last-Modified"))
+    lastMod := resp.Header.Get("Last-Modified")
+    if lastMod == "" {
+        log.Printf("[GH-Check] ℹ️ No Last-Modified header for %s. Using current time.", repoName)
+        return time.Now(), nil 
+    }
+
+    t, err := time.Parse(time.RFC1123, lastMod)
+    log.Printf("[GH-Check] ✅ README for %s was last modified at: %v", repoName, t)
+    return t, err
 }
 
 
@@ -135,71 +146,93 @@ func refineInstallationWithGemini(existing EntryPayload, repoName string) (Entry
 }
 
 func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
-			return
-		}
+    return func(w http.ResponseWriter, r *http.Request) {
+        if r.Method != http.MethodPost {
+            http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+            return
+        }
 
-		var req struct {
-			Repo string `json:"repo"`
-		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, "Invalid JSON", http.StatusBadRequest)
-			return
-		}
+        var req struct {
+            Repo string `json:"repo"`
+        }
+        if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+            http.Error(w, "Invalid JSON", http.StatusBadRequest)
+            return
+        }
 
-		// 1. Get existing data from local DB
-		existingEntry, err := fetchFullEntryFromDB(db, req.Repo)
-		if err != nil {
-			// If it doesn't exist, we can't update it
-			json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
-			return
-		}
+        log.Printf("[UpdateCheck] 🔍 Checking for updates: %s", req.Repo)
 
-		// 2. Compare Timestamps
-		ghTime, err := getReadmeLastModified(req.Repo)
-		if err != nil {
-			log.Printf("⚠️ Update Check: Could not fetch GH metadata for %s: %v", req.Repo, err)
-			json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
-			return
-		}
+        // 1. Get existing data from local DB
+        existingEntry, err := fetchFullEntryFromDB(db, req.Repo)
+        if err != nil {
+            log.Printf("[UpdateCheck] ℹ️ Repo %s not found in local DB. Skipping update check.", req.Repo)
+            json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
+            return
+        }
 
-		dbTime, _ := time.Parse(time.RFC3339, existingEntry.UpdatedAt)
+        // 2. Compare Timestamps
+        ghTime, err := getReadmeLastModified(req.Repo)
+        if err != nil {
+            log.Printf("[UpdateCheck] ⚠️ Could not fetch GH metadata for %s: %v", req.Repo, err)
+            json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
+            return
+        }
 
-		if !ghTime.After(dbTime) {
-			// README is not newer than our last DB update
-			json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
-			return
-		}
+        // Parse local DB time
+        dbTime, err := time.Parse(time.RFC3339, existingEntry.UpdatedAt)
+        if err != nil {
+            log.Printf("[UpdateCheck] ⚠️ Error parsing DB timestamp '%s' for %s: %v", existingEntry.UpdatedAt, req.Repo, err)
+            // If we can't parse the DB time, we should probably assume we need an update to be safe
+            dbTime = time.Time{} 
+        }
 
-		// 3. README is newer! Trigger Refinement
-		log.Printf("🔄 %s: README updated (%v > %v). Triggering refinement...", req.Repo, ghTime, dbTime)
-		updatedPayload, err := refineInstallationWithGemini(existingEntry, req.Repo)
-		if err != nil {
-			http.Error(w, "Refinement failed", http.StatusInternalServerError)
-			return
-		}
+        // Detailed Comparison Log
+        diff := ghTime.Sub(dbTime)
+        log.Printf("[UpdateCheck] 🕒 Timestamp Comparison for %s:", req.Repo)
+        log.Printf("      - GitHub README: %v", ghTime.Format(time.RFC1123))
+        log.Printf("      - Local DB:      %v", dbTime.Format(time.RFC1123))
+        log.Printf("      - Difference:    %v (Positive means GH is newer)", diff)
 
-		// 4. Save/Overwrite in DB
-		success, err := saveInstallerpediaEntry(db, updatedPayload, true)
-		if err != nil || !success {
-			http.Error(w, "Failed to persist update", http.StatusInternalServerError)
-			return
-		}
+        if !ghTime.After(dbTime) {
+            log.Printf("[UpdateCheck] ✅ %s is up to date. No action needed.", req.Repo)
+            json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
+            return
+        }
 
-		// 5. Sync to Meili in background
-		go func() {
-			if err := SyncSingleRepoToMeili(updatedPayload); err != nil {
-				log.Printf("⚠️ Meili Sync Error during update: %v", err)
-			}
-		}()
+        // 3. README is newer! Trigger Refinement
+        log.Printf("[UpdateCheck] 🔄 TRIGGER: README is newer. Starting Gemini refinement for %s...", req.Repo)
+        
+        updatedPayload, err := refineInstallationWithGemini(existingEntry, req.Repo)
+        if err != nil {
+            log.Printf("[UpdateCheck] ❌ Refinement failed for %s: %v", req.Repo, err)
+            http.Error(w, "Refinement failed", http.StatusInternalServerError)
+            return
+        }
 
-		// 6. Return the new JSON so IPM can use it immediately
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(map[string]interface{}{
-			"has_update": true,
-			"data":       updatedPayload,
-		})
-	}
+        // 4. Save/Overwrite in DB
+        success, err := saveInstallerpediaEntry(db, updatedPayload, true)
+        if err != nil || !success {
+            log.Printf("[UpdateCheck] ❌ Failed to save updated payload for %s to DB", req.Repo)
+            http.Error(w, "Failed to persist update", http.StatusInternalServerError)
+            return
+        }
+        log.Printf("[UpdateCheck] 💾 Successfully saved updated data for %s to local DB.", req.Repo)
+
+        // 5. Sync to Meili in background
+        go func() {
+            log.Printf("[UpdateCheck] 🚀 Starting MeiliSearch sync for %s...", req.Repo)
+            if err := SyncSingleRepoToMeili(updatedPayload); err != nil {
+                log.Printf("[UpdateCheck] ⚠️ Meili Sync Error for %s: %v", req.Repo, err)
+            } else {
+                log.Printf("[UpdateCheck] ✅ MeiliSearch sync complete for %s.", req.Repo)
+            }
+        }()
+
+        // 6. Return response
+        w.Header().Set("Content-Type", "application/json")
+        json.NewEncoder(w).Encode(map[string]interface{}{
+            "has_update": true,
+            "data":       updatedPayload,
+        })
+    }
 }
