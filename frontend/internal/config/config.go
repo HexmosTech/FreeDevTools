@@ -22,6 +22,7 @@ type Config struct {
 	B2ApplicationKey string              `toml:"b2_application_key"`
 	MeiliWriteKey    string              `toml:"meili_write_key"`
 	GeminiKeys		 string              `toml:"gemini_keys"`
+	GithubToken    string              `toml:"github_token"`
 	EnableAds        bool                `toml:"enable_ads"`
 	Ads              map[string][]string `toml:"ads"`
 	FdtPgDB       FdtPgDBConfig    `toml:"fdt_pg_db"`

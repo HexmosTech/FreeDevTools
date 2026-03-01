@@ -2,13 +2,12 @@ package main
 
 import (
 	"encoding/json"
+	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
-
-	"os"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -16,36 +15,38 @@ import (
 
 
 func getReadmeLastModified(repoName string) (time.Time, error) {
+	cfg := config.GetConfig()
+	githubToken := cfg.GithubToken
     url := fmt.Sprintf("https://api.github.com/repos/%s/readme", repoName)
-    log.Printf("[GH-Check] Fetching README metadata for: %s", repoName)
+    log.Printf("[Installerpedia API] Fetching README metadata for: %s", repoName)
     
     client := &http.Client{Timeout: 5 * time.Second}
     req, _ := http.NewRequest("GET", url, nil)
 
-    if token := os.Getenv("GITHUB_TOKEN"); token != "" {
-        req.Header.Set("Authorization", "Bearer "+token)
+    if githubToken != "" {
+        req.Header.Set("Authorization", "Bearer "+githubToken)
     }
 
     resp, err := client.Do(req)
     if err != nil {
-        log.Printf("[GH-Check] ❌ Request failed for %s: %v", repoName, err)
+        log.Printf("[Installerpedia API] ❌ Request failed for %s: %v", repoName, err)
         return time.Time{}, err
     }
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        log.Printf("[GH-Check] ⚠️ Non-200 status for %s: %d", repoName, resp.StatusCode)
+        log.Printf("[Installerpedia API] ⚠️ Non-200 status for %s: %d", repoName, resp.StatusCode)
         return time.Time{}, fmt.Errorf("GitHub status: %d", resp.StatusCode)
     }
 
     lastMod := resp.Header.Get("Last-Modified")
     if lastMod == "" {
-        log.Printf("[GH-Check] ℹ️ No Last-Modified header for %s. Using current time.", repoName)
+        log.Printf("[Installerpedia API] ℹ️ No Last-Modified header for %s. Using current time.", repoName)
         return time.Now(), nil 
     }
 
     t, err := time.Parse(time.RFC1123, lastMod)
-    log.Printf("[GH-Check] ✅ README for %s was last modified at: %v", repoName, t)
+    log.Printf("[Installerpedia API] ✅ README for %s was last modified at: %v", repoName, t)
     return t, err
 }
 
@@ -162,12 +163,12 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
             return
         }
 
-        log.Printf("[UpdateCheck] 🔍 Checking for updates: %s", req.Repo)
+        log.Printf("[Installerpedia API] 🔍 Checking for updates: %s", req.Repo)
 
         // 1. Get existing data from local DB
         existingEntry, err := fetchFullEntryFromDB(db, req.Repo)
         if err != nil {
-            log.Printf("[UpdateCheck] ℹ️ Repo %s not found in local DB. Skipping update check.", req.Repo)
+            log.Printf("[Installerpedia API] ℹ️ Repo %s not found in local DB. Skipping update check.", req.Repo)
             json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
             return
         }
@@ -175,7 +176,7 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
         // 2. Compare Timestamps
         ghTime, err := getReadmeLastModified(req.Repo)
         if err != nil {
-            log.Printf("[UpdateCheck] ⚠️ Could not fetch GH metadata for %s: %v", req.Repo, err)
+            log.Printf("[Installerpedia API]⚠️ Could not fetch GH metadata for %s: %v", req.Repo, err)
             json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
             return
         }
@@ -183,37 +184,37 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
         // Parse local DB time
         dbTime, err := time.Parse(time.RFC3339, existingEntry.UpdatedAt)
         if err != nil {
-            log.Printf("[UpdateCheck] ⚠️ Error parsing DB timestamp '%s' for %s: %v", existingEntry.UpdatedAt, req.Repo, err)
+            log.Printf("[Installerpedia API] ⚠️ Error parsing DB timestamp '%s' for %s: %v", existingEntry.UpdatedAt, req.Repo, err)
             // If we can't parse the DB time, we should probably assume we need an update to be safe
             dbTime = time.Time{} 
         }
 
         // Detailed Comparison Log
         diff := ghTime.Sub(dbTime)
-        log.Printf("[UpdateCheck] 🕒 Timestamp Comparison for %s:", req.Repo)
+        log.Printf("[Installerpedia API] 🕒 Timestamp Comparison for %s:", req.Repo)
         log.Printf("      - GitHub README: %v", ghTime.Format(time.RFC1123))
         log.Printf("      - Local DB:      %v", dbTime.Format(time.RFC1123))
         log.Printf("      - Difference:    %v (Positive means GH is newer)", diff)
 
         if !ghTime.After(dbTime) {
-            log.Printf("[UpdateCheck] ✅ %s is up to date. No action needed.", req.Repo)
+            log.Printf("[Installerpedia API] ✅ %s is up to date. No action needed.", req.Repo)
             json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
             return
         }
 
         // 3. README is newer! Trigger Refinement
-        log.Printf("[UpdateCheck] 🔄 TRIGGER: README is newer. Starting Gemini refinement for %s...", req.Repo)
+        log.Printf("[Installerpedia API] 🔄 TRIGGER: README is newer. Starting Gemini refinement for %s...", req.Repo)
         
         updatedPayload, err := refineInstallationWithGemini(existingEntry, req.Repo)
         if err != nil {
-            log.Printf("[UpdateCheck] ❌ Refinement failed for %s: %v", req.Repo, err)
+            log.Printf("[Installerpedia API] ❌ Refinement failed for %s: %v", req.Repo, err)
             http.Error(w, "Refinement failed", http.StatusInternalServerError)
             return
         }
 
 		err = updateRepoMethodsOnly(db, req.Repo, updatedPayload.InstallationMethods)
         if err != nil {
-            log.Printf("[UpdateCheck] ❌ Failed to update methods for %s: %v", req.Repo, err)
+            log.Printf("[Installerpedia API] ❌ Failed to update methods for %s: %v", req.Repo, err)
             http.Error(w, "Failed to persist update", http.StatusInternalServerError)
             return
         }
@@ -221,16 +222,16 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
         // Refresh the payload from DB to ensure we have the full object for Meili sync
         finalEntry, err := fetchFullEntryFromDB(db, req.Repo)
         if err != nil {
-             log.Printf("[UpdateCheck] ⚠️ Refetch failed: %v", err)
+             log.Printf("[Installerpedia API] ⚠️ Refetch failed: %v", err)
              finalEntry = updatedPayload // Fallback
         }
-        log.Printf("[UpdateCheck] 💾 Successfully saved updated data for %s to local DB.", req.Repo)
+        log.Printf("[Installerpedia API] 💾 Successfully saved updated data for %s to local DB.", req.Repo)
 
         // 5. Sync to Meili in background
         go func() {
-            log.Printf("[UpdateCheck] 🚀 Starting MeiliSearch sync for %s...", req.Repo)
+            log.Printf("[Installerpedia API] 🚀 Starting MeiliSearch sync for %s...", req.Repo)
             if err := SyncSingleRepoToMeili(finalEntry); err != nil {
-                log.Printf("[UpdateCheck] ⚠️ Meili Sync Error: %v", err)
+                log.Printf("[Installerpedia API] ⚠️ Meili Sync Error: %v", err)
             }
         }()
 
