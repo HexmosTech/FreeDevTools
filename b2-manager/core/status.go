@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"b2m/model"
@@ -160,6 +162,18 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 		}
 	}
 
+	// -------------------------------------------------------------------------
+	// PHASE 5: UNKNOWN STATE / MISSING METADATA
+	// -------------------------------------------------------------------------
+	if db.ExistsRemote && !hasRemoteMeta {
+		// The DB file is physically on the remote, but there is no .json metadata.
+		// Since we cannot verify if local is newer or older, it's an anomalous state.
+		LogError("Status Check: %s -> Missing Remote Metadata! (ExistsLocal: %v, ExistsRemote: %v)", db.Name, db.ExistsLocal, db.ExistsRemote)
+		return model.StatusCodeNoMetadata, model.DBStatuses.NoMetadata.Text, text.Colors{model.DBStatuses.NoMetadata.Color}
+	}
+
+	// Catch-all if something else falls through
+	LogError("Status Check: %s -> Unknown state (ExistsLocal: %v, ExistsRemote: %v, HasRemoteMeta: %v)", db.Name, db.ExistsLocal, db.ExistsRemote, hasRemoteMeta)
 	return model.StatusCodeUnknown, model.DBStatuses.Unknown.Text, text.Colors{model.DBStatuses.Unknown.Color}
 }
 
@@ -269,6 +283,8 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	LogInfo("FetchDBStatusData: Aggregated total %d databases", len(allDBs))
 
 	// Calculate status for each database
+	versionRoles := CalculateVersionRoles(allDBs)
+
 	var statusData []model.DBStatusInfo
 	for _, db := range allDBs {
 		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions, onProgress)
@@ -283,14 +299,78 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 			rawMetaStatus = meta.Status
 		}
 
+		role := "Latest" // default fallback
+		if r, ok := versionRoles[db.Name]; ok {
+			role = r
+		}
+
 		statusData = append(statusData, model.DBStatusInfo{
 			DB:               db,
 			Status:           statusText,
 			StatusCode:       statusCode,
 			RemoteMetaStatus: rawMetaStatus,
+			VersionRole:      role,
 			Color:            colorVal,
 		})
 	}
 
 	return statusData, nil
+}
+
+// CalculateVersionRoles determines which DB is "Latest" and which is "Old Version"
+// by grouping them by base name and finding the highest 'v(number)'.
+func CalculateVersionRoles(dbs []model.DBInfo) map[string]string {
+	roles := make(map[string]string)
+
+	// Regex matches base-v(num).db or just base.db (without v-num)
+	re := regexp.MustCompile(`^(.*)-v(\d+)(\..*)?$`)
+
+	// Group by base name
+	// baseName -> []{name: fullDBName, version: int}
+	type verInfo struct {
+		name    string
+		version int
+	}
+	groups := make(map[string][]verInfo)
+
+	for _, db := range dbs {
+		match := re.FindStringSubmatch(db.Name)
+		if match != nil {
+			base := match[1]
+			ver, err := strconv.Atoi(match[2])
+			if err != nil {
+				ver = 0
+			}
+			groups[base] = append(groups[base], verInfo{name: db.Name, version: ver})
+		} else {
+			// If no version number (e.g. "settings.db"), it's the only one of its kind so it's Latest
+			roles[db.Name] = "Latest"
+		}
+	}
+
+	for _, list := range groups {
+		if len(list) == 1 {
+			roles[list[0].name] = "Latest"
+			continue
+		}
+
+		// Find highest version
+		maxVer := -1
+		for _, info := range list {
+			if info.version > maxVer {
+				maxVer = info.version
+			}
+		}
+
+		// Assign roles
+		for _, info := range list {
+			if info.version == maxVer {
+				roles[info.name] = "Latest"
+			} else {
+				roles[info.name] = "Old Version"
+			}
+		}
+	}
+
+	return roles
 }

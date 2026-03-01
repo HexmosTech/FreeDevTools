@@ -125,12 +125,12 @@ func HandleCLI() {
 				},
 			},
 			{
-				Name:     "execute-changeset",
+				Name:     "exe-changeset",
 				Category: "User Commands",
 				Usage:    "Execute a given changeset script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m execute-changeset <script_name>", 1)
+						return cli.Exit("Usage: b2m exe-changeset <script_name>", 1)
 					}
 					scriptName := cCtx.Args().First()
 					if err := core.ExecuteChangeset(scriptName); err != nil {

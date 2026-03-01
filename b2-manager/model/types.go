@@ -23,6 +23,7 @@ type DBStatusInfo struct {
 	Status           string
 	StatusCode       string // Stable identifier for logic (e.g. "remote_newer")
 	RemoteMetaStatus string // Raw status from remote metadata (e.g. "uploading")
+	VersionRole      string // e.g. "Latest" or "Old Version" based on LSF
 	Color            text.Color
 }
 
@@ -163,15 +164,15 @@ var (
 // Config holds all application configuration
 type Config struct {
 	// Paths
-	RootBucket      string
-	LockDir         string
-	VersionDir      string
-	LocalVersionDir string
-	LocalAnchorDir  string
-	LocalB2MDir     string
-	LocalDBDir      string
-	MigrationsDir   string
-	ChangesetDir    string
+	RootBucket          string
+	LockDir             string
+	VersionDir          string
+	LocalVersionDir     string
+	LocalAnchorDir      string
+	LocalB2MDir         string
+	LocalDBDir          string
+	MigrationsDir       string
+	ChangesetDir        string
 	ChangesetScriptsDir string
 	ChangesetLogsDir    string
 	ChangesetDBsDir     string
