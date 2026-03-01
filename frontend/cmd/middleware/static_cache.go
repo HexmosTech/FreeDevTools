@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"fdt-templ/internal/static_cache"
 )
 
 // responseWriterWrapper captures the response status and body
@@ -72,8 +74,7 @@ func serveFromCache(w http.ResponseWriter, path, cachePath string) bool {
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		// Temporarily disabled injection for performance testing
-		w.Write(content)
+		w.Write(static_cache.InjectCSS(content))
 		return true
 	}
 	return false
@@ -154,8 +155,7 @@ func StaticCache(cacheDir string, next http.Handler) http.Handler {
 
 			// BUT for the current user, we must inject the JS/CSS now
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			// Temporarily disabled injection for performance testing
-			w.Write(rawContent)
+			w.Write(static_cache.InjectCSS(rawContent))
 		}
 	})
 }
