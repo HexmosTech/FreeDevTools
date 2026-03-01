@@ -394,7 +394,7 @@ func handleAutoIndex(db *installerpedia.DB) http.HandlerFunc {
 
 		// Insert into database
 		log.Printf("💾 [Auto-Index] Inserting entry for: %s", entryPayload.Repo)
-		success, err := saveInstallerpediaEntry(db, entryPayload)
+		success, err := saveInstallerpediaEntry(db, entryPayload,false)
 		if err != nil {
 			log.Printf("❌ [Auto-Index] Error saving entry: %v", err)
 			http.Error(w, "Failed to save entry", http.StatusInternalServerError)
