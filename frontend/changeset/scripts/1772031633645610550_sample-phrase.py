@@ -8,10 +8,19 @@ import urllib.parse
 import os
 import time
 
-DB_NAME = "ipm-db"
+DB_NAME = "test-db.db"
+
+import sys
+
+# Add the parent directory (frontend/changeset) to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 ## Import Common Functions
-from changeset import db_status, db_download, db_upload # Still many more should be added.
+try:
+    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copydb_to_changeset_dir
+except ImportError as e:
+    print(f"Error importing changeset: {e}")
+    sys.exit(1)
 
 def inserted_queries(db_name):
     """
@@ -25,23 +34,25 @@ def inserted_queries(db_name):
 def main():
     # Check status of db.
     status = db_status(DB_NAME)
+    print(status)
     # If status is outdated_db, then download db from b2.
-    if status == "outdated_db":
+    if status == "up_to_date":
+        pass
+    elif status == "outdated_db":
+        stop_server()
         db_download(DB_NAME)
-        cp_queries(DB_NAME)
         inserted_queries(DB_NAME)
-        rename_db(DB_NAME)
-        stop_server()
-        copy_db(DB_NAME)
-        update_db(DB_NAME)
+        bump_db_version(DB_NAME)
+        db_upload(DB_NAME)
         start_server()
-        upload_db(DB_NAME)
-    # If status is ready_to_upload, then upload db to b2.
-    if status == "ready_to_upload":
+        
+    # # If status is ready_to_upload, then upload db to b2.
+    elif status == "ready_to_upload":
         stop_server()
-        copy_db(DB_NAME)
+        copydb_to_changeset_dir(DB_NAME)
         start_server()
         db_upload(DB_NAME)
+        
     # If status is up_to_date, then do nothing.
     elif status == "up_to_date":
         pass

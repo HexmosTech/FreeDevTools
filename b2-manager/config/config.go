@@ -179,3 +179,11 @@ func CheckDependencies() error {
 	}
 	return nil
 }
+
+// UpdateForScript updates the global configuration paths given a script name
+func UpdateForScript(scriptName string) {
+	if scriptName != "" {
+		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", "backup", scriptName)
+		model.AppConfig.LocalDBDir = model.AppConfig.ChangesetDBsDir
+	}
+}

@@ -74,6 +74,9 @@ func ExecuteChangeset(scriptName string) error {
 		return fmt.Errorf("script %s not found in %s", scriptName, scriptDir)
 	}
 
+	// Since b2m runs from frontend, changeset.py should be at frontend/changeset/changeset.py
+	// But it's better to make it relative to the scripts dir (which is frontend/changeset/scripts).
+	// So the wrapper will be at: [scriptDir]/../changeset.py
 	fmt.Printf("Executing Changeset Script: %s\n", scriptPath)
 
 	cmd := exec.Command("python3", scriptPath)

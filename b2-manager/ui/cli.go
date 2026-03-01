@@ -160,9 +160,13 @@ func HandleCLI() {
 				Usage:    "Upload database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m upload <db_name>", 1)
+						return cli.Exit("Usage: b2m upload <db_name> [script_name]", 1)
 					}
 					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
 					if err := core.RunCLIUpload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error uploading database: %v", err), 1)
 					}
@@ -175,9 +179,13 @@ func HandleCLI() {
 				Usage:    "Download database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m download <db_name>", 1)
+						return cli.Exit("Usage: b2m download <db_name> [script_name]", 1)
 					}
 					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
 					if err := core.RunCLIDownload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error downloading database: %v", err), 1)
 					}
@@ -191,6 +199,26 @@ func HandleCLI() {
 				Action: func(cCtx *cli.Context) error {
 					if err := core.RunCLIFetchDBToml(); err != nil {
 						return cli.Exit(fmt.Sprintf("Error fetching db.toml: %v", err), 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:     "bump-db-version",
+				Category: "Changeset Commands",
+				Usage:    "Increment DB version and update db.toml (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return cli.Exit("Usage: b2m bump-db-version <db_name> [script_name]", 1)
+					}
+					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
+
+					if err := core.RunCLIBumpDBVersion(dbName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
 					return nil
 				},
