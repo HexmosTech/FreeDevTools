@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"bytes"
-	"fdt-templ/internal/static_cache"
 	"log"
 	"net/http"
 	"os"
@@ -73,7 +72,8 @@ func serveFromCache(w http.ResponseWriter, path, cachePath string) bool {
 		}
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
-		w.Write(static_cache.InjectCSS(static_cache.InjectScripts(content)))
+		// Temporarily disabled injection for performance testing
+		w.Write(content)
 		return true
 	}
 	return false
@@ -154,7 +154,8 @@ func StaticCache(cacheDir string, next http.Handler) http.Handler {
 
 			// BUT for the current user, we must inject the JS/CSS now
 			w.Header().Set("Content-Type", "text/html; charset=utf-8")
-			w.Write(static_cache.InjectCSS(static_cache.InjectScripts(rawContent)))
+			// Temporarily disabled injection for performance testing
+			w.Write(rawContent)
 		}
 	})
 }
