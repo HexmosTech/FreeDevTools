@@ -1,4 +1,4 @@
 package version
 
 // Version is the app version. Bump with: make bump-version
-const Version = "0.1.9"
+const Version = "0.1.10"

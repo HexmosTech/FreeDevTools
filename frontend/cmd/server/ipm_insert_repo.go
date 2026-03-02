@@ -35,6 +35,7 @@ type EntryPayload struct {
 	ResourcesOfInterest interface{} `json:"resources_of_interest"`
 	Description         string      `json:"description"`
 	Stars               int         `json:"stars"`
+	UpdatedAt           string      `json:"updated_at"` // <--- Add this
 }
 
 type InstallMethod struct {
@@ -57,6 +58,8 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/update-entry",handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
+	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
+	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
 
 }
 
@@ -90,7 +93,7 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
 			return
 		}
-
+		overwrite := r.URL.Query().Get("overwrite") == "true"
 		var payload EntryPayload
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 			log.Printf("⚠️  [Installerpedia API] Bad JSON: %v", err)
@@ -99,7 +102,7 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 		}
 
 		// Delegate logic to the DB helper
-		success, err := saveInstallerpediaEntry(db, payload)
+		success, err := saveInstallerpediaEntry(db, payload,overwrite)
 		if err != nil {
 			log.Printf("❌ [Installerpedia API] Error: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -132,7 +135,7 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 }
 
 // saveInstallerpediaEntry handles the data transformation and DB transaction
-func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload) (bool, error) {
+func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bool) (bool, error) {
 	repoSlug := strings.ReplaceAll(strings.ToLower(p.Repo), "/", "-")
 	slugHash := hashStringToInt64(repoSlug)
 	categoryHash := hashStringToInt64(p.RepoType)
@@ -150,23 +153,28 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload) (bool, error
 		return string(b)
 	}
 
+	// Determine the SQL verb
+	verb := "INSERT OR IGNORE"
+	if overwrite {
+		verb = "INSERT OR REPLACE"
+	}
+
 	tx, err := db.GetConn().Begin()
 	if err != nil {
 		return false, err
 	}
 	defer tx.Rollback()
 
-	res, err := tx.Exec(`
-        INSERT OR IGNORE INTO ipm_data (
-            slug_hash, repo, repo_slug, repo_type, category_hash, 
-            has_installation, is_deleted, prerequisites, 
-            installation_methods, post_installation, resources_of_interest, description, 
-            stars, keywords, updated_at
-        ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)
-    `, slugHash, p.Repo, repoSlug, p.RepoType, categoryHash,
+	res, err := tx.Exec(fmt.Sprintf(`
+		%s INTO ipm_data (
+			slug_hash, repo, repo_slug, repo_type, category_hash, 
+			has_installation, is_deleted, prerequisites, 
+			installation_methods, post_installation, resources_of_interest, description, 
+			stars, keywords, updated_at
+		) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, verb), slugHash, p.Repo, repoSlug, p.RepoType, categoryHash,
 		p.HasInstallation, m(p.Prerequisites), m(p.InstallationMethods),
 		m(p.PostInstallation), m(p.ResourcesOfInterest), p.Description, p.Stars, m(p.Keywords), updatedAt)
-
 	if err != nil {
 		return false, err
 	}
@@ -410,11 +418,11 @@ func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, 
     err := db.GetConn().QueryRow(`
         SELECT repo, repo_type, has_installation, description, stars, 
                prerequisites, installation_methods, post_installation, 
-               resources_of_interest, keywords
+               resources_of_interest, keywords, updated_at
         FROM ipm_data WHERE slug_hash = ?
     `, slugHash).Scan(
         &p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
-        &prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson,
+        &prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson, &p.UpdatedAt, // <--- Scan it here
     )
 
     if err != nil {
@@ -429,4 +437,41 @@ func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, 
     json.Unmarshal([]byte(keywordsJson), &p.Keywords)
 
     return p, nil
+}
+
+
+func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        repoName := r.URL.Query().Get("repo")
+        if repoName == "" {
+            http.Error(w, "Missing repo parameter", http.StatusBadRequest)
+            return
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+
+        // Reuse your existing helper to fetch the data
+        entry, err := fetchFullEntryFromDB(db, repoName)
+        
+        if err != nil {
+            // If the error is "no rows", it just doesn't exist
+            if strings.Contains(err.Error(), "no rows in result set") {
+                json.NewEncoder(w).Encode(map[string]interface{}{
+                    "exists": false,
+                    "repo":   repoName,
+                })
+                return
+            }
+            log.Printf("❌ [Installerpedia API] DB Check Error: %v", err)
+            http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+            return
+        }
+
+        // If we reached here, it exists. Return 'exists: true' + the full data
+        resp := map[string]interface{}{
+            "exists": true,
+            "data":   entry,
+        }
+        json.NewEncoder(w).Encode(resp)
+    }
 }
