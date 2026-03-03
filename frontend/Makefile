@@ -949,6 +949,12 @@ clear-cache: ## Clear the generated static/ directory
 
 generate-mcp: ## Generate static pages for the MCP section
 	@echo "Building static generator..."
-	$(GO_CMD) build -o static-gen cmd/static-generator/main.go cmd/static-generator/mcp.go cmd/static-generator/utils.go
+	$(GO_CMD) build -o static-gen cmd/static-generator/main.go cmd/static-generator/mcp.go cmd/static-generator/man_pages.go cmd/static-generator/utils.go
 	@echo "Running static generator for MCP..."
 	@./static-gen --section mcp
+
+generate-man-pages: ## Generate static pages for the Man Pages section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/main.go cmd/static-generator/mcp.go cmd/static-generator/man_pages.go cmd/static-generator/utils.go
+	@echo "Running static generator for Man Pages..."
+	@./static-gen --section man-pages

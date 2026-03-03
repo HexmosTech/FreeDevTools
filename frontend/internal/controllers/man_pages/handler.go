@@ -36,10 +36,14 @@ import (
 	"strings"
 	"time"
 
+	"errors"
+
 	"github.com/a-h/templ"
 )
 
-func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.DB) {
+var ErrNotFound = errors.New("not found")
+
+func FetchManPagesIndexData(db *man_pages.DB) (*man_pages_components.IndexData, error) {
 	// Run queries in parallel
 	categoriesChan := make(chan []man_pages.Category)
 	overviewChan := make(chan *man_pages.Overview)
@@ -67,9 +71,7 @@ func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.D
 	overview := <-overviewChan
 
 	if len(errChan) > 0 {
-		log.Printf("Error fetching data: %v", <-errChan)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return nil, <-errChan
 	}
 
 	totalManPages := 0
@@ -108,12 +110,22 @@ func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.D
 			PageType:     "CollectionPage",
 		},
 	}
+	return &data, nil
+}
 
-	handler := templ.Handler(man_pages_components.Index(data))
+func HandleManPagesIndex(w http.ResponseWriter, r *http.Request, db *man_pages.DB) {
+	data, err := FetchManPagesIndexData(db)
+	if err != nil {
+		log.Printf("Error fetching data: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	handler := templ.Handler(man_pages_components.Index(*data))
 	handler.ServeHTTP(w, r)
 }
 
-func HandleManPagesCategory(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category string, page int) {
+func FetchManPagesCategoryData(db *man_pages.DB, category string, page int) (*man_pages_components.CategoryData, error) {
 	itemsPerPage := 12
 	offset := (page - 1) * itemsPerPage
 
@@ -144,17 +156,12 @@ func HandleManPagesCategory(w http.ResponseWriter, r *http.Request, db *man_page
 	subcategories := <-subcategoriesChan
 
 	if len(errChan) > 0 {
-		log.Printf("Error fetching data: %v", <-errChan)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return nil, <-errChan
 	}
 
 	totalPages := (counts.SubCategoryCount + itemsPerPage - 1) / itemsPerPage
 	if page > totalPages || page < 1 {
-		// Redirect to category home page (page 1) if pagination page doesn't exist
-		log.Printf("[DEBUG] Pagination fallback: Page %d doesn't exist (total: %d), redirecting to category home", page, totalPages)
-		http.Redirect(w, r, config.GetBasePath()+"/man-pages/"+url.PathEscape(category)+"/", http.StatusMovedPermanently)
-		return
+		return nil, ErrNotFound
 	}
 
 	categoryTitle := man_pages_components.FormatCategoryName(category)
@@ -191,7 +198,6 @@ func HandleManPagesCategory(w http.ResponseWriter, r *http.Request, db *man_page
 		canonical = fmt.Sprintf("%s/man-pages/%s/%d/", config.GetSiteURL(), url.PathEscape(category), page)
 	}
 
-
 	data := man_pages_components.CategoryData{
 		Category:         category,
 		SubCategories:    subcategories,
@@ -211,12 +217,28 @@ func HandleManPagesCategory(w http.ResponseWriter, r *http.Request, db *man_page
 			PageType:     "CollectionPage",
 		},
 	}
+	return &data, nil
+}
 
-	handler := templ.Handler(man_pages_components.Category(data))
+func HandleManPagesCategory(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category string, page int) {
+	data, err := FetchManPagesCategoryData(db, category, page)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			// Redirect to category home page (page 1) if pagination page doesn't exist
+			log.Printf("[DEBUG] Pagination fallback: Page %d doesn't exist, redirecting to category home", page)
+			http.Redirect(w, r, config.GetBasePath()+"/man-pages/"+url.PathEscape(category)+"/", http.StatusMovedPermanently)
+			return
+		}
+		log.Printf("Error fetching data: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	handler := templ.Handler(man_pages_components.Category(*data))
 	handler.ServeHTTP(w, r)
 }
 
-func HandleManPagesSubcategory(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category, subcategory string, page int) {
+func FetchManPagesSubcategoryData(db *man_pages.DB, category, subcategory string, page int) (*man_pages_components.SubCategoryData, error) {
 	itemsPerPage := 20
 	offset := (page - 1) * itemsPerPage
 
@@ -247,67 +269,23 @@ func HandleManPagesSubcategory(w http.ResponseWriter, r *http.Request, db *man_p
 	manPages := <-manPagesChan
 
 	if len(errChan) > 0 {
-		log.Printf("Error fetching data: %v", <-errChan)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return nil, <-errChan
 	}
 
 	totalPages := (totalCount + itemsPerPage - 1) / itemsPerPage
 	if totalCount == 0 {
 		// Check if subcategory exists in database first
-		// If it exists but has 0 pages, render the empty subcategory page
 		exists, err := db.SubCategoryExists(category, subcategory)
 		if err != nil {
-			log.Printf("Error checking if subcategory exists: %v", err)
-		} else if exists {
-			// Subcategory exists but has 0 pages - render empty page
-			log.Printf("[DEBUG] Subcategory exists but has 0 pages: %s/%s", category, subcategory)
-			// Continue to render the page below (skip fallbacks)
-		} else {
-			// Subcategory doesn't exist, check if the second part could be a slug
-			// This handles cases like /kernel-routines/gpio/ where gpio might be a slug, not a subcategory
-			log.Printf("[DEBUG] Subcategory lookup failed (count=%d, page=%d), trying fallbacks with slug='%s'", totalCount, page, subcategory)
-
-		// Fetch matches once and reuse
-		startTime := time.Now()
-		matches, err := db.GetManPageBySlugOnly(subcategory)
-		duration := time.Since(startTime)
-		if err != nil {
-			log.Printf("[DEBUG] SubcategoryFallback: Error fetching man page by slug only: %v (took %v)", err, duration)
-		} else {
-			log.Printf("[DEBUG] SubcategoryFallback: GetManPageBySlugOnly query took %v", duration)
+			return nil, err
 		}
-
-		if tryFallback1And2WithMatches(w, r, db, category, subcategory, "SubcategoryFallback", matches, err) {
-			return
-		}
-		// Try Fallback 4 (first match even if multiple) - reuse matches if available
-		if tryFallback4WithMatches(w, r, db, subcategory, matches, err) {
-			return
-		}
-		// Try Fallback 5 (LIKE query with first 5 characters)
-		if tryFallback5(w, r, db, subcategory) {
-			return
-		}
-
-		// Try Fallback 6 FIRST (check old_urls.csv for subcategory -> slug mapping)
-		// This should run before slug-based fallbacks to handle old subcategory names
-		if tryFallback6OldUrlsCSV(w, r, db, category, subcategory) {
-			return
-		}
-
-		http.NotFound(w, r)
-		return
+		if !exists {
+			return nil, ErrNotFound
 		}
 	}
 
-	// Check if pagination page exceeds total pages - redirect to subcategory home (page 1)
-	// Allow page 1 even if totalPages is 0 (empty subcategory)
 	if (page > totalPages && totalPages > 0) || page < 1 {
-		// Redirect to subcategory home page (page 1) if pagination page doesn't exist
-		log.Printf("[DEBUG] Pagination fallback: Page %d doesn't exist (total: %d), redirecting to subcategory home", page, totalPages)
-		http.Redirect(w, r, config.GetBasePath()+"/man-pages/"+url.PathEscape(category)+"/"+url.PathEscape(subcategory)+"/", http.StatusMovedPermanently)
-		return
+		return nil, ErrNotFound
 	}
 
 	categoryTitle := man_pages_components.FormatCategoryName(category)
@@ -344,7 +322,6 @@ func HandleManPagesSubcategory(w http.ResponseWriter, r *http.Request, db *man_p
 		canonical = fmt.Sprintf("%s/man-pages/%s/%s/%d/", config.GetSiteURL(), url.PathEscape(category), url.PathEscape(subcategory), page)
 	}
 
-
 	data := man_pages_components.SubCategoryData{
 		Category:        category,
 		SubCategory:     subcategory,
@@ -364,8 +341,43 @@ func HandleManPagesSubcategory(w http.ResponseWriter, r *http.Request, db *man_p
 			PageType:     "CollectionPage",
 		},
 	}
+	return &data, nil
+}
 
-	handler := templ.Handler(man_pages_components.SubCategory(data))
+func HandleManPagesSubcategory(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category, subcategory string, page int) {
+	data, err := FetchManPagesSubcategoryData(db, category, subcategory, page)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			// Subcategory doesn't exist, check fallbacks
+			log.Printf("[DEBUG] Subcategory lookup failed (page=%d), trying fallbacks with slug='%s'", page, subcategory)
+
+			matches, err := db.GetManPageBySlugOnly(subcategory)
+			if err != nil {
+				log.Printf("[DEBUG] SubcategoryFallback: Error fetching man page by slug only: %v", err)
+			}
+
+			if tryFallback1And2WithMatches(w, r, db, category, subcategory, "SubcategoryFallback", matches, err) {
+				return
+			}
+			if tryFallback4WithMatches(w, r, db, subcategory, matches, err) {
+				return
+			}
+			if tryFallback5(w, r, db, subcategory) {
+				return
+			}
+			if tryFallback6OldUrlsCSV(w, r, db, category, subcategory) {
+				return
+			}
+
+			http.NotFound(w, r)
+			return
+		}
+		log.Printf("Error fetching data: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	handler := templ.Handler(man_pages_components.SubCategory(*data))
 	handler.ServeHTTP(w, r)
 }
 
@@ -721,52 +733,14 @@ func tryFallback6OldUrlsCSV(w http.ResponseWriter, r *http.Request, db *man_page
 	return true
 }
 
-func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category, subcategory, slug string) {
-	log.Printf("[DEBUG] Initial lookup: category='%s', subcategory='%s', slug='%s'", category, subcategory, slug)
-
+func FetchManPagesPageData(db *man_pages.DB, category, subcategory, slug string) (*man_pages_components.PageData, error) {
 	manPage, err := db.GetManPageBySlug(category, subcategory, slug)
 	if err != nil {
-		log.Printf("[DEBUG] Error fetching man page: %v", err)
-		http.Error(w, "Internal server error", http.StatusInternalServerError)
-		return
+		return nil, err
 	}
-
 	if manPage == nil {
-		log.Printf("[DEBUG] Initial lookup returned nil, starting fallback chain")
-
-		// Fallback 1: search by slug only
-		if tryFallback1And2(w, r, db, category, slug, "Fallback1") {
-			return
-		}
-
-		// Fallback 3: clean the slug (remove .html, remove .8/.9, lowercase) and try fallback 1 & 2 again
-		cleanedSlug := cleanSlug(slug)
-		log.Printf("[DEBUG] Fallback3: Original slug='%s', cleaned slug='%s'", slug, cleanedSlug)
-		if cleanedSlug != slug {
-			if tryFallback1And2(w, r, db, category, cleanedSlug, "Fallback3") {
-				return
-			}
-		} else {
-			log.Printf("[DEBUG] Fallback3: Slug unchanged after cleaning, skipping")
-		}
-
-		// Fallback 4: try first match by slug (even if multiple exist), clean slug if needed
-		if tryFallback4(w, r, db, slug) {
-			return
-		}
-
-		// Fallback 5: try LIKE query with first 5 characters of slug
-		if tryFallback5(w, r, db, slug) {
-			return
-		}
-
-		// Zero matches or multiple matches (ambiguous) - return 404
-		log.Printf("[DEBUG] All fallbacks exhausted - returning 404 for category='%s', subcategory='%s', slug='%s'", category, subcategory, slug)
-		http.NotFound(w, r)
-		return
+		return nil, ErrNotFound
 	}
-
-	log.Printf("[DEBUG] Initial lookup SUCCESS - found man page")
 
 	categoryTitle := man_pages_components.FormatCategoryName(category)
 	subcategoryTitle := man_pages_components.FormatCategoryName(subcategory)
@@ -831,12 +805,53 @@ func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB
 		Keywords:     keywords,
 		SeeAlsoItems: seeAlsoItems,
 	}
+	return &data, nil
+}
 
-	handler := templ.Handler(man_pages_components.Page(data))
+func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category, subcategory, slug string) {
+	data, err := FetchManPagesPageData(db, category, subcategory, slug)
+	if err != nil {
+		if errors.Is(err, ErrNotFound) {
+			log.Printf("[DEBUG] Page lookup returned nil, starting fallback chain")
+
+			// Fallback 1: search by slug only
+			if tryFallback1And2(w, r, db, category, slug, "Fallback1") {
+				return
+			}
+
+			// Fallback 3: clean the slug (remove .html, remove .8/.9, lowercase) and try fallback 1 & 2 again
+			cleanedSlug := cleanSlug(slug)
+			log.Printf("[DEBUG] Fallback3: Original slug='%s', cleaned slug='%s'", slug, cleanedSlug)
+			if cleanedSlug != slug {
+				if tryFallback1And2(w, r, db, category, cleanedSlug, "Fallback3") {
+					return
+				}
+			}
+
+			// Fallback 4: try first match by slug (even if multiple exist), clean slug if needed
+			if tryFallback4(w, r, db, slug) {
+				return
+			}
+
+			// Fallback 5: try LIKE query with first 5 characters of slug
+			if tryFallback5(w, r, db, slug) {
+				return
+			}
+
+			log.Printf("[DEBUG] All fallbacks exhausted - returning 404 for category='%s', subcategory='%s', slug='%s'", category, subcategory, slug)
+			http.NotFound(w, r)
+			return
+		}
+		log.Printf("Error fetching data: %v", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	handler := templ.Handler(man_pages_components.Page(*data))
 	handler.ServeHTTP(w, r)
 }
 
-func HandleManPagesCredits(w http.ResponseWriter, r *http.Request) {
+func FetchManPagesCreditsData() (*man_pages_components.CreditsData, error) {
 	breadcrumbItems := []components.BreadcrumbItem{
 		{Label: "Free DevTools", Href: config.GetBasePath() + "/"},
 		{Label: "Man Pages", Href: config.GetBasePath() + "/man-pages/"},
@@ -866,7 +881,15 @@ func HandleManPagesCredits(w http.ResponseWriter, r *http.Request) {
 			PageType:     "CollectionPage",
 		},
 	}
+	return &data, nil
+}
 
-	handler := templ.Handler(man_pages_components.Credits(data))
+func HandleManPagesCredits(w http.ResponseWriter, r *http.Request) {
+	data, err := FetchManPagesCreditsData()
+	if err != nil {
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	handler := templ.Handler(man_pages_components.Credits(*data))
 	handler.ServeHTTP(w, r)
 }
