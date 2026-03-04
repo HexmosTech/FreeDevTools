@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import List, Tuple
 
 # Database path
-DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "man-pages-db-v5.db"
+DB_PATH = Path(__file__).parent.parent.parent / "db" / "all_dbs" / "man-pages-db-v6.db"
 
 # Input file path
 INPUT_FILE = Path(__file__).parent.parent / "404.txt"

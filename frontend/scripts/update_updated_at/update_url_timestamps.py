@@ -10,13 +10,13 @@ from urllib.parse import urlparse
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DB_DIR = os.path.join(BASE_DIR, 'db', 'all_dbs')
 
-EMOJI_DB_PATH = os.path.join(DB_DIR, 'emoji-db-v5.db')
+EMOJI_DB_PATH = os.path.join(DB_DIR, 'emoji-db-v6.db')
 CHEATSHEET_DB_PATH = os.path.join(DB_DIR, 'cheatsheets-db-v5.db')
-PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v5.db')
+PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v6.db')
 SVG_ICONS_DB_PATH = os.path.join(DB_DIR, 'svg-icons-db-v5.db')
-TLDR_DB_PATH = os.path.join(DB_DIR, 'tldr-db-v5.db')
+TLDR_DB_PATH = os.path.join(DB_DIR, 'tldr-db-v6.db')
 MCP_DB_PATH = os.path.join(DB_DIR, 'mcp-db-v6.db')
-MAN_PAGES_DB_PATH = os.path.join(DB_DIR, 'man-pages-db-v5.db')
+MAN_PAGES_DB_PATH = os.path.join(DB_DIR, 'man-pages-db-v6.db')
 IPM_DB_PATH = os.path.join(DB_DIR, 'ipm-db-v6.db')
 
 def get_current_time_str():

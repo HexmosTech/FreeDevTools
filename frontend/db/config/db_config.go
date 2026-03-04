@@ -58,7 +58,7 @@ package db_config
 // Mem:           3.8Gi       740Mi       2.4Gi       3.1Mi       1.0Gi       3.1Gi
 // Swap:           11Gi       2.2Gi       9.8Gi
 
-// 2.48GB man-pages-db-v5.db
+// 2.48GB man-pages-db-v6.db
 // Optimized for 2.48GB database: 1GB cache, 2.6GB mmap (covers full DB + overhead)
 var ManPagesDBConfig = "?mode=ro" +
 	"&_immutable=1" +
@@ -71,7 +71,7 @@ var SVGIconsDBConfig = "?mode=ro" +
 	"&_cache_size=-32768" +
 	"&_mmap_size=536870912"
 
-// 465M png-icons-db-v5.db
+// 465M png-icons-db-v6.db
 var PngIconsDBConfig = "?mode=ro" +
 	"&_immutable=1" +
 	"&_cache_size=-32768" +
@@ -79,7 +79,7 @@ var PngIconsDBConfig = "?mode=ro" +
 
 // 36K banner-db.db
 // 7.5M cheatsheets-db-v5.db
-// 2.3G emoji-db-v5.db
+// 2.3G emoji-db-v6.db
 // Optimize for RAM: mmap_size covers full DB, large cache for hot pages
 // Match man-pages pattern: 1GB cache, 2.5GB mmap (covers full 2.3GB DB + overhead)
 var EmojiDBConfig = "?mode=ro" +
@@ -101,8 +101,8 @@ var CheatsheetsDBConfig = "?mode=ro" +
 	"&_cache_size=-2000" + // 2MB cache
 	"&_mmap_size=16777216" // 16MB mmap
 
-	// 465M png-icons-db-v5.db
-// 31M  tldr-db-v5.db
+	// 465M png-icons-db-v6.db
+// 31M  tldr-db-v6.db
 var TldrDBConfig = "?mode=ro" +
 	"&_immutable=1" +
 	"&_cache_size=-4000" + // 4MB cache

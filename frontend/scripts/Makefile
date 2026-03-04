@@ -13,22 +13,22 @@ emoji-blob-to-files:
 
 add-emoji-indexes:
 	@echo "🔧 Adding composite indexes for Apple and Discord images query optimization..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/add_apple_images_index.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v6.db < scripts/emojis/add_apple_images_index.sql
 	@echo "✅ Indexes created!"
 
 verify-indexes:
 	@echo "🔍 Verifying and creating emoji indexes..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/verify_and_create_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v6.db < scripts/emojis/verify_and_create_indexes.sql
 	@echo "✅ Index verification complete!"
 
 optimize-order-by-indexes:
 	@echo "🔧 Adding indexes to optimize ORDER BY performance..."
-	@cd .. && sqlite3 db/all_dbs/emoji-db-v5.db < scripts/emojis/optimize_order_by_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/emoji-db-v6.db < scripts/emojis/optimize_order_by_indexes.sql
 	@echo "✅ Order BY indexes created!"
 
 optimize-man-pages-indexes:
 	@echo "🔧 Adding indexes to optimize man pages queries..."
-	@cd .. && sqlite3 db/all_dbs/man-pages-db-v5.db < scripts/man-pages/optimize_man_pages_indexes.sql
+	@cd .. && sqlite3 db/all_dbs/man-pages-db-v6.db < scripts/man-pages/optimize_man_pages_indexes.sql
 	@echo "✅ Man pages indexes created!"
 
 create_html_content:
