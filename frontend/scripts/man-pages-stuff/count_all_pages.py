@@ -8,8 +8,8 @@ total_pages = 0
 
 # Database configurations: (db_file, table_name, description)
 databases = [
-    ("man-pages-db-v5.db", "man_pages", "Man Pages"),
-    ("emoji-db-v5.db", "images", "Emojis"),
+    ("man-pages-db-v6.db", "man_pages", "Man Pages"),
+    ("emoji-db-v6.db", "images", "Emojis"),
     ("mcp-db-v6.db", "mcp_pages", "MCP Pages"),
     ("cheatsheets-db-v5.db", "cheatsheet", "Cheatsheets"),
     ("tldr-db-v5.db", "pages", "TLDR Pages"),

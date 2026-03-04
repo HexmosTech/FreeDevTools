@@ -128,7 +128,7 @@ checkpoint-db: ## Checkpoint SQLite WAL (required before shipping with immutable
 
 man-pages-index-slug: ## Add index on slug column to man_pages table
 	@echo "Adding index on slug column to man_pages table..."
-	@DB_PATH="db/all_dbs/man-pages-db-v5.db"; \
+	@DB_PATH="db/all_dbs/man-pages-db-v6.db"; \
 	if [ ! -f "$$DB_PATH" ]; then \
 		echo "❌ Error: Database file not found at $$DB_PATH"; \
 		exit 1; \
@@ -148,7 +148,7 @@ man-pages-index-slug: ## Add index on slug column to man_pages table
 
 undo-man-pages-index-slug: ## Remove index on slug column from man_pages table
 	@echo "Removing index on slug column from man_pages table..."
-	@DB_PATH="db/all_dbs/man-pages-db-v5.db"; \
+	@DB_PATH="db/all_dbs/man-pages-db-v6.db"; \
 	if [ ! -f "$$DB_PATH" ]; then \
 		echo "❌ Error: Database file not found at $$DB_PATH"; \
 		exit 1; \

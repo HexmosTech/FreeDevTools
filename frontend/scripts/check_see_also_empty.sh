@@ -121,7 +121,7 @@ print_category_summary "ipm-db-v6.db" "ipm_data" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 7. Man Pages
-print_category_summary "man-pages-db-v5.db" "man_pages" "category" \
+print_category_summary "man-pages-db-v6.db" "man_pages" "category" \
     "SELECT main_category || '/' || sub_category, COUNT(*) 
      FROM man_pages 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
@@ -129,7 +129,7 @@ print_category_summary "man-pages-db-v5.db" "man_pages" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 8. Emojis
-print_category_summary "emoji-db-v5.db" "emojis" "category" \
+print_category_summary "emoji-db-v6.db" "emojis" "category" \
     "SELECT COALESCE(category, 'Uncategorized'), COUNT(*) 
      FROM emojis 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'

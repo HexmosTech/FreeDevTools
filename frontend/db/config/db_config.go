@@ -58,7 +58,7 @@ package db_config
 // Mem:           3.8Gi       740Mi       2.4Gi       3.1Mi       1.0Gi       3.1Gi
 // Swap:           11Gi       2.2Gi       9.8Gi
 
-// 2.48GB man-pages-db-v5.db
+// 2.48GB man-pages-db-v6.db
 // Optimized for 2.48GB database: 1GB cache, 2.6GB mmap (covers full DB + overhead)
 var ManPagesDBConfig = "?mode=ro" +
 	"&_immutable=1" +
@@ -79,7 +79,7 @@ var PngIconsDBConfig = "?mode=ro" +
 
 // 36K banner-db.db
 // 7.5M cheatsheets-db-v5.db
-// 2.3G emoji-db-v5.db
+// 2.3G emoji-db-v6.db
 // Optimize for RAM: mmap_size covers full DB, large cache for hot pages
 // Match man-pages pattern: 1GB cache, 2.5GB mmap (covers full 2.3GB DB + overhead)
 var EmojiDBConfig = "?mode=ro" +
