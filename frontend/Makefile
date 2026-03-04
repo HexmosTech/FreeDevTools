@@ -183,7 +183,20 @@ build-b2m: ## Build b2m CLI
 	fi
 	cd ../b2-manager && $(GO_CMD) build -o ../b2m .
 	cp ../b2m ./b2m
-	
+
+exe-changeset: build-b2m ## Execute a changeset script
+	@SCRIPT_NAME=$$([ -n "$(script)" ] && echo "$(script)" || echo "$(filter-out exe-changeset,$(MAKECMDGOALS))" | head -n1); \
+	if [ -z "$$SCRIPT_NAME" ]; then \
+		echo "❌ Error: Script name is required"; \
+		echo "Usage: make exe-changeset <script_name>"; \
+		exit 1; \
+	fi; \
+	./b2m exe-changeset "$$SCRIPT_NAME"
+
+# Catch-all target to prevent make from complaining about the script name being a missing rule
+%:
+	@:
+
 b2m-test: ## Run b2-manager test script
 	@echo "Running b2-manager test script..."
 	@../b2-manager/testing/test.sh

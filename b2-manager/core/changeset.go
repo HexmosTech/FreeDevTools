@@ -109,13 +109,21 @@ func RunCLIStatus(dbName string) error {
 
 		if baseName == reqBaseName || info.DB.Name == dbName {
 			found = true
-			// Translate core statuses to the 3 Python required statuses
-			switch info.StatusCode {
-			case model.StatusCodeLocalNewer, model.StatusCodeNewLocal, model.StatusCodeLockedByYou:
+			isReadyToUpload := info.StatusCode == model.StatusCodeLocalNewer || info.StatusCode == model.StatusCodeNewLocal || info.StatusCode == model.StatusCodeLockedByYou
+			isOutdated := info.StatusCode == model.StatusCodeRemoteNewer || info.StatusCode == model.StatusCodeRemoteOnly || info.StatusCode == model.StatusCodeErrorReadLocal || info.StatusCode == model.StatusCodeUnknown
+
+			if info.VersionRole == "New Bump" && isReadyToUpload {
 				fmt.Println("ready_to_upload")
-			case model.StatusCodeUpToDate:
+			} else if info.VersionRole == "Latest" && isOutdated {
+				fmt.Println("outdated_db")
+			} else if info.VersionRole == "Old Version" && isOutdated {
+				fmt.Println("outdated_version")
+			} else if info.StatusCode == model.StatusCodeUpToDate {
 				fmt.Println("up_to_date")
-			default:
+			} else if isReadyToUpload {
+				// User didn't specify what to do if it's 'Latest' and 'ready_to_upload', but it should upload.
+				fmt.Println("ready_to_upload")
+			} else {
 				fmt.Println("outdated_db") // fallback for safety
 			}
 			return nil
@@ -131,8 +139,26 @@ func RunCLIStatus(dbName string) error {
 // RunCLIUpload runs a database upload without UI components
 func RunCLIUpload(dbName string) error {
 	ctx := context.Background()
-	// Using empty functions to keep it quiet
-	return PerformUpload(ctx, dbName, false, nil, nil)
+	// Using empty functions to keep it quiet, but print basic progress
+	onProgress := func(p model.RcloneProgress) {
+		pct := int64(0)
+		if p.Stats.TotalBytes > 0 {
+			pct = (p.Stats.Bytes * 100) / p.Stats.TotalBytes
+		}
+		// ETA is in seconds
+		etaStr := "-"
+		if p.Stats.Eta > 0 {
+			etaStr = fmt.Sprintf("%ds", p.Stats.Eta)
+		}
+		fmt.Printf("\rUploading... %d%% (ETA: %s)", pct, etaStr)
+	}
+	onStatusUpdate := func(s string) {
+		fmt.Printf("\rStatus: %s\n", s)
+	}
+	// We force the upload (true) to bypass interactive safety checks that would hang a script
+	err := PerformUpload(ctx, dbName, true, onProgress, onStatusUpdate)
+	fmt.Println() // Add a final newline
+	return err
 }
 
 // RunCLIDownload runs a database download without UI components

@@ -217,9 +217,11 @@ func HandleCLI() {
 						config.UpdateForScript(scriptName)
 					}
 
-					if err := core.RunCLIBumpDBVersion(dbName); err != nil {
+					newDBName, err := core.RunCLIBumpDBVersion(dbName)
+					if err != nil {
 						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
+					fmt.Println(newDBName)
 					return nil
 				},
 			},

@@ -3,7 +3,9 @@ package core
 import (
 	"context"
 	"fmt"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"time"
 
 	"b2m/model"
@@ -155,7 +157,14 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 // CheckUploadSafety verifies that the remote database is not newer than the local one.
 // It fetches the specific remote metadata and compares it with the local anchor and file.
 func CheckUploadSafety(ctx context.Context, dbName string) error {
-	LogInfo("CheckUploadSafety: Verifying status for %s...", dbName)
+	// 0. Quick check if it exists on remote at all
+	cmd := exec.CommandContext(ctx, "rclone", "lsf", model.AppConfig.RootBucket+dbName)
+	out, err := cmd.Output()
+	if err != nil || len(strings.TrimSpace(string(out))) == 0 {
+		// Doesn't exist remotely (or network error, but usually means not found). Safe to upload as new.
+		LogInfo("CheckUploadSafety: %s not found on remote. Safe to upload (New DB).", dbName)
+		return nil
+	}
 
 	// 1. Fetch Remote Metadata (Specific file only)
 	remoteMeta, err := FetchSingleRemoteMetadata(ctx, dbName)

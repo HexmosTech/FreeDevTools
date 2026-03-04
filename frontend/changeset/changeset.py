@@ -16,6 +16,8 @@ def db_status(db_name):
     """
     Check the synchronization status of a database on B2.
     """
+    if not db_name.endswith('.db'):
+        db_name += '.db'
     print(f"Executing status check for: {db_name}")
     try:
         b2m_bin = get_b2m_bin()
@@ -29,6 +31,8 @@ def db_upload(db_name):
     """
     Upload the local database file directly to B2 storage.
     """
+    if not db_name.endswith('.db'):
+        db_name += '.db'
     print(f"Executing upload for: {db_name}")
     try:
         b2m_bin = get_b2m_bin()
@@ -43,6 +47,8 @@ def db_download(db_name):
     """
     Download the database file directly from B2 storage.
     """
+    if not db_name.endswith('.db'):
+        db_name += '.db'
     print(f"Executing download for: {db_name}")
     try:
         b2m_bin = get_b2m_bin()
@@ -95,13 +101,13 @@ def setup_logging():
 
 def stop_server():
     try:
-        subprocess.run(["make", "stop-dev"], check=True)
+        subprocess.run(["make", "stop-prod"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error stopping server: {e}")
 
 def start_server():
     try:
-        subprocess.run(["make", "start-dev"], check=True)
+        subprocess.run(["make", "start-prod"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error starting server: {e}")
 
@@ -115,7 +121,7 @@ def copydb_to_changeset_dir(db_name):
         # Assuming db.toml is at `frontend/db/all_dbs/db.toml`
         frontend_dir = os.path.abspath(os.path.join(script_dir, ".."))
         server_db_dir = os.path.join(frontend_dir, "db", "all_dbs")
-        db_toml_path = os.path.join(server_db_dir, "db.toml")
+        db_toml_path = os.path.join(frontend_dir, "db.toml")
 
         # Basic parser for db.toml to find actual active db name mapped to `db_name`
         actual_db_filename = None
@@ -145,7 +151,7 @@ def copydb_to_changeset_dir(db_name):
             return
 
         src_path = os.path.join(server_db_dir, actual_db_filename)
-        dest_dir = os.path.join(script_dir, "dbs", "backup", script_name)
+        dest_dir = os.path.join(script_dir, "dbs", script_name, "backup")
         os.makedirs(dest_dir, exist_ok=True)
         dest_path = os.path.join(dest_dir, actual_db_filename)
 
@@ -154,13 +160,69 @@ def copydb_to_changeset_dir(db_name):
     except Exception as e:
         print(f"Error copying DB to changeset dir: {e}")
 
+def copysql_to_changeset_dir(db_name):
+    import shutil
+    try:
+        script_name = get_script_name()
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        
+        frontend_dir = os.path.abspath(os.path.join(script_dir, ".."))
+        # Check standard locations: db/all_dbs first, then testing/
+        possible_src_dirs = [
+            os.path.join(frontend_dir, "db", "all_dbs"),
+            os.path.abspath(os.path.join(frontend_dir, "..", "b2-manager", "testing"))
+        ]
+        
+        actual_sql_filename = db_name + ".sql"
+        src_path = None
+        
+        for d in possible_src_dirs:
+            p = os.path.join(d, actual_sql_filename)
+            if os.path.exists(p):
+                src_path = p
+                break
+                
+        if not src_path:
+            # Maybe it starts with db_name (e.g. test-db-v1.sql)
+            for d in possible_src_dirs:
+                if not os.path.exists(d): continue
+                for f in os.listdir(d):
+                    if f.startswith(db_name) and f.endswith(".sql"):
+                        src_path = os.path.join(d, f)
+                        actual_sql_filename = f
+                        break
+                if src_path: break
+
+        if not src_path:
+            print(f"Error copying SQL: Could not find SQL file for '{db_name}' in standard directories")
+            return
+
+        dest_dir = os.path.join(script_dir, "dbs", script_name, "backup")
+        os.makedirs(dest_dir, exist_ok=True)
+        dest_path = os.path.join(dest_dir, actual_sql_filename)
+
+        print(f"Copying {src_path} to {dest_path}")
+        shutil.copy2(src_path, dest_path)
+    except Exception as e:
+        print(f"Error copying SQL to changeset dir: {e}")
+
 def bump_db_version(db_name):
     try:
+        if not db_name.endswith('.db'):
+            db_name += '.db'
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        subprocess.run([b2m_bin, "bump-db-version", db_name, script_name], check=True)
+        result = subprocess.run([b2m_bin, "bump-db-version", db_name, script_name], capture_output=True, text=True, check=True)
+        
+        # B2M logs to stdout with [INFO] and the actual new db name is printed on a raw line at the end
+        lines = result.stdout.strip().split('\n')
+        # The last line should be the new db name
+        new_db_name = lines[-1].strip()
+        print(f"Bumped {db_name} to {new_db_name}")
+        return new_db_name
     except subprocess.CalledProcessError as e:
         print(f"Error bumping db version: {e}")
+        return db_name
 
 # Initialize logging automatically when imported
 setup_logging()

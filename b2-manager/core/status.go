@@ -317,7 +317,7 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	return statusData, nil
 }
 
-// CalculateVersionRoles determines which DB is "Latest" and which is "Old Version"
+// CalculateVersionRoles determines which DB is "Latest", "New Bump", and "Old Version"
 // by grouping them by base name and finding the highest 'v(number)'.
 func CalculateVersionRoles(dbs []model.DBInfo) map[string]string {
 	roles := make(map[string]string)
@@ -326,10 +326,10 @@ func CalculateVersionRoles(dbs []model.DBInfo) map[string]string {
 	re := regexp.MustCompile(`^(.*)-v(\d+)(\..*)?$`)
 
 	// Group by base name
-	// baseName -> []{name: fullDBName, version: int}
 	type verInfo struct {
 		name    string
 		version int
+		remote  bool
 	}
 	groups := make(map[string][]verInfo)
 
@@ -341,31 +341,32 @@ func CalculateVersionRoles(dbs []model.DBInfo) map[string]string {
 			if err != nil {
 				ver = 0
 			}
-			groups[base] = append(groups[base], verInfo{name: db.Name, version: ver})
+			groups[base] = append(groups[base], verInfo{name: db.Name, version: ver, remote: db.ExistsRemote})
 		} else {
-			// If no version number (e.g. "settings.db"), it's the only one of its kind so it's Latest
-			roles[db.Name] = "Latest"
+			// If no version number (e.g. "settings.db"), it's the only one of its kind so it's Latest or New Bump
+			if db.ExistsRemote {
+				roles[db.Name] = "Latest"
+			} else {
+				roles[db.Name] = "New Bump"
+			}
 		}
 	}
 
 	for _, list := range groups {
-		if len(list) == 1 {
-			roles[list[0].name] = "Latest"
-			continue
-		}
-
-		// Find highest version
-		maxVer := -1
+		// Find highest remote version
+		maxRemoteVer := -1
 		for _, info := range list {
-			if info.version > maxVer {
-				maxVer = info.version
+			if info.remote && info.version > maxRemoteVer {
+				maxRemoteVer = info.version
 			}
 		}
 
 		// Assign roles
 		for _, info := range list {
-			if info.version == maxVer {
+			if info.version == maxRemoteVer && info.remote {
 				roles[info.name] = "Latest"
+			} else if !info.remote && info.version > maxRemoteVer {
+				roles[info.name] = "New Bump"
 			} else {
 				roles[info.name] = "Old Version"
 			}

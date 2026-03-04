@@ -12,7 +12,7 @@ import (
 )
 
 // RunCLIBumpDBVersion handles the CLI bump-db-version command logic
-func RunCLIBumpDBVersion(baseDBName string) error {
+func RunCLIBumpDBVersion(baseDBName string) (string, error) {
 	LogInfo("Bumping DB version for base: %s", baseDBName)
 
 	// 1. Determine the actual current DB filename from db.toml (since the user likely passed the generic name)
@@ -23,14 +23,29 @@ func RunCLIBumpDBVersion(baseDBName string) error {
 
 	currentPath := filepath.Join(model.AppConfig.LocalDBDir, baseDBName)
 	if _, err := os.Stat(currentPath); os.IsNotExist(err) {
-		return fmt.Errorf("database file doesn't exist in script dir to bump: %s", currentPath)
+		// Try to find the actual file if they passed a prefix like "test-db"
+		files, errDir := os.ReadDir(model.AppConfig.LocalDBDir)
+		foundMatch := false
+		if errDir == nil {
+			for _, file := range files {
+				if strings.HasPrefix(file.Name(), baseDBName) && strings.HasSuffix(file.Name(), ".db") {
+					baseDBName = file.Name()
+					currentPath = filepath.Join(model.AppConfig.LocalDBDir, baseDBName)
+					foundMatch = true
+					break
+				}
+			}
+		}
+		if !foundMatch {
+			return "", fmt.Errorf("database file doesn't exist in script dir to bump: %s", currentPath)
+		}
 	}
 
 	// 2. Increment the version number string inside the filename
 	// e.g. ipm-db-v1.db -> ipm-db-v2.db
 	newDBName, err := incrementFilenameVersion(baseDBName)
 	if err != nil {
-		return fmt.Errorf("failed to parse version from filename %s: %w", baseDBName, err)
+		return "", fmt.Errorf("failed to parse version from filename %s: %w", baseDBName, err)
 	}
 
 	newPath := filepath.Join(model.AppConfig.LocalDBDir, newDBName)
@@ -40,25 +55,25 @@ func RunCLIBumpDBVersion(baseDBName string) error {
 	// 3. Copy the DB file inside the changeset staging directory with the new name
 	err = copyFile(currentPath, newPath)
 	if err != nil {
-		return fmt.Errorf("failed to copy database in changeset dir: %w", err)
+		return "", fmt.Errorf("failed to copy database in changeset dir: %w", err)
 	}
 	LogInfo("Copied to new version in changeset dir: %s", newPath)
 
 	// 4. Copy the newly versioned DB file into the main server directory (`db/all_dbs`)
 	err = copyFile(newPath, serverPath)
 	if err != nil {
-		return fmt.Errorf("failed to copy bumped db to server db dir: %w", err)
+		return "", fmt.Errorf("failed to copy bumped db to server db dir: %w", err)
 	}
 	LogInfo("Copied to server db dir: %s", serverPath)
 
 	// 5. Update the `db.toml` to point to the newly named database.
 	err = updateDBToml(baseDBName, newDBName)
 	if err != nil {
-		return fmt.Errorf("failed to update db.toml: %w", err)
+		return "", fmt.Errorf("failed to update db.toml: %w", err)
 	}
 	LogInfo("Updated db.toml with new version %s", newDBName)
 
-	return nil
+	return newDBName, nil
 }
 
 func incrementFilenameVersion(filename string) (string, error) {

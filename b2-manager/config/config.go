@@ -55,7 +55,7 @@ func InitializeConfig() error {
 	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ChangesetDir, "logs")
 	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs")
 
-	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db", "all_dbs", "db.toml")
+	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db.toml")
 
 	return nil
 }
@@ -183,7 +183,7 @@ func CheckDependencies() error {
 // UpdateForScript updates the global configuration paths given a script name
 func UpdateForScript(scriptName string) {
 	if scriptName != "" {
-		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", "backup", scriptName)
+		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", scriptName, "backup")
 		model.AppConfig.LocalDBDir = model.AppConfig.ChangesetDBsDir
 	}
 }
