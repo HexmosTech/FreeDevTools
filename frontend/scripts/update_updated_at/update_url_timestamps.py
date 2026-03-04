@@ -12,7 +12,7 @@ DB_DIR = os.path.join(BASE_DIR, 'db', 'all_dbs')
 
 EMOJI_DB_PATH = os.path.join(DB_DIR, 'emoji-db-v6.db')
 CHEATSHEET_DB_PATH = os.path.join(DB_DIR, 'cheatsheets-db-v5.db')
-PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v5.db')
+PNG_ICONS_DB_PATH = os.path.join(DB_DIR, 'png-icons-db-v6.db')
 SVG_ICONS_DB_PATH = os.path.join(DB_DIR, 'svg-icons-db-v5.db')
 TLDR_DB_PATH = os.path.join(DB_DIR, 'tldr-db-v5.db')
 MCP_DB_PATH = os.path.join(DB_DIR, 'mcp-db-v6.db')

@@ -71,7 +71,7 @@ var SVGIconsDBConfig = "?mode=ro" +
 	"&_cache_size=-32768" +
 	"&_mmap_size=536870912"
 
-// 465M png-icons-db-v5.db
+// 465M png-icons-db-v6.db
 var PngIconsDBConfig = "?mode=ro" +
 	"&_immutable=1" +
 	"&_cache_size=-32768" +
@@ -101,7 +101,7 @@ var CheatsheetsDBConfig = "?mode=ro" +
 	"&_cache_size=-2000" + // 2MB cache
 	"&_mmap_size=16777216" // 16MB mmap
 
-	// 465M png-icons-db-v5.db
+	// 465M png-icons-db-v6.db
 // 31M  tldr-db-v5.db
 var TldrDBConfig = "?mode=ro" +
 	"&_immutable=1" +

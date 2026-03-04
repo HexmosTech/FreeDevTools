@@ -14,7 +14,7 @@ databases = [
     ("cheatsheets-db-v5.db", "cheatsheet", "Cheatsheets"),
     ("tldr-db-v5.db", "pages", "TLDR Pages"),
     ("svg-icons-db-v5.db", None, "SVG Icons"),  # Will auto-detect
-    ("png-icons-db-v5.db", None, "PNG Icons"),  # Will auto-detect
+    ("png-icons-db-v6.db", None, "PNG Icons"),  # Will auto-detect
 ]
 
 print("Counting detail pages from all databases:\n")

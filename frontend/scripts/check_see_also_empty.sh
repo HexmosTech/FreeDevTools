@@ -104,7 +104,7 @@ print_category_summary "svg-icons-db-v5.db" "icon" "cluster" \
      ORDER BY COUNT(*) DESC;"
 
 # 5. PNG Icons
-print_category_summary "png-icons-db-v5.db" "icon" "cluster" \
+print_category_summary "png-icons-db-v6.db" "icon" "cluster" \
     "SELECT cluster, COUNT(*) 
      FROM icon 
      WHERE see_also IS NULL OR see_also = '' OR see_also = '[]'
