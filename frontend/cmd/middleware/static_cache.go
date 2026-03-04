@@ -8,7 +8,11 @@ import (
 	"path/filepath"
 	"strings"
 
+	"encoding/json"
+	"fdt-templ/components/layouts"
 	"fdt-templ/internal/static_cache"
+
+	"github.com/a-h/templ"
 )
 
 // responseWriterWrapper captures the response status and body
@@ -64,15 +68,66 @@ func getCachePath(cacheDir, path string) string {
 
 // attempts to read the HTML from disk and serve it (with injections).
 // Returns true if successfully served.
-func serveFromCache(w http.ResponseWriter, path, cachePath string) bool {
+func serveFromCache(w http.ResponseWriter, r *http.Request, cachePath string) bool {
 	if info, err := os.Stat(cachePath); err == nil && !info.IsDir() {
-		log.Printf("[STATIC_CACHE] HIT: Serving %s from disk (injected)", path)
 		content, err := os.ReadFile(cachePath)
 		if err != nil {
 			log.Printf("[STATIC_CACHE] Error: Failed to read %s: %v", cachePath, err)
 			return false
 		}
 
+	// Check for metadata for Layout Stitching
+		metaPrefix := "<!-- FDT_META: "
+		metaClosing := " -->"
+		if strings.HasPrefix(string(content), metaPrefix) {
+			log.Printf("[STATIC_CACHE] HIT (Stitched): Serving %s", r.URL.Path)
+			
+			// 1. Extract metadata
+			endIdx := strings.Index(string(content), metaClosing)
+			if endIdx == -1 {
+				return false
+			}
+			metaStr := string(content[len(metaPrefix):endIdx])
+			var meta static_cache.PageMetadata
+			if err := json.Unmarshal([]byte(metaStr), &meta); err != nil {
+				log.Printf("[STATIC_CACHE] Error: Failed to parse meta: %v", err)
+				return false
+			}
+
+			// 2. Extract inner HTML (skip past " -->\n")
+			contentStart := endIdx + len(metaClosing)
+			if contentStart < len(content) && content[contentStart] == '\n' {
+				contentStart++
+			}
+			innerHtml := content[contentStart:]
+
+
+			// 3. Stitch into BaseLayout
+			props := layouts.BaseLayoutProps{
+				Title:       meta.Title,
+				Description: meta.Description,
+				Keywords:    meta.Keywords,
+				Canonical:   meta.Canonical,
+				ShowHeader:  true,
+			}
+
+			// Render the full layout with the inner content injected
+			component := layouts.BaseLayout(props)
+			
+			// We need a way to pass the raw innerHtml as children.
+			// Templ handles children via context.
+			ctx := templ.WithChildren(r.Context(), templ.Raw(string(innerHtml)))
+			
+			w.Header().Set("Content-Type", "text/html; charset=utf-8")
+			if err := component.Render(ctx, w); err != nil {
+				log.Printf("[STATIC_CACHE] Error: Render failed: %v", err)
+				return false
+			}
+			return true
+		}
+
+		// Legacy / Standard behavior
+		log.Printf("[STATIC_CACHE] HIT: Serving %s from disk (injected)", r.URL.Path)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Write(static_cache.InjectCSS(content))
 		return true
@@ -134,7 +189,7 @@ func StaticCache(cacheDir string, next http.Handler) http.Handler {
 		cachePath := getCachePath(cacheDir, path)
 
 		// 1. O(1) Check
-		if serveFromCache(w, path, cachePath) {
+		if serveFromCache(w, r, cachePath) {
 			return
 		}
 

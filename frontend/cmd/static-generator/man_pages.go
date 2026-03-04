@@ -7,10 +7,12 @@ import (
 	"os"
 	"path/filepath"
 
+	"encoding/json"
 	man_pages_components "fdt-templ/components/pages/man_pages"
 	"fdt-templ/internal/config"
 	manpages "fdt-templ/internal/controllers/man_pages"
 	"fdt-templ/internal/db/man_pages"
+	"fdt-templ/internal/static_cache"
 
 	"github.com/a-h/templ"
 )
@@ -74,7 +76,7 @@ func GenerateManPages() {
 	tracker := NewProgressTracker("Man Pages", estimatedTotal)
 	ctx := context.Background()
 
-	renderToFile := func(relPath string, component templ.Component) {
+	renderToFile := func(relPath string, component templ.Component, metadata *static_cache.PageMetadata) {
 		defer tracker.Increment()
 
 		pageDir := filepath.Join(outDir, relPath)
@@ -91,6 +93,12 @@ func GenerateManPages() {
 		}
 		defer f.Close()
 
+		// Write metadata as a JSON comment if provided
+		if metadata != nil {
+			metaBytes, _ := json.Marshal(metadata)
+			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+		}
+
 		if err := component.Render(ctx, f); err != nil {
 			log.Printf("Failed to render %s: %v", filename, err)
 		}
@@ -98,12 +106,12 @@ func GenerateManPages() {
 
 	log.Println("Generating Credits page...")
 	creditsData, _ := manpages.FetchManPagesCreditsData()
-	renderToFile("credits/", man_pages_components.Credits(*creditsData))
+	renderToFile("credits/", man_pages_components.Credits(*creditsData), nil)
 
 	log.Println("Generating Man Pages Index...")
 	indexData, err := manpages.FetchManPagesIndexData(db)
 	if err == nil {
-		renderToFile("", man_pages_components.Index(*indexData))
+		renderToFile("", man_pages_components.Index(*indexData), nil)
 	}
 
 	log.Println("Generating Category, Subcategory, and Detail pages...")
@@ -134,7 +142,13 @@ func GenerateManPages() {
 				log.Printf("Failed to fetch category data for %s (page %d): %v", cat.Name, p, err)
 				continue
 			}
-			renderToFile(relPath, man_pages_components.Category(*data))
+			catMeta := &static_cache.PageMetadata{
+				Title:       data.LayoutProps.Title,
+				Description: data.LayoutProps.Description,
+				Keywords:    data.LayoutProps.Keywords,
+				Canonical:   data.LayoutProps.Canonical,
+			}
+			renderToFile(relPath, man_pages_components.CategoryContent(*data), catMeta)
 		}
 
 		// Fetch all subcategories for this category
@@ -169,7 +183,13 @@ func GenerateManPages() {
 						log.Printf("Failed to fetch subcategory data for %s/%s (page %d): %v", cat.Name, subcat.Name, p, err)
 						continue
 					}
-					renderToFile(relPath, man_pages_components.SubCategory(*data))
+					scMeta := &static_cache.PageMetadata{
+						Title:       data.LayoutProps.Title,
+						Description: data.LayoutProps.Description,
+						Keywords:    data.LayoutProps.Keywords,
+						Canonical:   data.LayoutProps.Canonical,
+					}
+					renderToFile(relPath, man_pages_components.SubCategoryContent(*data), scMeta)
 				}
 
 				// Fetch and generate individual man pages
@@ -186,7 +206,14 @@ func GenerateManPages() {
 							log.Printf("Failed to fetch page data for %s: %v", relPath, err)
 							continue
 						}
-						renderToFile(relPath, man_pages_components.Page(*data))
+						meta := &static_cache.PageMetadata{
+							Title:       data.LayoutProps.Title,
+							Description: data.LayoutProps.Description,
+							Keywords:    data.LayoutProps.Keywords,
+							Canonical:   data.LayoutProps.Canonical,
+						}
+						// Save ONLY the content, not the whole layout
+						renderToFile(relPath, man_pages_components.PageContent(*data), meta)
 					}
 					if mp*100 >= scCount {
 						break
