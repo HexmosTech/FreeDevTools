@@ -102,7 +102,7 @@ var CheatsheetsDBConfig = "?mode=ro" +
 	"&_mmap_size=16777216" // 16MB mmap
 
 	// 465M png-icons-db-v6.db
-// 31M  tldr-db-v5.db
+// 31M  tldr-db-v6.db
 var TldrDBConfig = "?mode=ro" +
 	"&_immutable=1" +
 	"&_cache_size=-4000" + // 4MB cache

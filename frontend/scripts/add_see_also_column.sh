@@ -16,8 +16,8 @@ echo "Adding to cheatsheets-db-v5.db (cheatsheet)..."
 sqlite3 "$DB_DIR/cheatsheets-db-v5.db" "ALTER TABLE cheatsheet ADD COLUMN see_also TEXT DEFAULT '';" 2>/dev/null || echo "  Column may already exist or table not found"
 
 # TLDR pages table
-echo "Adding to tldr-db-v5.db (pages)..."
-sqlite3 "$DB_DIR/tldr-db-v5.db" "ALTER TABLE pages ADD COLUMN see_also TEXT DEFAULT '';" 2>/dev/null || echo "  Column may already exist or table not found"
+echo "Adding to tldr-db-v6.db (pages)..."
+sqlite3 "$DB_DIR/tldr-db-v6.db" "ALTER TABLE pages ADD COLUMN see_also TEXT DEFAULT '';" 2>/dev/null || echo "  Column may already exist or table not found"
 
 # SVG icons table
 echo "Adding to svg-icons-db-v5.db (icon)..."

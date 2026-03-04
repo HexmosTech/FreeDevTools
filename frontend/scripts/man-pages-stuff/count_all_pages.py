@@ -12,7 +12,7 @@ databases = [
     ("emoji-db-v6.db", "images", "Emojis"),
     ("mcp-db-v6.db", "mcp_pages", "MCP Pages"),
     ("cheatsheets-db-v5.db", "cheatsheet", "Cheatsheets"),
-    ("tldr-db-v5.db", "pages", "TLDR Pages"),
+    ("tldr-db-v6.db", "pages", "TLDR Pages"),
     ("svg-icons-db-v5.db", None, "SVG Icons"),  # Will auto-detect
     ("png-icons-db-v6.db", None, "PNG Icons"),  # Will auto-detect
 ]

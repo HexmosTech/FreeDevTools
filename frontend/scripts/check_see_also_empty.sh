@@ -86,7 +86,7 @@ print_category_summary "cheatsheets-db-v5.db" "cheatsheet" "category" \
      ORDER BY COUNT(*) DESC;"
 
 # 3. TLDR Pages - extract platform from URL (format: /freedevtools/tldr/{platform}/{command}/)
-print_category_summary "tldr-db-v5.db" "pages" "platform" \
+print_category_summary "tldr-db-v6.db" "pages" "platform" \
     "SELECT 
         replace(replace(url, '/freedevtools/tldr/', ''), '/' || substr(replace(url, '/freedevtools/tldr/', ''), instr(replace(url, '/freedevtools/tldr/', ''), '/') + 1), '') as platform,
         COUNT(*) 
