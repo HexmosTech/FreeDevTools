@@ -206,6 +206,59 @@ def copysql_to_changeset_dir(db_name):
     except Exception as e:
         print(f"Error copying SQL to changeset dir: {e}")
 
+def handle_query(sql_name, db_name):
+    try:
+        if not db_name.endswith('.db'):
+            db_name += '.db'
+        if not sql_name.endswith('.sql'):
+            sql_name += '.sql'
+            
+        b2m_bin = get_b2m_bin()
+        script_name = get_script_name()
+        
+        print(f"Executing handle-query {sql_name} on {db_name}")
+        subprocess.run([b2m_bin, "handle-query", sql_name, db_name, script_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error handling query: {e}")
+
+def notify(msg):
+    try:
+        b2m_bin = get_b2m_bin()
+        subprocess.run([b2m_bin, "notify", msg], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error sending notification: {e}")
+
+def get_local_db(short_name):
+    try:
+        b2m_bin = get_b2m_bin()
+        script_name = get_script_name()
+        result = subprocess.run([b2m_bin, "get-version", short_name, script_name], capture_output=True, text=True, check=True)
+        
+        lines = result.stdout.strip().split('\n')
+        local_db_name = lines[-1].strip()
+        print(f"Local DB name for {short_name} is {local_db_name}")
+        return local_db_name
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting local db version for {short_name}: {e}")
+        print(f"B2M Error Output: {e.stderr}")
+        return None
+
+def get_latest_db(db_name):
+    try:
+        if not db_name.endswith('.db'):
+            db_name += '.db'
+        b2m_bin = get_b2m_bin()
+        script_name = get_script_name()
+        result = subprocess.run([b2m_bin, "get-latest", db_name, script_name], capture_output=True, text=True, check=True)
+        
+        lines = result.stdout.strip().split('\n')
+        latest_db_name = lines[-1].strip()
+        print(f"Latest version for {db_name} is {latest_db_name}")
+        return latest_db_name
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting latest db version: {e}")
+        return db_name
+
 def bump_db_version(db_name):
     try:
         if not db_name.endswith('.db'):

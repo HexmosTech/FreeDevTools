@@ -561,3 +561,26 @@ v2 mcp
 ## Testing
 
 1. 
+
+
+```
+gk@jarvis:~/hex/FreeDevTools/frontend$ make exe-changeset 1772031633645610550_sample-phrase
+Building b2m...
+cd ../b2-manager && go build -o ../b2m .
+cp ../b2m ./b2m
+Executing Changeset Script: /home/gk/hex/FreeDevTools/frontend/changeset/scripts/1772031633645610550_sample-phrase.py
+Executing status check for: test-db.db
+ready_to_upload
+Copying /home/gk/hex/FreeDevTools/frontend/db/all_dbs/test-db.db to /home/gk/hex/FreeDevTools/frontend/changeset/dbs/1772031633645610550_sample-phrase/backup/test-db.db
+Bumped test-db.db to test-db-v2.db
+test-db-v2.db
+Executing upload for: test-db-v2.db
+Status: Safety Check...
+Status: Locking...
+Status: Setting Metadata...
+Status: Uploading...
+Status: Finalizing... -)
+Status: Done
+
+
+```

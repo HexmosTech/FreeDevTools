@@ -8,7 +8,7 @@ import urllib.parse
 import os
 import time
 
-DB_NAME = "ipm-db"
+SHORT_NAME = "ipmdb"
 
 import sys
 
@@ -17,21 +17,26 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 ## Import Common Functions
 try:
-    from changeset import db_status, db_download, db_upload, fetch_db_toml, start_server, stop_server, bump_db_version, copydb_to_changeset_dir, copysql_to_changeset_dir
+    from changeset import db_status, db_download, db_upload, fetch_db_toml, start_server, stop_server, bump_db_version, copydb_to_changeset_dir, copysql_to_changeset_dir, handle_query, get_local_db, get_latest_db
 except ImportError as e:
     print(f"Error importing changeset: {e}")
     sys.exit(1)
 
-def inserted_queries(db_name):
+def inserted_queries(sql_name, target_db_name):
     """
     This function should insert the new data in the db.
     These will be in ipm-db-v1.sql file. 
     """
-    # execute queries from `changeset/dbs/{{.Timestamp}}_{{.Phrase}}/ipm-db-v1.sql` file to `changeset/dbs/{{.Timestamp}}_{{.Phrase}}/ipm-db-v2.db` file.
-    
+    handle_query(sql_name, target_db_name)
     return None
 
 def main():
+    global DB_NAME
+    DB_NAME = get_local_db(SHORT_NAME)
+    if not DB_NAME:
+        print(f"Could not find local database for {SHORT_NAME}")
+        return
+
     # Check status of db.
     status = db_status(DB_NAME)
     print(status)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/urfave/cli/v2"
 
@@ -222,6 +223,81 @@ func HandleCLI() {
 						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
 					fmt.Println(newDBName)
+					return nil
+				},
+			},
+			{
+				Name:     "handle-query",
+				Category: "Changeset Commands",
+				Usage:    "Execute a specific SQL file against a target database (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() < 2 {
+						return cli.Exit("Usage: b2m handle-query <sql_name> <db_name> [script_name]", 1)
+					}
+					sqlName := cCtx.Args().Get(0)
+					dbName := cCtx.Args().Get(1)
+					if cCtx.NArg() > 2 {
+						scriptName := cCtx.Args().Get(2)
+						config.UpdateForScript(scriptName)
+					}
+
+					if err := core.RunCLIHandleQuery(sqlName, dbName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error executing queries: %v", err), 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:     "get-version",
+				Category: "Changeset Commands",
+				Usage:    "Get the local DB filename from db.toml using its short name (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return cli.Exit("Usage: b2m get-version <short_name> [script_name]", 1)
+					}
+					shortName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
+					if err := core.RunCLIGetVersion(shortName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error getting version: %v", err), 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:     "get-latest",
+				Category: "Changeset Commands",
+				Usage:    "Get the latest version of a database (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return cli.Exit("Usage: b2m get-latest <db_name> [script_name]", 1)
+					}
+					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
+					if err := core.RunCLIGetLatest(dbName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error getting latest DB version: %v", err), 1)
+					}
+					return nil
+				},
+			},
+			{
+				Name:     "notify",
+				Category: "Changeset Commands",
+				Usage:    "Send a custom notification to Discord (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return cli.Exit("Usage: b2m notify <message>", 1)
+					}
+					// Join all arguments as the message
+					msg := strings.Join(cCtx.Args().Slice(), " ")
+					if err := core.RunCLINotify(msg); err != nil {
+						return cli.Exit(fmt.Sprintf("Error sending notification: %v", err), 1)
+					}
 					return nil
 				},
 			},

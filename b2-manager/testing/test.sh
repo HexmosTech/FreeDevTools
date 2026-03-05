@@ -2,8 +2,8 @@
 
 # Configuration
 # Path to the test database (relative to frontend/ directory where this script is called)
-DB_PATH="db/all_dbs/test-db.db"
-SQL_FILE="${DB_PATH%.db}.sql"
+DB_PATH="db/all_dbs/test-db-v3.db"
+SQL_FILE="db/all_dbs/test-db-v3.sql"
 
 # Ensure the database file exists
 if [ ! -f "$DB_PATH" ]; then
