@@ -143,10 +143,14 @@ func GenerateManPages() {
 				continue
 			}
 			catMeta := &static_cache.PageMetadata{
-				Title:       data.LayoutProps.Title,
-				Description: data.LayoutProps.Description,
-				Keywords:    data.LayoutProps.Keywords,
-				Canonical:   data.LayoutProps.Canonical,
+				Title:          data.LayoutProps.Title,
+				Description:    data.LayoutProps.Description,
+				Keywords:       data.LayoutProps.Keywords,
+				Canonical:      data.LayoutProps.Canonical,
+				OgImage:        data.LayoutProps.OgImage,
+				TwitterImage:   data.LayoutProps.TwitterImage,
+				ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+				EncodingFormat: data.LayoutProps.EncodingFormat,
 			}
 			renderToFile(relPath, man_pages_components.CategoryContent(*data), catMeta)
 		}
@@ -184,10 +188,14 @@ func GenerateManPages() {
 						continue
 					}
 					scMeta := &static_cache.PageMetadata{
-						Title:       data.LayoutProps.Title,
-						Description: data.LayoutProps.Description,
-						Keywords:    data.LayoutProps.Keywords,
-						Canonical:   data.LayoutProps.Canonical,
+						Title:          data.LayoutProps.Title,
+						Description:    data.LayoutProps.Description,
+						Keywords:       data.LayoutProps.Keywords,
+						Canonical:      data.LayoutProps.Canonical,
+						OgImage:        data.LayoutProps.OgImage,
+						TwitterImage:   data.LayoutProps.TwitterImage,
+						ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+						EncodingFormat: data.LayoutProps.EncodingFormat,
 					}
 					renderToFile(relPath, man_pages_components.SubCategoryContent(*data), scMeta)
 				}
@@ -207,10 +215,14 @@ func GenerateManPages() {
 							continue
 						}
 						meta := &static_cache.PageMetadata{
-							Title:       data.LayoutProps.Title,
-							Description: data.LayoutProps.Description,
-							Keywords:    data.LayoutProps.Keywords,
-							Canonical:   data.LayoutProps.Canonical,
+							Title:          data.LayoutProps.Title,
+							Description:    data.LayoutProps.Description,
+							Keywords:       data.LayoutProps.Keywords,
+							Canonical:      data.LayoutProps.Canonical,
+							OgImage:        data.LayoutProps.OgImage,
+							TwitterImage:   data.LayoutProps.TwitterImage,
+							ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+							EncodingFormat: data.LayoutProps.EncodingFormat,
 						}
 						// Save ONLY the content, not the whole layout
 						renderToFile(relPath, man_pages_components.PageContent(*data), meta)

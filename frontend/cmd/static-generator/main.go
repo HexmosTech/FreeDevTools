@@ -24,7 +24,19 @@ func main() {
 		GenerateMCP()
 	} else if *section == "man-pages" {
 		GenerateManPages()
+	} else if *section == "png-icons" {
+		GeneratePNGIcons()
+	} else if *section == "svg-icons" {
+		GenerateSVGIcons()
+	} else if *section == "tldr" {
+		GenerateTLDR()
+	} else if *section == "emojis" {
+		GenerateEmojis()
+	} else if *section == "cheatsheets" {
+		GenerateCheatsheets()
+	} else if *section == "installerpedia" {
+		GenerateInstallerpedia()
 	} else {
-		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages]")
+		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages|png-icons|svg-icons|tldr|emojis|cheatsheets|installerpedia]")
 	}
 }

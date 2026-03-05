@@ -104,11 +104,15 @@ func serveFromCache(w http.ResponseWriter, r *http.Request, cachePath string) bo
 
 			// 3. Stitch into BaseLayout
 			props := layouts.BaseLayoutProps{
-				Title:       meta.Title,
-				Description: meta.Description,
-				Keywords:    meta.Keywords,
-				Canonical:   meta.Canonical,
-				ShowHeader:  true,
+				Title:          meta.Title,
+				Description:    meta.Description,
+				Keywords:       meta.Keywords,
+				Canonical:      meta.Canonical,
+				OgImage:        meta.OgImage,
+				TwitterImage:   meta.TwitterImage,
+				ThumbnailUrl:   meta.ThumbnailUrl,
+				EncodingFormat: meta.EncodingFormat,
+				ShowHeader:     true,
 			}
 
 			// Render the full layout with the inner content injected

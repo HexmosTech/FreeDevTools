@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -11,6 +12,7 @@ import (
 	"fdt-templ/internal/config"
 	mcp_controllers "fdt-templ/internal/controllers/mcp"
 	mcp_db "fdt-templ/internal/db/mcp"
+	"fdt-templ/internal/static_cache"
 
 	"github.com/a-h/templ"
 )
@@ -71,7 +73,7 @@ func GenerateMCP() {
 	ctx := context.Background()
 
 	// Helper to generate a page using component rendering
-	renderToFile := func(relPath string, component templ.Component) {
+	renderToFile := func(relPath string, component templ.Component, metadata *static_cache.PageMetadata) {
 		defer tracker.Increment()
 
 		pageDir := filepath.Join(outDir, relPath)
@@ -88,16 +90,20 @@ func GenerateMCP() {
 		}
 		defer f.Close()
 
+		// Write metadata as a JSON comment if provided
+		if metadata != nil {
+			metaBytes, _ := json.Marshal(metadata)
+			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+		}
+
 		if err := component.Render(ctx, f); err != nil {
 			log.Printf("Failed to render %s: %v", filename, err)
-		} else {
-			log.Printf("Generated: %s", filename)
 		}
 	}
 
 	log.Println("Generating Credits page...")
 	creditsData := mcp_controllers.FetchCreditsData()
-	renderToFile("credits/", mcp_pages.Credits(creditsData))
+	renderToFile("credits/", mcp_pages.Credits(creditsData), nil)
 
 	log.Println("Generating MCP Index Pages...")
 	for p := 1; p <= totalIndexPages; p++ {
@@ -107,7 +113,17 @@ func GenerateMCP() {
 			log.Printf("Failed to fetch index data for page %d: %v", p, err)
 			continue
 		}
-		renderToFile(path, mcp_pages.Index(*data))
+		idxMeta := &static_cache.PageMetadata{
+			Title:          data.LayoutProps.Title,
+			Description:    data.LayoutProps.Description,
+			Keywords:       data.LayoutProps.Keywords,
+			Canonical:      data.LayoutProps.Canonical,
+			OgImage:        data.LayoutProps.OgImage,
+			TwitterImage:   data.LayoutProps.TwitterImage,
+			ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+			EncodingFormat: data.LayoutProps.EncodingFormat,
+		}
+		renderToFile(path, mcp_pages.IndexContent(*data), idxMeta)
 	}
 
 	log.Println("Generating MCP Category and Repo Pages...")
@@ -133,7 +149,17 @@ func GenerateMCP() {
 					log.Printf("Failed to fetch category data %s: %v", path, err)
 					continue
 				}
-				renderToFile(path, mcp_pages.Category(*data))
+				catMeta := &static_cache.PageMetadata{
+					Title:          data.LayoutProps.Title,
+					Description:    data.LayoutProps.Description,
+					Keywords:       data.LayoutProps.Keywords,
+					Canonical:      data.LayoutProps.Canonical,
+					OgImage:        data.LayoutProps.OgImage,
+					TwitterImage:   data.LayoutProps.TwitterImage,
+					ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+					EncodingFormat: data.LayoutProps.EncodingFormat,
+				}
+				renderToFile(path, mcp_pages.CategoryContent(*data), catMeta)
 			}
 
 			// Generate Repo Pages for this category
@@ -151,7 +177,17 @@ func GenerateMCP() {
 						log.Printf("Failed to fetch repo data %s/%s (HashID: %d): %v", cat.Slug, repo.Key, repo.HashID, err)
 						continue
 					}
-					renderToFile(path, mcp_pages.Repo(*data))
+					repoMeta := &static_cache.PageMetadata{
+						Title:          data.LayoutProps.Title,
+						Description:    data.LayoutProps.Description,
+						Keywords:       data.LayoutProps.Keywords,
+						Canonical:      data.LayoutProps.Canonical,
+						OgImage:        data.LayoutProps.OgImage,
+						TwitterImage:   data.LayoutProps.TwitterImage,
+						ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
+						EncodingFormat: data.LayoutProps.EncodingFormat,
+					}
+					renderToFile(path, mcp_pages.RepoContent(*data), repoMeta)
 				}
 
 				if rPage*100 >= cat.Count {
