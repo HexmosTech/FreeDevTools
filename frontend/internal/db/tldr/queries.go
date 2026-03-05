@@ -219,6 +219,60 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 	return commands, nil
 }
 
+// GetPagesByClusterPaginatedFull retrieves full pages for a platform with pagination
+func (db *DB) GetPagesByClusterPaginatedFull(platform string, limit, offset int) ([]Page, error) {
+	key := fmt.Sprintf("GetPagesByClusterPaginatedFull:%s:%d:%d", platform, limit, offset)
+	if val, ok := db.cache.Get(key); ok {
+		return val.([]Page), nil
+	}
+
+	// Calculate cluster hash for lookup
+	clusterHash := CalculateHash(platform)
+
+	query := `
+		SELECT title, description, html_content, metadata, see_also, url
+		FROM pages 
+		WHERE cluster_hash = ? 
+		ORDER BY url 
+		LIMIT ? OFFSET ?
+	`
+
+	rows, err := db.conn.Query(query, clusterHash, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query full pages: %w", err)
+	}
+	defer rows.Close()
+
+	var pages []Page
+	for rows.Next() {
+		var title, description, htmlContent, url sql.NullString
+		var metadataJSON string
+		var seeAlso string
+
+		if err := rows.Scan(&title, &description, &htmlContent, &metadataJSON, &seeAlso, &url); err != nil {
+			return nil, fmt.Errorf("failed to scan full page: %w", err)
+		}
+
+		metadata, err := ParsePageMetadata(metadataJSON)
+		if err != nil {
+			// Log but continue
+			fmt.Printf("Error parsing metadata for %s: %v\n", url.String, err)
+		}
+
+		pages = append(pages, Page{
+			Title:       title.String,
+			Description: description.String,
+			HTMLContent: htmlContent.String,
+			Metadata:    metadata,
+			SeeAlso:     seeAlso,
+			URL:         url.String,
+		})
+	}
+
+	db.cache.Set(key, pages, CacheTTLPage)
+	return pages, nil
+}
+
 // GetPage retrieves a single TLDR page
 func (db *DB) GetPage(hash int64) (*Page, error) {
 	key := fmt.Sprintf("GetPage:%d", hash)

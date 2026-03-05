@@ -264,6 +264,45 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 	return cheatsheets, total, nil
 }
 
+// GetCheatsheetsByCategoryFull returns all cheatsheets for a category with full content (paginated)
+func (db *DB) GetCheatsheetsByCategoryFull(categorySlug string, page, itemsPerPage int) ([]Cheatsheet, int, error) {
+	// Get total count for pagination
+	var total int
+	queryStart := time.Now()
+	err := db.conn.QueryRow("SELECT COUNT(*) FROM cheatsheet WHERE category = ?", categorySlug).Scan(&total)
+	log.Printf("[DB] GetCheatsheetsByCategoryFull count query took %v (category=%s)", time.Since(queryStart), categorySlug)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * itemsPerPage
+	query := `SELECT hash_id, category, slug, content, title, description, keywords, see_also, updated_at 
+			  FROM cheatsheet 
+			  WHERE category = ? 
+			  ORDER BY slug 
+			  LIMIT ? OFFSET ?`
+
+	queryStart = time.Now()
+	rows, err := db.conn.Query(query, categorySlug, itemsPerPage, offset)
+	log.Printf("[DB] GetCheatsheetsByCategoryFull list query took %v (category=%s)", time.Since(queryStart), categorySlug)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var cheatsheets []Cheatsheet
+	for rows.Next() {
+		var r rawCheatsheetRow
+		if err := rows.Scan(&r.HashID, &r.Category, &r.Slug, &r.Content, &r.Title, &r.Description, &r.Keywords, &r.SeeAlso, &r.UpdatedAt); err != nil {
+			log.Printf("[DB] Error scanning rawCheatsheetRow: %v", err)
+			continue
+		}
+		cheatsheets = append(cheatsheets, r.toCheatsheet())
+	}
+
+	return cheatsheets, total, nil
+}
+
 func (db *DB) GetUpdatedAtForCategory(categorySlug string) (string, error) {
 	cacheKey := getCacheKey("getUpdatedAtForCategory", map[string]interface{}{"category": categorySlug})
 	if val, ok := globalCache.Get(cacheKey); ok {
@@ -394,4 +433,26 @@ func (db *DB) GetCheatsheetsByCategorySitemap(categorySlug string) ([]SitemapIte
 
 	globalCache.Set(cacheKey, items, CacheTTLCheatsheets) // Reuse TTL
 	return items, nil
+}
+// GetCategoryCounts returns counts of cheatsheets per category
+func (db *DB) GetCategoryCounts() (map[string]int, error) {
+	query := `SELECT category, COUNT(*) FROM cheatsheet GROUP BY category`
+	queryStart := time.Now()
+	rows, err := db.conn.Query(query)
+	log.Printf("[DB] GetCategoryCounts query took %v", time.Since(queryStart))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	counts := make(map[string]int)
+	for rows.Next() {
+		var cat string
+		var count int
+		if err := rows.Scan(&cat, &count); err != nil {
+			continue
+		}
+		counts[cat] = count
+	}
+	return counts, nil
 }

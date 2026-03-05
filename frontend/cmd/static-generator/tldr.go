@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"fdt-templ/components"
 	"fdt-templ/components/common"
@@ -87,8 +88,12 @@ func GenerateTLDR() {
 		defer f.Close()
 
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -243,64 +248,57 @@ func GenerateTLDR() {
 		}
 
 		// Command Pages
-		// We can't use GetCommandsByClusterPaginated for ALL commands easily without a loop
+		// We can't use GetPagesByClusterPaginatedFull for ALL commands easily without a loop
 		for cp := 1; ; cp++ {
-			commands, err := db.GetCommandsByClusterPaginated(platform, 100, (cp-1)*100)
-			if err != nil || len(commands) == 0 {
+			pages, err := db.GetPagesByClusterPaginatedFull(platform, 100, (cp-1)*100)
+			if err != nil || len(pages) == 0 {
 				break
 			}
 
-			for _, cmd := range commands {
-				// We need the full page content
-				urlHash := tldr_db.CalculateHash(cmd.URL)
-				page, err := db.GetPage(urlHash)
-				if err != nil || page == nil {
-					log.Printf("Failed to fetch page content for %s: %v", cmd.URL, err)
-					continue
-				}
+			for _, page := range pages {
+				// Extract command name from URL: /freedevtools/tldr/common/tar/ -> tar
+				cmdName := filepath.Base(strings.TrimSuffix(page.URL, "/"))
 
 				// relPath should be platform/command/
-				// cmd.URL is usually /freedevtools/tldr/platform/command/
-				// We want relPath as platform/command/
-				relPath := fmt.Sprintf("%s/%s/", platform, cmd.Name)
+				relPath := fmt.Sprintf("%s/%s/", platform, cmdName)
 
 				title := page.Title
 				if title == "" {
-					title = fmt.Sprintf("%s - %s Commands - TLDR", cmd.Name, platform)
+					title = fmt.Sprintf("%s - %s Commands - TLDR", cmdName, platform)
 				}
 				description := page.Description
 				if description == "" {
-					description = fmt.Sprintf("Documentation for %s command", cmd.Name)
+					description = fmt.Sprintf("Documentation for %s command", cmdName)
 				}
 
 				keywords := page.Metadata.Keywords
 				if len(keywords) == 0 {
-					keywords = []string{"tldr", "command", "cli", platform, cmd.Name}
+					keywords = []string{"tldr", "command", "cli", platform, cmdName}
 				}
 
 				layoutProps := layouts.BaseLayoutProps{
 					Title:       title,
 					Description: description,
-					Canonical:   fmt.Sprintf("%s/tldr/%s/%s/", siteURL, platform, cmd.Name),
+					Canonical:   fmt.Sprintf("%s/tldr/%s/%s/", siteURL, platform, cmdName),
 					Keywords:    keywords,
 					ShowHeader:  true,
 				}
 
 				commandData := tldr.TLDRCommandData{
-					Command:  cmd.Name,
+					Command:  cmdName,
 					Platform: platform,
-					Page:     page,
+					Page:     &page,
 					BreadcrumbItems: []components.BreadcrumbItem{
 						{Label: "Free DevTools", Href: basePath + "/"},
 						{Label: "TLDR", Href: basePath + "/tldr/"},
 						{Label: platform, Href: fmt.Sprintf("%s/tldr/%s/", basePath, platform)},
-						{Label: cmd.Name},
+						{Label: cmdName},
 					},
 					LayoutProps:  layoutProps,
 					Keywords:     keywords,
 					SeeAlsoItems: []common.SeeAlsoItem{}, // Simplified for now, or fetch if needed
 				}
-				
+
 				// Handle SeeAlso
 				if page.SeeAlso != "" {
 					var seeAlsoData []common.SeeAlsoJSONItem

@@ -193,6 +193,64 @@ func (db *DB) GetReposByTypePaginated(category string, limit, offset int) ([]Rep
 	return repos, nil
 }
 
+// GetReposByCategoryPaginatedFull retrieves full repo data for a category with pagination
+func (db *DB) GetReposByCategoryPaginatedFull(category string, limit, offset int) ([]RepoData, error) {
+	categoryHash := HashStringToInt64(category)
+
+	rows, err := db.conn.Query(`
+		SELECT
+			slug_hash,
+			repo,
+			repo_type,
+			has_installation,
+			is_deleted,
+			prerequisites,
+			installation_methods,
+			post_installation,
+			resources_of_interest,
+			description,
+			stars,
+			note,
+			keywords,
+			see_also
+		FROM ipm_data
+		WHERE category_hash = ?
+		  AND is_deleted = 0
+		ORDER BY stars DESC, slug_hash
+		LIMIT ? OFFSET ?
+	`, categoryHash, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var repos []RepoData
+	for rows.Next() {
+		var raw RawRepoRow
+		if err := rows.Scan(
+			&raw.ID,
+			&raw.Repo,
+			&raw.RepoType,
+			&raw.HasInstallation,
+			&raw.IsDeleted,
+			&raw.Prerequisites,
+			&raw.InstallationMethods,
+			&raw.PostInstallation,
+			&raw.ResourcesOfInterest,
+			&raw.Description,
+			&raw.Stars,
+			&raw.Note,
+			&raw.Keywords,
+			&raw.SeeAlso,
+		); err != nil {
+			return nil, err
+		}
+		repos = append(repos, ParseRepoRow(raw))
+	}
+
+	return repos, nil
+}
+
 // -------------------------
 // Counts
 // -------------------------

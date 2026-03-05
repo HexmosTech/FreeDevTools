@@ -83,8 +83,12 @@ func GenerateInstallerpedia() {
 		defer f.Close()
 
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -209,68 +213,69 @@ func GenerateInstallerpedia() {
 		}
 
 		// Individual Pages for this category
-		// To avoid repeated offsets, we just fetch all slugs for this category
-		sitemapItems, err := db.GetReposByCategoryForSitemap(cat.Name)
-		if err != nil {
-			log.Printf("Failed to fetch sitemap items for %s: %v", cat.Name, err)
-			continue
-		}
-
-		for _, item := range sitemapItems {
-			hashID := ip_db.HashStringToInt64(item.Slug)
-			repo, err := db.GetRepo(hashID)
-			if err != nil || repo == nil || repo.IsDeleted {
-				continue
+		for ip := 1; ; ip++ {
+			repos, err := db.GetReposByCategoryPaginatedFull(cat.Name, 100, (ip-1)*100)
+			if err != nil || len(repos) == 0 {
+				break
 			}
 
-			slug := ip_page.ToSlug(repo.Repo)
-			
-			repoKeywords := []string{
-				"installerpedia",
-				"installation",
-				"install",
-				cat.Name,
-				repo.Repo,
-			}
+			for _, repo := range repos {
+				if repo.IsDeleted {
+					continue
+				}
 
-			var seeAlsoItems []common.SeeAlsoItem
-			if repo.SeeAlso != "" {
-				var seeAlsoData []common.SeeAlsoJSONItem
-				if err := json.Unmarshal([]byte(repo.SeeAlso), &seeAlsoData); err == nil {
-					for _, saItem := range seeAlsoData {
-						seeAlsoItems = append(seeAlsoItems, saItem.ToSeeAlsoItem())
+				slug := ip_page.ToSlug(repo.Repo)
+				
+				repoKeywords := []string{
+					"installerpedia",
+					"installation",
+					"install",
+					cat.Name,
+					repo.Repo,
+				}
+
+				var seeAlsoItems []common.SeeAlsoItem
+				if repo.SeeAlso != "" {
+					var seeAlsoData []common.SeeAlsoJSONItem
+					if err := json.Unmarshal([]byte(repo.SeeAlso), &seeAlsoData); err == nil {
+						for _, saItem := range seeAlsoData {
+							seeAlsoItems = append(seeAlsoItems, saItem.ToSeeAlsoItem())
+						}
 					}
 				}
-			}
 
-			repoLayoutProps := layouts.BaseLayoutProps{
-				Title:       repo.Repo + " Installation Guide | Installerpedia",
-				Description: "How to install " + repo.Repo + " on your system. Step-by-step installation commands and setup instructions.",
-				Canonical:   fmt.Sprintf("%s/installerpedia/%s/%s/", siteURL, cat.Name, slug),
-				ShowHeader:  true,
-				Keywords:    repoKeywords,
-			}
+				repoLayoutProps := layouts.BaseLayoutProps{
+					Title:       repo.Repo + " Installation Guide | Installerpedia",
+					Description: "How to install " + repo.Repo + " on your system. Step-by-step installation commands and setup instructions.",
+					Canonical:   fmt.Sprintf("%s/installerpedia/%s/%s/", siteURL, cat.Name, slug),
+					ShowHeader:  true,
+					Keywords:    repoKeywords,
+				}
 
-			repoData := ip_page.PageData{
-				Repo:            repo,
-				Category:        cat.Name,
-				BreadcrumbItems: []components.BreadcrumbItem{
-					{Label: "Free DevTools", Href: basePath + "/"},
-					{Label: "Installerpedia", Href: basePath + "/installerpedia/"},
-					{Label: cat.Name, Href: basePath + "/installerpedia/" + cat.Name + "/"},
-					{Label: repo.Repo},
-				},
-				LayoutProps:     repoLayoutProps,
-				Keywords:        repoKeywords,
-				SeeAlsoItems:    seeAlsoItems,
-			}
+				repoData := ip_page.PageData{
+					Repo:            &repo,
+					Category:        cat.Name,
+					BreadcrumbItems: []components.BreadcrumbItem{
+						{Label: "Free DevTools", Href: basePath + "/"},
+						{Label: "Installerpedia", Href: basePath + "/installerpedia/"},
+						{Label: cat.Name, Href: basePath + "/installerpedia/" + cat.Name + "/"},
+						{Label: repo.Repo},
+					},
+					LayoutProps:     repoLayoutProps,
+					Keywords:        repoKeywords,
+					SeeAlsoItems:    seeAlsoItems,
+				}
 
-			repoMeta := &static_cache.PageMetadata{
-				Title:       repoLayoutProps.Title,
-				Description: repoLayoutProps.Description,
-				Canonical:   repoLayoutProps.Canonical,
+				repoMeta := &static_cache.PageMetadata{
+					Title:       repoLayoutProps.Title,
+					Description: repoLayoutProps.Description,
+					Canonical:   repoLayoutProps.Canonical,
+				}
+				renderToFile(fmt.Sprintf("%s/%s/", cat.Name, slug), ip_page.PageContent(repoData), repoMeta)
 			}
-			renderToFile(fmt.Sprintf("%s/%s/", cat.Name, slug), ip_page.PageContent(repoData), repoMeta)
+			if ip*100 >= cat.Count {
+				break
+			}
 		}
 	}
 

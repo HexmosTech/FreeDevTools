@@ -115,6 +115,37 @@ func (db *DB) GetMcpPagesByCategory(categorySlug string, page, itemsPerPage int)
 	return repos, nil
 }
 
+// GetMcpPagesByCategoryPaginatedFull returns repos for a category with full data
+func (db *DB) GetMcpPagesByCategoryPaginatedFull(categorySlug string, page, itemsPerPage int) ([]McpPage, error) {
+	categoryID := HashToID(categorySlug)
+
+	offset := (page - 1) * itemsPerPage
+	query := `SELECT hash_id, category_id, "key", name, description, owner, stars, forks, 
+		language, license, url, image_url, npm_url, npm_downloads, keywords, readme_content, see_also
+		FROM mcp_pages WHERE category_id = ? LIMIT ? OFFSET ?`
+
+	rows, err := db.conn.Query(query, categoryID, itemsPerPage, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var repos []McpPage
+	for rows.Next() {
+		var r McpPage
+		err := rows.Scan(
+			&r.HashID, &r.CategoryID, &r.Key, &r.Name, &r.Description, &r.Owner, &r.Stars, &r.Forks,
+			&r.Language, &r.License, &r.URL, &r.ImageURL, &r.NpmURL, &r.NpmDownloads, &r.Keywords, &r.ReadmeContent, &r.SeeAlso,
+		)
+		if err != nil {
+			continue
+		}
+		repos = append(repos, r)
+	}
+
+	return repos, nil
+}
+
 // GetMcpPage returns a repo by hashID
 func (db *DB) GetMcpPage(hashID int64) (*McpPage, error) {
 	cacheKey := getCacheKey("getMcpPage", hashID)

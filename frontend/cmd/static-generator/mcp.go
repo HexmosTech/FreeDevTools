@@ -92,8 +92,12 @@ func GenerateMCP() {
 
 		// Write metadata as a JSON comment if provided
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -165,16 +169,16 @@ func GenerateMCP() {
 			// Generate Repo Pages for this category
 			rPage := 1
 			for {
-				repos, err := db.GetMcpPagesByCategory(cat.Slug, rPage, 100)
+				repos, err := db.GetMcpPagesByCategoryPaginatedFull(cat.Slug, rPage, 100)
 				if err != nil || len(repos) == 0 {
 					break
 				}
 
 				for _, repo := range repos {
 					path := fmt.Sprintf("%s/%s/", cat.Slug, repo.Key)
-					data, err := mcp_controllers.FetchRepoData(db, cat.Slug, repo.Key, repo.HashID)
+					data, err := mcp_controllers.FetchRepoDataFromFull(&repo, cat.Slug)
 					if err != nil {
-						log.Printf("Failed to fetch repo data %s/%s (HashID: %d): %v", cat.Slug, repo.Key, repo.HashID, err)
+						log.Printf("Failed to prepare repo data %s/%s: %v", cat.Slug, repo.Key, err)
 						continue
 					}
 					repoMeta := &static_cache.PageMetadata{

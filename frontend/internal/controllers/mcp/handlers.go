@@ -301,6 +301,81 @@ func FetchRepoData(db *mcp_db.DB, categorySlug string, repoKey string, hashID in
 	return &data, nil
 }
 
+func FetchRepoDataFromFull(repo *mcp_db.McpPage, categorySlug string) (*mcp_pages.RepoData, error) {
+	if repo == nil {
+		return nil, ErrNotFound
+	}
+	basePath := config.GetBasePath()
+	categoryName := strings.Title(strings.ReplaceAll(categorySlug, "-", " "))
+
+	breadcrumbItems := []components.BreadcrumbItem{
+		{Label: "Free DevTools", Href: basePath + "/"},
+		{Label: "MCP Directory", Href: basePath + "/mcp/1/"},
+		{Label: categoryName, Href: fmt.Sprintf("%s/mcp/%s/1/", basePath, categorySlug)},
+		{Label: repo.Name},
+	}
+
+	ownerName := repo.Owner
+	if ownerName == "" {
+		ownerName = "Unknown"
+	} else if len(ownerName) > 0 {
+		ownerName = strings.ToUpper(ownerName[:1]) + ownerName[1:]
+	}
+
+	title := fmt.Sprintf("%s – %s MCP Server by %s Model Context Protocol Tool | Free DevTools by Hexmos", repo.Name, categoryName, ownerName)
+	description := repo.Description
+	if description == "" {
+		description = fmt.Sprintf("%s's %s MCP server helps your AI generate more accurate and context-aware responses.", ownerName, repo.Name)
+	}
+
+	layoutProps := layouts.BaseLayoutProps{
+		Title:       title,
+		Description: description,
+		ShowHeader:  true,
+		Canonical:   fmt.Sprintf("%s/mcp/%s/%s/", config.GetSiteURL(), url.PathEscape(categorySlug), url.PathEscape(repo.Key)),
+		OgImage:     repo.ImageURL,
+	}
+
+	partialCat := &mcp_db.McpCategory{
+		Slug: categorySlug,
+		Name: categoryName,
+	}
+
+	keywords := []string{"mcp", "model context protocol", categoryName, repo.Name}
+	if repo.Keywords != "" {
+		keywordParts := strings.Split(repo.Keywords, ",")
+		for _, kw := range keywordParts {
+			kw = strings.TrimSpace(kw)
+			if kw != "" {
+				keywords = append(keywords, kw)
+			}
+		}
+	}
+
+	var seeAlsoItems []common.SeeAlsoItem
+	if repo.SeeAlso != "" {
+		var seeAlsoData []common.SeeAlsoJSONItem
+		if err := json.Unmarshal([]byte(repo.SeeAlso), &seeAlsoData); err != nil {
+			log.Printf("Error parsing see_also JSON for %s: %v", repo.Key, err)
+		} else {
+			for _, item := range seeAlsoData {
+				seeAlsoItems = append(seeAlsoItems, item.ToSeeAlsoItem())
+			}
+		}
+	}
+
+	data := mcp_pages.RepoData{
+		Repo:            repo,
+		Category:        partialCat,
+		BreadcrumbItems: breadcrumbItems,
+		LayoutProps:     layoutProps,
+		Keywords:        keywords,
+		SeeAlsoItems:    seeAlsoItems,
+	}
+
+	return &data, nil
+}
+
 func HandleRepo(w http.ResponseWriter, r *http.Request, db *mcp_db.DB, categorySlug string, repoKey string, hashID int64) {
 	data, err := FetchRepoData(db, categorySlug, repoKey, hashID)
 	if err != nil {

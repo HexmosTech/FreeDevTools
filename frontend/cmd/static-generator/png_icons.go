@@ -92,8 +92,12 @@ func GeneratePNGIcons() {
 		defer f.Close()
 
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -261,10 +265,7 @@ func GeneratePNGIcons() {
 			}
 
 			for _, iconMeta := range icons {
-				icon, err := db.GetIconByCategoryAndName(category, iconMeta.Name)
-				if err != nil || icon == nil {
-					continue
-				}
+				icon := iconMeta.Icon // Use the already fetched full data
 
 				relPath := fmt.Sprintf("%s/%s/", category, icon.Name)
 
@@ -317,7 +318,7 @@ func GeneratePNGIcons() {
 				}
 
 				data := png_icons_pages.IconData{
-					Icon:     icon,
+					Icon:     &icon,
 					Category: category,
 					BreadcrumbItems: []components.BreadcrumbItem{
 						{Label: "Free DevTools", Href: basePath + "/"},

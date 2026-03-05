@@ -82,8 +82,20 @@ func GenerateEmojis() {
 	if err == nil {
 		totalPagesCount += len(sitemapEmojis)
 	}
-	// Vendor pages (Apple & Discord) - simplifying estimation
-	totalPagesCount += (2 * 1) + (2 * 10) + (2 * 1000) // index + categories + some emojis
+	// Vendor pages (Apple & Discord) - more accurate estimation
+	// Apple
+	appleCategories, _ := db.GetAppleCategoriesWithPreviewEmojis(5)
+	appleSitemap, _ := db.GetSitemapAppleEmojis()
+	totalPagesCount += 1 // Apple Index
+	totalPagesCount += len(appleCategories)
+	totalPagesCount += len(appleSitemap)
+
+	// Discord
+	discordCategories, _ := db.GetDiscordCategoriesWithPreviewEmojis(5)
+	discordSitemap, _ := db.GetSitemapDiscordEmojis()
+	totalPagesCount += 1 // Discord Index
+	totalPagesCount += len(discordCategories)
+	totalPagesCount += len(discordSitemap)
 
 	tracker := NewProgressTracker("Emojis", totalPagesCount)
 	ctx := context.Background()
@@ -107,8 +119,12 @@ func GenerateEmojis() {
 		defer f.Close()
 
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -289,7 +305,10 @@ func GenerateEmojis() {
 			continue
 		}
 
-		images, _ := db.GetEmojiImages(se.Slug)
+		images, err := db.GetEmojiImages(se.Slug)
+		if err != nil {
+			log.Printf("Failed to fetch emoji images for %s: %v", se.Slug, err)
+		}
 		var imageVariants []emojis_page.ImageVariant
 		if images != nil {
 			if images.ThreeD != nil {
@@ -365,7 +384,7 @@ func GenerateEmojis() {
 
 	// --- Apple Emojis ---
 	log.Println("Generating Apple Emojis pages...")
-	appleCategories, _ := db.GetAppleCategoriesWithPreviewEmojis(5)
+	// appleCategories already fetched at top
 	var filteredAppleCategories []emojis_db.CategoryWithPreview
 	for _, cat := range appleCategories {
 		if cat.Category != "Other" {
@@ -400,19 +419,43 @@ func GenerateEmojis() {
 
 	for _, cat := range filteredAppleCategories {
 		catSlug := emojis_page.CategoryToSlug(cat.Category)
-		emList, total, _ := db.GetEmojisByCategoryWithAppleImagesPaginated(cat.Category, 1, 1000)
-		
-		emWithImg := make([]apple_page.EmojiWithImage, 0, len(emList))
-		for _, em := range emList {
-			latestImg, _ := db.GetLatestAppleImage(em.Slug)
-			emWithImg = append(emWithImg, apple_page.EmojiWithImage{Emoji: &em, LatestImage: latestImg})
-			
-			// Individual Apple Emoji Page
-			evolution, _ := db.GetAppleEvolutionImages(em.Slug)
-			appleEv := make([]apple_page.EvolutionImage, len(evolution))
-			for i, ev := range evolution {
-				appleEv[i] = apple_page.EvolutionImage{URL: ev.URL, Version: ev.Version}
+		emWithImg := make([]apple_page.EmojiWithImage, 0, cat.Count)
+		for ep := 1; ; ep++ {
+			batchSize := 100
+			batchList, _, err := db.GetEmojisByCategoryWithAppleImagesPaginated(cat.Category, ep, batchSize)
+			if err != nil {
+				log.Printf("Failed to fetch emojis batch for apple category %s, page %d: %v", cat.Category, ep, err)
+				break
 			}
+			if len(batchList) == 0 {
+				break
+			}
+
+			slugs := make([]string, len(batchList))
+			for i, em := range batchList {
+				slugs[i] = em.Slug
+			}
+
+			evolutionMap, err := db.GetAppleEvolutionImagesBatch(slugs)
+			if err != nil {
+				log.Printf("Failed to fetch evolution images batch: %v", err)
+			}
+
+			for _, em := range batchList {
+				evolution := evolutionMap[em.Slug]
+				var latestImg *string
+				if len(evolution) > 0 {
+					latest := evolution[len(evolution)-1].URL
+					latestImg = &latest
+				}
+
+				emWithImg = append(emWithImg, apple_page.EmojiWithImage{Emoji: &em, LatestImage: latestImg})
+
+				// Individual Apple Emoji Page
+				appleEv := make([]apple_page.EvolutionImage, len(evolution))
+				for i, ev := range evolution {
+					appleEv[i] = apple_page.EvolutionImage{URL: ev.URL, Version: ev.Version}
+				}
 			
 			var description string
 			if em.AppleVendorDescription != nil && *em.AppleVendorDescription != "" {
@@ -449,13 +492,17 @@ func GenerateEmojis() {
 				Canonical:   appleEmojiData.LayoutProps.Canonical,
 			}
 			renderToFile("apple-emojis/"+em.Slug+"/", apple_page.EmojiContent(appleEmojiData), meta)
+			}
+			if ep*batchSize >= cat.Count {
+				break
+			}
 		}
 
 		catData := apple_page.CategoryData{
 			Category:     cat.Category,
 			CategorySlug: catSlug,
 			Emojis:       emWithImg,
-			TotalEmojis:  total,
+			TotalEmojis:  cat.Count,
 			CurrentPage:  1,
 			TotalPages:   1,
 			BreadcrumbItems: []components.BreadcrumbItem{
@@ -481,7 +528,7 @@ func GenerateEmojis() {
 
 	// --- Discord Emojis ---
 	log.Println("Generating Discord Emojis pages...")
-	discordCategories, _ := db.GetDiscordCategoriesWithPreviewEmojis(5)
+	// discordCategories already fetched at top
 	var filteredDiscordCategories []emojis_db.CategoryWithPreview
 	for _, cat := range discordCategories {
 		if cat.Category != "Other" {
@@ -514,19 +561,43 @@ func GenerateEmojis() {
 
 	for _, cat := range filteredDiscordCategories {
 		catSlug := emojis_page.CategoryToSlug(cat.Category)
-		emList, total, _ := db.GetEmojisByCategoryWithDiscordImagesPaginated(cat.Category, 1, 1000)
-		
-		emWithImg := make([]discord_page.EmojiWithImage, 0, len(emList))
-		for _, em := range emList {
-			latestImg, _ := db.GetLatestDiscordImage(em.Slug)
-			emWithImg = append(emWithImg, discord_page.EmojiWithImage{Emoji: &em, LatestImage: latestImg})
-			
-			// Individual Discord Emoji Page
-			evolution, _ := db.GetDiscordEvolutionImages(em.Slug)
-			discordEv := make([]discord_page.EvolutionImage, len(evolution))
-			for i, ev := range evolution {
-				discordEv[i] = discord_page.EvolutionImage{URL: ev.URL, Version: ev.Version}
+		emWithImg := make([]discord_page.EmojiWithImage, 0, cat.Count)
+		for ep := 1; ; ep++ {
+			batchSize := 100
+			batchList, _, err := db.GetEmojisByCategoryWithDiscordImagesPaginated(cat.Category, ep, batchSize)
+			if err != nil {
+				log.Printf("Failed to fetch emojis batch for discord category %s, page %d: %v", cat.Category, ep, err)
+				break
 			}
+			if len(batchList) == 0 {
+				break
+			}
+
+			slugs := make([]string, len(batchList))
+			for i, em := range batchList {
+				slugs[i] = em.Slug
+			}
+
+			evolutionMap, err := db.GetDiscordEvolutionImagesBatch(slugs)
+			if err != nil {
+				log.Printf("Failed to fetch discord evolution images batch: %v", err)
+			}
+
+			for _, em := range batchList {
+				evolution := evolutionMap[em.Slug]
+				var latestImg *string
+				if len(evolution) > 0 {
+					latest := evolution[len(evolution)-1].URL
+					latestImg = &latest
+				}
+
+				emWithImg = append(emWithImg, discord_page.EmojiWithImage{Emoji: &em, LatestImage: latestImg})
+
+				// Individual Discord Emoji Page
+				discordEv := make([]discord_page.EvolutionImage, len(evolution))
+				for i, ev := range evolution {
+					discordEv[i] = discord_page.EvolutionImage{URL: ev.URL, Version: ev.Version}
+				}
 			
 			var description string
 			if em.DiscordVendorDescription != nil && *em.DiscordVendorDescription != "" {
@@ -563,13 +634,17 @@ func GenerateEmojis() {
 				Canonical:   discordEmojiData.LayoutProps.Canonical,
 			}
 			renderToFile("discord-emojis/"+em.Slug+"/", discord_page.EmojiContent(discordEmojiData), meta)
+			}
+			if ep*batchSize >= cat.Count {
+				break
+			}
 		}
 
 		catData := discord_page.CategoryData{
 			Category:     cat.Category,
 			CategorySlug: catSlug,
 			Emojis:       emWithImg,
-			TotalEmojis:  total,
+			TotalEmojis:  cat.Count,
 			CurrentPage:  1,
 			TotalPages:   1,
 			BreadcrumbItems: []components.BreadcrumbItem{

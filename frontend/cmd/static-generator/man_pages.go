@@ -95,8 +95,12 @@ func GenerateManPages() {
 
 		// Write metadata as a JSON comment if provided
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -105,8 +109,12 @@ func GenerateManPages() {
 	}
 
 	log.Println("Generating Credits page...")
-	creditsData, _ := manpages.FetchManPagesCreditsData()
-	renderToFile("credits/", man_pages_components.Credits(*creditsData), nil)
+	creditsData, err := manpages.FetchManPagesCreditsData()
+	if err != nil {
+		log.Printf("Failed to fetch man pages credits data: %v", err)
+	} else {
+		renderToFile("credits/", man_pages_components.Credits(*creditsData), nil)
+	}
 
 	log.Println("Generating Man Pages Index...")
 	indexData, err := manpages.FetchManPagesIndexData(db)
@@ -202,16 +210,16 @@ func GenerateManPages() {
 
 				// Fetch and generate individual man pages
 				for mp := 1; ; mp++ {
-					pages, err := db.GetManPagesBySubcategoryPaginated(cat.Name, subcat.Name, 100, (mp-1)*100)
+					pages, err := db.GetManPagesBySubcategoryPaginatedFull(cat.Name, subcat.Name, 100, (mp-1)*100)
 					if err != nil || len(pages) == 0 {
 						break
 					}
 
 					for _, page := range pages {
 						relPath := fmt.Sprintf("%s/%s/%s/", cat.Name, subcat.Name, page.Slug)
-						data, err := manpages.FetchManPagesPageData(db, cat.Name, subcat.Name, page.Slug)
+						data, err := manpages.FetchManPagesPageDataFromFull(&page, cat.Name, subcat.Name)
 						if err != nil {
-							log.Printf("Failed to fetch page data for %s: %v", relPath, err)
+							log.Printf("Failed to prepare page data for %s: %v", relPath, err)
 							continue
 						}
 						meta := &static_cache.PageMetadata{

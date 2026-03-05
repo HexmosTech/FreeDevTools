@@ -52,13 +52,20 @@ func GenerateCheatsheets() {
 	}
 
 	// Calculate total pages for progress tracker
-	totalPagesCount := 1 + totalIndexPages // credits + index pages
+	totalPagesCount := 1 + totalIndexPages + overview.TotalCount // credits + index pages + individual cheatsheets
 	categories, err := db.GetAllCategoriesSitemap()
 	if err == nil {
-		totalPagesCount += len(categories)
+		catCounts, err := db.GetCategoryCounts()
+		if err != nil {
+			log.Printf("Failed to fetch category counts: %v", err)
+		}
 		for _, cat := range categories {
-			csItems, _ := db.GetCheatsheetsByCategorySitemap(cat.Slug)
-			totalPagesCount += len(csItems)
+			count := catCounts[cat.Slug]
+			pages := (count + 36 - 1) / 36
+			if pages == 0 {
+				pages = 1
+			}
+			totalPagesCount += pages
 		}
 	}
 
@@ -83,8 +90,12 @@ func GenerateCheatsheets() {
 		defer f.Close()
 
 		if metadata != nil {
-			metaBytes, _ := json.Marshal(metadata)
-			fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			metaBytes, err := json.Marshal(metadata)
+			if err != nil {
+				log.Printf("Failed to marshal metadata for %s: %v", filename, err)
+			} else {
+				fmt.Fprintf(f, "<!-- FDT_META: %s -->\n", string(metaBytes))
+			}
 		}
 
 		if err := component.Render(ctx, f); err != nil {
@@ -196,7 +207,11 @@ func GenerateCheatsheets() {
 				relPath = fmt.Sprintf("%s/%d/", cat.Slug, p)
 			}
 
-			pageCsList, _, _ := db.GetCheatsheetsByCategory(cat.Slug, p, catItemsPerPage)
+			pageCsList, _, err := db.GetCheatsheetsByCategory(cat.Slug, p, catItemsPerPage)
+			if err != nil {
+				log.Printf("Failed to fetch cheatsheets for category %s, page %d: %v", cat.Slug, p, err)
+				continue
+			}
 
 			title := fmt.Sprintf("%s Cheatsheets | Online Free DevTools by Hexmos", cat.Name)
 			description := fmt.Sprintf("Explore %s cheatsheets and reference guides.", cat.Name)
@@ -242,14 +257,19 @@ func GenerateCheatsheets() {
 		}
 
 		// Individual Cheatsheets
-		// For simplicity in static-generator, fetch all metadata for the category
-		fullCsList, _, _ := db.GetCheatsheetsByCategory(cat.Slug, 1, 10000)
-		for _, cs := range fullCsList {
-			// Re-fetch individual cheatsheet for content
-			fullCs, _ := db.GetCheatsheet(cs.HashID)
-			if fullCs == nil {
-				continue
+		for cp := 1; ; cp++ {
+			batchSize := 100
+			batchCsList, _, err := db.GetCheatsheetsByCategoryFull(cat.Slug, cp, batchSize)
+			if err != nil {
+				log.Printf("Failed to fetch cheatsheet batch for category %s, page %d: %v", cat.Slug, cp, err)
+				break
 			}
+			if len(batchCsList) == 0 {
+				break
+			}
+
+			for _, cs := range batchCsList {
+				fullCs := &cs // Use the already fetched full data
 
 			breadcrumbItems := []components.BreadcrumbItem{
 				{Label: "Free DevTools", Href: basePath + "/"},
@@ -292,7 +312,11 @@ func GenerateCheatsheets() {
 			}
 			renderToFile(cat.Slug+"/"+fullCs.Slug+"/", cheatsheets_page.CheatsheetContent(csData), meta)
 		}
+		if cp*batchSize >= total {
+			break
+		}
 	}
+}
 
 	log.Println("Static HTML generation for Cheatsheets complete!")
 	tracker.Finish()

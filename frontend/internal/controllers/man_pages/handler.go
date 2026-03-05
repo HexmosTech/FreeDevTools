@@ -808,6 +808,77 @@ func FetchManPagesPageData(db *man_pages.DB, category, subcategory, slug string)
 	return &data, nil
 }
 
+func FetchManPagesPageDataFromFull(manPage *man_pages.ManPage, category, subcategory string) (*man_pages_components.PageData, error) {
+	if manPage == nil {
+		return nil, ErrNotFound
+	}
+
+	categoryTitle := man_pages_components.FormatCategoryName(category)
+	subcategoryTitle := man_pages_components.FormatCategoryName(subcategory)
+
+	breadcrumbItems := []components.BreadcrumbItem{
+		{Label: "Free DevTools", Href: config.GetBasePath() + "/"},
+		{Label: "Man Pages", Href: config.GetBasePath() + "/man-pages/"},
+		{Label: categoryTitle, Href: config.GetBasePath() + "/man-pages/" + url.PathEscape(category) + "/"},
+		{Label: subcategoryTitle, Href: config.GetBasePath() + "/man-pages/" + url.PathEscape(category) + "/" + url.PathEscape(subcategory) + "/"},
+		{Label: manPage.Slug},
+	}
+
+	title := fmt.Sprintf("%s - Manual Page | Free DevTools by Hexmos", manPage.Title)
+	description := fmt.Sprintf("Read the manual page for %s", manPage.Title)
+
+	// Keywords for Ethical Ads
+	keywords := []string{
+		"man pages",
+		"manual",
+		"documentation",
+		category,
+		subcategory,
+		manPage.Slug,
+	}
+	if manPage.Title != "" {
+		keywords = append(keywords, manPage.Title)
+	}
+
+	canonical := fmt.Sprintf("%s/man-pages/%s/%s/%s/", config.GetSiteURL(), url.PathEscape(category), url.PathEscape(subcategory), url.PathEscape(manPage.Slug))
+
+	// Parse SeeAlso JSON
+	var seeAlsoItems []common.SeeAlsoItem
+	if manPage.SeeAlso != "" {
+		var seeAlsoData []common.SeeAlsoJSONItem
+		if err := json.Unmarshal([]byte(manPage.SeeAlso), &seeAlsoData); err != nil {
+			// Log error but don't fail the page
+			log.Printf("Error parsing see_also JSON for %s/%s/%s: %v", category, subcategory, manPage.Slug, err)
+		} else {
+			for _, item := range seeAlsoData {
+				seeAlsoItems = append(seeAlsoItems, item.ToSeeAlsoItem())
+			}
+		}
+	}
+
+	data := man_pages_components.PageData{
+		ManPage:         manPage,
+		Category:        category,
+		SubCategory:     subcategory,
+		BreadcrumbItems: breadcrumbItems,
+		LayoutProps: layouts.BaseLayoutProps{
+			Name:         manPage.Title,
+			Title:        title,
+			Description:  description,
+			Canonical:    canonical,
+			Keywords:     keywords,
+			OgImage:      "https://hexmos.com/freedevtools/public/tool-banners/man-pages-banner.png",
+			TwitterImage: "https://hexmos.com/freedevtools/public/tool-banners/man-pages-banner.png",
+			Path:         canonical,
+			PageType:     "TechArticle",
+			ShowHeader:   true,
+		},
+		Keywords:     keywords,
+		SeeAlsoItems: seeAlsoItems,
+	}
+	return &data, nil
+}
+
 func HandleManPagesPage(w http.ResponseWriter, r *http.Request, db *man_pages.DB, category, subcategory, slug string) {
 	data, err := FetchManPagesPageData(db, category, subcategory, slug)
 	if err != nil {
