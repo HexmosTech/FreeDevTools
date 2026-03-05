@@ -947,50 +947,50 @@ clear-cache: ## Clear the generated static/ directory
 	@rm -rf static/
 	@echo "✅ static/ directory cleared!"
 
-generate-mcp: ## Generate static pages for the MCP section
+generate-mcp: generate ## Generate static pages for the MCP section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Running static generator for MCP..."
 	@./static-gen --section mcp
 
-generate-man-pages: ## Generate static pages for the Man Pages section
+generate-man-pages: generate ## Generate static pages for the Man Pages section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Running static generator for Man Pages..."
 	@./static-gen --section man-pages
 
-generate-png-icons: ## Generate static pages for the PNG Icons section
+generate-png-icons: generate ## Generate static pages for the PNG Icons section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Running static generator for PNG Icons..."
 	@./static-gen --section png-icons
 
-generate-svg-icons: ## Generate static pages for the SVG Icons section
+generate-svg-icons: generate ## Generate static pages for the SVG Icons section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Running static generator for SVG Icons..."
 	@./static-gen --section svg-icons
-generate-tldr: ## Generate static pages for the TLDR section
+generate-tldr: generate ## Generate static pages for the TLDR section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section tldr
 
-generate-emojis: ## Generate static pages for the Emojis section
+generate-emojis: generate ## Generate static pages for the Emojis section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section emojis
 
-generate-cheatsheets: ## Generate static pages for the Cheatsheets section
+generate-cheatsheets: generate ## Generate static pages for the Cheatsheets section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section cheatsheets
 
-generate-installerpedia: ## Generate static pages for the Installerpedia section
+generate-installerpedia: generate ## Generate static pages for the Installerpedia section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section installerpedia
 
-static-generator-all: ## Generate all static pages for all sections
+static-generator-all: generate ## Generate all static pages for all sections
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Running static generator for all sections..."
