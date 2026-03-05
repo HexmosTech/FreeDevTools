@@ -36,7 +36,18 @@ func main() {
 		GenerateCheatsheets()
 	} else if *section == "installerpedia" {
 		GenerateInstallerpedia()
+	} else if *section == "all" {
+		log.Println("Starting generation for ALL sections...")
+		GenerateMCP()
+		GenerateManPages()
+		GeneratePNGIcons()
+		GenerateSVGIcons()
+		GenerateTLDR()
+		GenerateEmojis()
+		GenerateCheatsheets()
+		GenerateInstallerpedia()
+		log.Println("✅ Generation for ALL sections complete!")
 	} else {
-		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages|png-icons|svg-icons|tldr|emojis|cheatsheets|installerpedia]")
+		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages|png-icons|svg-icons|tldr|emojis|cheatsheets|installerpedia|all]")
 	}
 }

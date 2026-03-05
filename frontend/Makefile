@@ -1,4 +1,4 @@
-.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version
+.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generator-all
 
 # Variables
 PORT ?= 4321
@@ -989,3 +989,10 @@ generate-installerpedia: ## Generate static pages for the Installerpedia section
 	@echo "Building static generator..."
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section installerpedia
+
+static-generator-all: ## Generate all static pages for all sections
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for all sections..."
+	@./static-gen --section all
+	@echo "✅ All static pages generated successfully!"
