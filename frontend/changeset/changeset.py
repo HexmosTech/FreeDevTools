@@ -14,7 +14,10 @@ def get_script_name():
 
 def db_status(db_name):
     """
-    Check the synchronization status of a database on B2.
+    This command will check the current status of the database.
+
+    Args:
+        db_name (str): Simple
     """
     if not db_name.endswith('.db'):
         db_name += '.db'

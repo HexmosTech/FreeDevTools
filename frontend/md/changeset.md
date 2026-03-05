@@ -417,170 +417,54 @@ python3 changeset/scripts/1735288266296000000_ipm-new-data-backup.py
 ```
 
 
-
-## B2m DB Versioning Workflow
-
-This is reiterated version of b2m db versioning workflow. 
-
-The main update is with idetifying the new db version (*-v1.db, *-v2.db, etc).
-B2m didn't had this feature of identifying the new db version. Rather it was just identifying the db version based on the name.
-This causing anyone can upload db with same name and version. Which was discussed to be not done. Ex: b2 had `ipm-db-v1.db` and server had `ipm-db-v1.db` anyone could have uploaded with same name and version. 
-(Even though b2m not not allow outdated db which was calculated using hash to be uploaded, but it was not able to identify the new db version.)
+## What to test?
 
 
-b2m had 
+Current state of ipmdb is `ipm-db-v6.db`
 
-1. Name Identification
-2. Hash Identification
 
-B2m lacked 
-1. Version Identification 
+Requirement:
 
-Why this was not identified in initial implementation doc?
-I Thought it can be done with simple modification of using upload and download. 
-But with final comments no db should be uploaded without version bump. This was identified later and didn't not mention this in initial implementation doc.
+Any new data inseted/updated/deleted should be present in `ipm-db-v6.sql` file. 
+
+File name will be defined in `db.toml`. Just remove `.db` from the file name and use `.sql` as extension.
+
+
+This is still not done. 
 
 
 
-There are 4 possible states of the changeset status and it's actions.
-
-Hash will be calculated using `b3sum` command.
-
-These hash only calculated on download / upload of the db.
-
-Hash will be stored in `.b2m/` directory. 
-
-This hash will be invalid if the db mod time changes. (If there are any new data added/updated/deleted in db mod time will change)
+### Testing Cases
 
 
+Case 1: `ipm-db-v6.db` is present in server and b2 `ipm-db-v6.db`.
+Both Have same data no new data inserted/updated/deleted.
 
-State 1: Up to Date ✅ (`up_to_date`)
-
-B2 has `ipm-db-v1.db` file
-Local has `ipm-db-v1.db` file
- 
-Hash of b2 `ipm-db-v1.db` == Hash of local `ipm-db-v1.db`
+Status will be `up_to_date`.
 
 
-Action: No Actions Needed
+Case 2: `ipm-db-v6.db` is present in server and b2 `ipm-db-v6.db`.
+Server has updated data via api calls and new data is present in `ipm-db-v6.sql` file.
+In this case, status will be `bump_and_upload`.
 
-State 2: DB Outdated Download Now 🔽 (`outdated_db`)
-
-B2 has `ipm-db-v2.db` file
-Local has `ipm-db-v1.db` file
-
-Hash of local `ipm-db-v1.db` is != Hash of b2 `ipm-db-v1.db`. (This means new data is added to b2 `ipm-db-v1.db`)
-
-Action: 
-1. Changeset script should be performed
-2. Download ipm-db-v2.db from b2 to changeset directory.
-3. Query should be executed in ipm-db-v2.db which was created in ipm-db-v1.sql
-4. Rename ipm-db-v2.db to ipm-db-v3.db and copy to local directory.
-5. Bump and Upload ipm-db-v2.db to b2 with new version ipm-db-v3.db from changeset directory.
-Using inbuild python function which will trigger the bump and upload process.
-```shell
- b2m bump-db-version <db-name> <path-to-db-file>
-```
-6. Stop Server
-7. Update db.toml file
-8. Start Server
-
-State 3: Ready To Bump New Version ⬆️ 
-
-B2 has `ipm-db-v1.db` file
-Local has `ipm-db-v2.db` file
-
-Hash of local `ipm-db-v1.db` is == Hash of b2 `ipm-db-v1.db`. (This means no new data is added to b2 `ipm-db-v1.db`)
-
-Action:
-1. Copy ipm-db-v2.db to changeset directory.
-2. Bump and Upload ipm-db-v2.db to b2 with new version ipm-db-v3.db from changeset directory.
-Using inbuild python function
-```shell
-b2m bump-db-version <db-name> <path-to-db-file>
-```
-3. Stop Server
-4. Update db.toml file (`ipm-db-v3.db`)
-5. Start Server
-
-State 4: Download New DB ⬇️ (`new_db_available`) 
-
-B2 has ipm-db-v2.db file
-Local has ipm-db-v1.db file
-
-Hash of local `ipm-db-v1.db` is == Hash of b2 `ipm-db-v1.db`. (This means no new data is added to b2 `ipm-db-v1.db`)    
-
-Action: 
-1. Download ipm-db-v2.db from b2 to db directory.
-2. Stop Server
-3. Update db.toml file (ipm-db-v2.db)
-4. Start Server
+This will do these steps.
+1. Stop fdt server.
+2. Copy `ipm-db-v6.db` to `changeset/dbs/1735288266296000000_ipm-new-data-backup/ipm-db-v6.db`.
+3. Bump `ipm-db-v6.db` to `ipm-db-v7.db`.
+4. Copy to `db/all_dbs/ipm-db-v7.db`.
+5. Update `db.toml` with `ipm-db-v7.db`.
+6. Start fdt server.
+7. Upload `ipm-db-v7.db` to b2.
 
 
+Case 3: `ipm-db-v6.db` is present in server and b2 `ipm-db-v7.db`.
 
-By new proposal
-
-b2m go implement:
-
-1. Identify the state of db.
-2. Update db.toml file.
-3. Start/stop server.
-4. Download/upload db.
-5. Perform changeset script.
-
-
-python script operations:
-
-1. Handling b2m cli
-2. Handle sql query execution.
-3. Specify where db download/upload should happen.
-
-
-## Confusions regarding how to handle changeset upload
-
-
-1. Major blockhead in db.toml.
-Can't store same all the db versions in db.toml. 
-We have to store lattest db version in bump folder only.
-
-```
-/bump
-```
-```
-v1 ipm
-v2 mcp
-```
-
-2. Version bump issues
-    1. b2m can't detect new bump version as lattest db version. EX: v2 > v1
-
-
-
-
-
-## Testing
-
-1. 
-
-
-```
-gk@jarvis:~/hex/FreeDevTools/frontend$ make exe-changeset 1772031633645610550_sample-phrase
-Building b2m...
-cd ../b2-manager && go build -o ../b2m .
-cp ../b2m ./b2m
-Executing Changeset Script: /home/gk/hex/FreeDevTools/frontend/changeset/scripts/1772031633645610550_sample-phrase.py
-Executing status check for: test-db.db
-ready_to_upload
-Copying /home/gk/hex/FreeDevTools/frontend/db/all_dbs/test-db.db to /home/gk/hex/FreeDevTools/frontend/changeset/dbs/1772031633645610550_sample-phrase/backup/test-db.db
-Bumped test-db.db to test-db-v2.db
-test-db-v2.db
-Executing upload for: test-db-v2.db
-Status: Safety Check...
-Status: Locking...
-Status: Setting Metadata...
-Status: Uploading...
-Status: Finalizing... -)
-Status: Done
-
-
-```
+1. Download `ipm-db-v7.db` from b2. 
+2. Copy `ipm-db-v6.sql` to `changeset/dbs/1735288266296000000_ipm-new-data-backup/ipm-db-v6.sql`.
+3. Execute sql queries from `ipm-db-v6.sql` to `ipm-db-v7.db`.
+4. Stop fdt server.
+5. Bump `ipm-db-v7.db` to `ipm-db-v8.db`.
+6. Copy to `db/all_dbs/ipm-db-v8.db`.
+7. Update `db.toml` with `ipm-db-v8.db`.
+8. Start fdt server.
+9. Upload `ipm-db-v8.db` to b2.

@@ -43,12 +43,12 @@ def main():
 
     # If status is outdated_db, then download db from b2.
     elif status == "outdated_version":
-        stop_server()
         latest_db_name = get_latest_db(DB_NAME)
         db_download(latest_db_name)
         copysql_to_changeset_dir(DB_NAME)
-        new_db_name = bump_db_version(latest_db_name)
         inserted_queries(DB_NAME, new_db_name)
+        stop_server()
+        new_db_name = bump_db_version(latest_db_name)
         db_upload(new_db_name)
         start_server()
         
