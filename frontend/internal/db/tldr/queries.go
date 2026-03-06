@@ -172,7 +172,7 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 	clusterHash := CalculateHash(platform)
 
 	query := `
-		SELECT url, title, description, metadata 
+		SELECT url, title, description, metadata, updated_at
 		FROM pages 
 		WHERE cluster_hash = ? 
 		ORDER BY url 
@@ -187,10 +187,10 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 
 	var commands []Command
 	for rows.Next() {
-		var url, metadataJSON string
+		var url, metadataJSON, updatedAt string
 		var title, description sql.NullString
 
-		if err := rows.Scan(&url, &title, &description, &metadataJSON); err != nil {
+		if err := rows.Scan(&url, &title, &description, &metadataJSON, &updatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan command: %w", err)
 		}
 
@@ -212,6 +212,7 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 			URL:         frontendURL,
 			Description: description.String,
 			Features:    metadata.Features,
+			UpdatedAt:   updatedAt,
 		})
 	}
 
@@ -230,7 +231,7 @@ func (db *DB) GetPagesByClusterPaginatedFull(platform string, limit, offset int)
 	clusterHash := CalculateHash(platform)
 
 	query := `
-		SELECT title, description, html_content, metadata, see_also, url
+		SELECT title, description, html_content, metadata, see_also, url, updated_at
 		FROM pages 
 		WHERE cluster_hash = ? 
 		ORDER BY url 
@@ -246,10 +247,10 @@ func (db *DB) GetPagesByClusterPaginatedFull(platform string, limit, offset int)
 	var pages []Page
 	for rows.Next() {
 		var title, description, htmlContent, url sql.NullString
-		var metadataJSON string
+		var metadataJSON, updatedAt string
 		var seeAlso string
 
-		if err := rows.Scan(&title, &description, &htmlContent, &metadataJSON, &seeAlso, &url); err != nil {
+		if err := rows.Scan(&title, &description, &htmlContent, &metadataJSON, &seeAlso, &url, &updatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan full page: %w", err)
 		}
 
@@ -266,6 +267,7 @@ func (db *DB) GetPagesByClusterPaginatedFull(platform string, limit, offset int)
 			Metadata:    metadata,
 			SeeAlso:     seeAlso,
 			URL:         url.String,
+			UpdatedAt:   updatedAt,
 		})
 	}
 

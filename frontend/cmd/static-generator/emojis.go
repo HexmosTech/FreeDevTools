@@ -166,6 +166,7 @@ func GenerateEmojis() {
 			Title:       creditsLayoutProps.Title,
 			Description: creditsLayoutProps.Description,
 			Canonical:   creditsLayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 	renderToFile("credits/", emojis_page.CreditsContent(emojis_page.CreditsData{LayoutProps: creditsLayoutProps}), meta)
 
@@ -224,6 +225,7 @@ func GenerateEmojis() {
 			Title:       layoutProps.Title,
 			Description: layoutProps.Description,
 			Canonical:   layoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 		renderToFile(relPath, emojis_page.IndexContent(indexData), meta)
 	}
@@ -292,6 +294,7 @@ func GenerateEmojis() {
 				Title:       layoutProps.Title,
 				Description: layoutProps.Description,
 				Canonical:   layoutProps.Canonical,
+				UpdatedAt:   cat.UpdatedAt,
 			}
 			renderToFile(relPath, emojis_page.CategoryContent(catData), meta)
 		}
@@ -377,7 +380,9 @@ func GenerateEmojis() {
 		meta = &static_cache.PageMetadata{
 			Title:       layoutProps.Title,
 			Description: layoutProps.Description,
+			Keywords:    emoji.Keywords,
 			Canonical:   layoutProps.Canonical,
+			UpdatedAt:   emoji.UpdatedAt,
 		}
 		renderToFile(se.Slug+"/", emojis_page.EmojiContent(emojiData), meta)
 	}
@@ -414,6 +419,7 @@ func GenerateEmojis() {
 			Title:       appleIndexData.LayoutProps.Title,
 			Description: appleIndexData.LayoutProps.Description,
 			Canonical:   appleIndexData.LayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 	renderToFile("apple-emojis/", apple_page.IndexContent(appleIndexData), meta)
 
@@ -490,6 +496,7 @@ func GenerateEmojis() {
 				Title:       appleEmojiData.LayoutProps.Title,
 				Description: appleEmojiData.LayoutProps.Description,
 				Canonical:   appleEmojiData.LayoutProps.Canonical,
+				UpdatedAt:   em.UpdatedAt,
 			}
 			renderToFile("apple-emojis/"+em.Slug+"/", apple_page.EmojiContent(appleEmojiData), meta)
 			}
@@ -516,14 +523,15 @@ func GenerateEmojis() {
 				Description: "Browse Apple-style " + cat.Category + " emojis.",
 				Canonical:   siteURL + "/emojis/apple-emojis/" + catSlug + "/",
 				ShowHeader:  true,
-			},
-		}
-		meta = &static_cache.PageMetadata{
-			Title:       catData.LayoutProps.Title,
-			Description: catData.LayoutProps.Description,
-			Canonical:   catData.LayoutProps.Canonical,
-		}
-		renderToFile("apple-emojis/"+catSlug+"/", apple_page.CategoryContent(catData), meta)
+		},
+	}
+	meta = &static_cache.PageMetadata{
+		Title:       catData.LayoutProps.Title,
+		Description: catData.LayoutProps.Description,
+		Canonical:   catData.LayoutProps.Canonical,
+		UpdatedAt:   cat.UpdatedAt,
+	}
+	renderToFile("apple-emojis/"+catSlug+"/", apple_page.CategoryContent(catData), meta)
 	}
 
 	// --- Discord Emojis ---
@@ -556,6 +564,7 @@ func GenerateEmojis() {
 			Title:       discordIndexData.LayoutProps.Title,
 			Description: discordIndexData.LayoutProps.Description,
 			Canonical:   discordIndexData.LayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 	renderToFile("discord-emojis/", discord_page.IndexContent(discordIndexData), meta)
 
@@ -632,6 +641,7 @@ func GenerateEmojis() {
 				Title:       discordEmojiData.LayoutProps.Title,
 				Description: discordEmojiData.LayoutProps.Description,
 				Canonical:   discordEmojiData.LayoutProps.Canonical,
+				UpdatedAt:   em.UpdatedAt,
 			}
 			renderToFile("discord-emojis/"+em.Slug+"/", discord_page.EmojiContent(discordEmojiData), meta)
 			}
@@ -664,6 +674,7 @@ func GenerateEmojis() {
 			Title:       catData.LayoutProps.Title,
 			Description: catData.LayoutProps.Description,
 			Canonical:   catData.LayoutProps.Canonical,
+			UpdatedAt:   cat.UpdatedAt,
 		}
 		renderToFile("discord-emojis/"+catSlug+"/", discord_page.CategoryContent(catData), meta)
 	}

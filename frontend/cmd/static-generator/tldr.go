@@ -114,6 +114,7 @@ func GenerateTLDR() {
 		Title:       creditsLayoutProps.Title,
 		Description: creditsLayoutProps.Description,
 		Canonical:   creditsLayoutProps.Canonical,
+		UpdatedAt:   overview.LastUpdatedAt,
 	}
 	renderToFile("credits/", tldr.CreditsContent(tldr.CreditsData{LayoutProps: creditsLayoutProps}), creditsMeta)
 
@@ -175,6 +176,7 @@ func GenerateTLDR() {
 			Title:       layoutProps.Title,
 			Description: layoutProps.Description,
 			Canonical:   layoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 		renderToFile(relPath, tldr.IndexContent(indexData), meta)
 	}
@@ -243,6 +245,7 @@ func GenerateTLDR() {
 				Title:       layoutProps.Title,
 				Description: layoutProps.Description,
 				Canonical:   layoutProps.Canonical,
+				UpdatedAt:   cluster.UpdatedAt,
 			}
 			renderToFile(relPath, tldr.PlatformContent(platformData), meta)
 		}
@@ -314,6 +317,7 @@ func GenerateTLDR() {
 					Description: layoutProps.Description,
 					Keywords:    layoutProps.Keywords,
 					Canonical:   layoutProps.Canonical,
+					UpdatedAt:   page.UpdatedAt,
 				}
 				renderToFile(relPath, tldr.CommandContent(commandData), meta)
 			}

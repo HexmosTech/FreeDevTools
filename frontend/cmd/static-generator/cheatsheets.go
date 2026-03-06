@@ -119,6 +119,7 @@ func GenerateCheatsheets() {
 		Title:       creditsLayoutProps.Title,
 		Description: creditsLayoutProps.Description,
 		Canonical:   creditsLayoutProps.Canonical,
+		UpdatedAt:   overview.LastUpdatedAt,
 	}
 	renderToFile("credits/", cheatsheets_page.CreditsContent(cheatsheets_page.CreditsData{LayoutProps: creditsLayoutProps}), creditsMeta)
 
@@ -176,6 +177,7 @@ func GenerateCheatsheets() {
 			Title:       layoutProps.Title,
 			Description: layoutProps.Description,
 			Canonical:   layoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
 		}
 		renderToFile(relPath, cheatsheets_page.IndexContent(indexData), meta)
 	}
@@ -252,6 +254,7 @@ func GenerateCheatsheets() {
 				Title:       layoutProps.Title,
 				Description: layoutProps.Description,
 				Canonical:   layoutProps.Canonical,
+				UpdatedAt:   cat.UpdatedAt,
 			}
 			renderToFile(relPath, cheatsheets_page.CategoryContent(catData), meta)
 		}
@@ -309,6 +312,7 @@ func GenerateCheatsheets() {
 				Title:       layoutProps.Title,
 				Description: layoutProps.Description,
 				Canonical:   layoutProps.Canonical,
+				UpdatedAt:   fullCs.UpdatedAt,
 			}
 			renderToFile(cat.Slug+"/"+fullCs.Slug+"/", cheatsheets_page.CheatsheetContent(csData), meta)
 		}

@@ -38,6 +38,11 @@ func GenerateSVGIcons() {
 	if err := os.MkdirAll(outDir, 0755); err != nil {
 		log.Fatalf("Failed to create out dir: %v", err)
 	}
+ 
+	overview, err := db.GetOverview()
+	if err != nil {
+		log.Fatalf("Failed to fetch overview: %v", err)
+	}
 
 	totalCategories, err := db.GetTotalClusters()
 	if err != nil {
@@ -116,7 +121,13 @@ func GenerateSVGIcons() {
 			ShowHeader:  true,
 		},
 	}
-	renderToFile("credits/", svg_icons_pages.Credits(creditsData), nil)
+	creditsMeta := &static_cache.PageMetadata{
+		Title:       creditsData.LayoutProps.Title,
+		Description: creditsData.LayoutProps.Description,
+		Canonical:   creditsData.LayoutProps.Canonical,
+		UpdatedAt:   overview.LastUpdatedAt,
+	}
+	renderToFile("credits/", svg_icons_pages.Credits(creditsData), creditsMeta)
 
 	// Index pages
 	log.Println("Generating SVG Icons Index Pages...")
@@ -177,6 +188,7 @@ func GenerateSVGIcons() {
 			TwitterImage:   layoutProps.TwitterImage,
 			ThumbnailUrl:   layoutProps.ThumbnailUrl,
 			EncodingFormat: layoutProps.EncodingFormat,
+			UpdatedAt:      overview.LastUpdatedAt,
 		}
 		renderToFile(relPath, svg_icons_pages.IndexContent(data), meta)
 	}
@@ -251,6 +263,7 @@ func GenerateSVGIcons() {
 				TwitterImage:   layoutProps.TwitterImage,
 				ThumbnailUrl:   layoutProps.ThumbnailUrl,
 				EncodingFormat: layoutProps.EncodingFormat,
+				UpdatedAt:      cluster.UpdatedAt,
 			}
 			renderToFile(relPath, svg_icons_pages.CategoryContent(data), catMeta)
 		}
@@ -340,6 +353,7 @@ func GenerateSVGIcons() {
 					TwitterImage:   data.LayoutProps.TwitterImage,
 					ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 					EncodingFormat: data.LayoutProps.EncodingFormat,
+					UpdatedAt:      icon.UpdatedAt,
 				}
 				renderToFile(relPath, svg_icons_pages.IconContent(data), iconMeta)
 			}

@@ -10,6 +10,7 @@ import (
 
 	"encoding/json"
 	"fdt-templ/components/layouts"
+	"fdt-templ/internal/http_cache"
 	"fdt-templ/internal/static_cache"
 
 	"github.com/a-h/templ"
@@ -92,6 +93,12 @@ func serveFromCache(w http.ResponseWriter, r *http.Request, cachePath string) bo
 			if err := json.Unmarshal([]byte(metaStr), &meta); err != nil {
 				log.Printf("[STATIC_CACHE] Error: Failed to parse meta: %v", err)
 				return false
+			}
+ 
+			// **ETag/Cache Validation**
+			// Use the timestamp stored in JSON to handle HTTP caching headers.
+			if http_cache.CheckETag(w, r, meta.UpdatedAt) {
+				return true
 			}
 
 			// 2. Extract inner HTML (skip past " -->\n")

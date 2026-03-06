@@ -113,13 +113,25 @@ func GenerateManPages() {
 	if err != nil {
 		log.Printf("Failed to fetch man pages credits data: %v", err)
 	} else {
-		renderToFile("credits/", man_pages_components.Credits(*creditsData), nil)
+		creditsMeta := &static_cache.PageMetadata{
+			Title:       creditsData.LayoutProps.Title,
+			Description: creditsData.LayoutProps.Description,
+			Canonical:   creditsData.LayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
+		}
+		renderToFile("credits/", man_pages_components.Credits(*creditsData), creditsMeta)
 	}
 
 	log.Println("Generating Man Pages Index...")
 	indexData, err := manpages.FetchManPagesIndexData(db)
 	if err == nil {
-		renderToFile("", man_pages_components.Index(*indexData), nil)
+		indexMeta := &static_cache.PageMetadata{
+			Title:       indexData.LayoutProps.Title,
+			Description: indexData.LayoutProps.Description,
+			Canonical:   indexData.LayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
+		}
+		renderToFile("", man_pages_components.Index(*indexData), indexMeta)
 	}
 
 	log.Println("Generating Category, Subcategory, and Detail pages...")
@@ -159,6 +171,7 @@ func GenerateManPages() {
 				TwitterImage:   data.LayoutProps.TwitterImage,
 				ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 				EncodingFormat: data.LayoutProps.EncodingFormat,
+				UpdatedAt:      cat.UpdatedAt,
 			}
 			renderToFile(relPath, man_pages_components.CategoryContent(*data), catMeta)
 		}
@@ -204,6 +217,7 @@ func GenerateManPages() {
 						TwitterImage:   data.LayoutProps.TwitterImage,
 						ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 						EncodingFormat: data.LayoutProps.EncodingFormat,
+						UpdatedAt:      subcat.UpdatedAt,
 					}
 					renderToFile(relPath, man_pages_components.SubCategoryContent(*data), scMeta)
 				}
@@ -231,6 +245,7 @@ func GenerateManPages() {
 							TwitterImage:   data.LayoutProps.TwitterImage,
 							ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 							EncodingFormat: data.LayoutProps.EncodingFormat,
+							UpdatedAt:      page.UpdatedAt,
 						}
 						// Save ONLY the content, not the whole layout
 						renderToFile(relPath, man_pages_components.PageContent(*data), meta)

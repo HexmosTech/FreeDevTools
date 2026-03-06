@@ -121,7 +121,7 @@ func (db *DB) GetMcpPagesByCategoryPaginatedFull(categorySlug string, page, item
 
 	offset := (page - 1) * itemsPerPage
 	query := `SELECT hash_id, category_id, "key", name, description, owner, stars, forks, 
-		language, license, url, image_url, npm_url, npm_downloads, keywords, readme_content, see_also
+		language, license, url, image_url, npm_url, npm_downloads, keywords, readme_content, see_also, updated_at
 		FROM mcp_pages WHERE category_id = ? LIMIT ? OFFSET ?`
 
 	rows, err := db.conn.Query(query, categoryID, itemsPerPage, offset)
@@ -135,7 +135,7 @@ func (db *DB) GetMcpPagesByCategoryPaginatedFull(categorySlug string, page, item
 		var r McpPage
 		err := rows.Scan(
 			&r.HashID, &r.CategoryID, &r.Key, &r.Name, &r.Description, &r.Owner, &r.Stars, &r.Forks,
-			&r.Language, &r.License, &r.URL, &r.ImageURL, &r.NpmURL, &r.NpmDownloads, &r.Keywords, &r.ReadmeContent, &r.SeeAlso,
+			&r.Language, &r.License, &r.URL, &r.ImageURL, &r.NpmURL, &r.NpmDownloads, &r.Keywords, &r.ReadmeContent, &r.SeeAlso, &r.UpdatedAt,
 		)
 		if err != nil {
 			continue
@@ -155,12 +155,12 @@ func (db *DB) GetMcpPage(hashID int64) (*McpPage, error) {
 
 	var r McpPage
 	query := `SELECT hash_id, category_id, "key", name, description, owner, stars, forks, 
-		language, license, url, image_url, npm_url, npm_downloads, keywords, readme_content, see_also
+		language, license, url, image_url, npm_url, npm_downloads, keywords, readme_content, see_also, updated_at
 		FROM mcp_pages WHERE hash_id = ?`
 
 	err := db.conn.QueryRow(query, hashID).Scan(
 		&r.HashID, &r.CategoryID, &r.Key, &r.Name, &r.Description, &r.Owner, &r.Stars, &r.Forks,
-		&r.Language, &r.License, &r.URL, &r.ImageURL, &r.NpmURL, &r.NpmDownloads, &r.Keywords, &r.ReadmeContent, &r.SeeAlso,
+		&r.Language, &r.License, &r.URL, &r.ImageURL, &r.NpmURL, &r.NpmDownloads, &r.Keywords, &r.ReadmeContent, &r.SeeAlso, &r.UpdatedAt,
 	)
 	// r.ReadmeContent is left empty
 	if err != nil {

@@ -133,6 +133,7 @@ func GenerateInstallerpedia() {
 		Title:       indexLayoutProps.Title,
 		Description: indexLayoutProps.Description,
 		Canonical:   indexLayoutProps.Canonical,
+		UpdatedAt:   overview.LastUpdatedAt,
 	}
 	renderToFile("", ip_page.IndexContent(indexData), indexMeta)
 
@@ -208,6 +209,7 @@ func GenerateInstallerpedia() {
 				Title:       catLayoutProps.Title,
 				Description: catLayoutProps.Description,
 				Canonical:   catLayoutProps.Canonical,
+				UpdatedAt:   cat.UpdatedAt,
 			}
 			renderToFile(relPath, ip_page.CategoryContent(catData), catMeta)
 		}
@@ -270,6 +272,7 @@ func GenerateInstallerpedia() {
 					Title:       repoLayoutProps.Title,
 					Description: repoLayoutProps.Description,
 					Canonical:   repoLayoutProps.Canonical,
+					UpdatedAt:   repo.UpdatedAt,
 				}
 				renderToFile(fmt.Sprintf("%s/%s/", cat.Name, slug), ip_page.PageContent(repoData), repoMeta)
 			}

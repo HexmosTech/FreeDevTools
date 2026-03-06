@@ -107,7 +107,13 @@ func GenerateMCP() {
 
 	log.Println("Generating Credits page...")
 	creditsData := mcp_controllers.FetchCreditsData()
-	renderToFile("credits/", mcp_pages.Credits(creditsData), nil)
+	creditsMeta := &static_cache.PageMetadata{
+		Title:       creditsData.Title,
+		Description: creditsData.Description,
+		Canonical:   creditsData.Canonical,
+		UpdatedAt:   overview.LastUpdatedAt,
+	}
+	renderToFile("credits/", mcp_pages.Credits(creditsData), creditsMeta)
 
 	log.Println("Generating MCP Index Pages...")
 	for p := 1; p <= totalIndexPages; p++ {
@@ -126,6 +132,7 @@ func GenerateMCP() {
 			TwitterImage:   data.LayoutProps.TwitterImage,
 			ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 			EncodingFormat: data.LayoutProps.EncodingFormat,
+			UpdatedAt:      overview.LastUpdatedAt,
 		}
 		renderToFile(path, mcp_pages.IndexContent(*data), idxMeta)
 	}
@@ -162,6 +169,7 @@ func GenerateMCP() {
 					TwitterImage:   data.LayoutProps.TwitterImage,
 					ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 					EncodingFormat: data.LayoutProps.EncodingFormat,
+					UpdatedAt:      cat.UpdatedAt,
 				}
 				renderToFile(path, mcp_pages.CategoryContent(*data), catMeta)
 			}
@@ -190,6 +198,7 @@ func GenerateMCP() {
 						TwitterImage:   data.LayoutProps.TwitterImage,
 						ThumbnailUrl:   data.LayoutProps.ThumbnailUrl,
 						EncodingFormat: data.LayoutProps.EncodingFormat,
+						UpdatedAt:      repo.UpdatedAt,
 					}
 					renderToFile(path, mcp_pages.RepoContent(*data), repoMeta)
 				}
