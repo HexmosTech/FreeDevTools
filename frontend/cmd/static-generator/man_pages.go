@@ -119,7 +119,7 @@ func GenerateManPages() {
 			Canonical:   creditsData.LayoutProps.Canonical,
 			UpdatedAt:   overview.LastUpdatedAt,
 		}
-		renderToFile("credits/", man_pages_components.Credits(*creditsData), creditsMeta)
+		renderToFile("credits/", man_pages_components.CreditsContent(*creditsData), creditsMeta)
 	}
 
 	log.Println("Generating Man Pages Index...")
@@ -131,7 +131,7 @@ func GenerateManPages() {
 			Canonical:   indexData.LayoutProps.Canonical,
 			UpdatedAt:   overview.LastUpdatedAt,
 		}
-		renderToFile("", man_pages_components.Index(*indexData), indexMeta)
+		renderToFile("", man_pages_components.IndexContent(*indexData), indexMeta)
 	}
 
 	log.Println("Generating Category, Subcategory, and Detail pages...")
