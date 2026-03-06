@@ -305,6 +305,7 @@ func GenerateEmojis() {
 	for _, se := range sitemapEmojis {
 		emoji, err := db.GetEmojiBySlug(se.Slug)
 		if err != nil || emoji == nil {
+			log.Printf("Failed to generate or skipped emoji: %s (err: %v)", se.Slug, err)
 			continue
 		}
 

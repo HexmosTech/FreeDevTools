@@ -339,7 +339,7 @@ func (db *DB) GetEmojiBySlug(slug string) (*EmojiData, error) {
 	slugHash := hashStringToInt64(slug)
 	query := `SELECT slug_hash, id, code, unicode, slug, title, category, description,
 	                 apple_vendor_description, keywords, also_known_as, version, senses,
-	                 shortcodes, discord_vendor_description, category_hash, image_filename, see_also, updated_at
+	                 shortcodes, discord_vendor_description, category_hash, see_also, updated_at
 	          FROM emojis
 	          WHERE slug_hash = ?`
 
@@ -349,7 +349,6 @@ func (db *DB) GetEmojiBySlug(slug string) (*EmojiData, error) {
 		&row.Category, &row.Description, &row.AppleVendorDescription,
 		&row.Keywords, &row.AlsoKnownAs, &row.Version, &row.Senses,
 		&row.Shortcodes, &row.DiscordVendorDescription, &row.CategoryHash,
-		&row.ImageFilename,
 		&row.SeeAlso,
 		&row.UpdatedAt,
 	)
