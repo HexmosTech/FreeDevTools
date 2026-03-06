@@ -37,6 +37,20 @@ func setupInstallerpediaRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 		pathPrefix := basePath + "/installerpedia"
 		relativePath := strings.TrimSuffix(strings.TrimPrefix(r.URL.Path, pathPrefix+"/"), "/")
 
+		// Metrics subpage: /installerpedia/{category}/{slug}/metrics
+		if strings.HasSuffix(relativePath, "/metrics") {
+			trimmed := strings.TrimSuffix(relativePath, "/metrics")
+			trimmed = strings.TrimSuffix(trimmed, "/")
+			parts := strings.Split(trimmed, "/")
+			if len(parts) == 2 {
+				category := parts[0]
+				slug := parts[1]
+				hashID := installerpedia.HashStringToInt64(slug)
+				installerpedia_controllers.HandleMetrics(w, r, db, category, slug, hashID)
+				return
+			}
+		}
+
 		// Detect Route
 		routeInfo, ok := utils.DetectRoute(relativePath, "installerpedia")
 		if !ok {
