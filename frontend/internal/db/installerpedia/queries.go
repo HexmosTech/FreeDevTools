@@ -113,10 +113,10 @@ func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
     // Note: If this list grows huge, consider a separate table or a join,
     // but for 13 strings, this is perfectly fine.
     query := `
-        SELECT repo_type, count, updated_at
+        SELECT repo_type, repo_count, updated_at
         FROM ipm_category
         WHERE repo_type IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ORDER BY count DESC
+        ORDER BY repo_count DESC
     `
 
     // Convert slice to interface slice for the Query method
