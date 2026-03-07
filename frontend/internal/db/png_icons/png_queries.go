@@ -21,7 +21,7 @@ func NewDB(dbPath string) (*DB, error) {
 	// Optimize SQLite connection string for read-only performance
 	// Note: _immutable=1 means SQLite ignores WAL completely - DB must be checkpointed before shipping
 	// Do NOT include _journal_mode=WAL in DSN - it doesn't work correctly for read-only/immutable mode
-	connStr := dbPath + db_config.PngIconsDBConfig
+	connStr := db_config.PngIconsDBConfig
 	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)

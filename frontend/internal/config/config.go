@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/pelletier/go-toml/v2"
 )
@@ -28,19 +27,6 @@ type Config struct {
 	Ads              map[string][]string `toml:"ads"`
 	FdtPgDB       FdtPgDBConfig    `toml:"fdt_pg_db"`
 }
-// DBTomlConfig holds the dynamic database paths and filenames from db.toml
-type DBTomlConfig struct {
-	Path          string `toml:"path"`
-	BannerDB      string `toml:"bannerdb"`
-	CheatsheetsDB string `toml:"cheatsheetsdb"`
-	EmojiDB       string `toml:"emojidb"`
-	IpmDB         string `toml:"ipmdb"`
-	ManPagesDB    string `toml:"manpagesdb"`
-	McpDB         string `toml:"mcpdb"`
-	PngIconsDB    string `toml:"pngiconsdb"`
-	SvgIconsDB    string `toml:"svgiconsdb"`
-	TldrDB        string `toml:"tldrdb"`
-}
 
 // FdtPgDBConfig holds PostgreSQL database configuration for Free DevTools
 type FdtPgDBConfig struct {
@@ -52,11 +38,6 @@ type FdtPgDBConfig struct {
 }
 
 var appConfig *Config
-var (
-	DBConfig   *DBTomlConfig
-	dbTomlOnce sync.Once
-	dbTomlErr  error
-)
 
 // loadNodeEnvFromDotEnv reads NODE_ENV from .env file
 // Returns the value if found, otherwise returns empty string
@@ -383,74 +364,4 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	}
 
 	return &config, nil
-}
-
-// LoadDBToml loads database versions and paths from db.toml in a thread-safe manner
-func LoadDBToml() error {
-	dbTomlOnce.Do(func() {
-		dbTomlErr = loadDBTomlInternal()
-	})
-	return dbTomlErr
-}
-
-func loadDBTomlInternal() error {
-	var tomlPath string
-	fallbackPaths := []string{
-		"db.toml",
-		"../db.toml",
-		"../../db.toml",
-	}
-
-	for _, p := range fallbackPaths {
-		if _, err := os.Stat(p); !os.IsNotExist(err) {
-			tomlPath = p
-			break
-		}
-	}
-
-	if tomlPath == "" {
-		return fmt.Errorf("could not find db.toml file")
-	}
-
-	data, err := os.ReadFile(tomlPath)
-	if err != nil {
-		return fmt.Errorf("failed to read db.toml from %s: %w", tomlPath, err)
-	}
-
-	// Wrap struct to match the [db] section in TOML
-	var wrapper struct {
-		DB DBTomlConfig `toml:"db"`
-	}
-
-	if err := toml.Unmarshal(data, &wrapper); err != nil {
-		return fmt.Errorf("failed to parse db.toml: %w", err)
-	}
-
-	basePathStr := wrapper.DB.Path
-	if basePathStr == "" {
-		basePathStr = "db/all_dbs/"
-	}
-
-	// Prepend paths safely
-	safeJoin := func(filename string) string {
-		if filename == "" {
-			return ""
-		}
-		return filepath.Join(basePathStr, filename)
-	}
-
-	DBConfig = &DBTomlConfig{
-		Path:          basePathStr,
-		BannerDB:      safeJoin(wrapper.DB.BannerDB),
-		CheatsheetsDB: safeJoin(wrapper.DB.CheatsheetsDB),
-		EmojiDB:       safeJoin(wrapper.DB.EmojiDB),
-		IpmDB:         safeJoin(wrapper.DB.IpmDB),
-		ManPagesDB:    safeJoin(wrapper.DB.ManPagesDB),
-		McpDB:         safeJoin(wrapper.DB.McpDB),
-		PngIconsDB:    safeJoin(wrapper.DB.PngIconsDB),
-		SvgIconsDB:    safeJoin(wrapper.DB.SvgIconsDB),
-		TldrDB:        safeJoin(wrapper.DB.TldrDB),
-	}
-
-	return nil
 }
