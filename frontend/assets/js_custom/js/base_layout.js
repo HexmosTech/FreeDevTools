@@ -204,26 +204,41 @@
 
     // 6. Launch Banner Scroll Logic
     (function () {
-        var launchBannerShown = false;
-        function showLaunchBannerOnScroll() {
-            if (launchBannerShown || (document.scrollingElement.scrollTop || window.pageYOffset || 0) <= 80) return;
-            launchBannerShown = true;
-            window.removeEventListener('scroll', showLaunchBannerOnScroll);
+        var isClosedManually = false;
+        function handleLaunchBannerScroll() {
+            if (isClosedManually) return;
             var root = document.getElementById('lr-launch-banner-root');
             var card = document.getElementById('lr-launch-banner');
+            var closeBtn = document.getElementById('lr-launch-banner-close');
             if (!root) return;
-            if (card) {
-                card.classList.remove('lr-ph-theme-light', 'lr-ph-theme-dark');
-                card.classList.add(document.documentElement.classList.contains('dark') ? 'lr-ph-theme-dark' : 'lr-ph-theme-light');
+            if (closeBtn && !closeBtn.getAttribute('data-listener-set')) {
+                closeBtn.addEventListener('click', function () { isClosedManually = true; });
+                closeBtn.setAttribute('data-listener-set', 'true');
             }
-            root.style.display = '';
-            root.style.opacity = '0';
-            root.style.transform = 'translateY(14px)';
-            requestAnimationFrame(() => requestAnimationFrame(() => {
-                root.style.opacity = '1';
-                root.style.transform = 'translateY(0)';
-            }));
+            var scrollTop = document.scrollingElement.scrollTop || window.pageYOffset || 0;
+            if (scrollTop > 80) {
+                if (root.style.display === 'none' || root.style.opacity === '0') {
+                    if (card) {
+                        card.classList.remove('lr-ph-theme-light', 'lr-ph-theme-dark');
+                        card.classList.add(document.documentElement.classList.contains('dark') ? 'lr-ph-theme-dark' : 'lr-ph-theme-light');
+                    }
+                    root.style.display = '';
+                    root.style.opacity = '0'; // Initial state for transition
+                    root.style.transform = 'translateY(14px)';
+                    requestAnimationFrame(() => {
+                        root.style.opacity = '1';
+                        root.style.transform = 'translateY(0)';
+                    });
+                }
+            } else if (root.style.display !== 'none' || root.style.opacity === '1') {
+                root.style.opacity = '0';
+                root.style.transform = 'translateY(14px)';
+                setTimeout(() => {
+                    var s = document.scrollingElement.scrollTop || window.pageYOffset || 0;
+                    if (s <= 80) root.style.display = 'none';
+                }, 450);
+            }
         }
-        setTimeout(() => window.addEventListener('scroll', showLaunchBannerOnScroll, { passive: true }), 500);
+        setTimeout(() => window.addEventListener('scroll', handleLaunchBannerScroll, { passive: true }), 500);
     })();
 })();
