@@ -16,7 +16,6 @@
         }
         localStorage.setItem('theme', theme);
     }
-    applyTheme(getTheme());
     window.addEventListener('message', (event) => {
         const message = event.data;
         if (message && message.command === 'setTheme' && message.theme) {

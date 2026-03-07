@@ -81,7 +81,7 @@ func serveFromCache(w http.ResponseWriter, r *http.Request, cachePath string) bo
 		metaPrefix := "<!-- FDT_META: "
 		metaClosing := " -->"
 		if strings.HasPrefix(string(content), metaPrefix) {
-			log.Printf("[STATIC_CACHE] HIT (Stitched): Serving %s", r.URL.Path)
+			log.Printf("[STATIC_CACHE] HIT: Serving %s", r.URL.Path)
 			
 			// 1. Extract metadata
 			endIdx := strings.Index(string(content), metaClosing)
