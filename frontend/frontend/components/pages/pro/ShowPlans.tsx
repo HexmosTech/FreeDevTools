@@ -1,6 +1,6 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableRow } from '@/components/ui/table';
 import {
   cancelSubscription,
@@ -15,7 +15,7 @@ import {
   type LicenceRenewal,
   type PurchasesData,
 } from '@/lib/api';
-import { Check, ChevronDown, DownloadIcon, Loader2, ShieldCheck, Infinity, Search, Puzzle, BookmarkPlus, Zap, Ban, ArrowRight } from 'lucide-react';
+import { ArrowRight, Ban, BookmarkPlus, Check, DownloadIcon, Infinity, Loader2, Puzzle, Search, ShieldCheck, Zap } from 'lucide-react';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import PurchaseHistory from './PurchaseHistory';
 
@@ -357,7 +357,7 @@ const ShowPlans: React.FC = () => {
   };
 
   // If no JWT, show plans
-  if (!hasJWT) {
+  if (!hasJWT || !licence) {
     // Find the primary plan (first one, or lifetime)
     const primaryPlan = availablePlans.length > 0 ? availablePlans[0] : null;
 
@@ -909,169 +909,169 @@ const ShowPlans: React.FC = () => {
     );
   }
 
-  if (!licence) {
-    return (
-      <div className="w-full max-w-4xl mx-auto space-y-6">
-        <Card className="w-full max-w-96 mx-auto dark:bg-slate-900">
-          <CardHeader>
-            <CardTitle>No Active Plan</CardTitle>
-            <CardDescription>You don't have an active subscription</CardDescription>
-          </CardHeader>
-        </Card>
+  // if (!licence) {
+  //   return (
+  //     <div className="w-full max-w-4xl mx-auto space-y-6">
+  //       <Card className="w-full max-w-96 mx-auto dark:bg-slate-900">
+  //         <CardHeader>
+  //           <CardTitle>No Active Plan</CardTitle>
+  //           <CardDescription>You don't have an active subscription</CardDescription>
+  //         </CardHeader>
+  //       </Card>
 
-        {/* Show available plans below */}
-        {isLoadingPlans ? (
-          <div className="flex gap-4 w-full justify-center">
-            <div className="w-80 h-96 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl animate-pulse" />
-          </div>
-        ) : availablePlans.length > 0 ? (
-          <div>
-            <div className="flex flex-col gap-4 mb-4">
-              <h2 className="text-2xl font-semibold text-center">Available Plans</h2>
-              <div className="flex justify-center">
-                <div className="relative">
-                  <button
-                    ref={currencyButtonRef}
-                    onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
-                    className="flex items-center justify-between gap-2 px-4 py-2 w-[200px] rounded-md border border-gray-300 dark:border-gray-700 bg-slate-50 dark:bg-slate-900 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200"
-                    aria-label="Select currency"
-                    aria-expanded={isCurrencyDropdownOpen}
-                    aria-haspopup="true"
-                  >
-                    <span>{currencies.find(c => c.code === selectedCurrency)?.name || 'Select currency'}</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
-                  </button>
+  //       {/* Show available plans below */}
+  //       {isLoadingPlans ? (
+  //         <div className="flex gap-4 w-full justify-center">
+  //           <div className="w-80 h-96 bg-white dark:bg-slate-900 border border-gray-100 dark:border-slate-800 rounded-xl animate-pulse" />
+  //         </div>
+  //       ) : availablePlans.length > 0 ? (
+  //         <div>
+  //           <div className="flex flex-col gap-4 mb-4">
+  //             <h2 className="text-2xl font-semibold text-center">Available Plans</h2>
+  //             <div className="flex justify-center">
+  //               <div className="relative">
+  //                 <button
+  //                   ref={currencyButtonRef}
+  //                   onClick={() => setIsCurrencyDropdownOpen(!isCurrencyDropdownOpen)}
+  //                   className="flex items-center justify-between gap-2 px-4 py-2 w-[200px] rounded-md border border-gray-300 dark:border-gray-700 bg-slate-50 dark:bg-slate-900 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer transition-all duration-200"
+  //                   aria-label="Select currency"
+  //                   aria-expanded={isCurrencyDropdownOpen}
+  //                   aria-haspopup="true"
+  //                 >
+  //                   <span>{currencies.find(c => c.code === selectedCurrency)?.name || 'Select currency'}</span>
+  //                   <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isCurrencyDropdownOpen ? 'rotate-180' : ''}`} />
+  //                 </button>
 
-                  {isCurrencyDropdownOpen && (
-                    <div
-                      ref={currencyDropdownRef}
-                      className="absolute right-0 mt-2 w-[200px] rounded-md border dark:border-gray-700 border-gray-300 bg-slate-50 dark:bg-slate-900 shadow-lg z-50"
-                      role="menu"
-                      aria-orientation="vertical"
-                    >
-                      <div className="py-1">
-                        {currencies.map((currency) => (
-                          <button
-                            key={currency.code}
-                            onClick={() => {
-                              setSelectedCurrency(currency.code);
-                              fetchAvailablePlans(currency.code);
-                              setIsCurrencyDropdownOpen(false);
-                            }}
-                            className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
-                              }`}
-                            role="menuitem"
-                          >
-                            <span>{currency.name}</span>
-                            {selectedCurrency === currency.code && (
-                              <Check className="h-4 w-4 ml-auto" />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-wrap gap-6 justify-center w-full">
-              {availablePlans.map((plan, index) => {
-                // Parse features from description JSON string
-                let features: string[] = [];
-                if (plan.description) {
-                  try {
-                    features = JSON.parse(plan.description);
-                  } catch (e) {
-                    console.error('Failed to parse description:', e);
-                  }
-                }
+  //                 {isCurrencyDropdownOpen && (
+  //                   <div
+  //                     ref={currencyDropdownRef}
+  //                     className="absolute right-0 mt-2 w-[200px] rounded-md border dark:border-gray-700 border-gray-300 bg-slate-50 dark:bg-slate-900 shadow-lg z-50"
+  //                     role="menu"
+  //                     aria-orientation="vertical"
+  //                   >
+  //                     <div className="py-1">
+  //                       {currencies.map((currency) => (
+  //                         <button
+  //                           key={currency.code}
+  //                           onClick={() => {
+  //                             setSelectedCurrency(currency.code);
+  //                             fetchAvailablePlans(currency.code);
+  //                             setIsCurrencyDropdownOpen(false);
+  //                           }}
+  //                           className={`flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer ${selectedCurrency === currency.code ? 'bg-gray-100 dark:bg-gray-700' : ''
+  //                             }`}
+  //                           role="menuitem"
+  //                         >
+  //                           <span>{currency.name}</span>
+  //                           {selectedCurrency === currency.code && (
+  //                             <Check className="h-4 w-4 ml-auto" />
+  //                           )}
+  //                         </button>
+  //                       ))}
+  //                     </div>
+  //                   </div>
+  //                 )}
+  //               </div>
+  //             </div>
+  //           </div>
+  //           <div className="flex flex-wrap gap-6 justify-center w-full">
+  //             {availablePlans.map((plan, index) => {
+  //               // Parse features from description JSON string
+  //               let features: string[] = [];
+  //               if (plan.description) {
+  //                 try {
+  //                   features = JSON.parse(plan.description);
+  //                 } catch (e) {
+  //                   console.error('Failed to parse description:', e);
+  //                 }
+  //               }
 
-                return (
-                  <Card
-                    key={plan.objectId || index}
-                    className="flex-1 flex flex-col justify-between overflow-hidden max-w-96 border border-gray-200 dark:border-slate-800 dark:bg-slate-900 rounded-xl"
-                  >
-                    <div>
-                      <div className="p-0 flex flex-col items-center max-w-96 rounded-xl">
-                        <div className="text-sm my-3 text-center font-bold text-gray-700 dark:text-gray-300 font-mono tracking-wider">
-                          {plan.name.toUpperCase().replace('FREEDEVTOOLS', '')}
-                        </div>
-                        {/* Divider line */}
-                        <div className="w-full h-px bg-gray-100 dark:bg-gray-700 mb-4"></div>
-                        <div className="text-l text-center">
-                          <span className="block text-gray-500 dark:text-gray-400 text-xl">
-                            {plan.purchaseType === 'one-time' ? (
-                              <>
-                                {plan.actualAmount && plan.discountedAmount && plan.actualAmount !== plan.discountedAmount && (
-                                  <span className="line-through block text-gray-400 dark:text-gray-500 text-xl mb-1">
-                                    <span className="text-xs">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
-                                    {plan.actualAmount}
-                                  </span>
-                                )}
-                                <span className="block text-4xl font-extrabold text-gray-900 dark:text-gray-100">
-                                  <span className="text-3xl">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
-                                  {plan.discountedAmount || plan.actualAmount}
-                                </span>
-                              </>
-                            ) : (
-                              <span className="block mt-7 text-4xl font-extrabold text-gray-900 dark:text-gray-100">
-                                <span className="text-sm">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
-                                {plan.discountedAmount || plan.actualAmount}
-                              </span>
-                            )}
-                          </span>
-                          <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 mb-6">
-                            {plan.purchaseType === 'one-time' ? (
-                              <>One-time payment</>
-                            ) : (
-                              <>
-                                per {plan.durationType === 'year' ? 'Month' : plan.durationType || 'Month'} (Billed {plan.durationType || 'monthly'})
-                              </>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                      <div className="w-full h-px bg-gray-100 dark:bg-gray-700 my-4"></div>
-                      <div className="p-0 mt-4 pl-2 pr-4">
-                        <ul className="space-y-3 text-gray-600 dark:text-gray-400">
-                          {plan.type === 'paid' && (
-                            <strong className="text-sm break-words w-80 block">
-                              Includes everything from Free Trial
-                            </strong>
-                          )}
-                          {features.map((feature, idx) => (
-                            <li key={idx} className="flex items-center gap-2">
-                              <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0">
-                                <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-                              </div>
-                              <span className="text-sm">{typeof feature === 'string' ? feature : feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    </div>
-                    <CardFooter className="mt-6">
-                      <Button
-                        onClick={() => {
-                          const purchaseUrl = plan.objectId
-                            ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
-                            : PURCHASE_URL;
-                          window.location.href = purchaseUrl;
-                        }}
-                        className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2"
-                      >
-                        Buy Now
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                );
-              })}
-            </div>
-          </div>
-        ) : null}
-      </div>
-    );
-  }
+  //               return (
+  //                 <Card
+  //                   key={plan.objectId || index}
+  //                   className="flex-1 flex flex-col justify-between overflow-hidden max-w-96 border border-gray-200 dark:border-slate-800 dark:bg-slate-900 rounded-xl"
+  //                 >
+  //                   <div>
+  //                     <div className="p-0 flex flex-col items-center max-w-96 rounded-xl">
+  //                       <div className="text-sm my-3 text-center font-bold text-gray-700 dark:text-gray-300 font-mono tracking-wider">
+  //                         {plan.name.toUpperCase().replace('FREEDEVTOOLS', '')}
+  //                       </div>
+  //                       {/* Divider line */}
+  //                       <div className="w-full h-px bg-gray-100 dark:bg-gray-700 mb-4"></div>
+  //                       <div className="text-l text-center">
+  //                         <span className="block text-gray-500 dark:text-gray-400 text-xl">
+  //                           {plan.purchaseType === 'one-time' ? (
+  //                             <>
+  //                               {plan.actualAmount && plan.discountedAmount && plan.actualAmount !== plan.discountedAmount && (
+  //                                 <span className="line-through block text-gray-400 dark:text-gray-500 text-xl mb-1">
+  //                                   <span className="text-xs">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
+  //                                   {plan.actualAmount}
+  //                                 </span>
+  //                               )}
+  //                               <span className="block text-4xl font-extrabold text-gray-900 dark:text-gray-100">
+  //                                 <span className="text-3xl">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
+  //                                 {plan.discountedAmount || plan.actualAmount}
+  //                               </span>
+  //                             </>
+  //                           ) : (
+  //                             <span className="block mt-7 text-4xl font-extrabold text-gray-900 dark:text-gray-100">
+  //                               <span className="text-sm">{plan.currencySymbol || (plan.currency === 'INR' ? '₹' : '$')}</span>
+  //                               {plan.discountedAmount || plan.actualAmount}
+  //                             </span>
+  //                           )}
+  //                         </span>
+  //                         <div className="text-sm text-gray-600 dark:text-gray-400 mt-1 mb-6">
+  //                           {plan.purchaseType === 'one-time' ? (
+  //                             <>One-time payment</>
+  //                           ) : (
+  //                             <>
+  //                               per {plan.durationType === 'year' ? 'Month' : plan.durationType || 'Month'} (Billed {plan.durationType || 'monthly'})
+  //                             </>
+  //                           )}
+  //                         </div>
+  //                       </div>
+  //                     </div>
+  //                     <div className="w-full h-px bg-gray-100 dark:bg-gray-700 my-4"></div>
+  //                     <div className="p-0 mt-4 pl-2 pr-4">
+  //                       <ul className="space-y-3 text-gray-600 dark:text-gray-400">
+  //                         {plan.type === 'paid' && (
+  //                           <strong className="text-sm break-words w-80 block">
+  //                             Includes everything from Free Trial
+  //                           </strong>
+  //                         )}
+  //                         {features.map((feature, idx) => (
+  //                           <li key={idx} className="flex items-center gap-2">
+  //                             <div className="w-4 h-4 rounded-full flex items-center justify-center flex-shrink-0">
+  //                               <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+  //                             </div>
+  //                             <span className="text-sm">{typeof feature === 'string' ? feature : feature}</span>
+  //                           </li>
+  //                         ))}
+  //                       </ul>
+  //                     </div>
+  //                   </div>
+  //                   <CardFooter className="mt-6">
+  //                     <Button
+  //                       onClick={() => {
+  //                         const purchaseUrl = plan.objectId
+  //                           ? `https://purchase.hexmos.com/freedevtools/subscription/${plan.objectId}`
+  //                           : PURCHASE_URL;
+  //                         window.location.href = purchaseUrl;
+  //                       }}
+  //                       className="w-full bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2"
+  //                     >
+  //                       Buy Now
+  //                     </Button>
+  //                   </CardFooter>
+  //                 </Card>
+  //               );
+  //             })}
+  //           </div>
+  //         </div>
+  //       ) : null}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="w-full max-w-4xl space-y-6">
