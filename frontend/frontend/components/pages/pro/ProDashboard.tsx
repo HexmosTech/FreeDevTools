@@ -321,19 +321,6 @@ const ProDashboard: React.FC<ProDashboardProps> = ({
 
             {/* Footer Info */}
             <div className="flex flex-col items-center justify-center pt-8 space-y-4 opacity-70 hover:opacity-100 transition-opacity">
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <a href="/freedevtools/terms/" className="hover:underline flex items-center gap-1">
-                        Terms <ExternalLink className="w-3 h-3" />
-                    </a>
-                    <span className="w-1 h-1 bg-muted-foreground rounded-full" />
-                    <a href="/freedevtools/privacy/" className="hover:underline flex items-center gap-1">
-                        Privacy <ExternalLink className="w-3 h-3" />
-                    </a>
-                    <span className="w-1 h-1 bg-muted-foreground rounded-full" />
-                    <a href="mailto:support@hexmos.com" className="hover:underline flex items-center gap-1">
-                        Support <ExternalLink className="w-3 h-3" />
-                    </a>
-                </div>
                 <p className="text-xs text-center text-muted-foreground max-w-md">
                     Thank you for supporting Free DevTools. Your contribution helps us maintain and build more free resources for the developer community.
                 </p>
