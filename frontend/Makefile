@@ -260,8 +260,9 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
 		nohup bash -c '\
+			DISCORD_WEBHOOK=$$(grep -E "^discord_webhook_url\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\"\([^\"]*\)\".*/\1/" | tr -d " " || echo ""); \
 			START_TIME=$$(date +%s); \
-			make clear-cache; \
+			make clear-static-cache; \
 			make static-generation-all; \
 			END_TIME=$$(date +%s); \
 			DURATION=$$((END_TIME - START_TIME)); \
@@ -269,9 +270,10 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 				SIZE=$$(du -sh static/freedevtools/ | cut -f1); \
 				COUNT=$$(find static/freedevtools/ -type f | wc -l); \
 				MSG="✅ **Static HTMLs Deployed!**\n⏱ **Time taken:** $${DURATION}s\n📦 **Total size:** $${SIZE}\n📄 **Total files:** $${COUNT}"; \
-				curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" https://discord.com/api/webhooks/1352514179105423442/EIiL-kYMQUJ5ie9HFnlXu7obQEcVEN-DYw4ImmntugivKk4ewiK-iDj4iiaxNvzOa1PW > /dev/null; \
+				if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
 			else \
-				curl -s -H "Content-Type: application/json" -d "{\"content\": \"❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s\"}" https://discord.com/api/webhooks/1352514179105423442/EIiL-kYMQUJ5ie9HFnlXu7obQEcVEN-DYw4ImmntugivKk4ewiK-iDj4iiaxNvzOa1PW > /dev/null; \
+				MSG="❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s"; \
+				if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
 			fi \
 		' > deployment.log 2>&1 & \
 	else \
@@ -311,8 +313,9 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
 		nohup bash -c '\
+			DISCORD_WEBHOOK=$$(grep -E "^discord_webhook_url\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\"\([^\"]*\)\".*/\1/" | tr -d " " || echo ""); \
 			START_TIME=$$(date +%s); \
-			make clear-cache; \
+			make clear-static-cache; \
 			make static-generation-all; \
 			END_TIME=$$(date +%s); \
 			DURATION=$$((END_TIME - START_TIME)); \
@@ -320,11 +323,13 @@ start-prod-binary: ## Start production server using existing binary (no build)
 				SIZE=$$(du -sh static/freedevtools/ | cut -f1); \
 				COUNT=$$(find static/freedevtools/ -type f | wc -l); \
 				MSG="✅ **Static HTMLs Deployed!**\n⏱ **Time taken:** $${DURATION}s\n📦 **Total size:** $${SIZE}\n📄 **Total files:** $${COUNT}"; \
-				curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" https://discord.com/api/webhooks/1352514179105423442/EIiL-kYMQUJ5ie9HFnlXu7obQEcVEN-DYw4ImmntugivKk4ewiK-iDj4iiaxNvzOa1PW > /dev/null; \
+				if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
 			else \
-				curl -s -H "Content-Type: application/json" -d "{\"content\": \"❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s\"}" https://discord.com/api/webhooks/1352514179105423442/EIiL-kYMQUJ5ie9HFnlXu7obQEcVEN-DYw4ImmntugivKk4ewiK-iDj4iiaxNvzOa1PW > /dev/null; \
+				MSG="❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s"; \
+				if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
 			fi \
 		' > deployment.log 2>&1 & \
+
 	else \
 		echo "Skipping static HTML deployment."; \
 	fi
@@ -982,7 +987,7 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 	echo "✅ Local search environment setup complete!"
  
 
-clear-cache: ## Clear the generated static/ directory
+clear-static-cache: ## Clear the generated static/ directory
 	@echo "Clearing static/ directory..."
 	@rm -rf static/
 	@echo "✅ static/ directory cleared!"
