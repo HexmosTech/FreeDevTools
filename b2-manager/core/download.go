@@ -48,15 +48,17 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 	remotePath := path.Join(model.AppConfig.RootBucket, dbName)
 	// Use directory as destination for 'copy'
 	localDir := model.AppConfig.LocalDBDir
+	destPath := localDir
+	cmdName := "copy"
 
 	// -------------------------------------------------------------------------
 	// PHASE 2: EXECUTE DOWNLOAD
-	// Perform the actual network transfer using `rclone copy`.
+	// Perform the actual network transfer using `rclone copy` or `copyto`.
 	// -------------------------------------------------------------------------
 	description := "Downloading " + dbName
 	// Use the passed quiet parameter
 	// The new RcloneCopy uses !quiet for verbose. If onProgress is set, it adds json flags.
-	if err := RcloneCopy(ctx, "copy", remotePath, localDir, description, quiet, onProgress); err != nil {
+	if err := RcloneCopy(ctx, cmdName, remotePath, destPath, description, quiet, onProgress); err != nil {
 		LogError("DownloadDatabase RcloneCopy failed for %s: %v", dbName, err)
 		return fmt.Errorf("download of %s failed: %w", dbName, err)
 	}

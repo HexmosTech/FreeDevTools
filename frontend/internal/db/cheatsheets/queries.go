@@ -3,13 +3,13 @@ package cheatsheets
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"path/filepath"
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog/log"
 )
 
 // DB wraps a database connection
@@ -33,6 +33,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to Cheatsheets DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -43,12 +44,19 @@ func (db *DB) Close() error {
 
 // GetDB returns a database instance
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, err
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Cheatsheets DB: %w", err)
 	}
-	return NewDB(absPath)
+	dbPath := config.DBConfig.CheatsheetsDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Cheatsheets DB path is empty in db.toml")
+	}
+
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Cheatsheets DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetTotalCheatsheets returns the total number of cheatsheets

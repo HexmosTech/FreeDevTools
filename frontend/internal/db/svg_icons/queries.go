@@ -3,11 +3,12 @@ package svg_icons
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 // DB wraps a database connection
@@ -37,6 +38,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to SVG Icons DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -437,15 +439,21 @@ func (db *DB) GetIconByCategoryAndName(category, iconName string) (*Icon, error)
 	return &icon, nil
 }
 
-// GetDB returns a database instance using the default path
+// GetDB returns a database instance
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
-	// Resolve to absolute path
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, err
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for SVG Icons DB: %w", err)
 	}
-	return NewDB(absPath)
+	dbPath := config.DBConfig.SvgIconsDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("SVG Icons DB path is empty in db.toml")
+	}
+
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open SVG Icons DB: %w", err)
+	}
+	return db, nil
 }
 
 func (db *DB) GetClusterUpdatedAt(hashName string) (string, error) {

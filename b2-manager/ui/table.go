@@ -49,14 +49,18 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 	viewW, _ := v.Size()
 
 	// Column Widths (Percentage Based)
-	// 25% (Name) | 25% (Status) | 10% (Step/Msg) | 40% (Bar/ETA)
-	colNameW := int(float64(viewW) * 0.25)
-	colStatusW := int(float64(viewW) * 0.25)
+	// 20% (Name) | 15% (Version) | 20% (Status) | 10% (Step/Msg) | 35% (Bar/ETA)
+	colNameW := int(float64(viewW) * 0.20)
+	colVerW := int(float64(viewW) * 0.15)
+	colStatusW := int(float64(viewW) * 0.20)
 	colStepW := int(float64(viewW) * 0.10)
-	colBarW := viewW - colNameW - colStatusW - colStepW - 2
+	colBarW := viewW - colNameW - colVerW - colStatusW - colStepW - 2
 
 	if colNameW < 10 {
 		colNameW = 10
+	}
+	if colVerW < 5 {
+		colVerW = 5
 	}
 	if colStatusW < 10 {
 		colStatusW = 10
@@ -69,16 +73,18 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 	}
 
 	// Header - Line 0
-	titleRow := fmt.Sprintf("%-*s%-*s%-*s%-*s",
+	titleRow := fmt.Sprintf("%-*s%-*s%-*s%-*s%-*s",
 		colNameW, " DB Name",
+		colVerW, " Version",
 		colStatusW, " Status",
 		colStepW, " Step",
 		colBarW, " Progress")
 	fmt.Fprintln(v, titleRow)
 
 	// Separator - Line 1
-	sepRow := fmt.Sprintf("%s%s%s%s",
+	sepRow := fmt.Sprintf("%s%s%s%s%s",
 		strings.Repeat("-", colNameW),
+		strings.Repeat("-", colVerW),
 		strings.Repeat("-", colStatusW),
 		strings.Repeat("-", colStepW),
 		strings.Repeat("-", colBarW))
@@ -135,6 +141,12 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 			name = name[:colNameW-1]
 		}
 
+		// Retrieve version string calculated during Fetch
+		versionStr := db.VersionRole
+		if versionStr == "" {
+			versionStr = "Latest"
+		}
+
 		status := " " + statusText
 		if len(status) > colStatusW-1 {
 			status = status[:colStatusW-1]
@@ -144,8 +156,9 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 			stepText = stepText[:colStepW-1]
 		}
 
-		line := fmt.Sprintf("%-*s%-*s%-*s%-s",
+		line := fmt.Sprintf("%-*s%-*s%-*s%-*s%-s",
 			colNameW, name,
+			colVerW, " "+versionStr,
 			colStatusW, status,
 			colStepW, " "+stepText,
 			" "+barText)

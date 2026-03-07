@@ -3,12 +3,21 @@ package mcp
 import (
 	"crypto/sha256"
 	"encoding/binary"
-	"path/filepath"
+	"fdt-templ/internal/config"
+	"fmt"
 )
 
 // GetDBPath returns the path to the mcp database
-func GetDBPath() string {
-	return filepath.Join("db", "all_dbs", "mcp-db-v6.db")
+func GetDBPath() (string, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return "", err
+		}
+	}
+	if config.DBConfig.McpDB == "" {
+		return "", fmt.Errorf("MCP DB path is empty in db.toml")
+	}
+	return config.DBConfig.McpDB, nil
 }
 
 // HashToID generates a hash ID from a string key
