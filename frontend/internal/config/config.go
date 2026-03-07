@@ -24,6 +24,7 @@ type Config struct {
 	GeminiKeys		 string              `toml:"gemini_keys"`
 	GithubToken    string              `toml:"github_token"`
 	EnableAds        bool                `toml:"enable_ads"`
+	EnableStaticCache bool               `toml:"enable_static_cache"`
 	Ads              map[string][]string `toml:"ads"`
 	FdtPgDB       FdtPgDBConfig    `toml:"fdt_pg_db"`
 }

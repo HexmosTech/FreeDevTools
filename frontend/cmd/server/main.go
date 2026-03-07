@@ -178,7 +178,13 @@ func main() {
 
 	// Wrap mux with StaticCache (innermost), then cache headers, then pro middleware, then logging middleware
 	// Note: nginx handles compression, so gzip middleware is not needed
-	cachedMux := middleware.StaticCache("./static", mux)
+	cfg := GetConfig()
+	var cachedMux http.Handler = mux
+	if cfg != nil && cfg.EnableStaticCache {
+		cachedMux = middleware.StaticCache("./static", mux)
+	} else {
+		log.Printf("Static caching is disabled via configuration.")
+	}
 	handler := middleware.Logging(pro.ProMiddleware(middleware.CacheHeaders(cachedMux)))
 
 
