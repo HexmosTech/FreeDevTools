@@ -5,7 +5,7 @@
 ## Predifned Imports and Functions 
 import os
 
-SHORT_NAME = "ipmdb"
+DB_SHORT_NAME = "ipmdb"
 import sys
 
 # Add the parent directory (frontend/changeset) to sys.path
@@ -27,9 +27,9 @@ def inserted_queries(sql_name, target_db_name):
 
 def main():
     global DB_NAME
-    DB_NAME = get_local_db(SHORT_NAME)
+    DB_NAME = get_local_db(DB_SHORT_NAME)
     if not DB_NAME:
-        print(f"Could not find local database for {SHORT_NAME}")
+        print(f"Could not find local database for {DB_SHORT_NAME}")
         return
 
     # Check status of db.
