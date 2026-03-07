@@ -5,6 +5,8 @@ import (
 	"path/filepath"
 	"sync"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/knadh/koanf/parsers/toml/v2"
 	"github.com/knadh/koanf/providers/file"
 	"github.com/knadh/koanf/v2"
@@ -38,18 +40,24 @@ func LoadDBToml() error {
 	return dbTomlErr
 }
 
-func safeJoin(basePath, filename string) string {
+func safeJoinAndAbs(basePath, filename string) string {
 	if filename == "" {
 		return ""
 	}
-	return filepath.Join(basePath, filename)
+	joined := filepath.Join(basePath, filename)
+	absPath, err := filepath.Abs(joined)
+	if err != nil {
+		log.Warn().Msgf("Warning: failed to resolve absolute path for %s: %v", joined, err)
+		return "file:" + joined
+	}
+	return "file:" + absPath
 }
 
 func loadDBTomlInternal() error {
 	tomlPath := "db.toml"
 	var k = koanf.New(".")
 
-	// Load db.toml from current directory 
+	// Load db.toml from current directory
 	if err := k.Load(file.Provider(tomlPath), toml.Parser()); err != nil {
 		return fmt.Errorf("FATAL: failed to load %s: %w", tomlPath, err)
 	}
@@ -66,27 +74,27 @@ func loadDBTomlInternal() error {
 
 	DBConfig = &DBTomlConfig{
 		Path:          basePathStr,
-		BannerDB:      safeJoin(basePathStr, parsedConfig.BannerDB),
-		CheatsheetsDB: safeJoin(basePathStr, parsedConfig.CheatsheetsDB),
-		EmojiDB:       safeJoin(basePathStr, parsedConfig.EmojiDB),
-		IpmDB:         safeJoin(basePathStr, parsedConfig.IpmDB),
-		ManPagesDB:    safeJoin(basePathStr, parsedConfig.ManPagesDB),
-		McpDB:         safeJoin(basePathStr, parsedConfig.McpDB),
-		PngIconsDB:    safeJoin(basePathStr, parsedConfig.PngIconsDB),
-		SvgIconsDB:    safeJoin(basePathStr, parsedConfig.SvgIconsDB),
-		TldrDB:        safeJoin(basePathStr, parsedConfig.TldrDB),
+		BannerDB:      safeJoinAndAbs(basePathStr, parsedConfig.BannerDB),
+		CheatsheetsDB: safeJoinAndAbs(basePathStr, parsedConfig.CheatsheetsDB),
+		EmojiDB:       safeJoinAndAbs(basePathStr, parsedConfig.EmojiDB),
+		IpmDB:         safeJoinAndAbs(basePathStr, parsedConfig.IpmDB),
+		ManPagesDB:    safeJoinAndAbs(basePathStr, parsedConfig.ManPagesDB),
+		McpDB:         safeJoinAndAbs(basePathStr, parsedConfig.McpDB),
+		PngIconsDB:    safeJoinAndAbs(basePathStr, parsedConfig.PngIconsDB),
+		SvgIconsDB:    safeJoinAndAbs(basePathStr, parsedConfig.SvgIconsDB),
+		TldrDB:        safeJoinAndAbs(basePathStr, parsedConfig.TldrDB),
 	}
 
-	fmt.Printf("Successfully loaded db.toml config. Database location path: %s\n", DBConfig.Path)
-	fmt.Printf("BannerDB: %s\n", DBConfig.BannerDB)
-	fmt.Printf("CheatsheetsDB: %s\n", DBConfig.CheatsheetsDB)
-	fmt.Printf("EmojiDB: %s\n", DBConfig.EmojiDB)
-	fmt.Printf("IpmDB: %s\n", DBConfig.IpmDB)
-	fmt.Printf("ManPagesDB: %s\n", DBConfig.ManPagesDB)
-	fmt.Printf("McpDB: %s\n", DBConfig.McpDB)
-	fmt.Printf("PngIconsDB: %s\n", DBConfig.PngIconsDB)
-	fmt.Printf("SvgIconsDB: %s\n", DBConfig.SvgIconsDB)
-	fmt.Printf("TldrDB: %s\n", DBConfig.TldrDB)
+	log.Info().Msgf("Successfully loaded db.toml config. Database location path: %s", DBConfig.Path)
+	log.Info().Msgf("BannerDB: %s", DBConfig.BannerDB)
+	log.Info().Msgf("CheatsheetsDB: %s", DBConfig.CheatsheetsDB)
+	log.Info().Msgf("EmojiDB: %s", DBConfig.EmojiDB)
+	log.Info().Msgf("IpmDB: %s", DBConfig.IpmDB)
+	log.Info().Msgf("ManPagesDB: %s", DBConfig.ManPagesDB)
+	log.Info().Msgf("McpDB: %s", DBConfig.McpDB)
+	log.Info().Msgf("PngIconsDB: %s", DBConfig.PngIconsDB)
+	log.Info().Msgf("SvgIconsDB: %s", DBConfig.SvgIconsDB)
+	log.Info().Msgf("TldrDB: %s", DBConfig.TldrDB)
 
 	return nil
 }

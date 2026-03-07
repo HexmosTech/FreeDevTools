@@ -3,12 +3,12 @@ package png_icons
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 
 	db_config "fdt-templ/db/config"
 	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 // DB wraps a database connection
@@ -21,7 +21,7 @@ func NewDB(dbPath string) (*DB, error) {
 	// Optimize SQLite connection string for read-only performance
 	// Note: _immutable=1 means SQLite ignores WAL completely - DB must be checkpointed before shipping
 	// Do NOT include _journal_mode=WAL in DSN - it doesn't work correctly for read-only/immutable mode
-	connStr := db_config.PngIconsDBConfig
+	connStr := dbPath + db_config.PngIconsDBConfig
 	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database: %w", err)
@@ -38,6 +38,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to PNG Icons DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -479,17 +480,12 @@ func GetDB() (*DB, error) {
 		return nil, fmt.Errorf("failed to load db.toml for PNG Icons DB: %w", err)
 	}
 	dbPath := config.DBConfig.PngIconsDB
+
 	if dbPath == "" {
 		return nil, fmt.Errorf("PNG Icons DB path is empty in db.toml")
 	}
 
-	// Resolve to absolute path
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve absolute path for PNG Icons DB: %w", err)
-	}
-
-	db, err := NewDB(absPath)
+	db, err := NewDB(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open PNG Icons DB: %w", err)
 	}

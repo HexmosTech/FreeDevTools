@@ -3,11 +3,11 @@ package installerpedia
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 
 	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog/log"
 )
 
 // Configuration resolution happens in GetDB() and GetWriteDB() to avoid startup panics
@@ -49,21 +49,9 @@ func ParseRepoListRow(row RawRepoListRow) RepoData {
 // -------------------------
 // DB init
 // -------------------------
-func GetDB() (*DB, error) {
-	if config.DBConfig == nil {
-		if err := config.LoadDBToml(); err != nil {
-			return nil, fmt.Errorf("failed to load db.toml for Installerpedia DB: %w", err)
-		}
-	}
-	dbPathConfig := config.DBConfig.IpmDB
-	if dbPathConfig == "" {
-		return nil, fmt.Errorf("IPM DB path is empty in db.toml")
-	}
-	// IPM_DB_FILE already contains the full path including db/all_dbs/ due to safeJoin
-	dbPath := filepath.Join(".", dbPathConfig)
-
+func NewDB(dbPath string) (*DB, error) {
 	// Match man_pages read-only + immutable configuration
-	connStr := "file:" + dbPath + "?mode=ro&_immutable=1"
+	connStr := dbPath + "?mode=ro&_immutable=1"
 	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, err
@@ -81,21 +69,39 @@ func GetDB() (*DB, error) {
 		return nil, err
 	}
 
+	log.Info().Msgf("Successfully connected to Installerpedia DB at %s", dbPath)
 	return &DB{conn: conn}, nil
+}
+
+func GetDB() (*DB, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return nil, fmt.Errorf("failed to load db.toml for Installerpedia DB: %w", err)
+		}
+	}
+	dbPath := config.DBConfig.IpmDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("IPM DB path is empty in db.toml")
+	}
+
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Installerpedia DB: %w", err)
+	}
+	return db, nil
 }
 
 func GetWriteDB() (*DB, error) {
 	if err := config.LoadDBToml(); err != nil {
 		return nil, fmt.Errorf("failed to load db.toml for Installerpedia DB: %w", err)
 	}
-	dbPathConfig := config.DBConfig.IpmDB
-	if dbPathConfig == "" {
+	dbPath := config.DBConfig.IpmDB
+	if dbPath == "" {
 		return nil, fmt.Errorf("IPM DB path is empty in db.toml")
 	}
-	dbPath := filepath.Join(".", dbPathConfig)
 
 	// Remove mode=ro and add WAL for concurrent write/read
-	connStr := "file:" + dbPath + "?_journal=WAL&_sync=NORMAL"
+	connStr := dbPath + "?_journal=WAL&_sync=NORMAL"
 	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, err
@@ -103,7 +109,7 @@ func GetWriteDB() (*DB, error) {
 
 	// Standard write-safe pool settings
 	conn.SetMaxOpenConns(1) // SQLite handles writes best with a single connection
-	conn.SetMaxIdleConns(1) // Fix: replaced the undefined method
+	conn.SetMaxIdleConns(1)
 	if err := conn.Ping(); err != nil {
 		return nil, err
 	}

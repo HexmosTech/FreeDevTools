@@ -3,12 +3,12 @@ package mcp
 import (
 	"database/sql"
 	"fmt"
-	"path/filepath"
 
 	db_config "fdt-templ/db/config"
 	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 // DB wraps a database connection
@@ -29,9 +29,10 @@ func NewDB(dbPath string) (*DB, error) {
 	conn.SetConnMaxLifetime(0)
 
 	if err := conn.Ping(); err != nil {
-		return nil, fmt.Errorf("failed to ping database: %w", err)
+		return nil, fmt.Errorf("failed to ping MCP database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to MCP DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -50,12 +51,7 @@ func GetDB() (*DB, error) {
 		return nil, fmt.Errorf("MCP DB path is empty in db.toml")
 	}
 
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve absolute path for MCP DB: %w", err)
-	}
-
-	db, err := NewDB(absPath)
+	db, err := NewDB(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open MCP DB: %w", err)
 	}

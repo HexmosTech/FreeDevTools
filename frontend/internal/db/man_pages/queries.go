@@ -3,13 +3,12 @@ package man_pages
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"path/filepath"
 	"time"
 
 	db_config "fdt-templ/db/config"
 	"fdt-templ/internal/config"
 
+	"github.com/rs/zerolog/log"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -47,6 +46,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to Man Pages DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -618,13 +618,7 @@ func GetDB() (*DB, error) {
 		return nil, fmt.Errorf("Man Pages DB path is empty in db.toml")
 	}
 
-	// Resolve to absolute path
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to resolve absolute path for Man Pages DB: %w", err)
-	}
-
-	db, err := NewDB(absPath)
+	db, err := NewDB(dbPath)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open Man Pages DB: %w", err)
 	}
