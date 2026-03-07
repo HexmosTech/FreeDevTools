@@ -26,6 +26,11 @@
 
     // 2. Pro Status & Ad Management
     window.getProStatusCookie = function () {
+        try {
+            if (localStorage.getItem('hexmos-one-fdt-p-status') === 'true') {
+                return true;
+            }
+        } catch (e) { }
         const cookies = document.cookie.split('; ');
         for (const cookie of cookies) {
             const [name, value] = cookie.split('=');
