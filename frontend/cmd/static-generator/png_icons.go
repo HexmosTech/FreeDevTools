@@ -127,7 +127,7 @@ func GeneratePNGIcons() {
 		Canonical:   creditsData.LayoutProps.Canonical,
 		UpdatedAt:   overview.LastUpdatedAt,
 	}
-	renderToFile("credits/", png_icons_pages.Credits(creditsData), creditsMeta)
+	renderToFile("credits/", png_icons_pages.CreditsContent(creditsData), creditsMeta)
 
 	// Index pages
 	log.Println("Generating PNG Icons Index Pages...")

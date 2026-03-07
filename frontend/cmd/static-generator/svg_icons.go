@@ -127,7 +127,7 @@ func GenerateSVGIcons() {
 		Canonical:   creditsData.LayoutProps.Canonical,
 		UpdatedAt:   overview.LastUpdatedAt,
 	}
-	renderToFile("credits/", svg_icons_pages.Credits(creditsData), creditsMeta)
+	renderToFile("credits/", svg_icons_pages.CreditsContent(creditsData), creditsMeta)
 
 	// Index pages
 	log.Println("Generating SVG Icons Index Pages...")

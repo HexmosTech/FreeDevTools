@@ -113,7 +113,7 @@ func GenerateMCP() {
 		Canonical:   creditsData.Canonical,
 		UpdatedAt:   overview.LastUpdatedAt,
 	}
-	renderToFile("credits/", mcp_pages.Credits(creditsData), creditsMeta)
+	renderToFile("credits/", mcp_pages.CreditsContent(creditsData), creditsMeta)
 
 	log.Println("Generating MCP Index Pages...")
 	for p := 1; p <= totalIndexPages; p++ {
