@@ -259,28 +259,7 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	fi
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
-		nohup bash -c '\
-			ENABLE_STATIC_CACHE=$$(grep -E "^enable_static_cache\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\(true\|false\).*/\1/" | tr -d " "); \
-			if [ "$$ENABLE_STATIC_CACHE" = "true" ]; then \
-				DISCORD_WEBHOOK=$$(grep -E "^discord_webhook_url\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\"\([^\"]*\)\".*/\1/" | tr -d " " || echo ""); \
-				START_TIME=$$(date +%s); \
-				make clear-static-cache; \
-				make static-generation-all; \
-				END_TIME=$$(date +%s); \
-				DURATION=$$((END_TIME - START_TIME)); \
-				if [ -d "static/freedevtools/" ]; then \
-					SIZE=$$(du -sh static/freedevtools/ | cut -f1); \
-					COUNT=$$(find static/freedevtools/ -type f | wc -l); \
-					MSG="✅ **Static HTMLs Deployed!**\n⏱ **Time taken:** $${DURATION}s\n📦 **Total size:** $${SIZE}\n📄 **Total files:** $${COUNT}"; \
-					if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
-				else \
-					MSG="❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s"; \
-					if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
-				fi; \
-			else \
-				echo "Static HTML deployment skipped (enable_static_cache != true in fdt-prod.toml)."; \
-			fi \
-		' > deployment.log 2>&1 & \
+		nohup ./scripts/background_static_indexing.sh > deployment.log 2>&1 & \
 	else \
 		echo "Skipping static HTML deployment."; \
 	fi
@@ -317,28 +296,7 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
-		nohup bash -c '\
-			ENABLE_STATIC_CACHE=$$(grep -E "^enable_static_cache\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\(true\|false\).*/\1/" | tr -d " "); \
-			if [ "$$ENABLE_STATIC_CACHE" = "true" ]; then \
-				DISCORD_WEBHOOK=$$(grep -E "^discord_webhook_url\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\"\([^\"]*\)\".*/\1/" | tr -d " " || echo ""); \
-				START_TIME=$$(date +%s); \
-				make clear-static-cache; \
-				make static-generation-all; \
-				END_TIME=$$(date +%s); \
-				DURATION=$$((END_TIME - START_TIME)); \
-				if [ -d "static/freedevtools/" ]; then \
-					SIZE=$$(du -sh static/freedevtools/ | cut -f1); \
-					COUNT=$$(find static/freedevtools/ -type f | wc -l); \
-					MSG="✅ **Static HTMLs Deployed!**\n⏱ **Time taken:** $${DURATION}s\n📦 **Total size:** $${SIZE}\n📄 **Total files:** $${COUNT}"; \
-					if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
-				else \
-					MSG="❌ **Static HTML deployment failed.** Directory not found.\n⏱ **Time taken:** $${DURATION}s"; \
-					if [ -n "$$DISCORD_WEBHOOK" ]; then curl -s -H "Content-Type: application/json" -d "{\"content\": \"$$MSG\"}" "$$DISCORD_WEBHOOK" > /dev/null; fi; \
-				fi; \
-			else \
-				echo "Static HTML deployment skipped (enable_static_cache != true in fdt-prod.toml)."; \
-			fi \
-		' > deployment.log 2>&1 & \
+		nohup ./scripts/background_static_indexing.sh > deployment.log 2>&1 & \
 	else \
 		echo "Skipping static HTML deployment."; \
 	fi
