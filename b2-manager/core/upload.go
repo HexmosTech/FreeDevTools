@@ -294,9 +294,9 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 
 	if !quiet {
 		LogInfo("📢 Notifying Discord...")
-		sendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
+		SendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
 	} else {
-		sendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
+		SendDiscord(ctx, fmt.Sprintf("✅ Database updated to B2: **%s**", dbName))
 	}
 	LogInfo("Notified Discord for %s", dbName)
 

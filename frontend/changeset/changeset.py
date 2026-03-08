@@ -3,6 +3,7 @@
 import subprocess
 import os
 import sys
+import shutil
 
 def get_b2m_bin():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -114,106 +115,21 @@ def start_server():
     except subprocess.CalledProcessError as e:
         print(f"Error starting server: {e}")
 
-def copydb_to_changeset_dir(db_name):
-    import shutil
+def copy(src_name, dst, file_type):
     try:
+        b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        # Determine paths
-        # Assuming db.toml is at `frontend/db/all_dbs/db.toml`
-        frontend_dir = os.path.abspath(os.path.join(script_dir, ".."))
-        server_db_dir = os.path.join(frontend_dir, "db", "all_dbs")
-        db_toml_path = os.path.join(frontend_dir, "db.toml")
-
-        # Basic parser for db.toml to find actual active db name mapped to `db_name`
-        actual_db_filename = None
-        if os.path.exists(db_toml_path):
-            import re
-            with open(db_toml_path, "r") as f:
-                content = f.read()
-            # Searching for things like `ipmdb = "ipm-db-v2.db"` where DB_NAME is maybe `ipm-db-v2.db` or just the base
-            # If the user passes db_name exactly as "ipm-db", we search broadly for match
-            # But normally we just copy the one requested directly if it exists.
-            # Let's see if the exact db_name exists directly in server config as a filename:
-            if db_name in content:
-                # We expect the file `db_name` to be present if it's the full filename. 
-                # If it's a prefix, we try finding the _exact_ one referenced.
-                # Assuming the user passes a prefix `ipm-db` and we want `ipm-db-v2.db`
-                # Let's just find the first file matching `db_name` in the server_db_dir
-                pass
-
-        # To be safe, look in `server_db_dir` for a file that contains `db_name` and `.db`
-        for f in os.listdir(server_db_dir):
-            if f.startswith(db_name) and f.endswith(".db"):
-                actual_db_filename = f
-                break
-        
-        if not actual_db_filename:
-            print(f"Error copying db: Could not find active DB for '{db_name}' in '{server_db_dir}'")
-            return
-
-        src_path = os.path.join(server_db_dir, actual_db_filename)
-        dest_dir = os.path.join(script_dir, "dbs", script_name, "backup")
-        os.makedirs(dest_dir, exist_ok=True)
-        dest_path = os.path.join(dest_dir, actual_db_filename)
-
-        print(f"Copying {src_path} to {dest_path}")
-        shutil.copy2(src_path, dest_path)
-    except Exception as e:
-        print(f"Error copying DB to changeset dir: {e}")
-
-def copysql_to_changeset_dir(db_name):
-    import shutil
-    try:
-        script_name = get_script_name()
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        
-        frontend_dir = os.path.abspath(os.path.join(script_dir, ".."))
-        # Check standard locations: db/all_dbs first, then testing/
-        possible_src_dirs = [
-            os.path.join(frontend_dir, "db", "all_dbs"),
-            os.path.abspath(os.path.join(frontend_dir, "..", "b2-manager", "testing"))
-        ]
-        
-        actual_sql_filename = db_name + ".sql"
-        src_path = None
-        
-        for d in possible_src_dirs:
-            p = os.path.join(d, actual_sql_filename)
-            if os.path.exists(p):
-                src_path = p
-                break
-                
-        if not src_path:
-            # Maybe it starts with db_name (e.g. test-db-v1.sql)
-            for d in possible_src_dirs:
-                if not os.path.exists(d): continue
-                for f in os.listdir(d):
-                    if f.startswith(db_name) and f.endswith(".sql"):
-                        src_path = os.path.join(d, f)
-                        actual_sql_filename = f
-                        break
-                if src_path: break
-
-        if not src_path:
-            print(f"Error copying SQL: Could not find SQL file for '{db_name}' in standard directories")
-            return
-
-        dest_dir = os.path.join(script_dir, "dbs", script_name, "backup")
-        os.makedirs(dest_dir, exist_ok=True)
-        dest_path = os.path.join(dest_dir, actual_sql_filename)
-
-        print(f"Copying {src_path} to {dest_path}")
-        shutil.copy2(src_path, dest_path)
-    except Exception as e:
-        print(f"Error copying SQL to changeset dir: {e}")
+        subprocess.run([b2m_bin, "copy", src_name, dst, file_type, script_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error copying {file_type} to {dst}: {e}")
 
 def handle_query(sql_name, db_name):
     try:
         if not db_name.endswith('.db'):
             db_name += '.db'
-        if not sql_name.endswith('.sql'):
+        if '.db' in sql_name:
+            sql_name = sql_name.replace('.db', '.sql')
+        elif not sql_name.endswith('.sql'):
             sql_name += '.sql'
             
         b2m_bin = get_b2m_bin()

@@ -1,4 +1,4 @@
-package core
+package cli
 
 import (
 	"fmt"
@@ -8,12 +8,13 @@ import (
 	"strconv"
 	"strings"
 
+	"b2m/core"
 	"b2m/model"
 )
 
 // RunCLIBumpDBVersion handles the CLI bump-db-version command logic
 func RunCLIBumpDBVersion(baseDBName string) (string, error) {
-	LogInfo("Bumping DB version for base: %s", baseDBName)
+	core.LogInfo("Bumping DB version for base: %s", baseDBName)
 
 	// 1. Determine the actual current DB filename from db.toml (since the user likely passed the generic name)
 	// Or they might have passed the exact active name `ipm-db-v1.db`. We try to parse out the V.
@@ -57,21 +58,21 @@ func RunCLIBumpDBVersion(baseDBName string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("failed to copy database in changeset dir: %w", err)
 	}
-	LogInfo("Copied to new version in changeset dir: %s", newPath)
+	core.LogInfo("Copied to new version in changeset dir: %s", newPath)
 
 	// 4. Copy the newly versioned DB file into the main server directory (`db/all_dbs`)
 	err = copyFile(newPath, serverPath)
 	if err != nil {
 		return "", fmt.Errorf("failed to copy bumped db to server db dir: %w", err)
 	}
-	LogInfo("Copied to server db dir: %s", serverPath)
+	core.LogInfo("Copied to server db dir: %s", serverPath)
 
 	// 5. Update the `db.toml` to point to the newly named database.
 	err = updateDBToml(baseDBName, newDBName)
 	if err != nil {
 		return "", fmt.Errorf("failed to update db.toml: %w", err)
 	}
-	LogInfo("Updated db.toml with new version %s", newDBName)
+	core.LogInfo("Updated db.toml with new version %s", newDBName)
 
 	return newDBName, nil
 }

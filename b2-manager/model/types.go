@@ -23,7 +23,6 @@ type DBStatusInfo struct {
 	Status           string
 	StatusCode       string // Stable identifier for logic (e.g. "remote_newer")
 	RemoteMetaStatus string // Raw status from remote metadata (e.g. "uploading")
-	VersionRole      string // e.g. "Latest" or "Old Version" based on LSF
 	Color            text.Color
 }
 

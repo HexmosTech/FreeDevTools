@@ -1,4 +1,4 @@
-package ui
+package cli
 
 import (
 	"context"
@@ -119,7 +119,7 @@ func HandleCLI() {
 						return cli.Exit("Usage: b2m create-changeset <phrase>", 1)
 					}
 					phrase := cCtx.Args().First()
-					if err := core.CreateChangeset(phrase); err != nil {
+					if err := CreateChangeset(phrase); err != nil {
 						return cli.Exit(fmt.Sprintf("Error creating changeset: %v", err), 1)
 					}
 					return nil
@@ -134,7 +134,7 @@ func HandleCLI() {
 						return cli.Exit("Usage: b2m exe-changeset <script_name>", 1)
 					}
 					scriptName := cCtx.Args().First()
-					if err := core.ExecuteChangeset(scriptName); err != nil {
+					if err := ExecuteChangeset(scriptName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error executing changeset: %v", err), 1)
 					}
 					return nil
@@ -149,8 +149,30 @@ func HandleCLI() {
 						return cli.Exit("Usage: b2m status <db_name>", 1)
 					}
 					dbName := cCtx.Args().First()
-					if err := core.RunCLIStatus(dbName); err != nil {
+					statusStr, err := RunCLIStatus(dbName)
+					if err != nil {
 						return cli.Exit("", 1) // don't log generic error to Python script output
+					}
+					fmt.Println(statusStr)
+					return nil
+				},
+			},
+			{
+				Name:     "copy",
+				Category: "Changeset Commands",
+				Usage:    "Copy database files between directories",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() < 4 {
+						return cli.Exit("Usage: b2m copy <src_name> <dst> <file_type> <script_name>", 1)
+					}
+					srcName := cCtx.Args().Get(0)
+					dst := cCtx.Args().Get(1)
+					fileType := cCtx.Args().Get(2)
+					scriptName := cCtx.Args().Get(3)
+					config.UpdateForScript(scriptName)
+
+					if err := RunCLICopy(srcName, dst, fileType, scriptName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error in copy: %v", err), 1)
 					}
 					return nil
 				},
@@ -168,7 +190,7 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := core.RunCLIUpload(dbName); err != nil {
+					if err := RunCLIUpload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error uploading database: %v", err), 1)
 					}
 					return nil
@@ -187,7 +209,7 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := core.RunCLIDownload(dbName); err != nil {
+					if err := RunCLIDownload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error downloading database: %v", err), 1)
 					}
 					return nil
@@ -198,7 +220,7 @@ func HandleCLI() {
 				Category: "Changeset Commands",
 				Usage:    "Fetch db.toml from B2 (for scripting)",
 				Action: func(cCtx *cli.Context) error {
-					if err := core.RunCLIFetchDBToml(); err != nil {
+					if err := RunCLIFetchDBToml(); err != nil {
 						return cli.Exit(fmt.Sprintf("Error fetching db.toml: %v", err), 1)
 					}
 					return nil
@@ -218,7 +240,7 @@ func HandleCLI() {
 						config.UpdateForScript(scriptName)
 					}
 
-					newDBName, err := core.RunCLIBumpDBVersion(dbName)
+					newDBName, err := RunCLIBumpDBVersion(dbName)
 					if err != nil {
 						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
@@ -241,7 +263,7 @@ func HandleCLI() {
 						config.UpdateForScript(scriptName)
 					}
 
-					if err := core.RunCLIHandleQuery(sqlName, dbName); err != nil {
+					if err := RunCLIHandleQuery(sqlName, dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error executing queries: %v", err), 1)
 					}
 					return nil
@@ -260,7 +282,7 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := core.RunCLIGetVersion(shortName); err != nil {
+					if err := RunCLIGetVersion(shortName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error getting version: %v", err), 1)
 					}
 					return nil
@@ -279,7 +301,7 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := core.RunCLIGetLatest(dbName); err != nil {
+					if err := RunCLIGetLatest(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error getting latest DB version: %v", err), 1)
 					}
 					return nil
@@ -295,7 +317,7 @@ func HandleCLI() {
 					}
 					// Join all arguments as the message
 					msg := strings.Join(cCtx.Args().Slice(), " ")
-					if err := core.RunCLINotify(msg); err != nil {
+					if err := RunCLINotify(msg); err != nil {
 						return cli.Exit(fmt.Sprintf("Error sending notification: %v", err), 1)
 					}
 					return nil

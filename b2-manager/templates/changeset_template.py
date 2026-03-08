@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 ## Import Common Functions
 try:
-    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copydb_to_changeset_dir, copysql_to_changeset_dir, handle_query, get_latest_db, get_local_db
+    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copy, handle_query, get_latest_db, get_local_db
 except ImportError as e:
     print(f"Error importing changeset: {e}")
     sys.exit(1)
@@ -45,7 +45,7 @@ def main():
     elif status == "outdated_version":
         latest_db_name = get_latest_db(DB_NAME)
         db_download(latest_db_name)
-        copysql_to_changeset_dir(DB_NAME)
+        copy(DB_NAME, "changeset", "sql")
         inserted_queries(DB_NAME, new_db_name)
         stop_server()
         new_db_name = bump_db_version(latest_db_name)
@@ -55,20 +55,20 @@ def main():
     # If status is bump_and_upload, then bump and upload db to b2.
     elif status == "bump_and_upload":
         stop_server()
-        copydb_to_changeset_dir(DB_NAME)
+        copy(DB_NAME, "changeset", "db")
         new_db_name = bump_db_version(DB_NAME)
         print(new_db_name)
         start_server()
         db_upload(new_db_name)
 
-    # If status is outdated_db, then warn the user.
-    elif status == "outdated_db":
-        print(f"Warning: {DB_NAME} is an old version, skipping changeset.")
+    # If status is unidentified, then warn the user.
+    elif status == "unidentified":
+        print(f"Warning: {DB_NAME} has an unidentified status, skipping changeset.")
 
     # If status is ready_to_upload, then upload db to b2.
     elif status == "ready_to_upload":
         stop_server()
-        copydb_to_changeset_dir(DB_NAME)
+        copy(DB_NAME, "changeset", "db")
         print(DB_NAME)
         start_server()
         db_upload(DB_NAME)

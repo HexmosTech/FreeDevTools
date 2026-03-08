@@ -540,6 +540,62 @@ make create-changeset  ipm-db-dialy-backup
 This can be added in cron job from `frontend` directory
 
 
+
+## B2m Couldn't Find DB Differce On updating ipmDB
+
+I tested ipm-db-v6.db with updateing it with some data.
+
+
+Expectation:
+1. b2m should find the difference between local `ipm-db-v6.db` and b2 `ipm-db-v6.db`.
+2. It should return `ready_to_upload` status.
+3. Basic test for this is by updating `ipm-db-v6.db` with some data using fdt server.
+4. Check Status using b2m.
+
+Solution:
+1. Previous test was done with test.db with using sqlite3 cli.
+2. It was correctly detecting the difference.
+3. To test with ipm-db-v6.db.
+4. Setup local ipm bin and triggered `ipm i test`.
+5. This called the local fdt server and updated the `ipm-db-v6.db` with some data and it created `ipm-db-v6.sql` file.
+6. When i checked b2m status it was showing `up_to_date`.
+
+
+Actual Restlt
+
+1. b2m status returned `up_to_date`.
+2. This will never backup ipm db.
+
+Difference
+
+1. Expected ipm-db-v6.db to show "ready_to_upload" status.
+2. As it has new data.
+
+Root Cause of this issues
+
+1. b2m depends on Last modified time and `b3m` hash of `ipm-db-v6.db`.
+2. So, Any new query executed to `ipm-db-v6.sql` file it was commited to `ipm-db-v6.db`.
+3. That means these data will be present in `ipm-db-v6.db-wal`.
+4. To handle this we have to merge the `ipm-db-v6.db-wal` to `ipm-db-v6.db` gracefully.
+Also found all the previous new data added to `ipm-db` are not present in frontend server.
+
+https://hexmos.com/freedevtools/installerpedia/tool/hexmostech-cavlite/
+
+Hopefully we recover those data.
+
+Expectation
+
+1. Every time new data 
+2. Use `PRAGMA wal_checkpoint(TRUNCATE);` in configuration
+3. Check Read Performace
+
+
+
+
+
+
+
+
 ## B2M Main Logic
 
 

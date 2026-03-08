@@ -107,7 +107,7 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 	sortDBs(all)
 	return all, nil
 }
-func sendDiscord(ctx context.Context, content string) {
+func SendDiscord(ctx context.Context, content string) {
 	payload := map[string]string{"content": content}
 	data, _ := json.Marshal(payload)
 	err := exec.CommandContext(ctx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
