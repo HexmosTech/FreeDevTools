@@ -14,7 +14,7 @@ if [ "$ENABLE_STATIC_CACHE" = "true" ]; then
     fi
     
     make clear-static-cache
-    make static-generation-cheatsheets
+    make static-generation-all
     
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
