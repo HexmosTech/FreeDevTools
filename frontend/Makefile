@@ -259,7 +259,8 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	fi
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
-		nohup ./scripts/background_static_indexing.sh > deployment.log 2>&1 & \
+		SECTION="$(if $(STATIC_SECTION),$(STATIC_SECTION),all)"; \
+		nohup ./scripts/background_static_indexing.sh --section=$$SECTION > deployment.log 2>&1 & \
 	else \
 		echo "Skipping static HTML deployment."; \
 	fi
@@ -296,7 +297,8 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
 	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
 		echo "Starting background static HTML deployment..."; \
-		nohup ./scripts/background_static_indexing.sh > deployment.log 2>&1 & \
+		SECTION="$(if $(STATIC_SECTION),$(STATIC_SECTION),all)"; \
+		nohup ./scripts/background_static_indexing.sh --section=$$SECTION > deployment.log 2>&1 & \
 	else \
 		echo "Skipping static HTML deployment."; \
 	fi

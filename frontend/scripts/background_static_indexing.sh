@@ -1,20 +1,31 @@
 #!/bin/bash
 # scripts/background_static_indexing.sh
 
+# Parse arguments
+SECTION="all"
+for arg in "$@"; do
+    case "$arg" in
+        --section=*)
+            SECTION="${arg#*=}"
+            shift
+            ;;
+    esac
+done
+
 ENABLE_STATIC_CACHE=$(grep -E "^enable_static_cache\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\(true\|false\).*/\1/" | tr -d " ")
 
 if [ "$ENABLE_STATIC_CACHE" = "true" ]; then
     DISCORD_WEBHOOK=$(grep -E "^discord_webhook_url\s*=" fdt-prod.toml 2>/dev/null | sed "s/.*=\s*\"\([^\"]*\)\".*/\1/" | tr -d " " || echo "")
     START_TIME=$(date +%s)
     START_DATE=$(TZ="Asia/Kolkata" date "+%Y-%m-%d %I:%M:%S %p IST")
-    MSG_START="🚀 **Freedevtools Static Deployment Initiated**\n**Section:** all\n**Started at:** $START_DATE\n**Cache Dir:** static/freedevtools/\n**How to stop:** \`kill -9 \$(pgrep -f static-generation-all)\`"
+    MSG_START="🚀 **Freedevtools Static Deployment Initiated**\n**Section:** $SECTION\n**Started at:** $START_DATE\n**Cache Dir:** static/freedevtools/\n**How to stop:** \`kill -9 \$(pgrep -f static-generation-$SECTION)\`"
     
     if [ -n "$DISCORD_WEBHOOK" ]; then 
         curl -s -H "Content-Type: application/json" -d "{\"content\": \"$MSG_START\"}" "$DISCORD_WEBHOOK" > /dev/null
     fi
     
     make clear-static-cache
-    make static-generation-all
+    make "static-generation-$SECTION"
     
     END_TIME=$(date +%s)
     DURATION=$((END_TIME - START_TIME))
