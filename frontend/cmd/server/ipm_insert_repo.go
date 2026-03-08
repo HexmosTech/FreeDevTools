@@ -88,6 +88,11 @@ type osDistribution struct {
 	Total int    `json:"total"`
 }
 
+type countryDistribution struct {
+	Country string `json:"country"`
+	Total   int    `json:"total"`
+}
+
 type errorLogEntry struct {
 	Error     string `json:"error"`
 	Arch      string `json:"arch"`
@@ -386,13 +391,26 @@ func handleMetricsSummary() http.HandlerFunc {
         LIMIT 15
         `, repoEsc, timeFilter)
 
+		countryQuery := fmt.Sprintf(`
+        SELECT 
+            properties.$geoip_country_name as country,
+            count() as total
+        FROM events
+        WHERE properties.reponame = '%s'
+        AND event IN ('ipm_install_repo_success', 'ipm_install_repo_failed', 'ipm_install_repo_cancelled')
+        %s
+        GROUP BY country
+        ORDER BY total DESC
+        LIMIT 15
+        `, repoEsc, timeFilter)
+
 		// 2. Execute Queries in Parallel
 		type queryResult struct {
 			data [][]interface{}
 			err  error
 			id   string
 		}
-		resultsChan := make(chan queryResult, 3)
+		resultsChan := make(chan queryResult, 4)
 
 		go func() {
 			res, err := runPosthogQuery(summaryQuery)
@@ -406,13 +424,18 @@ func handleMetricsSummary() http.HandlerFunc {
 			res, err := runPosthogQuery(osQuery)
 			resultsChan <- queryResult{res, err, "os"}
 		}()
+		go func() {
+			res, err := runPosthogQuery(countryQuery)
+			resultsChan <- queryResult{res, err, "country"}
+		}()
 
 		// 3. Collect Results
 		var summaryResults [][]interface{}
 		var methodResults [][]interface{}
 		var osResults [][]interface{}
+		var countryResults [][]interface{}
 
-		for i := 0; i < 3; i++ {
+		for i := 0; i < 4; i++ {
 			res := <-resultsChan
 			if res.err != nil {
 				log.Printf("[Installerpedia Metrics] %s query error for %s: %v", res.id, repoName, res.err)
@@ -426,6 +449,8 @@ func handleMetricsSummary() http.HandlerFunc {
 				methodResults = res.data
 			case "os":
 				osResults = res.data
+			case "country":
+				countryResults = res.data
 			}
 		}
 
@@ -473,11 +498,23 @@ func handleMetricsSummary() http.HandlerFunc {
 			})
 		}
 
+		countryDist := make([]countryDistribution, 0, len(countryResults))
+		for _, row := range countryResults {
+			if len(row) < 2 {
+				continue
+			}
+			countryDist = append(countryDist, countryDistribution{
+				Country: ifaceToString(row[0]),
+				Total:   ifaceToInt(row[1]),
+			})
+		}
+
 		w.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
-			"summary":         summary,
-			"methods":         methods,
-			"os_distribution": osDist,
+			"summary":              summary,
+			"methods":              methods,
+			"os_distribution":      osDist,
+			"country_distribution": countryDist,
 		})
 	}
 }
