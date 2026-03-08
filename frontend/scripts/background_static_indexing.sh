@@ -7,7 +7,9 @@ for arg in "$@"; do
     case "$arg" in
         --section=*)
             SECTION="${arg#*=}"
-            shift
+            ;;
+        *)
+            # unknown option
             ;;
     esac
 done
@@ -24,7 +26,9 @@ if [ "$ENABLE_STATIC_CACHE" = "true" ]; then
         curl -s -H "Content-Type: application/json" -d "{\"content\": \"$MSG_START\"}" "$DISCORD_WEBHOOK" > /dev/null
     fi
     
-    make clear-static-cache
+    if [ "$SECTION" = "all" ]; then
+        make clear-static-cache
+    fi
     make "static-generation-$SECTION"
     
     END_TIME=$(date +%s)
