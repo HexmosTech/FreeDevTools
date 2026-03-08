@@ -44,6 +44,11 @@ make start-prod STATIC_SECTION=cheatsheets
 
 *(This argument is directly passed down to `./scripts/background_static_indexing.sh --section=cheatsheets`, which in turn executes `make static-generation-cheatsheets`)*
 
+To completely skip the background static HTML generation entirely when starting production (useful for rapid restarts when the cache is already warm):
+```bash
+make start-prod SKIP_STATIC_DEPLOY=1
+```
+
 ## Environment Configuration
 Static site caching must be explicitly enabled in the production configuration via the TOML config file:
 ```toml
