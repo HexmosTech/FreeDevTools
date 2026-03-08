@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -128,8 +129,69 @@ func updateDBToml(oldName, newName string) error {
 	}
 
 	content := string(data)
-	// Replace all verbatim occurrences of the old name
-	newContent := strings.ReplaceAll(content, oldName, newName)
 
-	return os.WriteFile(tomlPath, []byte(newContent), 0644)
+	// Since we might be given oldName as "ipm-db-v8.db", but db.toml contains "ipm-db-v6.db"
+	// we want to find the true original mapping by scanning for the base name.
+	ext := filepath.Ext(oldName)
+	baseName := strings.TrimSuffix(oldName, ext)
+
+	// Strip out the version number to find the base identifier string
+	reVersioned := regexp.MustCompile(`^(.*?)([-_]v\d+)?$`)
+	match := reVersioned.FindStringSubmatch(baseName)
+	var trueBaseName string
+	if match != nil {
+		trueBaseName = match[1]
+	} else {
+		trueBaseName = baseName
+	}
+
+	// Escape baseName for use in regex
+	escapedBase := regexp.QuoteMeta(trueBaseName)
+
+	// Search for `<base>[-_]v<num><ext>` or `<base><ext>` anywhere
+	reReplace := regexp.MustCompile(escapedBase + `([-_]v\d+)?` + regexp.QuoteMeta(ext))
+
+	// Verify if what we replace exists
+	if !reReplace.MatchString(content) {
+		core.LogInfo("Warning: base name %s not found in db.toml to replace", trueBaseName)
+		return nil
+	}
+
+	newContent := reReplace.ReplaceAllString(content, newName)
+	if err := os.WriteFile(tomlPath, []byte(newContent), 0644); err != nil {
+		return err
+	}
+
+	if err := commitAndPushDBToml(tomlPath, newName); err != nil {
+		core.LogInfo("Warning: failed to commit and push db.toml: %v", err)
+	}
+
+	return nil
+}
+
+// commitAndPushDBToml adds, commits, and pushes db.toml to origin main
+func commitAndPushDBToml(tomlPath, newName string) error {
+	dir := filepath.Dir(tomlPath)
+
+	cmdAdd := exec.Command("git", "add", filepath.Base(tomlPath))
+	cmdAdd.Dir = dir
+	if err := cmdAdd.Run(); err != nil {
+		return fmt.Errorf("git add failed: %w", err)
+	}
+
+	commitMsg := fmt.Sprintf("chore: bump DB version to %s in db.toml", newName)
+	cmdCommit := exec.Command("git", "commit", "-m", commitMsg)
+	cmdCommit.Dir = dir
+	if err := cmdCommit.Run(); err != nil {
+		// likely nothing to commit if there were no changes
+		return nil
+	}
+
+	cmdPush := exec.Command("git", "push")
+	cmdPush.Dir = dir
+	if err := cmdPush.Run(); err != nil {
+		return fmt.Errorf("git push failed: %w", err)
+	}
+
+	return nil
 }
