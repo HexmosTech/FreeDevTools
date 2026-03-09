@@ -129,7 +129,8 @@ func (db *DB) GetIconsByCluster(cluster string, categoryName *string, limit, off
 		COALESCE(emotional_cues, '') as emotional_cues,
 		enhanced,
 		COALESCE(img_alt, ''),
-		updated_at
+		updated_at,
+		COALESCE(see_also, '') as see_also
 		FROM icon WHERE cluster_hash = ? ORDER BY url_hash LIMIT ? OFFSET ?`
 
 	rows, err := db.conn.Query(query, hashName, limit, offset)
@@ -146,6 +147,7 @@ func (db *DB) GetIconsByCluster(cluster string, categoryName *string, limit, off
 			&row.ID, &row.Cluster, &row.Name, &row.Base64,
 			&row.Description, &row.Usecases, &row.Synonyms, &row.Tags,
 			&row.Industry, &row.EmotionalCues, &row.Enhanced, &row.ImgAlt, &row.UpdatedAt,
+			&row.SeeAlso,
 		)
 		if err != nil {
 			continue
@@ -182,7 +184,7 @@ func (db *DB) GetClustersWithPreviewIcons(page, itemsPerPage, previewIconsPerClu
 	}
 
 	offset := (page - 1) * itemsPerPage
-	query := `SELECT name, count, source_folder, preview_icons_json
+	query := `SELECT name, count, source_folder, preview_icons_json, updated_at
 		FROM cluster
 		ORDER BY hash_name
 		LIMIT ? OFFSET ?`
@@ -197,7 +199,7 @@ func (db *DB) GetClustersWithPreviewIcons(page, itemsPerPage, previewIconsPerClu
 		var result []ClusterTransformed
 		for rows.Next() {
 			var row rawClusterPreviewRow
-			err := rows.Scan(&row.Name, &row.Count, &row.SourceFolder, &row.PreviewIconsJSON)
+			err := rows.Scan(&row.Name, &row.Count, &row.SourceFolder, &row.PreviewIconsJSON, &row.UpdatedAt)
 			if err != nil {
 				continue
 			}
@@ -225,7 +227,7 @@ func (db *DB) GetClustersWithPreviewIcons(page, itemsPerPage, previewIconsPerClu
 	var result []ClusterWithPreviewIcons
 	for rows.Next() {
 		var row rawClusterPreviewRow
-		err := rows.Scan(&row.Name, &row.Count, &row.SourceFolder, &row.PreviewIconsJSON)
+		err := rows.Scan(&row.Name, &row.Count, &row.SourceFolder, &row.PreviewIconsJSON, &row.UpdatedAt)
 		if err != nil {
 			continue
 		}
@@ -247,6 +249,7 @@ func (db *DB) GetClustersWithPreviewIcons(page, itemsPerPage, previewIconsPerClu
 			About:            "",
 			WhyChooseUs:      []string{},
 			PreviewIcons:     previewIcons,
+			UpdatedAt:        row.UpdatedAt,
 		}
 
 		result = append(result, cluster)

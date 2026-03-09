@@ -379,7 +379,7 @@ func generateMcpSitemap(baseDir string) {
 		log.Fatalf("Failed to generate mcp pagination sitemap: %v", err)
 	}
 
-	pagesDir := filepath.Join(baseDir, "mcp_pages")
+	pagesDir := filepath.Join(baseDir, "mcp-pages")
 	if err := os.MkdirAll(pagesDir, 0755); err != nil {
 		log.Fatalf("Failed to create directory %s: %v", pagesDir, err)
 	}

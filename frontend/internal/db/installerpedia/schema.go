@@ -19,6 +19,7 @@ type InstallationGuide struct {
 	Note                  *string            `json:"note,omitempty"`
 	Keywords              []Keywords         `json:"keywords"`
 	SeeAlso               string             `json:"see_also"` // JSON string containing array of objects
+	UpdatedAt             string             `json:"updated_at"`
 }
 
 type Prerequisite struct {
@@ -64,6 +65,7 @@ type RawInstallationGuideRow struct {
 	Note                *string
 	Keywords             string
 	SeeAlso              string // JSON string
+	UpdatedAt            string
 	IsDeleted bool
 }
 
@@ -84,6 +86,7 @@ type RepoData struct {
 	Note                *string
 	Keywords            []Keywords
 	SeeAlso             string
+	UpdatedAt           string
 	IsDeleted			bool
 }
 
@@ -93,6 +96,7 @@ type RepoCategory struct {
 	Name        string
 	Count       int
 	Description string
+	UpdatedAt   string
 }
 
 type Overview struct {

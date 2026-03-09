@@ -74,6 +74,7 @@ type ClusterWithPreviewIcons struct {
 	About            string        `json:"about"`
 	WhyChooseUs      []string      `json:"why_choose_us"`
 	PreviewIcons     []PreviewIcon `json:"preview_icons"`
+	UpdatedAt        string        `json:"updated_at"`
 }
 
 // ClusterTransformed is a transformed version of ClusterWithPreviewIcons for display
@@ -148,6 +149,7 @@ type rawClusterPreviewRow struct {
 	Count            int
 	SourceFolder     string
 	PreviewIconsJSON string // JSON string
+	UpdatedAt        string
 }
 
 // parseJSONArray parses a JSON array string into a []string

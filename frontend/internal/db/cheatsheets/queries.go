@@ -198,10 +198,10 @@ func (db *DB) GetCategoryBySlug(slug string) (*Category, error) {
 		return val.(*Category), nil
 	}
 
-	query := `SELECT id, name, slug, description, keywords, features FROM category WHERE slug = ?`
+	query := `SELECT id, name, slug, description, keywords, features, updated_at FROM category WHERE slug = ?`
 	var r rawCategoryRow
 	queryStart := time.Now()
-	err := db.conn.QueryRow(query, slug).Scan(&r.ID, &r.Name, &r.Slug, &r.Description, &r.Keywords, &r.Features)
+	err := db.conn.QueryRow(query, slug).Scan(&r.ID, &r.Name, &r.Slug, &r.Description, &r.Keywords, &r.Features, &r.UpdatedAt)
 	log.Printf("[DB] GetCategoryBySlug query took %v (slug=%s)", time.Since(queryStart), slug)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -238,7 +238,7 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 	}
 
 	offset := (page - 1) * itemsPerPage
-	query := `SELECT hash_id, category, slug, title, description, keywords 
+	query := `SELECT hash_id, category, slug, title, description, keywords, updated_at 
 			  FROM cheatsheet 
 			  WHERE category = ? 
 			  ORDER BY slug 
@@ -255,7 +255,7 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 	var cheatsheets []Cheatsheet
 	for rows.Next() {
 		var r rawCheatsheetRow
-		if err := rows.Scan(&r.HashID, &r.Category, &r.Slug, &r.Title, &r.Description, &r.Keywords); err != nil {
+		if err := rows.Scan(&r.HashID, &r.Category, &r.Slug, &r.Title, &r.Description, &r.Keywords, &r.UpdatedAt); err != nil {
 			continue
 		}
 		// Content is not needed for list view, keeping it empty to save memory
@@ -268,6 +268,45 @@ func (db *DB) GetCheatsheetsByCategory(categorySlug string, page, itemsPerPage i
 		T int
 	}{cheatsheets, total}
 	globalCache.Set(cacheKey, res, CacheTTLCheatsheets)
+
+	return cheatsheets, total, nil
+}
+
+// GetCheatsheetsByCategoryFull returns all cheatsheets for a category with full content (paginated)
+func (db *DB) GetCheatsheetsByCategoryFull(categorySlug string, page, itemsPerPage int) ([]Cheatsheet, int, error) {
+	// Get total count for pagination
+	var total int
+	queryStart := time.Now()
+	err := db.conn.QueryRow("SELECT COUNT(*) FROM cheatsheet WHERE category = ?", categorySlug).Scan(&total)
+	log.Printf("[DB] GetCheatsheetsByCategoryFull count query took %v (category=%s)", time.Since(queryStart), categorySlug)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	offset := (page - 1) * itemsPerPage
+	query := `SELECT hash_id, category, slug, content, title, description, keywords, see_also, updated_at 
+			  FROM cheatsheet 
+			  WHERE category = ? 
+			  ORDER BY slug 
+			  LIMIT ? OFFSET ?`
+
+	queryStart = time.Now()
+	rows, err := db.conn.Query(query, categorySlug, itemsPerPage, offset)
+	log.Printf("[DB] GetCheatsheetsByCategoryFull list query took %v (category=%s)", time.Since(queryStart), categorySlug)
+	if err != nil {
+		return nil, 0, err
+	}
+	defer rows.Close()
+
+	var cheatsheets []Cheatsheet
+	for rows.Next() {
+		var r rawCheatsheetRow
+		if err := rows.Scan(&r.HashID, &r.Category, &r.Slug, &r.Content, &r.Title, &r.Description, &r.Keywords, &r.SeeAlso, &r.UpdatedAt); err != nil {
+			log.Printf("[DB] Error scanning rawCheatsheetRow: %v", err)
+			continue
+		}
+		cheatsheets = append(cheatsheets, r.toCheatsheet())
+	}
 
 	return cheatsheets, total, nil
 }
@@ -289,7 +328,7 @@ func (db *DB) GetUpdatedAtForCategory(categorySlug string) (string, error) {
 	return updatedAt, nil
 }
 
-// GetCheatsheet returns a single cheatsheet by category and slug
+// GetCheatsheet returns a single cheatsheet by hash_id
 func (db *DB) GetCheatsheet(hashID int64) (*Cheatsheet, error) {
 	cacheKey := getCacheKey("getCheatsheet", map[string]interface{}{
 		"hash_id": hashID,
@@ -298,14 +337,14 @@ func (db *DB) GetCheatsheet(hashID int64) (*Cheatsheet, error) {
 		return val.(*Cheatsheet), nil
 	}
 
-	query := `SELECT hash_id, category, slug, content, title, description, keywords, see_also 
+	query := `SELECT hash_id, category, slug, content, title, description, keywords, see_also, updated_at 
 			  FROM cheatsheet 
 			  WHERE hash_id = ?`
 
 	var r rawCheatsheetRow
 	queryStart := time.Now()
 	err := db.conn.QueryRow(query, hashID).Scan(
-		&r.HashID, &r.Category, &r.Slug, &r.Content, &r.Title, &r.Description, &r.Keywords, &r.SeeAlso,
+		&r.HashID, &r.Category, &r.Slug, &r.Content, &r.Title, &r.Description, &r.Keywords, &r.SeeAlso, &r.UpdatedAt,
 	)
 	log.Printf("[DB] GetCheatsheet query took %v (hash_id=%d)", time.Since(queryStart), hashID)
 	if err != nil {
@@ -402,4 +441,26 @@ func (db *DB) GetCheatsheetsByCategorySitemap(categorySlug string) ([]SitemapIte
 
 	globalCache.Set(cacheKey, items, CacheTTLCheatsheets) // Reuse TTL
 	return items, nil
+}
+// GetCategoryCounts returns counts of cheatsheets per category
+func (db *DB) GetCategoryCounts() (map[string]int, error) {
+	query := `SELECT category, COUNT(*) FROM cheatsheet GROUP BY category`
+	queryStart := time.Now()
+	rows, err := db.conn.Query(query)
+	log.Printf("[DB] GetCategoryCounts query took %v", time.Since(queryStart))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	counts := make(map[string]int)
+	for rows.Next() {
+		var cat string
+		var count int
+		if err := rows.Scan(&cat, &count); err != nil {
+			continue
+		}
+		counts[cat] = count
+	}
+	return counts, nil
 }

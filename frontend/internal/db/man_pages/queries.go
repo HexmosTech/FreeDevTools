@@ -65,7 +65,7 @@ func (db *DB) GetManPageCategories() ([]Category, error) {
 		return val.([]Category), nil
 	}
 
-	query := `SELECT name, count, description, path
+	query := `SELECT name, count, description, path, updated_at
 	          FROM category 
 	          ORDER BY name`
 
@@ -78,7 +78,7 @@ func (db *DB) GetManPageCategories() ([]Category, error) {
 	var categories []Category
 	for rows.Next() {
 		var row rawCategoryRow
-		err := rows.Scan(&row.Name, &row.Count, &row.Description, &row.Path)
+		err := rows.Scan(&row.Name, &row.Count, &row.Description, &row.Path, &row.UpdatedAt)
 		if err != nil {
 			continue
 		}
@@ -130,7 +130,7 @@ func (db *DB) GetSubCategoriesByMainCategoryPaginated(mainCategory string, limit
 
 	// Use hash-based lookup matching the worker query
 	categoryHashID := HashURLToKey(mainCategory, "", "")
-	query := `SELECT name, description, count
+	query := `SELECT name, description, count, updated_at
 	          FROM sub_category 
 	          WHERE main_category_hash = ?
 	          ORDER BY name
@@ -145,7 +145,7 @@ func (db *DB) GetSubCategoriesByMainCategoryPaginated(mainCategory string, limit
 	var subcategories []SubCategory
 	for rows.Next() {
 		var row rawSubCategoryRow
-		err := rows.Scan(&row.Name, &row.Description, &row.Count)
+		err := rows.Scan(&row.Name, &row.Description, &row.Count, &row.UpdatedAt)
 		if err != nil {
 			continue
 		}
@@ -236,6 +236,38 @@ func (db *DB) GetManPagesBySubcategoryPaginated(mainCategory, subCategory string
 	globalCache.Set(cacheKey, manPages, CacheTTLManPagesBySubcategory)
 	totalTime := time.Since(startTime)
 	log.Printf("[MAN_PAGES_DB] ManPages getManPagesBySubcategoryPaginated %v", totalTime)
+	return manPages, nil
+}
+
+// GetManPagesBySubcategoryPaginatedFull returns paginated man pages for a subcategory with full content
+func (db *DB) GetManPagesBySubcategoryPaginatedFull(mainCategory, subCategory string, limit, offset int) ([]ManPage, error) {
+	startTime := time.Now()
+
+	// Use hash-based lookup matching the worker query
+	categoryHashID := HashURLToKey(mainCategory, subCategory, "")
+	query := `SELECT title, slug, filename, content_html, see_also, updated_at
+	          FROM man_pages 
+	          WHERE category_hash = ?
+	          LIMIT ? OFFSET ?`
+
+	rows, err := db.conn.Query(query, categoryHashID, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var manPages []ManPage
+	for rows.Next() {
+		var row rawManPageRow
+		if err := rows.Scan(&row.Title, &row.Slug, &row.Filename, &row.ContentHTML, &row.SeeAlso, &row.UpdatedAt); err != nil {
+			log.Printf("[MAN_PAGES_DB] Error scanning rawManPageRow: %v", err)
+			continue
+		}
+		manPages = append(manPages, row.toManPage(mainCategory, subCategory))
+	}
+
+	totalTime := time.Since(startTime)
+	log.Printf("[MAN_PAGES_DB] ManPages getManPagesBySubcategoryPaginatedFull %v", totalTime)
 	return manPages, nil
 }
 

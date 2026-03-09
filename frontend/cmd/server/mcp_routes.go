@@ -117,7 +117,7 @@ func setupMcpRoutes(mux *http.ServeMux, db *mcp_db.DB) {
 }
 
 func setupMcpPagesRoutes(mux *http.ServeMux, db *mcp_db.DB) {
-	mux.HandleFunc(basePath+"/mcp_pages/", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(basePath+"/mcp-pages/", func(w http.ResponseWriter, r *http.Request) {
 		// Pagination sitemap
 		if strings.HasSuffix(r.URL.Path, "/sitemap.xml") {
 			mcp_pages.HandlePaginationSitemap(w, r, db)
