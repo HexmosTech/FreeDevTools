@@ -25,6 +25,7 @@ type Page struct {
 	HTMLContent string       `json:"html_content"`
 	Metadata    PageMetadata `json:"metadata"`
 	SeeAlso     string       `json:"see_also"` // JSON string containing array of objects
+	URL         string       `json:"url"`
 	UpdatedAt   string       `json:"updated_at"`
 }
 

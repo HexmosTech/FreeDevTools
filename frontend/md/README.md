@@ -288,3 +288,7 @@ To sync or update public files (emojis, images, static assets):
 ## See Also and Search Index Deployment Docs
 
 Refer to the [search-index/README.md](search-index/README.md#how-to-index-search-and-deploy-search-index) for details on deploying the search index and see also.
+
+## Static Generator Docs
+
+Refer to the [cmd/static-generator/README.md](../cmd/static-generator/README.md) for detailed instructions on managing the static pre-rendered HTML cache layer, including how to build individual pages or skip the build process during production restarts.

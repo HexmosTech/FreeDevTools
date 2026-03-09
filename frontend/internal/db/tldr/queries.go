@@ -172,7 +172,7 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 	clusterHash := CalculateHash(platform)
 
 	query := `
-		SELECT url, title, description, metadata 
+		SELECT url, title, description, metadata, updated_at
 		FROM pages 
 		WHERE cluster_hash = ? 
 		ORDER BY url 
@@ -187,10 +187,10 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 
 	var commands []Command
 	for rows.Next() {
-		var url, metadataJSON string
+		var url, metadataJSON, updatedAt string
 		var title, description sql.NullString
 
-		if err := rows.Scan(&url, &title, &description, &metadataJSON); err != nil {
+		if err := rows.Scan(&url, &title, &description, &metadataJSON, &updatedAt); err != nil {
 			return nil, fmt.Errorf("failed to scan command: %w", err)
 		}
 
@@ -212,11 +212,67 @@ func (db *DB) GetCommandsByClusterPaginated(platform string, limit, offset int) 
 			URL:         frontendURL,
 			Description: description.String,
 			Features:    metadata.Features,
+			UpdatedAt:   updatedAt,
 		})
 	}
 
 	db.cache.Set(key, commands, CacheTTLCommand)
 	return commands, nil
+}
+
+// GetPagesByClusterPaginatedFull retrieves full pages for a platform with pagination
+func (db *DB) GetPagesByClusterPaginatedFull(platform string, limit, offset int) ([]Page, error) {
+	key := fmt.Sprintf("GetPagesByClusterPaginatedFull:%s:%d:%d", platform, limit, offset)
+	if val, ok := db.cache.Get(key); ok {
+		return val.([]Page), nil
+	}
+
+	// Calculate cluster hash for lookup
+	clusterHash := CalculateHash(platform)
+
+	query := `
+		SELECT title, description, html_content, metadata, see_also, url, updated_at
+		FROM pages 
+		WHERE cluster_hash = ? 
+		ORDER BY url 
+		LIMIT ? OFFSET ?
+	`
+
+	rows, err := db.conn.Query(query, clusterHash, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query full pages: %w", err)
+	}
+	defer rows.Close()
+
+	var pages []Page
+	for rows.Next() {
+		var title, description, htmlContent, url sql.NullString
+		var metadataJSON, updatedAt string
+		var seeAlso string
+
+		if err := rows.Scan(&title, &description, &htmlContent, &metadataJSON, &seeAlso, &url, &updatedAt); err != nil {
+			return nil, fmt.Errorf("failed to scan full page: %w", err)
+		}
+
+		metadata, err := ParsePageMetadata(metadataJSON)
+		if err != nil {
+			// Log but continue
+			fmt.Printf("Error parsing metadata for %s: %v\n", url.String, err)
+		}
+
+		pages = append(pages, Page{
+			Title:       title.String,
+			Description: description.String,
+			HTMLContent: htmlContent.String,
+			Metadata:    metadata,
+			SeeAlso:     seeAlso,
+			URL:         url.String,
+			UpdatedAt:   updatedAt,
+		})
+	}
+
+	db.cache.Set(key, pages, CacheTTLPage)
+	return pages, nil
 }
 
 // GetPage retrieves a single TLDR page

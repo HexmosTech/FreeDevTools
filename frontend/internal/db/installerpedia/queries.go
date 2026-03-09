@@ -25,6 +25,7 @@ type RawRepoListRow struct {
 	RepoType    string
 	Description sql.NullString
 	Stars       int
+	UpdatedAt   string
 }
 
 func ParseRepoListRow(row RawRepoListRow) RepoData {
@@ -39,6 +40,7 @@ func ParseRepoListRow(row RawRepoListRow) RepoData {
 		RepoType:    row.RepoType,
 		Description: desc,
 		Stars:       row.Stars,
+		UpdatedAt:   row.UpdatedAt,
 	}
 }
 
@@ -111,11 +113,10 @@ func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
     // Note: If this list grows huge, consider a separate table or a join,
     // but for 13 strings, this is perfectly fine.
     query := `
-        SELECT repo_type, COUNT(*)
-        FROM ipm_data
+        SELECT repo_type, repo_count, updated_at
+        FROM ipm_category
         WHERE repo_type IN (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        GROUP BY repo_type
-        ORDER BY COUNT(*) DESC
+        ORDER BY repo_count DESC
     `
 
     // Convert slice to interface slice for the Query method
@@ -133,7 +134,7 @@ func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
     var result []RepoCategory
     for rows.Next() {
         var c RepoCategory
-        if err := rows.Scan(&c.Name, &c.Count); err != nil {
+        if err := rows.Scan(&c.Name, &c.Count, &c.UpdatedAt); err != nil {
             return nil, err
         }
         result = append(result, c)
@@ -163,7 +164,8 @@ func (db *DB) GetReposByTypePaginated(category string, limit, offset int) ([]Rep
 			repo,
 			repo_type,
 			description,
-			stars
+			stars,
+			updated_at
 		FROM ipm_data
 		WHERE category_hash = ?
 		  AND is_deleted = 0
@@ -184,10 +186,71 @@ func (db *DB) GetReposByTypePaginated(category string, limit, offset int) ([]Rep
 			&raw.RepoType,
 			&raw.Description,
 			&raw.Stars,
+			&raw.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
 		repos = append(repos, ParseRepoListRow(raw))
+	}
+
+	return repos, nil
+}
+
+// GetReposByCategoryPaginatedFull retrieves full repo data for a category with pagination
+func (db *DB) GetReposByCategoryPaginatedFull(category string, limit, offset int) ([]RepoData, error) {
+	categoryHash := HashStringToInt64(category)
+
+	rows, err := db.conn.Query(`
+		SELECT
+			slug_hash,
+			repo,
+			repo_type,
+			has_installation,
+			is_deleted,
+			prerequisites,
+			installation_methods,
+			post_installation,
+			resources_of_interest,
+			description,
+			stars,
+			note,
+			keywords,
+			see_also,
+			updated_at
+		FROM ipm_data
+		WHERE category_hash = ?
+		  AND is_deleted = 0
+		ORDER BY stars DESC, slug_hash
+		LIMIT ? OFFSET ?
+	`, categoryHash, limit, offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var repos []RepoData
+	for rows.Next() {
+		var raw RawRepoRow
+		if err := rows.Scan(
+			&raw.ID,
+			&raw.Repo,
+			&raw.RepoType,
+			&raw.HasInstallation,
+			&raw.IsDeleted,
+			&raw.Prerequisites,
+			&raw.InstallationMethods,
+			&raw.PostInstallation,
+			&raw.ResourcesOfInterest,
+			&raw.Description,
+			&raw.Stars,
+			&raw.Note,
+			&raw.Keywords,
+			&raw.SeeAlso,
+			&raw.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+		repos = append(repos, ParseRepoRow(raw))
 	}
 
 	return repos, nil
@@ -236,7 +299,8 @@ func (db *DB) GetRepo(hashID int64) (*RepoData, error) {
 			stars,
 			note,
 			keywords,
-			see_also
+			see_also,
+			updated_at
 		FROM ipm_data
 		WHERE slug_hash = ?
 		LIMIT 1
@@ -258,6 +322,7 @@ func (db *DB) GetRepo(hashID int64) (*RepoData, error) {
 		&raw.Note,
 		&raw.Keywords,
 		&raw.SeeAlso,
+		&raw.UpdatedAt,
 	); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
@@ -305,6 +370,7 @@ func ParseRepoRow(row RawRepoRow) RepoData {
 		Note:                row.Note,
 		Keywords:            keywords,
 		SeeAlso:             row.SeeAlso,
+		UpdatedAt:           row.UpdatedAt,
 		IsDeleted:           row.IsDeleted,
 	}
 }

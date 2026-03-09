@@ -409,6 +409,91 @@ func (db *DB) GetDiscordEvolutionImages(slug string) ([]EvolutionImage, error) {
 	return images, nil
 }
 
+// GetDiscordEvolutionImagesBatch returns evolution images for multiple slugs at once
+func (db *DB) GetDiscordEvolutionImagesBatch(slugs []string) (map[string][]EvolutionImage, error) {
+	if len(slugs) == 0 {
+		return make(map[string][]EvolutionImage), nil
+	}
+
+	placeholders := strings.TrimRight(strings.Repeat("?,", len(slugs)), ",")
+	args := make([]interface{}, len(slugs))
+	for i, s := range slugs {
+		args[i] = hashStringToInt64(s)
+	}
+
+	query := fmt.Sprintf(`
+		SELECT emoji_slug, filename, image_type
+		FROM images
+		WHERE emoji_slug_only_hash IN (%s) AND image_type = 'twemoji-vendor'
+		ORDER BY emoji_slug, filename`, placeholders)
+
+	rows, err := db.conn.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[string][]EvolutionImage)
+	tempMap := make(map[string]map[string]EvolutionImage)
+
+	for rows.Next() {
+		var emojiSlug, filename, imageType string
+		if err := rows.Scan(&emojiSlug, &filename, &imageType); err != nil {
+			continue
+		}
+
+		version := extractDiscordVersion(filename)
+		if version == "" || version == "0" {
+			continue
+		}
+
+		if _, ok := tempMap[emojiSlug]; !ok {
+			tempMap[emojiSlug] = make(map[string]EvolutionImage)
+		}
+
+		// Keep only first image per version
+		if _, exists := tempMap[emojiSlug][version]; !exists {
+			tempMap[emojiSlug][version] = EvolutionImage{
+				URL:     buildEmojiImagePath(emojiSlug, imageType, filename),
+				Version: version,
+			}
+		}
+	}
+
+	for slug, versions := range tempMap {
+		images := make([]EvolutionImage, 0, len(versions))
+		for _, img := range versions {
+			images = append(images, img)
+		}
+
+		// Sort by version
+		sort.Slice(images, func(i, j int) bool {
+			vi := versionToNumbers(images[i].Version)
+			vj := versionToNumbers(images[j].Version)
+			maxLen := len(vi)
+			if len(vj) > maxLen {
+				maxLen = len(vj)
+			}
+			for k := 0; k < maxLen; k++ {
+				viVal, vjVal := 0, 0
+				if k < len(vi) {
+					viVal = vi[k]
+				}
+				if k < len(vj) {
+					vjVal = vj[k]
+				}
+				if viVal != vjVal {
+					return viVal < vjVal
+				}
+			}
+			return false
+		})
+		result[slug] = images
+	}
+
+	return result, nil
+}
+
 // GetLatestDiscordImage returns the latest Discord image for an emoji slug as file path
 func (db *DB) GetLatestDiscordImage(slug string) (*string, error) {
 	startTime := time.Now()

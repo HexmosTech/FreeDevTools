@@ -1,4 +1,4 @@
-.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version
+.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis
 
 # Variables
 PORT ?= 4321
@@ -257,6 +257,13 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	else \
 		echo "Skipping sitemap generation."; \
 	fi
+	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
+		echo "Starting background static HTML deployment..."; \
+		SECTION="$(if $(STATIC_SECTION),$(STATIC_SECTION),all)"; \
+		nohup ./scripts/background_static_indexing.sh --section=$$SECTION > deployment.log 2>&1 & \
+	else \
+		echo "Skipping static HTML deployment."; \
+	fi
 
 start-prod-binary: ## Start production server using existing binary (no build)
 	@if [ ! -f bin/fdt-binary ]; then \
@@ -288,6 +295,13 @@ start-prod-binary: ## Start production server using existing binary (no build)
 	@echo "Test: curl http://localhost:4321/freedevtools/"
 	@echo "Use 'make stop-prod' to stop the server"
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
+	@if [ "$(SKIP_STATIC_DEPLOY)" != "1" ] && [ "$(SKIP_STATIC_DEPLOY)" != "true" ]; then \
+		echo "Starting background static HTML deployment..."; \
+		SECTION="$(if $(STATIC_SECTION),$(STATIC_SECTION),all)"; \
+		nohup ./scripts/background_static_indexing.sh --section=$$SECTION > deployment.log 2>&1 & \
+	else \
+		echo "Skipping static HTML deployment."; \
+	fi
 	@pmd logs fdt-4321 -f
 
 start-prod-profiling: generate build-css ## Start production server with CPU profiling enabled
@@ -941,3 +955,71 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
 	echo ""; \
 	echo "✅ Local search environment setup complete!"
  
+
+clear-static-cache: ## Clear the generated static/ directory
+	@echo "Clearing static/ directory..."
+	@rm -rf static/
+	@echo "✅ static/ directory cleared!"
+
+static-generation-mcp: generate ## Generate static pages for the MCP section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for MCP..."
+	@./static-gen --section mcp
+
+static-generation-man-pages: generate ## Generate static pages for the Man Pages section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for Man Pages..."
+	@./static-gen --section man-pages
+
+static-generation-png-icons: generate ## Generate static pages for the PNG Icons section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for PNG Icons..."
+	@./static-gen --section png-icons
+
+static-generation-svg-icons: generate ## Generate static pages for the SVG Icons section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for SVG Icons..."
+	@./static-gen --section svg-icons
+
+static-generation-tldr: generate ## Generate static pages for the TLDR section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@./static-gen --section tldr
+
+static-generation-emojis: generate ## Generate static pages for the Emojis section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@./static-gen --section emojis
+
+static-generation-cheatsheets: generate ## Generate static pages for the Cheatsheets section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@./static-gen --section cheatsheets
+
+static-generation-installerpedia: generate ## Generate static pages for the Installerpedia section
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@./static-gen --section installerpedia
+
+static-generation-all: generate ## Generate all static pages for all sections
+	@echo "Building static generator..."
+	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
+	@echo "Running static generator for all sections..."
+	@./static-gen --section all
+	@echo "✅ All static pages generated successfully!"
+
+static-generation-analysis: ## Analyze the size and filecount of the staticly generated files
+	@echo "Analyzing static/freedevtools/ directory..."
+	@if [ ! -d "static/freedevtools/" ]; then \
+		echo "❌ Directory static/freedevtools/ does not exist. Run generation first."; \
+		exit 1; \
+	fi
+	@echo "----------------------------------------"
+	@echo "Total Size: $$(du -sh static/freedevtools/ | cut -f1)"
+	@echo "File Count: $$(find static/freedevtools/ -type f | wc -l)"
+	@echo "----------------------------------------"
+
