@@ -620,7 +620,7 @@ sync-db-to-local:
 	@echo "⬇️  Syncing database files from Backblaze B2..."
 	@mkdir -p db/all_dbs
 	rclone sync \
-		b2-config:hexmos/freedevtools/content/db/ \
+		b2-config:hexmos-private/freedevtools/content/db/ \
 		db/all_dbs/ \
 		--checksum \
 		--retries 20 \
@@ -629,7 +629,7 @@ sync-db-to-local:
 		--progress \
 		&& \
 	rclone check \
-	  b2-config:hexmos/freedevtools/content/db/ \
+	  b2-config:hexmos-private/freedevtools/content/db/ \
 	  db/all_dbs/ \
 	  --checksum \
 	  --one-way
@@ -651,7 +651,7 @@ update-db-to-b2:
 	echo "⬆️  Uploading $$FILE_PATH to Backblaze B2..."; \
 	rclone copy \
 		"$$FILE_PATH" \
-		b2-config:hexmos/freedevtools/content/db/ \
+		b2-config:hexmos-private/freedevtools/content/db/ \
 		--checksum \
 		--retries 20 \
 		--low-level-retries 30 \
@@ -673,7 +673,7 @@ sync-public-to-local:
 	@echo "⬇️  Syncing public files from Backblaze B2..."
 	@sudo mkdir -p $(SYNC_PUBLIC_DEST)
 	rclone sync \
-		b2-config:hexmos/freedevtools/content/public/ \
+		b2-config:hexmos-private/freedevtools/content/public/ \
 		$(SYNC_PUBLIC_DEST) \
 		--checksum \
 		--retries 20 \
@@ -690,7 +690,7 @@ update-public-to-b2:
 	fi; \
 	rclone copy \
 		$(SYNC_PUBLIC_DEST) \
-		b2-config:hexmos/freedevtools/content/public/ \
+		b2-config:hexmos-private/freedevtools/content/public/ \
 		--checksum \
 		--retries 20 \
 		--low-level-retries 30 \
@@ -715,7 +715,7 @@ update-public-file-to-b2: ## Upload a specific public file to B2 (usage: make up
 	RELATIVE_PATH=$$(echo "$$FILE_PATH" | sed 's|^public/||'); \
 	rclone copy \
 		"$$FILE_PATH" \
-		"b2-config:hexmos/freedevtools/content/public/$$(dirname $$RELATIVE_PATH)/" \
+		"b2-config:hexmos-private/freedevtools/content/public/$$(dirname $$RELATIVE_PATH)/" \
 		--checksum \
 		--retries 20 \
 		--low-level-retries 30 \

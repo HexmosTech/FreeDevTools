@@ -246,7 +246,6 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
 
 
 func updateRepoMethodsOnly(db *installerpedia.DB, repoName string, methods interface{}) error {
-    // Generate the slug/hash exactly as your DB schema expects
     repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
     slugHash := hashStringToInt64(repoSlug)
     updatedAt := time.Now().UTC().Format(time.RFC3339)
@@ -256,12 +255,21 @@ func updateRepoMethodsOnly(db *installerpedia.DB, repoName string, methods inter
         return err
     }
 
-    _, err = db.GetConn().Exec(`
+    // Capture query and args for logging
+    update_ipm_method_query := `
         UPDATE ipm_data 
         SET installation_methods = ?, 
             updated_at = ?
         WHERE slug_hash = ?
-    `, string(methodsJSON), updatedAt, slugHash)
+    `
+    update_ipm_method_query_args := []interface{}{string(methodsJSON), updatedAt, slugHash}
+
+    _, err = db.GetConn().Exec(update_ipm_method_query, update_ipm_method_query_args...)
+    
+    // Add the log call here
+    if err == nil {
+        LogIPMQuery(update_ipm_method_query, update_ipm_method_query_args...)
+    }
 
     return err
 }

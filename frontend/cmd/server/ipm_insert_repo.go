@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"strings"
 	"time"
@@ -46,6 +48,38 @@ type InstallMethod struct {
 type Instruction struct {
 	Command string `json:"command"`
 	Meaning string `json:"meaning"`
+}
+
+var IPM_DB_NAME = "ipm-db-v6.db"
+var IPM_DB_PATH = filepath.Join(".", "db", "all_dbs", IPM_DB_NAME)
+// LogIPMQuery writes the executed SQL query to a .sql file matching the DB name.
+func LogIPMQuery(query string, args ...interface{}) {
+    // 1. Determine the .sql filename (ipm-db-v6.db -> ipm-db-v6.sql)
+    ext := filepath.Ext(IPM_DB_PATH)
+    sqlPath := strings.TrimSuffix(IPM_DB_PATH, ext) + ".sql"
+
+    // 2. Format the query with arguments (Basic representation)
+    formattedQuery := query
+    for _, arg := range args {
+        val := fmt.Sprintf("'%v'", arg)
+        // Replace the first occurrence of ? with the value
+        formattedQuery = strings.Replace(formattedQuery, "?", val, 1)
+    }
+
+    // 3. Prepare the entry with a semicolon and newline
+    entry := fmt.Sprintf("-- %s\n%s;\n\n", time.Now().Format(time.RFC3339), formattedQuery)
+
+    // 4. Append to file (Create if not exists)
+    f, err := os.OpenFile(sqlPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+    if err != nil {
+        log.Printf("⚠️  [SQL Log] Could not write to log file: %v", err)
+        return
+    }
+    defer f.Close()
+
+    if _, err := f.WriteString(entry); err != nil {
+        log.Printf("⚠️  [SQL Log] Error writing string: %v", err)
+    }
 }
 
 func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
@@ -141,70 +175,70 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bo
 	categoryHash := hashStringToInt64(p.RepoType)
 	updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
 
-	// JSON Helper
 	m := func(v interface{}) string {
-		if v == nil {
-			return ""
-		}
+		if v == nil { return "" }
 		b, _ := json.Marshal(v)
-		if string(b) == "null" {
-			return ""
-		}
+		if string(b) == "null" { return "" }
 		return string(b)
 	}
 
-	// Determine the SQL verb
 	verb := "INSERT OR IGNORE"
-	if overwrite {
-		verb = "INSERT OR REPLACE"
-	}
+	if overwrite { verb = "INSERT OR REPLACE" }
 
 	tx, err := db.GetConn().Begin()
-	if err != nil {
-		return false, err
-	}
+	if err != nil { return false, err }
 	defer tx.Rollback()
 
-	res, err := tx.Exec(fmt.Sprintf(`
-		%s INTO ipm_data (
-			slug_hash, repo, repo_slug, repo_type, category_hash, 
-			has_installation, is_deleted, prerequisites, 
-			installation_methods, post_installation, resources_of_interest, description, 
-			stars, keywords, updated_at
-		) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, verb), slugHash, p.Repo, repoSlug, p.RepoType, categoryHash,
+	// --- Query 1: Main Data ---
+	ipm_data_query := fmt.Sprintf(`
+        %s INTO ipm_data (
+            slug_hash, repo, repo_slug, repo_type, category_hash, 
+            has_installation, is_deleted, prerequisites, 
+            installation_methods, post_installation, resources_of_interest, description, 
+            stars, keywords, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, verb)
+	ipm_data_query_args := []interface{}{
+		slugHash, p.Repo, repoSlug, p.RepoType, categoryHash,
 		p.HasInstallation, m(p.Prerequisites), m(p.InstallationMethods),
-		m(p.PostInstallation), m(p.ResourcesOfInterest), p.Description, p.Stars, m(p.Keywords), updatedAt)
-	if err != nil {
-		return false, err
+		m(p.PostInstallation), m(p.ResourcesOfInterest), p.Description, p.Stars, m(p.Keywords), updatedAt,
 	}
+
+	res, err := tx.Exec(ipm_data_query, ipm_data_query_args...)
+	if err != nil { return false, err }
 
 	rowsAffected, _ := res.RowsAffected()
-	if rowsAffected == 0 {
-		return false, nil // Duplicate
-	}
+	if rowsAffected == 0 { return false, nil }
 
-	// 1. Run ipm_category update
-	_, err = tx.Exec(`INSERT INTO ipm_category (category_hash, repo_type, repo_count, updated_at)
+	// Log successful execution
+	LogIPMQuery(ipm_data_query, ipm_data_query_args...)
+
+	// --- Query 2: ipm_category update ---
+	ipm_category_query := `INSERT INTO ipm_category (category_hash, repo_type, repo_count, updated_at)
     SELECT category_hash, repo_type, COUNT(*), ? FROM ipm_data 
     WHERE is_deleted = 0 AND category_hash = ?
     GROUP BY category_hash
-    ON CONFLICT(category_hash) DO UPDATE SET repo_count=excluded.repo_count, updated_at=excluded.updated_at`, updatedAt, categoryHash)
-	if err != nil {
+    ON CONFLICT(category_hash) DO UPDATE SET repo_count=excluded.repo_count, updated_at=excluded.updated_at`
+	ipm_category_query_args := []interface{}{updatedAt, categoryHash}
+
+	if _, err = tx.Exec(ipm_category_query, ipm_category_query_args...); err != nil {
 		return false, fmt.Errorf("failed to update ipm_category: %w", err)
 	}
+	LogIPMQuery(ipm_category_query, ipm_category_query_args...)
 
-	// 2. Run overview update
-	_, err = tx.Exec(`INSERT INTO overview (id, total_count, last_updated_at)
+	// --- Query 3: overview update ---
+	ipm_overview_query := `INSERT INTO overview (id, total_count, last_updated_at)
     SELECT 1, COUNT(*), ? FROM ipm_data WHERE is_deleted = 0
-    ON CONFLICT(id) DO UPDATE SET total_count=excluded.total_count, last_updated_at=excluded.last_updated_at`, updatedAt)
-	if err != nil {
+    ON CONFLICT(id) DO UPDATE SET total_count=excluded.total_count, last_updated_at=excluded.last_updated_at`
+	ipm_overview_query_args := []interface{}{updatedAt}
+
+	if _, err = tx.Exec(ipm_overview_query, ipm_overview_query_args...); err != nil {
 		return false, fmt.Errorf("failed to update overview: %w", err)
 	}
+	LogIPMQuery(ipm_overview_query, ipm_overview_query_args...)
 
 	return true, tx.Commit()
 }
-
 func hashStringToInt64(s string) int64 {
 	h := sha256.Sum256([]byte(s))
 	return int64(binary.BigEndian.Uint64(h[:8]))
@@ -393,20 +427,25 @@ func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMeth
         return err
     }
 
-    _, err = tx.Exec(`
+    // Prepare Query and Args for Logging
+    ipm_update_method_query := `
         UPDATE ipm_data 
         SET installation_methods = ?, 
             updated_at = ?
         WHERE slug_hash = ?
-    `, string(updatedJson), updatedAt, slugHash)
+    `
+    ipm_update_method_query_args := []interface{}{string(updatedJson), updatedAt, slugHash}
 
+    _, err = tx.Exec(ipm_update_method_query, ipm_update_method_query_args...)
     if err != nil {
         return err
     }
 
+    // Log the update query
+    LogIPMQuery(ipm_update_method_query, ipm_update_method_query_args...)
+
     return tx.Commit()
 }
-
 
 func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, error) {
     repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
