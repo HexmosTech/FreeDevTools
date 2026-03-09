@@ -48,7 +48,7 @@ func GenerateSitemapIndexXML(db *mcp_db.DB) (string, error) {
 <?xml-stylesheet type="text/xsl" href="/freedevtools/sitemap.xsl"?>
 <sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <sitemap>
-    <loc>%s/mcp_pages/sitemap.xml</loc>
+    <loc>%s/mcp-pages/sitemap.xml</loc>
     <lastmod>%s</lastmod>
   </sitemap>
 `, siteURL, lastModIndex)
@@ -334,7 +334,7 @@ func GeneratePaginationSitemapXML(db *mcp_db.DB) (string, error) {
 func HandlePaginationSitemap(w http.ResponseWriter, r *http.Request, db *mcp_db.DB) {
 	w.Header().Set("Content-Type", "application/xml")
 	// Try serving static file
-	staticFile := "sitemaps/mcp_pages/sitemap.xml"
+	staticFile := "sitemaps/mcp-pages/sitemap.xml"
 	if _, err := os.Stat(staticFile); err == nil {
 		http.ServeFile(w, r, staticFile)
 		return
