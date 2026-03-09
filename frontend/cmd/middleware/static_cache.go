@@ -41,7 +41,8 @@ func (rw *responseWriterWrapper) Write(b []byte) (int, error) {
 // shouldSkipCache returns true if the incoming request path should bypass the static cache
 func shouldSkipCache(path string) bool {
 	if strings.Contains(path, "/pro/") || strings.Contains(path, "/api/") ||
-		strings.Contains(path, "/static/") || strings.Contains(path, "/public/") {
+		strings.Contains(path, "/static/") || strings.Contains(path, "/public/") || 
+		strings.Contains(path, "sitemap") {
 		return true
 	}
 
