@@ -6,15 +6,20 @@ import (
 	"os"
 	"strings"
 
-	_ "github.com/mattn/go-sqlite3"
 	"fdt-templ/internal/db/svg_icons"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
 	log.SetOutput(os.Stdout)
 	log.SetFlags(0)
 
-	db, err := sql.Open("sqlite3", svg_icons.GetDBPath())
+	dbPath, err := svg_icons.GetDBPath()
+	if err != nil {
+		log.Fatalf("Error getting DB path: %v", err)
+	}
+	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
 	}
@@ -30,7 +35,7 @@ func main() {
 
 	// Check if icon exists with exact name
 	log.Printf("1. Checking for icon with name: '%s' in category: '%s'", iconName, category)
-	
+
 	// Get cluster first
 	var clusterID int64
 	var clusterSourceFolder string
@@ -73,7 +78,7 @@ func main() {
 			}
 			found = true
 			log.Printf("   Found: ID=%d, name='%s', cluster='%s'", id, name, cluster)
-			
+
 			// Check if name contains problematic characters
 			if strings.Contains(name, "/") || strings.Contains(name, "linear-gradient") {
 				log.Printf("      ⚠️  WARNING: Icon name contains '/' or 'linear-gradient' - this is malformed!")
@@ -131,4 +136,3 @@ func main() {
 	log.Println("2. The icon.URL field contains malformed data")
 	log.Println("3. A link was generated incorrectly from SVG/CSS content")
 }
-

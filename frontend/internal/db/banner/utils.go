@@ -2,12 +2,13 @@ package banner
 
 import (
 	"database/sql"
-	"log"
-	"path/filepath"
+	"fdt-templ/internal/config"
+	"fmt"
 	"sync"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 var (
@@ -15,22 +16,43 @@ var (
 	dbOnce     sync.Once
 )
 
+func NewDB(dbPath string) (*sql.DB, error) {
+	conn, err := sql.Open("sqlite3", dbPath+"?mode=ro")
+	if err != nil {
+		return nil, fmt.Errorf("failed to open banner database: %w", err)
+	}
+
+	// Set connection pool settings
+	conn.SetMaxOpenConns(1)
+	conn.SetMaxIdleConns(1)
+	conn.SetConnMaxLifetime(time.Hour)
+
+	if err := conn.Ping(); err != nil {
+		return nil, fmt.Errorf("failed to ping banner database: %w", err)
+	}
+
+	log.Info().Msgf("Successfully connected to Banner DB at %s", dbPath)
+	return conn, nil
+}
+
 // GetDB returns a singleton database connection
 func GetDB() (*sql.DB, error) {
-	var err error
+	var initErr error
 	dbOnce.Do(func() {
-		dbPath := filepath.Join("db", "all_dbs", "banner-db.db")
-		dbInstance, err = sql.Open("sqlite3", dbPath+"?mode=ro")
-		if err != nil {
-			log.Printf("Failed to open banner database: %v", err)
+		// Ensure config is loaded
+		if e := config.LoadDBToml(); e != nil {
+			initErr = fmt.Errorf("failed to load db.toml for Banner DB: %w", e)
 			return
 		}
-		// Set connection pool settings
-		dbInstance.SetMaxOpenConns(1)
-		dbInstance.SetMaxIdleConns(1)
-		dbInstance.SetConnMaxLifetime(time.Hour)
+		dbPath := config.DBConfig.BannerDB
+		if dbPath == "" {
+			initErr = fmt.Errorf("Banner DB path is empty in db.toml")
+			return
+		}
+
+		dbInstance, initErr = NewDB(dbPath)
 	})
-	return dbInstance, err
+	return dbInstance, initErr
 }
 
 // CloseDB closes the database connection
@@ -39,4 +61,3 @@ func CloseDB() {
 		dbInstance.Close()
 	}
 }
-

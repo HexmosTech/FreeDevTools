@@ -2,11 +2,15 @@ package installerpedia
 
 import (
 	"database/sql"
-	"path/filepath"
+	"fmt"
+
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/rs/zerolog/log"
 )
-var IPM_DB_FILE = "ipm-db-v6.db"
+
+// Configuration resolution happens in GetDB() and GetWriteDB() to avoid startup panics
 
 type DB struct {
 	conn *sql.DB
@@ -45,13 +49,11 @@ func ParseRepoListRow(row RawRepoListRow) RepoData {
 }
 
 // -------------------------
-// DB init 
+// DB init
 // -------------------------
-func GetDB() (*DB, error) {
-	dbPath := filepath.Join(".", "db", "all_dbs", IPM_DB_FILE)
-
+func NewDB(dbPath string) (*DB, error) {
 	// Match man_pages read-only + immutable configuration
-	connStr := "file:" + dbPath + "?mode=ro&_immutable=1"
+	connStr := dbPath + "?mode=ro&_immutable=1"
 	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, err
@@ -69,23 +71,47 @@ func GetDB() (*DB, error) {
 		return nil, err
 	}
 
+	log.Info().Msgf("Successfully connected to Installerpedia DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
-// GetWriteDB opens the database with write permissions for the API.
-func GetWriteDB() (*DB, error) {
-    dbPath := filepath.Join(".", "db", "all_dbs", IPM_DB_FILE)
+func GetDB() (*DB, error) {
+	if config.DBConfig == nil {
+		if err := config.LoadDBToml(); err != nil {
+			return nil, fmt.Errorf("failed to load db.toml for Installerpedia DB: %w", err)
+		}
+	}
+	dbPath := config.DBConfig.IpmDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("IPM DB path is empty in db.toml")
+	}
 
-    // Remove mode=ro and add WAL for concurrent write/read
-    connStr := "file:" + dbPath + "?_journal=WAL&_sync=NORMAL"
-    conn, err := sql.Open("sqlite3", connStr)
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Installerpedia DB: %w", err)
+	}
+	return db, nil
+}
+
+func GetWriteDB() (*DB, error) {
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Installerpedia DB: %w", err)
+	}
+	dbPath := config.DBConfig.IpmDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("IPM DB path is empty in db.toml")
+	}
+
+	// Remove mode=ro and add WAL for concurrent write/read
+	connStr := dbPath + "?_journal=WAL&_sync=NORMAL"
+	conn, err := sql.Open("sqlite3", connStr)
 	if err != nil {
 		return nil, err
 	}
 
-    // Standard write-safe pool settings
+	// Standard write-safe pool settings
 	conn.SetMaxOpenConns(1) // SQLite handles writes best with a single connection
-	conn.SetMaxIdleConns(1)    // Fix: replaced the undefined method
+	conn.SetMaxIdleConns(1)
 	if err := conn.Ping(); err != nil {
 		return nil, err
 	}
@@ -95,19 +121,19 @@ func GetWriteDB() (*DB, error) {
 
 // GetConn exported helper to let the API use the internal connection
 func (db *DB) GetConn() *sql.DB {
-    return db.conn
+	return db.conn
 }
 
 // -------------------------
 // Categories
 // -------------------------
 func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
-    // Define the list of allowed categories
-    fixedCategories := []string{
-        "tool", "library", "cli", "server", "framework",
-        "plugin", "mobile", "desktop", "sdk", "sample",
-        "api", "container", "graphics",
-    }
+	// Define the list of allowed categories
+	fixedCategories := []string{
+		"tool", "library", "cli", "server", "framework",
+		"plugin", "mobile", "desktop", "sdk", "sample",
+		"api", "container", "graphics",
+	}
 
     // Use the IN clause to filter at the source
     // Note: If this list grows huge, consider a separate table or a join,
@@ -119,17 +145,17 @@ func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
         ORDER BY repo_count DESC
     `
 
-    // Convert slice to interface slice for the Query method
-    args := make([]any, len(fixedCategories))
-    for i, v := range fixedCategories {
-        args[i] = v
-    }
+	// Convert slice to interface slice for the Query method
+	args := make([]any, len(fixedCategories))
+	for i, v := range fixedCategories {
+		args[i] = v
+	}
 
-    rows, err := db.conn.Query(query, args...)
-    if err != nil {
-        return nil, err
-    }
-    defer rows.Close()
+	rows, err := db.conn.Query(query, args...)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
     var result []RepoCategory
     for rows.Next() {
@@ -142,6 +168,7 @@ func (db *DB) GetRepoCategories() ([]RepoCategory, error) {
     
     return result, nil
 }
+
 // -------------------------
 // Overview
 // -------------------------
@@ -333,7 +360,6 @@ func (db *DB) GetRepo(hashID int64) (*RepoData, error) {
 	parsed := ParseRepoRow(raw)
 	return &parsed, nil
 }
-
 
 // -------------------------
 // Row parsing

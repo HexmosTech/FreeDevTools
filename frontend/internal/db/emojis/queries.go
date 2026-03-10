@@ -6,14 +6,14 @@ import (
 	"database/sql"
 	"encoding/binary"
 	"fmt"
-	"log"
-	"path/filepath"
 	"strings"
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 // detectMimeType detects MIME type from buffer content (matching Astro's detectMime)
@@ -105,6 +105,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to Emoji DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -473,13 +474,19 @@ func (db *DB) GetSitemapEmojis() ([]SitemapEmoji, error) {
 
 // GetDB returns a database instance using the default path
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
-	// Resolve to absolute path
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, err
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Emoji DB: %w", err)
 	}
-	return NewDB(absPath)
+	dbPath := config.DBConfig.EmojiDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Emoji DB path is empty in db.toml")
+	}
+
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Emoji DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetEmojiCategoryUpdatedAt returns the updated_at timestamp for a category

@@ -140,19 +140,14 @@ func FetchSingleRemoteMetadata(ctx context.Context, dbName string) (*model.Metad
 		return nil, fmt.Errorf("failed to create local version dir: %w", err)
 	}
 
-	// Use RcloneCopy (it takes a file source and a directory destination usually, but let's check RcloneCopy impl)
-	// RcloneCopy signature: func RcloneCopy(ctx context.Context, src, dst, description string, quiet bool, onProgress func(model.RcloneProgress)) error
-	// If src is a file, dst can be a directory or a file? rclone copy usually expects dest to be a directory if source is a file?
-	// Actually rclone copy src dest. If dest is existing dir, it puts it there.
-	// Our RcloneCopy wraps `rclone copy`.
+	// Remove old local file if any, to avoid reading stale data if fetch fails
+	_ = os.Remove(localFile)
 
-	// To be safe and specific, we can use `copyto` via direct exec or trust `RcloneCopy` if we pass the full remote path.
-	// RcloneCopy uses `rclone copy`.
-	// "Copy the source to the destination. Doesn't transfer unchanged files."
-
-	// Let's use RcloneCopy with quiet=true.
-	if err := RcloneCopy(ctx, "copy", remotePath, localDir, "Fetching metadata", true, nil); err != nil {
-		return nil, fmt.Errorf("failed to fetch remote metadata: %w", err)
+	// We use exec.CommandContext directly to avoid the heavy retries in RcloneCopy.
+	// For new databases, the remote metadata file won't exist, and we don't want to hang.
+	cmd := exec.CommandContext(ctx, "rclone", "copyto", remotePath, localFile, "--retries", "1", "--low-level-retries", "1")
+	if err := cmd.Run(); err != nil {
+		LogInfo("FetchSingleRemoteMetadata: fetch failed (expected if new DB): %v", err)
 	}
 
 	// Read the file

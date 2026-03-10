@@ -45,4 +45,3 @@ Before any action, `core.CheckUploadSafety` performs a critical validation to pr
 
 1.  **Unlock**: Removes the `.lock` file from B2.
 2.  **Notify**: Sends a completion webhook (Descriptor).
-
