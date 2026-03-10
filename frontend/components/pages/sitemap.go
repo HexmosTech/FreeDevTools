@@ -26,7 +26,6 @@ func HandleRootSitemap(w http.ResponseWriter, r *http.Request) {
 		"/man-pages/sitemap.xml",
 		"/installerpedia/sitemap.xml",
 		"/installerpedia_pages/sitemap.xml",
-		"/temporary/sitemap.xml",
 	}
 
 	w.Header().Set("Content-Type", "application/xml")

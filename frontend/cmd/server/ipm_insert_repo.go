@@ -396,7 +396,7 @@ func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
 func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
     repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
     slugHash := hashStringToInt64(repoSlug)
-    updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
+    updatedAt := time.Now().UTC().Format(time.RFC3339)
 
     tx, err := db.GetConn().Begin()
     if err != nil {
