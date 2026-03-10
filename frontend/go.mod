@@ -3,7 +3,7 @@ module fdt-templ
 go 1.24.4
 
 require (
-	github.com/a-h/templ v0.3.960
+	github.com/a-h/templ v0.3.1001
 	github.com/mattn/go-sqlite3 v1.14.32
 )
 
