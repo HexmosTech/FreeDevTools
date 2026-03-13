@@ -15,7 +15,7 @@ $OS = "windows"
 $EXT = ".exe"
 
 $TARGET = "$INSTALL_DIR\$APPNAME$EXT"
-$DOWNLOAD_URL = "https://github.com/HexmosTech/freeDevTools/releases/latest/download/ipm-$OS-$ARCH$EXT"
+$DOWNLOAD_URL = "https://github.com/HexmosTech/Installerpedia/releases/latest/download/ipm-$OS-$ARCH$EXT"
 
 ###################################
 # Ensure install dir exists

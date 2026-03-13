@@ -24,7 +24,7 @@ if [[ "$OS" == "mingw"* || "$OS" == "cygwin"* || "$OS" == "msys"* ]]; then
 fi
 
 TARGET="$INSTALL_DIR/$APPNAME$EXT"
-DOWNLOAD_URL="https://github.com/HexmosTech/freeDevTools/releases/latest/download/ipm-$OS-$ARCH$EXT"
+DOWNLOAD_URL="https://github.com/HexmosTech/Installerpedia/releases/latest/download/ipm-$OS-$ARCH$EXT"
 
 ###################################
 # On Linux/macOS, prompt for sudo upfront
