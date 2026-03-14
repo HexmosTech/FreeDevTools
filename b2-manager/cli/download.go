@@ -36,3 +36,33 @@ func RunCLIFetchDBToml() error {
 	fmt.Printf("db.toml downloaded to %s\n", localPath)
 	return nil
 }
+
+// RunCLIDownloadLatestDB checks the status of the database and downloads the latest version if outdated.
+// It loops until the database is up_to_date or ready_to_upload.
+func RunCLIDownloadLatestDB(dbName string) error {
+	for {
+		statusStr, err := RunCLIStatus(dbName, false)
+		if err != nil {
+			return fmt.Errorf("failed to get status for %s: %w", dbName, err)
+		}
+
+		if statusStr == "up_to_date" || statusStr == "ready_to_upload" || statusStr == "bump_and_upload" {
+			core.LogInfo("Database %s is %s. Continuing to update stage.", dbName, statusStr)
+			// Print for Python
+			fmt.Printf("Database %s is %s. Continuing to update stage.\n", dbName, statusStr)
+			break
+		} else if statusStr == "outdated_db" || statusStr == "outdated_version" {
+			core.LogInfo("Database %s is outdated (%s). Downloading latest version...", dbName, statusStr)
+			fmt.Printf("Database %s is outdated. Downloading latest version...\n", dbName)
+
+			if err := RunCLIDownload(dbName); err != nil {
+				return fmt.Errorf("failed to download latest for %s: %w", dbName, err)
+			}
+		} else {
+			core.LogInfo("Warning: Unexpected status '%s' for %s.", statusStr, dbName)
+			fmt.Printf("Warning: Unexpected status '%s' for %s.\n", statusStr, dbName)
+			break
+		}
+	}
+	return nil
+}

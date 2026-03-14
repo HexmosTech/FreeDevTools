@@ -36,42 +36,10 @@ def main():
     status = db_status(DB_NAME)
     print(status)
     
-    # If status is up_to_date, then do nothing.
-    if status == "up_to_date":
-        print(f"Info: {DB_NAME} is up to date, skipping changeset.")
-        return
-
-    # If status is outdated_version, then download db from b2.
-    elif status == "outdated_version":
-        latest_db_name = get_latest_db(DB_NAME)
-        db_download(latest_db_name)
-        copy(DB_NAME, "changeset", "sql")
-        inserted_queries(DB_NAME, new_db_name)
-        stop_server()
-        new_db_name = bump_db_version(latest_db_name)
-        db_upload(new_db_name)
-        start_server()
-        
-    # If status is bump_and_upload, then bump and upload db to b2.
+    if status == "ready_to_upload":
+        print("Ready to upload")
     elif status == "bump_and_upload":
-        stop_server()
-        copy(DB_NAME, "changeset", "db")
-        new_db_name = bump_db_version(DB_NAME)
-        print(new_db_name)
-        start_server()
-        db_upload(new_db_name)
-
-    # If status is unidentified, then warn the user.
-    elif status == "unidentified":
-        print(f"Warning: {DB_NAME} has an unidentified status, skipping changeset.")
-
-    # If status is ready_to_upload, then upload db to b2.
-    elif status == "ready_to_upload":
-        stop_server()
-        copy(DB_NAME, "changeset", "db")
-        print(DB_NAME)
-        start_server()
-        db_upload(DB_NAME)
-
+        print("Needs bumping before upload")
+    
 if __name__ == "__main__":
     main()

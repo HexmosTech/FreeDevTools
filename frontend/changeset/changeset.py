@@ -4,6 +4,7 @@ import subprocess
 import os
 import sys
 import shutil
+import json
 
 def get_b2m_bin():
     script_dir = os.path.dirname(os.path.abspath(__file__))
@@ -25,8 +26,9 @@ def db_status(db_name):
     print(f"Executing status check for: {db_name}")
     try:
         b2m_bin = get_b2m_bin()
-        result = subprocess.run([b2m_bin, "status", db_name], capture_output=True, text=True, check=True)
-        return result.stdout.strip()
+        result = subprocess.run([b2m_bin, "--json", "status", db_name], capture_output=True, text=True, check=True)
+        data = json.loads(result.stdout)
+        return data.get("status", "unidentified")
     except subprocess.CalledProcessError as e:
         print(f"Error checking status for {db_name}: {e}")
         return None
@@ -42,10 +44,12 @@ def db_upload(db_name):
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
 
-        cmd = [b2m_bin, "upload", db_name, script_name]
+        cmd = [b2m_bin, "--json", "upload", db_name, script_name]
         subprocess.run(cmd, check=True)
+        return True
     except subprocess.CalledProcessError as e:
         print(f"Error uploading {db_name}: {e}")
+        return False
 
 def db_download(db_name):
     """
@@ -58,7 +62,7 @@ def db_download(db_name):
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
 
-        cmd = [b2m_bin, "download", db_name, script_name]
+        cmd = [b2m_bin, "--json", "download", db_name, script_name]
         subprocess.run(cmd, check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error downloading {db_name}: {e}")
@@ -70,7 +74,7 @@ def fetch_db_toml():
     print("Executing: fetch-db-toml")
     try:
         b2m_bin = get_b2m_bin()
-        subprocess.run([b2m_bin, "fetch-db-toml"], check=True)
+        subprocess.run([b2m_bin, "--json", "fetch-db-toml"], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error fetching db.toml: {e}")
 
@@ -119,7 +123,7 @@ def copy(src_name, dst, file_type):
     try:
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        subprocess.run([b2m_bin, "copy", src_name, dst, file_type, script_name], check=True)
+        subprocess.run([b2m_bin, "--json", "copy", src_name, dst, file_type, script_name], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error copying {file_type} to {dst}: {e}")
 
@@ -136,14 +140,14 @@ def handle_query(sql_name, db_name):
         script_name = get_script_name()
         
         print(f"Executing handle-query {sql_name} on {db_name}")
-        subprocess.run([b2m_bin, "handle-query", sql_name, db_name, script_name], check=True)
+        subprocess.run([b2m_bin, "--json", "handle-query", sql_name, db_name, script_name], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error handling query: {e}")
 
 def notify(msg):
     try:
         b2m_bin = get_b2m_bin()
-        subprocess.run([b2m_bin, "notify", msg], check=True)
+        subprocess.run([b2m_bin, "--json", "notify", msg], check=True)
     except subprocess.CalledProcessError as e:
         print(f"Error sending notification: {e}")
 
@@ -151,15 +155,17 @@ def get_local_db(short_name):
     try:
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        result = subprocess.run([b2m_bin, "get-version", short_name, script_name], capture_output=True, text=True, check=True)
+        result = subprocess.run([b2m_bin, "--json", "get-version", short_name, script_name], capture_output=True, text=True, check=True)
         
+        # We might have log lines printed before the JSON output
         lines = result.stdout.strip().split('\n')
-        local_db_name = lines[-1].strip()
+        # The last line should be the JSON data
+        data = json.loads(lines[-1].strip())
+        local_db_name = data.get("version_db_name")
         print(f"Local DB name for {short_name} is {local_db_name}")
         return local_db_name
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, json.JSONDecodeError, IndexError) as e:
         print(f"Error getting local db version for {short_name}: {e}")
-        print(f"B2M Error Output: {e.stderr}")
         return None
 
 def get_latest_db(db_name):
@@ -168,13 +174,16 @@ def get_latest_db(db_name):
             db_name += '.db'
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        result = subprocess.run([b2m_bin, "get-latest", db_name, script_name], capture_output=True, text=True, check=True)
+        result = subprocess.run([b2m_bin, "--json", "get-latest", db_name, script_name], capture_output=True, text=True, check=True)
         
+        # B2M logs to stdout with [INFO] and the actual new db name is printed on a raw line at the end
         lines = result.stdout.strip().split('\n')
-        latest_db_name = lines[-1].strip()
+        # The last line should be the JSON data
+        data = json.loads(lines[-1].strip())
+        latest_db_name = data.get("latest_db_name", db_name)
         print(f"Latest version for {db_name} is {latest_db_name}")
         return latest_db_name
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, json.JSONDecodeError, IndexError) as e:
         print(f"Error getting latest db version: {e}")
         return db_name
 
@@ -184,17 +193,37 @@ def bump_db_version(db_name):
             db_name += '.db'
         b2m_bin = get_b2m_bin()
         script_name = get_script_name()
-        result = subprocess.run([b2m_bin, "bump-db-version", db_name, script_name], capture_output=True, text=True, check=True)
+        result = subprocess.run([b2m_bin, "--json", "bump-db-version", db_name, script_name], capture_output=True, text=True, check=True)
         
         # B2M logs to stdout with [INFO] and the actual new db name is printed on a raw line at the end
         lines = result.stdout.strip().split('\n')
-        # The last line should be the new db name
-        new_db_name = lines[-1].strip()
+        # The last line should be the JSON data
+        data = json.loads(lines[-1].strip())
+        new_db_name = data.get("bumped_db_name", db_name)
         print(f"Bumped {db_name} to {new_db_name}")
         return new_db_name
-    except subprocess.CalledProcessError as e:
+    except (subprocess.CalledProcessError, json.JSONDecodeError, IndexError) as e:
         print(f"Error bumping db version: {e}")
         return db_name
+
+def download_latest_db(db_name, script_name=None):
+    """
+    Check the status of the database and download the latest version if outdated.
+    Loops until the database is up_to_date.
+    """
+    if not db_name.endswith('.db'):
+        db_name += '.db'
+    print(f"Executing: download-latest-db for {db_name}")
+    try:
+        b2m_bin = get_b2m_bin()
+        if not script_name:
+            script_name = get_script_name()
+        subprocess.run([b2m_bin, "--json", "download-latest-db", db_name, script_name], check=True)
+        return db_name, None
+    except subprocess.CalledProcessError as e:
+        err_msg = f"Error checking and downloading latest db for {db_name}: {e}"
+        print(err_msg)
+        return None, err_msg
 
 # Initialize logging automatically when imported
 setup_logging()

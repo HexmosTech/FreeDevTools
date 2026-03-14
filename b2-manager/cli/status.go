@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
@@ -27,7 +28,7 @@ import (
 // | Any           | Up To Date        | up_to_date         |
 // | Any           | Ready to Upload   | unidentified    |
 // | Any           | Unknown/Other     | unidentified       |
-func RunCLIStatus(dbName string) (string, error) {
+func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 	ctx := context.Background()
 
 	// Truncate WAL for matching DBs before fetching status
@@ -69,36 +70,49 @@ func RunCLIStatus(dbName string) (string, error) {
 			core.LogInfo("DEBUG: isOutdated=%v", isOutdated)
 			core.LogInfo("DEBUG: versionRole=%s", versionRole)
 
+			var statusStr string
 			if versionRole == "New Bump" && isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'New Bump' && isReadyToUpload")
-				return "ready_to_upload", nil
+				statusStr = "ready_to_upload"
 			} else if versionRole == "Latest" && isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'Latest' && isReadyToUpload")
-				return "bump_and_upload", nil
+				statusStr = "bump_and_upload"
 			} else if versionRole == "Old Version" {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'Old Version'")
-				return "outdated_version", nil
+				statusStr = "outdated_version"
 			} else if info.StatusCode == model.StatusCodeUpToDate {
-				core.LogInfo("DEBUG: Hit branch -> info.StatusCode == model.StatusCodeUpToDate")
-				return "up_to_date", nil
+				statusStr = "up_to_date"
 			} else if isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> isReadyToUpload fallback")
-				return "unidentified", nil
+				statusStr = "unidentified"
 			} else {
-				core.LogInfo("DEBUG: Hit branch -> unidentified fallback")
-				return "unidentified", nil // fallback for safety
+				statusStr = "unidentified" // fallback for safety
 			}
+
+			if useJSON {
+				resp := struct {
+					Status      string `json:"status"`
+					DBName      string `json:"db_name"`
+					StatusCode  string `json:"status_code"`
+					VersionRole string `json:"version_role"`
+				}{statusStr, info.DB.Name, info.StatusCode, versionRole}
+				b, _ := json.MarshalIndent(resp, "", "  ")
+				return string(b), nil
+			}
+			return statusStr, nil
 		}
 	}
 
 	if !found {
+		if useJSON {
+			return `{"status":"unidentified"}`, nil
+		}
 		return "unidentified", nil
+	}
+	if useJSON {
+		return `{"status":"unidentified"}`, nil
 	}
 	return "unidentified", nil
 }
 
 // RunCLIGetLatest finds the "Latest" version of a database given its base name or current name, and prints it natively for python
-func RunCLIGetLatest(dbName string) error {
+func RunCLIGetLatest(dbName string, useJSON bool) error {
 	ctx := context.Background()
 
 	statusData, err := core.FetchDBStatusData(ctx, nil)
@@ -127,19 +141,37 @@ func RunCLIGetLatest(dbName string) error {
 
 		if baseName == reqBaseName {
 			if roles[info.DB.Name] == "Latest" {
-				fmt.Println(info.DB.Name)
+				if useJSON {
+					resp := struct {
+						LatestDBName string `json:"latest_db_name"`
+						BaseName     string `json:"base_name"`
+					}{info.DB.Name, baseName}
+					b, _ := json.MarshalIndent(resp, "", "  ")
+					fmt.Println(string(b))
+				} else {
+					fmt.Println(info.DB.Name)
+				}
 				return nil
 			}
 		}
 	}
 
 	// Fallback to original dbName if latest not found
-	fmt.Println(dbName)
+	if useJSON {
+		resp := struct {
+			LatestDBName string `json:"latest_db_name"`
+			BaseName     string `json:"base_name"`
+		}{dbName, reqBaseName}
+		b, _ := json.MarshalIndent(resp, "", "  ")
+		fmt.Println(string(b))
+	} else {
+		fmt.Println(dbName)
+	}
 	return nil
 }
 
 // RunCLIGetVersion reads db.toml to find the full filename for a given short name and prints it natively for python
-func RunCLIGetVersion(shortName string) error {
+func RunCLIGetVersion(shortName string, useJSON bool) error {
 	tomlPath := model.AppConfig.FrontendTomlPath
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
 		return fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
@@ -170,7 +202,16 @@ func RunCLIGetVersion(shortName string) error {
 		return fmt.Errorf("short name '%s' is empty or invalid in db.toml", shortName)
 	}
 
-	fmt.Println(val)
+	if useJSON {
+		resp := struct {
+			VersionDBName string `json:"version_db_name"`
+			ShortName     string `json:"short_name"`
+		}{val, shortName}
+		b, _ := json.MarshalIndent(resp, "", "  ")
+		fmt.Println(string(b))
+	} else {
+		fmt.Println(val)
+	}
 	return nil
 }
 

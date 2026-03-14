@@ -2,6 +2,7 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
@@ -24,6 +25,12 @@ func HandleCLI() {
 		Name:    "b2m",
 		Usage:   "Backblaze B2 Database Manager",
 		Version: model.AppConfig.ToolVersion,
+		Flags: []cli.Flag{
+			&cli.BoolFlag{
+				Name:  "json",
+				Usage: "Output command results in JSON format",
+			},
+		},
 		Commands: []*cli.Command{
 			{
 				Name:     "generate-hash",
@@ -149,7 +156,8 @@ func HandleCLI() {
 						return cli.Exit("Usage: b2m status <db_name>", 1)
 					}
 					dbName := cCtx.Args().First()
-					statusStr, err := RunCLIStatus(dbName)
+					useJSON := cCtx.Bool("json")
+					statusStr, err := RunCLIStatus(dbName, useJSON)
 					if err != nil {
 						return cli.Exit("", 1) // don't log generic error to Python script output
 					}
@@ -174,6 +182,10 @@ func HandleCLI() {
 					if err := RunCLICopy(srcName, dst, fileType, scriptName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error in copy: %v", err), 1)
 					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"copy"}`)
+					}
 					return nil
 				},
 			},
@@ -192,6 +204,10 @@ func HandleCLI() {
 					}
 					if err := RunCLIUpload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error uploading database: %v", err), 1)
+					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"upload"}`)
 					}
 					return nil
 				},
@@ -212,6 +228,33 @@ func HandleCLI() {
 					if err := RunCLIDownload(dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error downloading database: %v", err), 1)
 					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"download"}`)
+					}
+					return nil
+				},
+			},
+			{
+				Name:     "download-latest-db",
+				Category: "Changeset Commands",
+				Usage:    "Check status and loop to download latest version of database (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return cli.Exit("Usage: b2m download-latest-db <db_name> [script_name]", 1)
+					}
+					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						scriptName := cCtx.Args().Get(1)
+						config.UpdateForScript(scriptName)
+					}
+					if err := RunCLIDownloadLatestDB(dbName); err != nil {
+						return cli.Exit(fmt.Sprintf("Error looping to download latest database: %v", err), 1)
+					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"download-latest-db"}`)
+					}
 					return nil
 				},
 			},
@@ -222,6 +265,10 @@ func HandleCLI() {
 				Action: func(cCtx *cli.Context) error {
 					if err := RunCLIFetchDBToml(); err != nil {
 						return cli.Exit(fmt.Sprintf("Error fetching db.toml: %v", err), 1)
+					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"fetch-db-toml"}`)
 					}
 					return nil
 				},
@@ -244,7 +291,18 @@ func HandleCLI() {
 					if err != nil {
 						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
-					fmt.Println(newDBName)
+
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						resp := struct {
+							BumpedDBName string `json:"bumped_db_name"`
+							BaseDBName   string `json:"base_db_name"`
+						}{newDBName, dbName}
+						b, _ := json.MarshalIndent(resp, "", "  ")
+						fmt.Println(string(b))
+					} else {
+						fmt.Println(newDBName)
+					}
 					return nil
 				},
 			},
@@ -266,6 +324,10 @@ func HandleCLI() {
 					if err := RunCLIHandleQuery(sqlName, dbName); err != nil {
 						return cli.Exit(fmt.Sprintf("Error executing queries: %v", err), 1)
 					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"handle-query"}`)
+					}
 					return nil
 				},
 			},
@@ -282,7 +344,8 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := RunCLIGetVersion(shortName); err != nil {
+					useJSON := cCtx.Bool("json")
+					if err := RunCLIGetVersion(shortName, useJSON); err != nil {
 						return cli.Exit(fmt.Sprintf("Error getting version: %v", err), 1)
 					}
 					return nil
@@ -301,7 +364,8 @@ func HandleCLI() {
 						scriptName := cCtx.Args().Get(1)
 						config.UpdateForScript(scriptName)
 					}
-					if err := RunCLIGetLatest(dbName); err != nil {
+					useJSON := cCtx.Bool("json")
+					if err := RunCLIGetLatest(dbName, useJSON); err != nil {
 						return cli.Exit(fmt.Sprintf("Error getting latest DB version: %v", err), 1)
 					}
 					return nil
@@ -319,6 +383,10 @@ func HandleCLI() {
 					msg := strings.Join(cCtx.Args().Slice(), " ")
 					if err := RunCLINotify(msg); err != nil {
 						return cli.Exit(fmt.Sprintf("Error sending notification: %v", err), 1)
+					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"notify"}`)
 					}
 					return nil
 				},
