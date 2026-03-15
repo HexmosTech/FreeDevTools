@@ -141,7 +141,7 @@ func TestIPMDB(t *testing.T) {
 	t.Log("Step 9: Cleaning up test-db-v2.db and its metadata from B2")
 	bucketName := "Amazing-Stardom:db"
 	remoteV2 := bucketName + "/test-db-v2.db"
-	remoteMetaV2 := bucketName + "/version/test-db-v2.db.json"
+	remoteMetaV2 := bucketName + "/version/test-db-v2.metadata.json"
 
 	// Delete DB file
 	t.Logf("Deleting %s", remoteV2)

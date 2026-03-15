@@ -41,17 +41,39 @@ def _parse_or_bool(result_stdout):
 
 def run_command(cmd):
     print(f"Executing: {' '.join(cmd)}")
+    stdout_lines = []
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
-        if result.stdout and result.stdout.strip():
-            print(f"Output: {result.stdout.strip()}")
-        return result
+        # use Popen to stream output in real-time
+        process = subprocess.Popen(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            text=True,
+            bufsize=1,
+            universal_newlines=True
+        )
+        
+        for line in process.stdout:
+            print(line, end='', flush=True)
+            stdout_lines.append(line)
+            
+        process.wait()
+        full_stdout = "".join(stdout_lines)
+        
+        if process.returncode != 0:
+            raise subprocess.CalledProcessError(process.returncode, cmd, full_stdout)
+            
+        # Create a mock result object to maintain compatibility with existing code
+        class CommandResult:
+            def __init__(self, stdout):
+                self.stdout = stdout
+        return CommandResult(full_stdout)
     except subprocess.CalledProcessError as e:
-        print(f"Error executing command: {e}")
-        if e.stdout:
-            print(f"STDOUT: {e.stdout.strip()}")
-        if e.stderr:
-            print(f"STDERR: {e.stderr.strip()}")
+        print(f"\nError executing command (Exit Code {e.returncode})")
+        # No need to print stdout/stderr again as it was streamed live
+        raise
+    except Exception as e:
+        print(f"\nAn unexpected error occurred: {e}")
         raise
 
 def db_status(db_path, changeset_dir=None):
@@ -298,15 +320,29 @@ def notify(msg):
         print(f"Caught error: {e}")
         return False
 
+def _resolve_db_path(db_path, b2m_bin):
+    """
+    Helper to resolve a project-relative or filename-only db path to an absolute path.
+    """
+    if not db_path:
+        return None
+        
+    # Strip leading slash if it's project-relative (e.g. /db/all_dbs/...)
+    clean_path = db_path[1:] if db_path.startswith('/') else db_path
+    
+    # b2m_bin is at frontend/b2m
+    # b2m_dir is frontend/
+    b2m_dir = os.path.dirname(b2m_bin)
+    
+    # Strip 'frontend/' if it's there (redundant join)
+    if clean_path.startswith("frontend/"):
+        clean_path = clean_path[len("frontend/"):]
+        
+    return os.path.abspath(os.path.join(b2m_dir, clean_path))
+
 def get_local_db(short_name, changeset_dir=None):
     """
-    Retrieves the local DB filename from db.toml using its short name.
-    
-    Inputs:
-        short_name (str): The short name of the database.
-        changeset_dir (str, optional): Overrides the config specifically for this changeset.
-    Returns:
-        str or None: The local DB filename if found, None otherwise.
+    Returns the absolute path to the local database for a given short name.
     """
     try:
         b2m_bin = get_b2m_bin()
@@ -315,11 +351,18 @@ def get_local_db(short_name, changeset_dir=None):
             cmd.append(f"changset_dir={get_script_name()}")
             
         result = run_command(cmd)
-        
         data = json.loads(result.stdout.strip())
-        return data.get("version_db_name")
-    except (subprocess.CalledProcessError, ValueError) as e:
-        print(f"Caught error: {e}")
+        
+        db_name = data.get("version_db_name")
+        if not db_name:
+            return None
+            
+        # Try to get db_path if available in newer b2m versions, else build it
+        db_path = data.get("db_path") or f"db/all_dbs/{db_name}"
+        return _resolve_db_path(db_path, b2m_bin)
+        
+    except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
+        print(f"Caught error in get_local_db: {e}")
         return None
 
 def get_latest_db(db_name, changeset_dir=None):
@@ -400,13 +443,12 @@ def download_latest_db(short_name, changeset_dir=None):
             return None, err_msg
             
         db_path = data.get("db_path")
-        if db_path and not os.path.isabs(db_path):
-            b2m_dir = os.path.dirname(b2m_bin)
-            db_path = os.path.abspath(os.path.join(b2m_dir, ".." + db_path))
+        if db_path:
+            db_path = _resolve_db_path(db_path, b2m_bin)
             
         return db_path, None
     except (subprocess.CalledProcessError, json.JSONDecodeError, ValueError, IndexError) as e:
-        print(f"Caught error: {e}")
+        print(f"Caught error in download_latest_db: {e}")
         return None, str(e)
 
 # Initialize logging automatically when imported

@@ -41,6 +41,7 @@ func InitializeConfig() error {
 	model.AppConfig.Frontend.B2m.Dir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
 	model.AppConfig.Frontend.B2m.Version = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "version")
 	model.AppConfig.Frontend.B2m.LocalMetadata = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "local-version")
+	model.AppConfig.Frontend.Log = filepath.Join(model.AppConfig.ProjectRoot, "b2m.log")
 
 	// Changeset Paths
 	model.AppConfig.Frontend.Changeset.Dir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")

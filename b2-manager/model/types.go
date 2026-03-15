@@ -181,6 +181,8 @@ type Config struct {
 			Script string
 			Dbs    string
 		}
+
+		Log string
 	}
 
 	// Environment
