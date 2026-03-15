@@ -12,7 +12,7 @@ import (
 // RunCLICopy handles moving db and sql files between the standard all_dbs and changeset backups dir
 func RunCLICopy(srcName, dst, fileType, scriptName string) error {
 	allDbsDir := filepath.Join(model.AppConfig.ProjectRoot, "db", "all_dbs")
-	changesetDir := model.AppConfig.ChangesetDBsDir // This is updated by UpdateForScript
+	changesetDir := model.AppConfig.Frontend.Changeset.Dbs // This is updated by UpdateForScript
 
 	filename := srcName
 	if fileType == "db" {

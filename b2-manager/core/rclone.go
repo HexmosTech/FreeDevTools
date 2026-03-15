@@ -61,7 +61,7 @@ func checkDBDiscoveryAndSync(ctx context.Context) error {
 	return nil
 }
 func checkFileChanged(ctx context.Context, dbName string) (bool, error) {
-	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+	localPath := filepath.Join(model.AppConfig.Frontend.LocalDB, dbName)
 	remotePath := model.AppConfig.RootBucket + dbName
 
 	cmd := exec.CommandContext(ctx, "rclone", "check", localPath, remotePath, "--one-way")

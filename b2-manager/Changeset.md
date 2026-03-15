@@ -451,3 +451,14 @@ changeset/
 │   └── ...
 └── changeset.py
 ```
+
+
+## Testing
+
+
+1. use rclone upload `test-db-back.db` to b2 with name `test-db-v1.db`.
+2. execute `./b2m status test-db-v1.db` and it should return `up_to_date`.
+3. Update ipmdb using sqlite cli.(using sqlite3 cli with sql queries file)
+4. execute `./b2m status test-db-v1.db` and it should return `bump_and_upload`.
+5. again use rclone upload `test-db-v1.db` to b2 with name `test-db-v1.db` and then followed with rclone upload `test-db-back.db` to b2 with name `test-db-v2.db`.
+6. execute `./b2m status test-db-v1.db` and it should return `outdated_version`.

@@ -39,11 +39,20 @@ def update_db(db_path):
 
     # 2. Update Stage: Have sql query defined under this function.
     query = "UPDATE my_table SET mod_time = CURRENT_TIMESTAMP;"
-    print(f"Executing update_db for {db_path}...")
     import subprocess
+    
+    # db_path comes as a relative path with a leading slash like "/db/all_dbs/test-db.db"
+    if db_path.startswith("/"):
+        db_path = db_path[1:]
+        
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    frontend_dir = os.path.abspath(os.path.join(script_dir, "..", ".."))
+    full_db_path = os.path.join(frontend_dir, db_path)
+    
+    print(f"Executing update_db for {full_db_path}...")
     try:
         # execute sql query using sqlite3 cli
-        subprocess.run(["sqlite3", db_path, query], check=True)
+        subprocess.run(["sqlite3", full_db_path, query], check=True)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Failed to execute query: {e}")
@@ -51,13 +60,13 @@ def update_db(db_path):
 
 def main():
     global DB_NAME
-    DB_NAME = get_local_db(DB_SHORT_NAME)
+    DB_NAME = download_latest_db(DB_SHORT_NAME)
     if not DB_NAME:
         print(f"Could not find local database for {DB_SHORT_NAME}")
         return
 
     # 1. Check Status of DB
-    db_path, err = download_latest_db(DB_SHORT_NAME,"fdt-db")
+    db_path, err = download_latest_db(DB_SHORT_NAME)
     if err:
         print(err)
         return
@@ -69,7 +78,7 @@ def main():
         return
     
     # 3. Upload DB
-    db_upload(db_path,"fdt-db")
+    db_upload(db_path)
     
     
 

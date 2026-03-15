@@ -14,6 +14,16 @@ import (
 	"b2m/model"
 )
 
+// exitError helper formats error output depending on --json flag
+func exitError(cCtx *cli.Context, msg string, code int) error {
+	if cCtx.Bool("json") {
+		msgEscaped, _ := json.Marshal(msg)
+		fmt.Printf(`{"status":"error","message":%s}`+"\n", string(msgEscaped))
+		return cli.Exit("", code)
+	}
+	return cli.Exit(msg, code)
+}
+
 // HandleCLI processes command line arguments using urfave/cli.
 // If a command is handled, it may exit the program.
 func HandleCLI() {
@@ -138,10 +148,10 @@ func HandleCLI() {
 				Usage:    "Execute a given changeset script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m exe-changeset <script_name>", 1)
+						return cli.Exit("Usage: b2m exe-changeset <changeset_dir>", 1)
 					}
-					scriptName := cCtx.Args().First()
-					if err := ExecuteChangeset(scriptName); err != nil {
+					changesetDir := cCtx.Args().First()
+					if err := ExecuteChangeset(changesetDir); err != nil {
 						return cli.Exit(fmt.Sprintf("Error executing changeset: %v", err), 1)
 					}
 					return nil
@@ -153,13 +163,20 @@ func HandleCLI() {
 				Usage:    "Check status of a database (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m status <db_name>", 1)
+						return exitError(cCtx, "Usage: b2m status <db_name> [changeset_dir]", 1)
 					}
 					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
+					}
 					useJSON := cCtx.Bool("json")
 					statusStr, err := RunCLIStatus(dbName, useJSON)
 					if err != nil {
-						return cli.Exit("", 1) // don't log generic error to Python script output
+						return exitError(cCtx, err.Error(), 1)
 					}
 					fmt.Println(statusStr)
 					return nil
@@ -171,20 +188,48 @@ func HandleCLI() {
 				Usage:    "Copy database files between directories",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() < 4 {
-						return cli.Exit("Usage: b2m copy <src_name> <dst> <file_type> <script_name>", 1)
+						return exitError(cCtx, "Usage: b2m copy <src_name> <dst> <file_type> [changeset_dir]", 1)
 					}
 					srcName := cCtx.Args().Get(0)
 					dst := cCtx.Args().Get(1)
 					fileType := cCtx.Args().Get(2)
-					scriptName := cCtx.Args().Get(3)
-					config.UpdateForScript(scriptName)
 
-					if err := RunCLICopy(srcName, dst, fileType, scriptName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error in copy: %v", err), 1)
+					changesetDir := ""
+					if cCtx.NArg() > 3 {
+						changesetDir = cCtx.Args().Get(3)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
+					}
+
+					if err := RunCLICopy(srcName, dst, fileType, changesetDir); err != nil {
+						return exitError(cCtx, fmt.Sprintf("Error in copy: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
 						fmt.Println(`{"status":"success","action":"copy"}`)
+					}
+					return nil
+				},
+			},
+
+			{
+				Name:     "notify",
+				Category: "Changeset Commands",
+				Usage:    "Send a custom notification to Discord (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return exitError(cCtx, "Usage: b2m notify <message>", 1)
+					}
+					// Join all arguments as the message
+					msg := strings.Join(cCtx.Args().Slice(), " ")
+					if err := RunCLINotify(msg); err != nil {
+						return exitError(cCtx, fmt.Sprintf("Error sending notification: %v", err), 1)
+					}
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						fmt.Println(`{"status":"success","action":"notify"}`)
 					}
 					return nil
 				},
@@ -195,15 +240,19 @@ func HandleCLI() {
 				Usage:    "Upload database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m upload <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m upload <db_name> [changeset_dir]", 1)
 					}
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
+
 					if err := RunCLIUpload(dbName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error uploading database: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error uploading database: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
@@ -218,15 +267,18 @@ func HandleCLI() {
 				Usage:    "Download database directly (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m download <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m download <db_name> [changeset_dir]", 1)
 					}
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
 					if err := RunCLIDownload(dbName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error downloading database: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error downloading database: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
@@ -241,55 +293,59 @@ func HandleCLI() {
 				Usage:    "Check status and loop to download latest version of database (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m download-latest-db <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m download-latest-db <short_name> [changeset_dir]", 1)
 					}
-					dbName := cCtx.Args().First()
+					shortName := cCtx.Args().First()
+					changesetScript := ""
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
-					}
-					if err := RunCLIDownloadLatestDB(dbName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error looping to download latest database: %v", err), 1)
+						changesetScript = cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetScript, "changset_dir=") {
+							changesetScript = strings.TrimPrefix(changesetScript, "changset_dir=")
+						}
 					}
 					useJSON := cCtx.Bool("json")
+
+					dbName, dbPath, err := RunCLIDownloadLatestDB(shortName, changesetScript, useJSON)
+					if err != nil {
+						return exitError(cCtx, fmt.Sprintf("Error finding and downloading latest database: %v", err), 1)
+					}
+
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"download-latest-db"}`)
+						resp := struct {
+							Status string `json:"status"`
+							Action string `json:"action"`
+							DBName string `json:"db_name"`
+							DBPath string `json:"db_path"`
+						}{"success", "download-latest-db", dbName, dbPath}
+						b, _ := json.MarshalIndent(resp, "", "  ")
+						fmt.Println(string(b))
+					} else {
+						fmt.Println(dbName)
 					}
 					return nil
 				},
 			},
-			{
-				Name:     "fetch-db-toml",
-				Category: "Changeset Commands",
-				Usage:    "Fetch db.toml from B2 (for scripting)",
-				Action: func(cCtx *cli.Context) error {
-					if err := RunCLIFetchDBToml(); err != nil {
-						return cli.Exit(fmt.Sprintf("Error fetching db.toml: %v", err), 1)
-					}
-					useJSON := cCtx.Bool("json")
-					if useJSON {
-						fmt.Println(`{"status":"success","action":"fetch-db-toml"}`)
-					}
-					return nil
-				},
-			},
+
 			{
 				Name:     "bump-db-version",
 				Category: "Changeset Commands",
 				Usage:    "Increment DB version and update db.toml (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m bump-db-version <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m bump-db-version <db_name> [changeset_dir]", 1)
 					}
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
 
 					newDBName, err := RunCLIBumpDBVersion(dbName)
 					if err != nil {
-						return cli.Exit(fmt.Sprintf("Error bumping db version: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error bumping db version: %v", err), 1)
 					}
 
 					useJSON := cCtx.Bool("json")
@@ -312,17 +368,20 @@ func HandleCLI() {
 				Usage:    "Execute a specific SQL file against a target database (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() < 2 {
-						return cli.Exit("Usage: b2m handle-query <sql_name> <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m handle-query <sql_name> <db_name> [changeset_dir]", 1)
 					}
 					sqlName := cCtx.Args().Get(0)
 					dbName := cCtx.Args().Get(1)
 					if cCtx.NArg() > 2 {
-						scriptName := cCtx.Args().Get(2)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(2)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
 
 					if err := RunCLIHandleQuery(sqlName, dbName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error executing queries: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error executing queries: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
@@ -337,16 +396,19 @@ func HandleCLI() {
 				Usage:    "Get the local DB filename from db.toml using its short name (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m get-version <short_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m get-version <short_name> [changeset_dir]", 1)
 					}
 					shortName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
 					useJSON := cCtx.Bool("json")
 					if err := RunCLIGetVersion(shortName, useJSON); err != nil {
-						return cli.Exit(fmt.Sprintf("Error getting version: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error getting version: %v", err), 1)
 					}
 					return nil
 				},
@@ -357,36 +419,19 @@ func HandleCLI() {
 				Usage:    "Get the latest version of a database (for scripting)",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m get-latest <db_name> [script_name]", 1)
+						return exitError(cCtx, "Usage: b2m get-latest <db_name> [changeset_dir]", 1)
 					}
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
-						scriptName := cCtx.Args().Get(1)
-						config.UpdateForScript(scriptName)
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
 					}
 					useJSON := cCtx.Bool("json")
 					if err := RunCLIGetLatest(dbName, useJSON); err != nil {
-						return cli.Exit(fmt.Sprintf("Error getting latest DB version: %v", err), 1)
-					}
-					return nil
-				},
-			},
-			{
-				Name:     "notify",
-				Category: "Changeset Commands",
-				Usage:    "Send a custom notification to Discord (for scripting)",
-				Action: func(cCtx *cli.Context) error {
-					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m notify <message>", 1)
-					}
-					// Join all arguments as the message
-					msg := strings.Join(cCtx.Args().Slice(), " ")
-					if err := RunCLINotify(msg); err != nil {
-						return cli.Exit(fmt.Sprintf("Error sending notification: %v", err), 1)
-					}
-					useJSON := cCtx.Bool("json")
-					if useJSON {
-						fmt.Println(`{"status":"success","action":"notify"}`)
+						return exitError(cCtx, fmt.Sprintf("Error getting latest DB version: %v", err), 1)
 					}
 					return nil
 				},

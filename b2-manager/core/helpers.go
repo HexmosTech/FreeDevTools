@@ -88,7 +88,7 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 		dbMap[name].ExistsLocal = true
 
 		// Get local file stats
-		info, err := os.Stat(filepath.Join(model.AppConfig.LocalDBDir, name))
+		info, err := os.Stat(filepath.Join(model.AppConfig.Frontend.LocalDB, name))
 		if err == nil {
 			dbMap[name].ModifiedAt = info.ModTime()
 			dbMap[name].CreatedAt = info.ModTime()
@@ -344,7 +344,7 @@ func UnlockDatabase(ctx context.Context, dbName, owner string, force bool) error
 
 // getLocalDBs lists all .db files in the local directory
 func getLocalDBs() ([]string, error) {
-	matches, err := filepath.Glob(filepath.Join(model.AppConfig.LocalDBDir, "*.db"))
+	matches, err := filepath.Glob(filepath.Join(model.AppConfig.Frontend.LocalDB, "*.db"))
 	if err != nil {
 		LogError("filepath.Glob failed in getLocalDBs: %v", err)
 		return nil, err

@@ -52,12 +52,13 @@ func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 	core.LogInfo("DEBUG: calculateVersionRoles returned: %+v", roles)
 
 	found := false
+	reqBaseName := strings.TrimSuffix(filepath.Base(dbName), filepath.Ext(dbName))
+
 	for _, info := range statusData {
 		// handle both exact match and extension-less
 		baseName := strings.TrimSuffix(info.DB.Name, filepath.Ext(info.DB.Name))
-		reqBaseName := strings.TrimSuffix(dbName, filepath.Ext(dbName))
 
-		if baseName == reqBaseName || info.DB.Name == dbName {
+		if baseName == reqBaseName || info.DB.Name == filepath.Base(dbName) {
 			found = true
 			isReadyToUpload := info.StatusCode == model.StatusCodeLocalNewer || info.StatusCode == model.StatusCodeNewLocal || info.StatusCode == model.StatusCodeLockedByYou
 			isOutdated := info.StatusCode == model.StatusCodeRemoteNewer || info.StatusCode == model.StatusCodeRemoteOnly || info.StatusCode == model.StatusCodeErrorReadLocal || info.StatusCode == model.StatusCodeUnknown
@@ -269,7 +270,7 @@ func calculateVersionRoles(dbs []model.DBInfo) map[string]string {
 
 // WalCheckpointTruncate attempts to run PRAGMA wal_checkpoint(TRUNCATE) on a specific database file
 func WalCheckpointTruncate(dbName string) error {
-	dbPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+	dbPath := filepath.Join(model.AppConfig.Frontend.LocalDB, dbName)
 	if _, err := os.Stat(dbPath); err != nil {
 		return fmt.Errorf("database file not found at %s", dbPath)
 	}

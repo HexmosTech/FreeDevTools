@@ -25,7 +25,6 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-
 type EntryPayload struct {
 	Repo                string      `json:"repo"`
 	RepoType            string      `json:"repo_type"`
@@ -50,36 +49,38 @@ type Instruction struct {
 	Meaning string `json:"meaning"`
 }
 
-var IPM_DB_NAME = "ipm-db-v6.db"
-var IPM_DB_PATH = filepath.Join(".", "db", "all_dbs", IPM_DB_NAME)
 // LogIPMQuery writes the executed SQL query to a .sql file matching the DB name.
 func LogIPMQuery(query string, args ...interface{}) {
-    // 1. Determine the .sql filename (ipm-db-v6.db -> ipm-db-v6.sql)
-    ext := filepath.Ext(IPM_DB_PATH)
-    sqlPath := strings.TrimSuffix(IPM_DB_PATH, ext) + ".sql"
+	// 1. Determine the .sql filename from config
+	ipmDbPath := config.DBConfig.IpmDB
+	// Remove "file:" prefix if present
+	ipmDbPath = strings.TrimPrefix(ipmDbPath, "file:")
 
-    // 2. Format the query with arguments (Basic representation)
-    formattedQuery := query
-    for _, arg := range args {
-        val := fmt.Sprintf("'%v'", arg)
-        // Replace the first occurrence of ? with the value
-        formattedQuery = strings.Replace(formattedQuery, "?", val, 1)
-    }
+	ext := filepath.Ext(ipmDbPath)
+	sqlPath := strings.TrimSuffix(ipmDbPath, ext) + ".sql"
 
-    // 3. Prepare the entry with a semicolon and newline
-    entry := fmt.Sprintf("-- %s\n%s;\n\n", time.Now().Format(time.RFC3339), formattedQuery)
+	// 2. Format the query with arguments (Basic representation)
+	formattedQuery := query
+	for _, arg := range args {
+		val := fmt.Sprintf("'%v'", arg)
+		// Replace the first occurrence of ? with the value
+		formattedQuery = strings.Replace(formattedQuery, "?", val, 1)
+	}
 
-    // 4. Append to file (Create if not exists)
-    f, err := os.OpenFile(sqlPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-    if err != nil {
-        log.Printf("⚠️  [SQL Log] Could not write to log file: %v", err)
-        return
-    }
-    defer f.Close()
+	// 3. Prepare the entry with a semicolon and newline
+	entry := fmt.Sprintf("-- %s\n%s;\n\n", time.Now().Format(time.RFC3339), formattedQuery)
 
-    if _, err := f.WriteString(entry); err != nil {
-        log.Printf("⚠️  [SQL Log] Error writing string: %v", err)
-    }
+	// 4. Append to file (Create if not exists)
+	f, err := os.OpenFile(sqlPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Printf("⚠️  [SQL Log] Could not write to log file: %v", err)
+		return
+	}
+	defer f.Close()
+
+	if _, err := f.WriteString(entry); err != nil {
+		log.Printf("⚠️  [SQL Log] Error writing string: %v", err)
+	}
 }
 
 func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
@@ -88,8 +89,8 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	// Clean routing table
 	mux.HandleFunc(base+"/add-entry", handleAddEntry(db))
 	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
-	mux.HandleFunc(base+"/generate_ipm_repo_method",handleGenerateRepoMethod())
-	mux.HandleFunc(base+"/update-entry",handleUpdateRepoMethods(db))
+	mux.HandleFunc(base+"/generate_ipm_repo_method", handleGenerateRepoMethod())
+	mux.HandleFunc(base+"/update-entry", handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
@@ -97,29 +98,29 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 
 }
 
-
 func handleGetFeatured() http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        // --- Configuration Variables (Change these anytime) ---
-        title := "Featured: Git-LRC"
-        tagline := "Free, unlimited AI code reviews that run on commit"
-        link := "https://www.producthunt.com/products/git-lrc"
-        cta := "Upvote and support us on Product Hunt!" 
-        // ------------------------------------------------------
+	return func(w http.ResponseWriter, r *http.Request) {
+		// --- Configuration Variables (Change these anytime) ---
+		title := "Featured: Git-LRC"
+		tagline := "Free, unlimited AI code reviews that run on commit"
+		link := "https://www.producthunt.com/products/git-lrc"
+		cta := "Upvote and support us on Product Hunt!"
+		// ------------------------------------------------------
 
-        w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 
-        // Constructing the message
-        // Added the CTA at the end for maximum visibility
-        msg := fmt.Sprintf("%s - %s. %s: %s", title, tagline, cta, link)
+		// Constructing the message
+		// Added the CTA at the end for maximum visibility
+		msg := fmt.Sprintf("%s - %s. %s: %s", title, tagline, cta, link)
 
-        resp := map[string]string{"message": msg}
-        
-        if err := json.NewEncoder(w).Encode(resp); err != nil {
-            http.Error(w, err.Error(), http.StatusInternalServerError)
-        }
-    }
+		resp := map[string]string{"message": msg}
+
+		if err := json.NewEncoder(w).Encode(resp); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
 }
+
 // handleAddEntry handles the HTTP concerns (parsing, headers, logging)
 func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -136,7 +137,7 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 		}
 
 		// Delegate logic to the DB helper
-		success, err := saveInstallerpediaEntry(db, payload,overwrite)
+		success, err := saveInstallerpediaEntry(db, payload, overwrite)
 		if err != nil {
 			log.Printf("❌ [Installerpedia API] Error: %v", err)
 			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -176,17 +177,25 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bo
 	updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
 
 	m := func(v interface{}) string {
-		if v == nil { return "" }
+		if v == nil {
+			return ""
+		}
 		b, _ := json.Marshal(v)
-		if string(b) == "null" { return "" }
+		if string(b) == "null" {
+			return ""
+		}
 		return string(b)
 	}
 
 	verb := "INSERT OR IGNORE"
-	if overwrite { verb = "INSERT OR REPLACE" }
+	if overwrite {
+		verb = "INSERT OR REPLACE"
+	}
 
 	tx, err := db.GetConn().Begin()
-	if err != nil { return false, err }
+	if err != nil {
+		return false, err
+	}
 	defer tx.Rollback()
 
 	// --- Query 1: Main Data ---
@@ -205,10 +214,14 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bo
 	}
 
 	res, err := tx.Exec(ipm_data_query, ipm_data_query_args...)
-	if err != nil { return false, err }
+	if err != nil {
+		return false, err
+	}
 
 	rowsAffected, _ := res.RowsAffected()
-	if rowsAffected == 0 { return false, nil }
+	if rowsAffected == 0 {
+		return false, nil
+	}
 
 	// Log successful execution
 	LogIPMQuery(ipm_data_query, ipm_data_query_args...)
@@ -337,8 +350,6 @@ func SyncSingleRepoToMeili(p EntryPayload) error {
 	return nil
 }
 
-
-
 // Updating new installation methods
 
 func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
@@ -394,123 +405,122 @@ func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
 	}
 }
 func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
-    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
-    slugHash := hashStringToInt64(repoSlug)
-    updatedAt := time.Now().UTC().Format(time.RFC3339)
+	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+	slugHash := hashStringToInt64(repoSlug)
+	updatedAt := time.Now().UTC().Format(time.RFC3339)
 
-    tx, err := db.GetConn().Begin()
-    if err != nil {
-        return err
-    }
-    defer tx.Rollback()
+	tx, err := db.GetConn().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
 
-    // 1. Extract existing methods
-    var existingJson string
-    err = tx.QueryRow(`SELECT installation_methods FROM ipm_data WHERE slug_hash = ?`, slugHash).Scan(&existingJson)
-    if err != nil {
-        return fmt.Errorf("failed to fetch existing methods: %w", err)
-    }
+	// 1. Extract existing methods
+	var existingJson string
+	err = tx.QueryRow(`SELECT installation_methods FROM ipm_data WHERE slug_hash = ?`, slugHash).Scan(&existingJson)
+	if err != nil {
+		return fmt.Errorf("failed to fetch existing methods: %w", err)
+	}
 
-    var methods []InstallMethod
-    if existingJson != "" && existingJson != "null" {
-        if err := json.Unmarshal([]byte(existingJson), &methods); err != nil {
-            return fmt.Errorf("failed to unmarshal existing methods: %w", err)
-        }
-    }
+	var methods []InstallMethod
+	if existingJson != "" && existingJson != "null" {
+		if err := json.Unmarshal([]byte(existingJson), &methods); err != nil {
+			return fmt.Errorf("failed to unmarshal existing methods: %w", err)
+		}
+	}
 
-    // 2. Add the new methods into the list
-    methods = append(methods, newMethods...)
+	// 2. Add the new methods into the list
+	methods = append(methods, newMethods...)
 
-    // 3. Re-marshal and update back
-    updatedJson, err := json.Marshal(methods)
-    if err != nil {
-        return err
-    }
+	// 3. Re-marshal and update back
+	updatedJson, err := json.Marshal(methods)
+	if err != nil {
+		return err
+	}
 
-    // Prepare Query and Args for Logging
-    ipm_update_method_query := `
+	// Prepare Query and Args for Logging
+	ipm_update_method_query := `
         UPDATE ipm_data 
         SET installation_methods = ?, 
             updated_at = ?
         WHERE slug_hash = ?
     `
-    ipm_update_method_query_args := []interface{}{string(updatedJson), updatedAt, slugHash}
+	ipm_update_method_query_args := []interface{}{string(updatedJson), updatedAt, slugHash}
 
-    _, err = tx.Exec(ipm_update_method_query, ipm_update_method_query_args...)
-    if err != nil {
-        return err
-    }
+	_, err = tx.Exec(ipm_update_method_query, ipm_update_method_query_args...)
+	if err != nil {
+		return err
+	}
 
-    // Log the update query
-    LogIPMQuery(ipm_update_method_query, ipm_update_method_query_args...)
+	// Log the update query
+	LogIPMQuery(ipm_update_method_query, ipm_update_method_query_args...)
 
-    return tx.Commit()
+	return tx.Commit()
 }
 
-func fetchFullEntryFromDB(db *installerpedia.DB,repoName string) (EntryPayload, error) {
-    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
-    slugHash := hashStringToInt64(repoSlug)
+func fetchFullEntryFromDB(db *installerpedia.DB, repoName string) (EntryPayload, error) {
+	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+	slugHash := hashStringToInt64(repoSlug)
 
-    var p EntryPayload
-    var prereqJson, methodsJson, postJson, resourceJson, keywordsJson string
+	var p EntryPayload
+	var prereqJson, methodsJson, postJson, resourceJson, keywordsJson string
 
-    err := db.GetConn().QueryRow(`
+	err := db.GetConn().QueryRow(`
         SELECT repo, repo_type, has_installation, description, stars, 
                prerequisites, installation_methods, post_installation, 
                resources_of_interest, keywords, updated_at
         FROM ipm_data WHERE slug_hash = ?
     `, slugHash).Scan(
-        &p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
-        &prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson, &p.UpdatedAt, // <--- Scan it here
-    )
+		&p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
+		&prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson, &p.UpdatedAt, // <--- Scan it here
+	)
 
-    if err != nil {
-        return p, err
-    }
+	if err != nil {
+		return p, err
+	}
 
-    // Unmarshal JSON fields into the payload structure
-    json.Unmarshal([]byte(prereqJson), &p.Prerequisites)
-    json.Unmarshal([]byte(methodsJson), &p.InstallationMethods)
-    json.Unmarshal([]byte(postJson), &p.PostInstallation)
-    json.Unmarshal([]byte(resourceJson), &p.ResourcesOfInterest)
-    json.Unmarshal([]byte(keywordsJson), &p.Keywords)
+	// Unmarshal JSON fields into the payload structure
+	json.Unmarshal([]byte(prereqJson), &p.Prerequisites)
+	json.Unmarshal([]byte(methodsJson), &p.InstallationMethods)
+	json.Unmarshal([]byte(postJson), &p.PostInstallation)
+	json.Unmarshal([]byte(resourceJson), &p.ResourcesOfInterest)
+	json.Unmarshal([]byte(keywordsJson), &p.Keywords)
 
-    return p, nil
+	return p, nil
 }
 
-
 func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
-    return func(w http.ResponseWriter, r *http.Request) {
-        repoName := r.URL.Query().Get("repo")
-        if repoName == "" {
-            http.Error(w, "Missing repo parameter", http.StatusBadRequest)
-            return
-        }
+	return func(w http.ResponseWriter, r *http.Request) {
+		repoName := r.URL.Query().Get("repo")
+		if repoName == "" {
+			http.Error(w, "Missing repo parameter", http.StatusBadRequest)
+			return
+		}
 
-        w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Content-Type", "application/json")
 
-        // Reuse your existing helper to fetch the data
-        entry, err := fetchFullEntryFromDB(db, repoName)
-        
-        if err != nil {
-            // If the error is "no rows", it just doesn't exist
-            if strings.Contains(err.Error(), "no rows in result set") {
-                json.NewEncoder(w).Encode(map[string]interface{}{
-                    "exists": false,
-                    "repo":   repoName,
-                })
-                return
-            }
-            log.Printf("❌ [Installerpedia API] DB Check Error: %v", err)
-            http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-            return
-        }
+		// Reuse your existing helper to fetch the data
+		entry, err := fetchFullEntryFromDB(db, repoName)
 
-        // If we reached here, it exists. Return 'exists: true' + the full data
-        resp := map[string]interface{}{
-            "exists": true,
-            "data":   entry,
-        }
-        json.NewEncoder(w).Encode(resp)
-    }
+		if err != nil {
+			// If the error is "no rows", it just doesn't exist
+			if strings.Contains(err.Error(), "no rows in result set") {
+				json.NewEncoder(w).Encode(map[string]interface{}{
+					"exists": false,
+					"repo":   repoName,
+				})
+				return
+			}
+			log.Printf("❌ [Installerpedia API] DB Check Error: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		// If we reached here, it exists. Return 'exists: true' + the full data
+		resp := map[string]interface{}{
+			"exists": true,
+			"data":   entry,
+		}
+		json.NewEncoder(w).Encode(resp)
+	}
 }

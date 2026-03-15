@@ -90,27 +90,28 @@ if __name__ == "__main__":
 
 ## How To Update DB
 
+All these steps should be defined in changset script.
+Although this order will be preset in template with comments. With full docs on function use case you can add to workflow and iterate with script.
+
+
 1. Download Latest DB
 2. Update DB
 3. Upload DB
-4. Handling Edge Case.
+4. Handling Edge Case (opttional).
 
 
-1. Use `get_latest_db` function to get latest db.
+1. Use `download_latest_db` function to get latest db.
 
 DB_SHORT_NAME = "test" # This should be same as the db.toml file.
 ```py
-    download_latest_db(DB_SHORT_NAME,"fdt-db") 
+    download_latest_db(DB_SHORT_NAME) 
 ```
 
 Inputs: 
-    1. Select directory. (changset or fdt-db) 
-    2. Select db. (ipmdb, emojidb, etc)
-
-
-Changeset: For cron based jobs to avoid data loss.
-All_Dbs: For downloading to fdt-db directory. 
-
+    1. Select db. (ipmdb, emojidb, etc)
+    2. Select directory (optional).`changset/dbs/<script-name>`or `db/all_dbs` 
+By default download and upload directory will be from `db/all_dbs`.
+If we need to download to changset directory (used for ipmdb backup) we can define changset.
 Output:
     1. Success Followed With Db Path.
     2. Failed
@@ -151,11 +152,10 @@ def update_db(db_path):
     2. If Failed to upload. Continue to Stage 4 Handling Edge Case.
 
 ```py 
-   db_upload(DB_NAME, "fdt-db")
+   db_upload(db_path)
 ```
 Input: 
-    1. Db name 
-    2. Directory.
+    1. `db_path` which will be returned from step 1
 Output: 
     1. Success 
     2. Failed Followed with Error Message.
@@ -229,7 +229,7 @@ def main():
         return
 
     # 1. Check Status of DB
-    db_path, err = download_latest_db(DB_SHORT_NAME,"fdt-db")
+    db_path, err = download_latest_db(DB_SHORT_NAME)
     if err:
         print(err)
         return
@@ -241,7 +241,7 @@ def main():
         return
     
     # 3. Upload DB
-    err = db_upload(db_path,"fdt-db")
+    err = db_upload(db_path)
     if err:
         print(err)
         return

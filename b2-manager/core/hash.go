@@ -123,7 +123,7 @@ func pruneHashCache() {
 
 // LoadHashCache loads the hash cache from disk
 func LoadHashCache() error {
-	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.Frontend.B2m.LocalMetadata, "hash.json")
 	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
 		return nil // No cache exists yet
 	}
@@ -151,10 +151,10 @@ func SaveHashCache() error {
 	// Prune before saving
 	pruneHashCache()
 
-	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.Frontend.B2m.LocalMetadata, "hash.json")
 
 	// Ensure directory exists
-	if err := os.MkdirAll(model.AppConfig.LocalAnchorDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.Frontend.B2m.LocalMetadata, 0755); err != nil {
 		LogError("SaveHashCache: Failed to create directory: %v", err)
 		return err
 	}

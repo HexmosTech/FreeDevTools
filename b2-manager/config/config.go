@@ -35,19 +35,17 @@ func InitializeConfig() error {
 	// Fetch user details
 	fetchUserDetails()
 
-	if model.AppConfig.LocalDBDir == "" {
+	if model.AppConfig.Frontend.LocalDB == "" {
 		return fmt.Errorf("LocalDBDir not configured. Please set b2m_db_dir in your config file")
 	}
-	model.AppConfig.LocalB2MDir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
-	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalB2MDir, "version")
-	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalB2MDir, "local-version")
-	model.AppConfig.MigrationsDir = filepath.Join(model.AppConfig.ProjectRoot, "b2m-migration")
+	model.AppConfig.Frontend.B2m.Dir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
+	model.AppConfig.Frontend.B2m.Version = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "version")
+	model.AppConfig.Frontend.B2m.LocalMetadata = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "local-version")
 
 	// Changeset Paths
-	model.AppConfig.ChangesetDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
-	model.AppConfig.ChangesetScriptsDir = filepath.Join(model.AppConfig.ChangesetDir, "scripts")
-	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ChangesetDir, "logs")
-	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs")
+	model.AppConfig.Frontend.Changeset.Dir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
+	model.AppConfig.Frontend.Changeset.Script = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "scripts")
+	model.AppConfig.Frontend.Changeset.Dbs = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "dbs")
 
 	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db.toml")
 
@@ -151,7 +149,7 @@ func CheckDependencies() error {
 // UpdateForScript updates the global configuration paths given a script name
 func UpdateForScript(scriptName string) {
 	if scriptName != "" {
-		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", scriptName, "backup")
-		model.AppConfig.LocalDBDir = model.AppConfig.ChangesetDBsDir
+		model.AppConfig.Frontend.Changeset.Dbs = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "dbs", scriptName)
+		model.AppConfig.Frontend.LocalDB = model.AppConfig.Frontend.Changeset.Dbs
 	}
 }

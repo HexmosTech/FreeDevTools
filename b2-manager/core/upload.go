@@ -21,6 +21,8 @@ import (
 // 4. Anchor: Upon success, update the local execution anchor (LocalVersion) to match the new state.
 // 5. Finalize: Remove the lock file.
 func PerformUpload(ctx context.Context, dbName string, force bool, onProgress func(model.RcloneProgress), onStatusUpdate func(string)) error {
+	localDir := model.AppConfig.Frontend.LocalDB
+
 	if onStatusUpdate != nil {
 		onStatusUpdate("Safety Check...")
 	}
@@ -121,7 +123,7 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 			// Update hash cache on disk as we just calculated it and it is fresh
 			// We recalculate the hash of the LOCAL file. CalculateXXHash updates the in-memory cache
 			// with the new ModTime and Size. Then SaveHashCache persists it.
-			localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+			localPath := filepath.Join(localDir, dbName)
 			if _, err := CalculateHash(localPath, nil); err != nil {
 				LogError("PerformUpload: Failed to recalculate hash for cache update: %v", err)
 			} else {
@@ -157,6 +159,8 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 // CheckUploadSafety verifies that the remote database is not newer than the local one.
 // It fetches the specific remote metadata and compares it with the local anchor and file.
 func CheckUploadSafety(ctx context.Context, dbName string) error {
+	localDir := model.AppConfig.Frontend.LocalDB
+
 	// 0. Quick check if it exists on remote at all
 	cmd := exec.CommandContext(ctx, "rclone", "lsf", model.AppConfig.RootBucket+dbName)
 	out, err := cmd.Output()
@@ -195,7 +199,7 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 	// We risk overwriting something we don't know about.
 	if localAnchor == nil {
 		// Exception: If hashes match, we are coincidentally in sync (autofixed elsewhere, but here we proceed).
-		localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+		localPath := filepath.Join(localDir, dbName)
 		if hash, err := CalculateHash(localPath, nil); err == nil && hash == remoteMeta.Hash {
 			LogInfo("CheckUploadSafety: No anchor, but hashes match. Safe to upload (Update).")
 			return nil
@@ -220,6 +224,8 @@ func CheckUploadSafety(ctx context.Context, dbName string) error {
 // UploadDatabase uploads a single database to remote
 // Returns the uploaded metadata on success, or nil/error
 func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress)) (*model.Metadata, error) {
+	localDir := model.AppConfig.Frontend.LocalDB
+
 	// Check for changes before uploading
 	changed, err := checkFileChanged(ctx, dbName)
 	if err != nil {
@@ -242,7 +248,7 @@ func UploadDatabase(ctx context.Context, dbName string, quiet bool, onProgress f
 		LogInfo("⬆ Uploading %s to Backblaze B2...", dbName)
 	}
 	LogInfo("Uploading %s to Backblaze B2...", dbName)
-	localPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+	localPath := filepath.Join(localDir, dbName)
 
 	startTime := time.Now()
 

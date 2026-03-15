@@ -18,7 +18,7 @@ func CreateChangeset(phrase string) error {
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_%s.py", timestamp, phrase)
 
-	scriptDir := model.AppConfig.ChangesetScriptsDir
+	scriptDir := model.AppConfig.Frontend.Changeset.Script
 	if err := os.MkdirAll(scriptDir, 0755); err != nil {
 		return fmt.Errorf("failed to create scripts directory: %w", err)
 	}
@@ -59,7 +59,7 @@ func CreateChangeset(phrase string) error {
 
 // ExecuteChangeset runs the specified python script securely
 func ExecuteChangeset(scriptName string) error {
-	scriptDir := model.AppConfig.ChangesetScriptsDir
+	scriptDir := model.AppConfig.Frontend.Changeset.Script
 
 	// Ensure ".py" extension is present if not provided
 	if filepath.Ext(scriptName) != ".py" {
@@ -105,8 +105,8 @@ func RunCLINotify(message string) error {
 // RunCLIHandleQuery executes a specific SQL file against a target database
 func RunCLIHandleQuery(sqlName string, dbName string) error {
 	// The files are expected to be in the changeset backup directory due to previous steps
-	dbPath := filepath.Join(model.AppConfig.ChangesetDBsDir, dbName)
-	sqlPath := filepath.Join(model.AppConfig.ChangesetDBsDir, sqlName)
+	dbPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, dbName)
+	sqlPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, sqlName)
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		return fmt.Errorf("database file not found at %s", dbPath)

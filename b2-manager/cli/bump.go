@@ -20,19 +20,19 @@ func RunCLIBumpDBVersion(baseDBName string) (string, error) {
 	// 1. Determine the actual current DB filename from db.toml (since the user likely passed the generic name)
 	// Or they might have passed the exact active name `ipm-db-v1.db`. We try to parse out the V.
 
-	// Assume the current working database is in model.AppConfig.LocalDBDir (which UpdateForScript set to the changeset directory)
+	// Assume the current working database is in model.AppConfig.Frontend.LocalDB (which UpdateForScript set to the changeset directory)
 	// We scan the directory to find the DB matching the prefix, or directly parse the requested one.
 
-	currentPath := filepath.Join(model.AppConfig.LocalDBDir, baseDBName)
+	currentPath := filepath.Join(model.AppConfig.Frontend.LocalDB, baseDBName)
 	if _, err := os.Stat(currentPath); os.IsNotExist(err) {
 		// Try to find the actual file if they passed a prefix like "test-db"
-		files, errDir := os.ReadDir(model.AppConfig.LocalDBDir)
+		files, errDir := os.ReadDir(model.AppConfig.Frontend.LocalDB)
 		foundMatch := false
 		if errDir == nil {
 			for _, file := range files {
 				if strings.HasPrefix(file.Name(), baseDBName) && strings.HasSuffix(file.Name(), ".db") {
 					baseDBName = file.Name()
-					currentPath = filepath.Join(model.AppConfig.LocalDBDir, baseDBName)
+					currentPath = filepath.Join(model.AppConfig.Frontend.LocalDB, baseDBName)
 					foundMatch = true
 					break
 				}
@@ -50,7 +50,7 @@ func RunCLIBumpDBVersion(baseDBName string) (string, error) {
 		return "", fmt.Errorf("failed to parse version from filename %s: %w", baseDBName, err)
 	}
 
-	newPath := filepath.Join(model.AppConfig.LocalDBDir, newDBName)
+	newPath := filepath.Join(model.AppConfig.Frontend.LocalDB, newDBName)
 	serverDBDir := filepath.Join(model.AppConfig.ProjectRoot, "db", "all_dbs")
 	serverPath := filepath.Join(serverDBDir, newDBName)
 

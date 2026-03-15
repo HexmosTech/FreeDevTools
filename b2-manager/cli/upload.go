@@ -10,6 +10,7 @@ import (
 // RunCLIUpload runs a database upload without UI components
 func RunCLIUpload(dbName string) error {
 	ctx := context.Background()
+
 	// Using empty functions to keep it quiet, but print basic progress
 	onProgress := func(p model.RcloneProgress) {
 		pct := int64(0)
@@ -26,6 +27,7 @@ func RunCLIUpload(dbName string) error {
 	onStatusUpdate := func(s string) {
 		fmt.Printf("\rStatus: %s\n", s)
 	}
+
 	// We force the upload (true) to bypass interactive safety checks that would hang a script
 	err := core.PerformUpload(ctx, dbName, true, onProgress, onStatusUpdate)
 	fmt.Println() // Add a final newline
