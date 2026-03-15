@@ -40,7 +40,6 @@ func checkDBDiscoveryAndSync(ctx context.Context) error {
 
 	// fmt.Println("No local databases found.")
 	LogInfo("No local databases found.")
-	LogInfo("No local databases found.")
 
 	remoteDBs, _, err := LsfRclone(ctx)
 	if err != nil {
@@ -51,12 +50,9 @@ func checkDBDiscoveryAndSync(ctx context.Context) error {
 	if len(remoteDBs) == 0 {
 		// fmt.Println("No remote databases found either. Starting fresh.")
 		LogInfo("No remote databases found either. Starting fresh.")
-		LogInfo("No remote databases found either. Starting fresh.")
 		return nil
 	}
 
-	// fmt.Printf("Remote databases detected (%d):\n", len(remoteDBs))
-	LogInfo("Remote databases detected (%d):", len(remoteDBs))
 	LogInfo("Remote databases detected (%d): %v", len(remoteDBs), remoteDBs)
 	for _, db := range remoteDBs {
 		// fmt.Printf("- %s\n", db)

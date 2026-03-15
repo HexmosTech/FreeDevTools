@@ -163,14 +163,19 @@ var (
 // Config holds all application configuration
 type Config struct {
 	// Paths
-	RootBucket      string
-	LockDir         string
-	VersionDir      string
-	LocalVersionDir string
-	LocalAnchorDir  string
-	LocalB2MDir     string
-	LocalDBDir      string
-	MigrationsDir   string
+	RootBucket          string
+	LockDir             string
+	VersionDir          string
+	LocalVersionDir     string
+	LocalAnchorDir      string
+	LocalB2MDir         string
+	LocalDBDir          string
+	MigrationsDir       string
+	ChangesetDir        string
+	ChangesetScriptsDir string
+	ChangesetLogsDir    string
+	ChangesetDBsDir     string
+	FrontendTomlPath    string
 
 	// Environment
 	DiscordWebhookURL string

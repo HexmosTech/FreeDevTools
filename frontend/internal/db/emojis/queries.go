@@ -6,14 +6,14 @@ import (
 	"database/sql"
 	"encoding/binary"
 	"fmt"
-	"log"
-	"path/filepath"
 	"strings"
 	"time"
 
 	db_config "fdt-templ/db/config"
+	"fdt-templ/internal/config"
 
 	_ "github.com/mattn/go-sqlite3"
+"github.com/rs/zerolog/log"
 )
 
 // detectMimeType detects MIME type from buffer content (matching Astro's detectMime)
@@ -105,6 +105,7 @@ func NewDB(dbPath string) (*DB, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
+	log.Info().Msgf("Successfully connected to Emoji DB at %s", dbPath)
 	return &DB{conn: conn}, nil
 }
 
@@ -202,7 +203,7 @@ func (db *DB) GetCategoriesWithPreviewEmojis(previewCount int) ([]CategoryWithPr
 		return val.([]CategoryWithPreview), nil
 	}
 
-	query := `SELECT category_hash, category, count, preview_emojis_json
+	query := `SELECT category_hash, category, count, preview_emojis_json, updated_at
 	          FROM category
 	          WHERE category != 'Other'
 	          ORDER BY category`
@@ -216,7 +217,7 @@ func (db *DB) GetCategoriesWithPreviewEmojis(previewCount int) ([]CategoryWithPr
 	var categories []CategoryWithPreview
 	for rows.Next() {
 		var row rawCategoryRow
-		err := rows.Scan(&row.CategoryHash, &row.Category, &row.Count, &row.PreviewEmojisJSON)
+		err := rows.Scan(&row.CategoryHash, &row.Category, &row.Count, &row.PreviewEmojisJSON, &row.UpdatedAt)
 		if err != nil {
 			continue
 		}
@@ -271,7 +272,7 @@ func (db *DB) GetEmojisByCategoryPaginated(category string, page, itemsPerPage i
 	query := `WITH sorted_emojis AS (
 	          SELECT slug_hash, id, code, unicode, slug, title, category, description,
 	                 apple_vendor_description, keywords, also_known_as, version, senses,
-	                 shortcodes, discord_vendor_description, category_hash,
+	                 shortcodes, discord_vendor_description, category_hash, updated_at,
 	                 CASE WHEN slug LIKE '%-skin-tone%' OR slug LIKE '%skin-tone%' THEN 1 ELSE 0 END as skin_tone_flag,
 	                 COALESCE(title, slug) as sort_key
 	          FROM emojis
@@ -280,7 +281,7 @@ func (db *DB) GetEmojisByCategoryPaginated(category string, page, itemsPerPage i
 	        )
 	        SELECT slug_hash, id, code, unicode, slug, title, category, description,
 	               apple_vendor_description, keywords, also_known_as, version, senses,
-	               shortcodes, discord_vendor_description, category_hash
+	               shortcodes, discord_vendor_description, category_hash, updated_at
 	        FROM sorted_emojis
 	        ORDER BY skin_tone_flag, sort_key COLLATE NOCASE
 	        LIMIT ? OFFSET ?`
@@ -301,7 +302,10 @@ func (db *DB) GetEmojisByCategoryPaginated(category string, page, itemsPerPage i
 			&row.SlugHash, &row.ID, &row.Code, &row.Unicode, &row.Slug, &row.Title,
 			&row.Category, &row.Description, &row.AppleVendorDescription,
 			&row.Keywords, &row.AlsoKnownAs, &row.Version, &row.Senses,
-			&row.Shortcodes, &row.DiscordVendorDescription, &row.CategoryHash,
+			&row.Shortcodes,
+			&row.DiscordVendorDescription,
+			&row.CategoryHash,
+			&row.UpdatedAt,
 		)
 		if err != nil {
 			continue
@@ -335,8 +339,8 @@ func (db *DB) GetEmojiBySlug(slug string) (*EmojiData, error) {
 	// Match Astro worker: look up by slug_hash instead of slug text.
 	slugHash := hashStringToInt64(slug)
 	query := `SELECT slug_hash, id, code, unicode, slug, title, category, description,
-	          apple_vendor_description, keywords, also_known_as, version, senses,
-	          shortcodes, discord_vendor_description, category_hash, see_also
+	                 apple_vendor_description, keywords, also_known_as, version, senses,
+	                 shortcodes, discord_vendor_description, category_hash, see_also, updated_at
 	          FROM emojis
 	          WHERE slug_hash = ?`
 
@@ -345,7 +349,9 @@ func (db *DB) GetEmojiBySlug(slug string) (*EmojiData, error) {
 		&row.SlugHash, &row.ID, &row.Code, &row.Unicode, &row.Slug, &row.Title,
 		&row.Category, &row.Description, &row.AppleVendorDescription,
 		&row.Keywords, &row.AlsoKnownAs, &row.Version, &row.Senses,
-		&row.Shortcodes, &row.DiscordVendorDescription, &row.CategoryHash, &row.SeeAlso,
+		&row.Shortcodes, &row.DiscordVendorDescription, &row.CategoryHash,
+		&row.SeeAlso,
+		&row.UpdatedAt,
 	)
 	if err != nil {
 		if err == sql.ErrNoRows {
@@ -468,13 +474,19 @@ func (db *DB) GetSitemapEmojis() ([]SitemapEmoji, error) {
 
 // GetDB returns a database instance using the default path
 func GetDB() (*DB, error) {
-	dbPath := GetDBPath()
-	// Resolve to absolute path
-	absPath, err := filepath.Abs(dbPath)
-	if err != nil {
-		return nil, err
+	if err := config.LoadDBToml(); err != nil {
+		return nil, fmt.Errorf("failed to load db.toml for Emoji DB: %w", err)
 	}
-	return NewDB(absPath)
+	dbPath := config.DBConfig.EmojiDB
+	if dbPath == "" {
+		return nil, fmt.Errorf("Emoji DB path is empty in db.toml")
+	}
+
+	db, err := NewDB(dbPath)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open Emoji DB: %w", err)
+	}
+	return db, nil
 }
 
 // GetEmojiCategoryUpdatedAt returns the updated_at timestamp for a category

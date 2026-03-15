@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"b2m/cli"
 	"b2m/config"
 	"b2m/core"
 	"b2m/model"
@@ -18,7 +19,7 @@ func main() {
 	defer config.Cleanup()
 
 	// Handle CLI commands first. If a command is executed, this function will exit.
-	ui.HandleCLI()
+	cli.HandleCLI()
 
 	// Startup checks for TUI
 	if err := config.CheckDependencies(); err != nil {

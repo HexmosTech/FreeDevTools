@@ -49,15 +49,16 @@ func (app *AppUI) renderMainView(g *gocui.Gui) {
 	viewW, _ := v.Size()
 
 	// Column Widths (Percentage Based)
-	// 25% (Name) | 25% (Status) | 10% (Step/Msg) | 40% (Bar/ETA)
-	colNameW := int(float64(viewW) * 0.25)
-	colStatusW := int(float64(viewW) * 0.25)
+	// 35% (Name) | 20% (Status) | 10% (Step/Msg) | 35% (Bar/ETA)
+	colNameW := int(float64(viewW) * 0.35)
+	colStatusW := int(float64(viewW) * 0.20)
 	colStepW := int(float64(viewW) * 0.10)
 	colBarW := viewW - colNameW - colStatusW - colStepW - 2
 
 	if colNameW < 10 {
 		colNameW = 10
 	}
+
 	if colStatusW < 10 {
 		colStatusW = 10
 	}

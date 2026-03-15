@@ -8,8 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/BurntSushi/toml"
-
 	"b2m/core"
 	"b2m/model"
 )
@@ -45,6 +43,14 @@ func InitializeConfig() error {
 	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalB2MDir, "local-version")
 	model.AppConfig.MigrationsDir = filepath.Join(model.AppConfig.ProjectRoot, "b2m-migration")
 
+	// Changeset Paths
+	model.AppConfig.ChangesetDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
+	model.AppConfig.ChangesetScriptsDir = filepath.Join(model.AppConfig.ChangesetDir, "scripts")
+	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ChangesetDir, "logs")
+	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs")
+
+	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db.toml")
+
 	return nil
 }
 
@@ -63,36 +69,6 @@ func findProjectRoot() (string, error) {
 		}
 		dir = parent
 	}
-}
-
-func loadTOMLConfig() error {
-	tomlPath := filepath.Join(model.AppConfig.ProjectRoot, "fdt-dev.toml")
-	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("couldn't find fdt-dev.toml file at %s: %w", tomlPath, err)
-	}
-
-	var tomlConf struct {
-		B2M struct {
-			Discord    string `toml:"b2m_discord_webhook"`
-			RootBucket string `toml:"b2m_remote_root_bucket"`
-			LocalDBDir string `toml:"b2m_db_dir"`
-		} `toml:"b2m"`
-	}
-	if _, err := toml.DecodeFile(tomlPath, &tomlConf); err != nil {
-		return fmt.Errorf("failed to decode fdt-dev.toml: %w", err)
-	}
-
-	model.AppConfig.RootBucket = tomlConf.B2M.RootBucket
-	model.AppConfig.DiscordWebhookURL = tomlConf.B2M.Discord
-	if tomlConf.B2M.LocalDBDir != "" {
-		if filepath.IsAbs(tomlConf.B2M.LocalDBDir) {
-			model.AppConfig.LocalDBDir = tomlConf.B2M.LocalDBDir
-		} else {
-			model.AppConfig.LocalDBDir = filepath.Join(model.AppConfig.ProjectRoot, tomlConf.B2M.LocalDBDir)
-		}
-	}
-
-	return nil
 }
 
 func validateAndSetPaths() error {
@@ -170,4 +146,12 @@ func CheckDependencies() error {
 		return fmt.Errorf("rclone config not found. Run 'init' or check setup")
 	}
 	return nil
+}
+
+// UpdateForScript updates the global configuration paths given a script name
+func UpdateForScript(scriptName string) {
+	if scriptName != "" {
+		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", scriptName, "backup")
+		model.AppConfig.LocalDBDir = model.AppConfig.ChangesetDBsDir
+	}
 }

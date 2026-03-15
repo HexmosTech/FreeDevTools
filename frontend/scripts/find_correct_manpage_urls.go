@@ -18,7 +18,10 @@ func main() {
 	log.SetFlags(0)
 
 	// Open database
-	dbPath := man_pages.GetDBPath()
+	dbPath, err := man_pages.GetDBPath()
+	if err != nil {
+		log.Fatalf("Error getting DB path: %v", err)
+	}
 	db, err := sql.Open("sqlite3", dbPath)
 	if err != nil {
 		log.Fatalf("Error opening database: %v", err)
@@ -151,4 +154,3 @@ func findManPageBySlug(db *sql.DB, slug string) string {
 		url.PathEscape(foundSubCategory),
 		url.PathEscape(foundSlug))
 }
-

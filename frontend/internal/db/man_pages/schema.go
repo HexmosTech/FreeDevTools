@@ -121,6 +121,7 @@ func (r *rawManPageRow) toManPage(mainCategory, subCategory string) ManPage {
 		Content:      content,
 		ContentHTML:  r.ContentHTML,
 		SeeAlso:      r.SeeAlso,
+		UpdatedAt:    r.UpdatedAt,
 	}
 }
 
@@ -131,6 +132,7 @@ func (r *rawCategoryRow) toCategory() Category {
 		Count:       r.Count,
 		Description: r.Description,
 		Path:        r.Path,
+		UpdatedAt:   r.UpdatedAt,
 	}
 }
 
@@ -140,5 +142,6 @@ func (r *rawSubCategoryRow) toSubCategory() SubCategory {
 		Name:        r.Name,
 		Count:       r.Count,
 		Description: r.Description,
+		UpdatedAt:   r.UpdatedAt,
 	}
 }

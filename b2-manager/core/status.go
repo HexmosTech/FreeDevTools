@@ -160,6 +160,18 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 		}
 	}
 
+	// -------------------------------------------------------------------------
+	// PHASE 5: UNKNOWN STATE / MISSING METADATA
+	// -------------------------------------------------------------------------
+	if db.ExistsRemote && !hasRemoteMeta {
+		// The DB file is physically on the remote, but there is no .json metadata.
+		// Since we cannot verify if local is newer or older, it's an anomalous state.
+		LogError("Status Check: %s -> Missing Remote Metadata! (ExistsLocal: %v, ExistsRemote: %v)", db.Name, db.ExistsLocal, db.ExistsRemote)
+		return model.StatusCodeNoMetadata, model.DBStatuses.NoMetadata.Text, text.Colors{model.DBStatuses.NoMetadata.Color}
+	}
+
+	// Catch-all if something else falls through
+	LogError("Status Check: %s -> Unknown state (ExistsLocal: %v, ExistsRemote: %v, HasRemoteMeta: %v)", db.Name, db.ExistsLocal, db.ExistsRemote, hasRemoteMeta)
 	return model.StatusCodeUnknown, model.DBStatuses.Unknown.Text, text.Colors{model.DBStatuses.Unknown.Color}
 }
 
@@ -268,7 +280,6 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	}
 	LogInfo("FetchDBStatusData: Aggregated total %d databases", len(allDBs))
 
-	// Calculate status for each database
 	var statusData []model.DBStatusInfo
 	for _, db := range allDBs {
 		statusCode, statusText, statusColor := CalculateDBStatus(db, locks, remoteMetas, localVersions, onProgress)
