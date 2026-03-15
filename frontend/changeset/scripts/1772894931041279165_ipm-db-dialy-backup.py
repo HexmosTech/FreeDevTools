@@ -33,7 +33,7 @@ def main():
         return
 
     # Check status of db.
-    status = db_status(DB_NAME, "cron")
+    status = db_status(DB_NAME)
     print(status)
     
     # If status is up_to_date, then do nothing.

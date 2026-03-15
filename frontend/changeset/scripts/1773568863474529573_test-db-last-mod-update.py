@@ -1,7 +1,7 @@
 # Template Version: v1
-# script_name : 1773242681492990101_test-db-last-mod-update
+# script_name : 1773568863474529573_test-db-last-mod-update
 # phrase : test-db-last-mod-update
-
+# Execute with make exe-changeset 1773568863474529573_test-db-last-mod-update
 ## Predifned Imports and Functions 
 import os
 
@@ -39,7 +39,8 @@ def update_db(db_path):
     """
 
     # 2. Update Stage: Have sql query defined under this function.
-    query = "UPDATE ipm_data SET updated_at = CURRENT_TIMESTAMP;"
+    query = "UPDATE ipm_data SET updated_at = CURRENT_TIMESTAMP"
+
     
     print(f"Executing update_db for {db_path}...")
     try:

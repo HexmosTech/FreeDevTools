@@ -9,7 +9,15 @@ import (
 	"testing"
 )
 
-func TestIPMDB(t *testing.T) {
+// TestAllDBDirB2MCLI verifies the full lifecycle of database management using the b2m CLI.
+// It performs the following sequence of checks:
+//  1. Builds the b2m binary.
+//  2. Uploads a local database and verifies its status as 'up_to_date'.
+//  3. Modifies the local database and verifies the status changes to 'bump_and_upload'.
+//  4. Uploads a newer version of the database (v2) and verifies that the older version (v1)
+//     now reports an 'outdated_version' status.
+//  5. Cleans up test artifacts from the B2 bucket.
+func TestAllDBDirB2MCLI(t *testing.T) {
 	// Find the frontend directory
 	// go test runs in the package directory (b2-manager/tests)
 	workDir, err := os.Getwd()

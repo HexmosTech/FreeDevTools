@@ -1,7 +1,8 @@
 # Template Version: v1
 # script_name : {{.Timestamp}}_{{.Phrase}}
 # phrase : {{.Phrase}}
-
+# Execute : 
+# make exe-changeset {{.Timestamp}}_{{.Phrase}}
 ## Predifned Imports and Functions 
 import os
 
@@ -18,15 +19,16 @@ import os
 # svgiconsdb 
 # tldrdb
 
-DB_SHORT_NAME = "test"
+DB_SHORT_NAME = "add db short name here"
 import sys
+import subprocess
 
 # Add the parent directory (frontend/changeset) to sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 ## Import Common Functions
 try:
-    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copy, handle_query, get_latest_db, get_local_db
+    from changeset import  db_upload, download_latest_db
 except ImportError as e:
     print(f"Error importing changeset: {e}")
     sys.exit(1)
@@ -38,8 +40,8 @@ def update_db(db_path):
     """
 
     # 2. Update Stage: Have sql query defined under this function.
-    query = "UPDATE my_table SET mod_time = CURRENT_TIMESTAMP;"
-    import subprocess
+    query = "Define query here"
+
     
     print(f"Executing update_db for {db_path}...")
     try:
@@ -51,15 +53,12 @@ def update_db(db_path):
         return False
 
 def main():
-    global DB_NAME
-    
     # 1. Check Status of DB & Download latest
     db_path, err = download_latest_db(DB_SHORT_NAME)
     if err:
         print(err)
         return
-        
-    DB_NAME = db_path
+    print(f"Downloaded latest db: {db_path}")
     
     # 2. Update DB
     update_success = update_db(db_path)

@@ -18,7 +18,7 @@ import (
 func exitError(cCtx *cli.Context, msg string, code int) error {
 	if cCtx.Bool("json") {
 		msgEscaped, _ := json.Marshal(msg)
-		fmt.Printf(`{"status":"error","message":%s}`+"\n", string(msgEscaped))
+		fmt.Printf(`{"status":"failed","message":%s}`+"\n", string(msgEscaped))
 		return cli.Exit("", code)
 	}
 	return cli.Exit(msg, code)
@@ -48,7 +48,7 @@ func HandleCLI() {
 				Usage:    "Generate new hash and create metadata in remote",
 				Action: func(cCtx *cli.Context) error {
 					if err := config.CheckDependencies(); err != nil {
-						return cli.Exit(fmt.Sprintf("Error: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error: %v", err), 1)
 					}
 
 					fmt.Println("\nWARNING: This operation regenerates all metadata from local files.")
@@ -65,7 +65,7 @@ func HandleCLI() {
 
 					if err := core.CleanupLocalMetadata(); err != nil {
 						core.LogError("Generate-Hash: Failed to cleanup metadata: %v", err)
-						return cli.Exit(fmt.Sprintf("Error: failed to cleanup metadata: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error: failed to cleanup metadata: %v", err), 1)
 					}
 					core.ClearHashCache()
 
@@ -86,7 +86,7 @@ func HandleCLI() {
 					fmt.Println("Resetting system state...")
 					if err := core.CleanupLocalMetadata(); err != nil {
 						core.LogError("Reset: Failed to cleanup metadata: %v", err)
-						return cli.Exit(fmt.Sprintf("Error: failed to cleanup metadata: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error: failed to cleanup metadata: %v", err), 1)
 					}
 					core.ClearHashCache()
 					config.Cleanup()
@@ -100,11 +100,11 @@ func HandleCLI() {
 				Usage:    "Force unlock a database",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m unlock <db_name>", 1)
+						return exitError(cCtx, "Usage: b2m unlock <db_name>", 1)
 					}
 					dbName := cCtx.Args().First()
 					if err := core.SanitizeDBName(dbName); err != nil {
-						return cli.Exit(fmt.Sprintf("Error: Invalid database name: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error: Invalid database name: %v", err), 1)
 					}
 
 					fmt.Printf("WARNING: You are about to FORCE UNLOCK database '%s'.\n", dbName)
@@ -121,7 +121,7 @@ func HandleCLI() {
 
 					ctx := context.Background()
 					if err := core.UnlockDatabase(ctx, dbName, "CLI-User", true); err != nil {
-						return cli.Exit(fmt.Sprintf("Error unlocking database: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error unlocking database: %v", err), 1)
 					}
 					fmt.Println("Database unlocked successfully.")
 					return nil
@@ -133,11 +133,11 @@ func HandleCLI() {
 				Usage:    "Create a new changeset python script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m create-changeset <phrase>", 1)
+						return exitError(cCtx, "Usage: b2m create-changeset <phrase>", 1)
 					}
 					phrase := cCtx.Args().First()
 					if err := CreateChangeset(phrase); err != nil {
-						return cli.Exit(fmt.Sprintf("Error creating changeset: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error creating changeset: %v", err), 1)
 					}
 					return nil
 				},
@@ -148,11 +148,11 @@ func HandleCLI() {
 				Usage:    "Execute a given changeset script",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return cli.Exit("Usage: b2m exe-changeset <changeset_dir>", 1)
+						return exitError(cCtx, "Usage: b2m exe-changeset <changeset_dir>", 1)
 					}
 					changesetDir := cCtx.Args().First()
 					if err := ExecuteChangeset(changesetDir); err != nil {
-						return cli.Exit(fmt.Sprintf("Error executing changeset: %v", err), 1)
+						return exitError(cCtx, fmt.Sprintf("Error executing changeset: %v", err), 1)
 					}
 					return nil
 				},
@@ -363,6 +363,43 @@ func HandleCLI() {
 				},
 			},
 			{
+				Name:     "bump-and-upload",
+				Category: "Changeset Commands",
+				Usage:    "Increment DB version, update db.toml, and upload to B2 (for scripting)",
+				Action: func(cCtx *cli.Context) error {
+					if cCtx.NArg() == 0 {
+						return exitError(cCtx, "Usage: b2m bump-and-upload <db_name> [changeset_dir]", 1)
+					}
+					dbName := cCtx.Args().First()
+					if cCtx.NArg() > 1 {
+						changesetDir := cCtx.Args().Get(1)
+						if strings.HasPrefix(changesetDir, "changset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						}
+						config.UpdateForScript(changesetDir)
+					}
+
+					newDBName, err := RunCLIBumpAndUpload(dbName, cCtx.Bool("json"))
+					if err != nil {
+						return exitError(cCtx, fmt.Sprintf("Error in bump-and-upload: %v", err), 1)
+					}
+
+					useJSON := cCtx.Bool("json")
+					if useJSON {
+						resp := struct {
+							BumpedDBName string `json:"bumped_db_name"`
+							BaseDBName   string `json:"base_db_name"`
+							Status       string `json:"status"`
+						}{newDBName, dbName, "success"}
+						b, _ := json.MarshalIndent(resp, "", "  ")
+						fmt.Println(string(b))
+					} else {
+						fmt.Println(newDBName)
+					}
+					return nil
+				},
+			},
+			{
 				Name:     "handle-query",
 				Category: "Changeset Commands",
 				Usage:    "Execute a specific SQL file against a target database (for scripting)",
@@ -440,7 +477,24 @@ func HandleCLI() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
+		// Use a temporary context to check for --json flag
+		// This is a bit tricky with urfave/cli v2 as the flag might not be parsed if Run failed early
+		// But for most command errors, we want JSON if --json was provided.
+		useJSON := false
+		for _, arg := range os.Args {
+			if arg == "--json" {
+				useJSON = true
+				break
+			}
+		}
+
+		if useJSON {
+			msgEscaped, _ := json.Marshal(err.Error())
+			fmt.Printf(`{"status":"failed","message":%s}`+"\n", string(msgEscaped))
+			os.Exit(1)
+		}
+
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
 

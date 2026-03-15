@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"os/exec"
@@ -8,6 +9,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"b2m/core"
 	"b2m/model"
@@ -74,6 +76,22 @@ func RunCLIBumpDBVersion(baseDBName string) (string, error) {
 		return "", fmt.Errorf("failed to update db.toml: %w", err)
 	}
 	core.LogInfo("Updated db.toml with new version %s", newDBName)
+
+	return newDBName, nil
+}
+
+// RunCLIBumpAndUpload handles the combined bump and upload logic
+func RunCLIBumpAndUpload(dbName string, useJSON bool) (string, error) {
+	// 1. Bump version
+	newDBName, err := RunCLIBumpDBVersion(dbName)
+	if err != nil {
+		return "", fmt.Errorf("failed to bump db version: %w", err)
+	}
+
+	// 2. Upload new version
+	if err := RunCLIUpload(newDBName); err != nil {
+		return newDBName, fmt.Errorf("failed to upload bumped db: %w", err)
+	}
 
 	return newDBName, nil
 }
@@ -173,25 +191,52 @@ func updateDBToml(oldName, newName string) error {
 func commitAndPushDBToml(tomlPath, newName string) error {
 	dir := filepath.Dir(tomlPath)
 
-	cmdAdd := exec.Command("git", "add", filepath.Base(tomlPath))
-	cmdAdd.Dir = dir
-	if err := cmdAdd.Run(); err != nil {
-		return fmt.Errorf("git add failed: %w", err)
-	}
-
-	commitMsg := fmt.Sprintf("chore: bump DB version to %s in db.toml", newName)
-	cmdCommit := exec.Command("git", "commit", "-m", commitMsg)
-	cmdCommit.Dir = dir
-	if err := cmdCommit.Run(); err != nil {
-		// likely nothing to commit if there were no changes
+	// Check if we are in a git repo before trying
+	if _, err := exec.LookPath("git"); err != nil {
 		return nil
 	}
 
-	cmdPush := exec.Command("git", "push")
-	cmdPush.Dir = dir
-	if err := cmdPush.Run(); err != nil {
-		return fmt.Errorf("git push failed: %w", err)
+	ctxAdd, cancelAdd := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancelAdd()
+	cmdAdd := exec.CommandContext(ctxAdd, "git", "add", filepath.Base(tomlPath))
+	cmdAdd.Dir = dir
+	_ = cmdAdd.Run() // Ignore errors if not a git repo or timeout
+
+	commitMsg := fmt.Sprintf("chore: bump DB version to %s in db.toml", newName)
+	ctxCommit, cancelCommit := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancelCommit()
+	cmdCommit := exec.CommandContext(ctxCommit, "git", "commit", "-m", commitMsg)
+	cmdCommit.Dir = dir
+	commitOut, err := cmdCommit.CombinedOutput()
+	if err != nil {
+		outStr := string(commitOut)
+		if strings.Contains(outStr, "interactive environment detected") || strings.Contains(outStr, "no-op") {
+			return fmt.Errorf("git commit skipped: %s", strings.TrimSpace(outStr))
+		}
+		// If it's just "nothing to commit", we can ignore it
+		if strings.Contains(outStr, "nothing to commit") {
+			return nil
+		}
+		if ctxCommit.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("git commit timed out (hook hang?)")
+		}
+		return fmt.Errorf("git commit failed: %v\nOutput: %s", err, outStr)
 	}
 
+	// For push, we use a timeout or just skip if it might hang
+	// In test environments, this often hangs. We can check for an env var.
+	if os.Getenv("SKIP_B2M_PUSH") == "true" {
+		return nil
+	}
+
+	// Try push with a short-ish timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	cmdPush := exec.CommandContext(ctx, "git", "push")
+	cmdPush.Dir = dir
+	pushOut, err := cmdPush.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("git push failed: %v\nOutput: %s", err, string(pushOut))
+	}
 	return nil
 }
