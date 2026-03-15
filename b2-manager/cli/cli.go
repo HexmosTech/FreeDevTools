@@ -168,8 +168,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -197,8 +197,8 @@ func HandleCLI() {
 					changesetDir := ""
 					if cCtx.NArg() > 3 {
 						changesetDir = cCtx.Args().Get(3)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -245,8 +245,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -272,8 +272,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -299,8 +299,8 @@ func HandleCLI() {
 					changesetScript := ""
 					if cCtx.NArg() > 1 {
 						changesetScript = cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetScript, "changset_dir=") {
-							changesetScript = strings.TrimPrefix(changesetScript, "changset_dir=")
+						if strings.HasPrefix(changesetScript, "changeset_dir=") {
+							changesetScript = strings.TrimPrefix(changesetScript, "changeset_dir=")
 						}
 					}
 					useJSON := cCtx.Bool("json")
@@ -337,8 +337,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -373,8 +373,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -411,8 +411,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().Get(1)
 					if cCtx.NArg() > 2 {
 						changesetDir := cCtx.Args().Get(2)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -438,8 +438,8 @@ func HandleCLI() {
 					shortName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}
@@ -461,8 +461,8 @@ func HandleCLI() {
 					dbName := cCtx.Args().First()
 					if cCtx.NArg() > 1 {
 						changesetDir := cCtx.Args().Get(1)
-						if strings.HasPrefix(changesetDir, "changset_dir=") {
-							changesetDir = strings.TrimPrefix(changesetDir, "changset_dir=")
+						if strings.HasPrefix(changesetDir, "changeset_dir=") {
+							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
 						config.UpdateForScript(changesetDir)
 					}

@@ -12,7 +12,7 @@ import (
 )
 
 // TestChangesetDirB2MCLI verifies the database management lifecycle using the b2m CLI
-// when a specific changeset directory is provided via the 'changset_dir=' parameter.
+// when a specific changeset directory is provided via the 'changeset_dir=' parameter.
 // It performs the following sequence of checks:
 //  1. Builds the b2m binary.
 //  2. Uploads a local database from a specific changeset directory and verifies status as 'up_to_date'.
@@ -21,8 +21,6 @@ import (
 //     now reports an 'outdated_version' status.
 //  5. Cleans up test artifacts from the B2 bucket.
 func TestChangesetDirB2MCLI(t *testing.T) {
-	os.Setenv("SKIP_B2M_PUSH", "true")
-
 	// Find the frontend directory
 	workDir, _ := os.Getwd()
 	projectRoot := filepath.Dir(filepath.Dir(workDir))
@@ -32,7 +30,7 @@ func TestChangesetDirB2MCLI(t *testing.T) {
 	}
 
 	specificChangesetDir := "1772031633645610550_sample-phrase"
-	changsetParam := "changset_dir=" + specificChangesetDir
+	changsetParam := "changeset_dir=" + specificChangesetDir
 	dbDir := filepath.Join(frontendDir, "changeset", "dbs", specificChangesetDir)
 	b2mBin := filepath.Join(frontendDir, "b2m")
 

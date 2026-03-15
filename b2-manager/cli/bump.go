@@ -181,7 +181,7 @@ func updateDBToml(oldName, newName string) error {
 	}
 
 	if err := commitAndPushDBToml(tomlPath, newName); err != nil {
-		core.LogInfo("Warning: failed to commit and push db.toml: %v", err)
+		return fmt.Errorf("failed to commit and push db.toml: %w", err)
 	}
 
 	return nil
