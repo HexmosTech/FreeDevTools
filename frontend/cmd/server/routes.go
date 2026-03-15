@@ -29,6 +29,7 @@ import (
 	"fdt-templ/internal/db/svg_icons"
 	"fdt-templ/internal/db/tldr"
 	"fdt-templ/internal/db/tools"
+	"fdt-templ/internal/utils"
 
 	"github.com/a-h/templ"
 )
@@ -168,6 +169,68 @@ func fetchVSXExtensionInstallCount() int {
 
 // Cheatsheets route matching functions are now in cheatsheets_routes.go
 
+// requireAdmin is a middleware that ensures the user is an admin.
+func requireAdmin(fdtPgDB *bookmarks.DB, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		uid, err := utils.GetUserIDFromCookie(r)
+		if err != nil || uid == "" {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		isAdmin, err := fdtPgDB.CheckUserAdmin(uid)
+		if err != nil {
+			log.Printf("[Admin] DB CheckUserAdmin error for uid=%s: %v", uid, err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		
+		if !isAdmin {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
+// requireAdminOrSlugAccess is a middleware that ensures the user is an admin OR has explicit slug access.
+func requireAdminOrSlugAccess(fdtPgDB *bookmarks.DB, next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		uid, err := utils.GetUserIDFromCookie(r)
+		if err != nil || uid == "" {
+			http.Error(w, "Unauthorized", http.StatusUnauthorized)
+			return
+		}
+
+		isAdmin, err := fdtPgDB.CheckUserAdmin(uid)
+		if err != nil {
+			log.Printf("[Admin] DB CheckUserAdmin error for uid=%s: %v", uid, err)
+		}
+		
+		repoName := r.URL.Query().Get("repo")
+		if repoName == "" {
+			log.Printf("[Admin] repo parameter is missing for UID: %s", uid)
+			http.Error(w, "Bad Request: repository name ('repo' query parameter) is required", http.StatusBadRequest)
+			return
+		}
+
+		hasSlugAccess, err := fdtPgDB.HasIPMDashboardAccess(uid, repoName)
+		if err != nil {
+			log.Printf("[Admin] DB HasIPMDashboardAccess error for uid=%s, repo=%s: %v", uid, repoName, err)
+			http.Error(w, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+
+		if !isAdmin && !hasSlugAccess {
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			return
+		}
+
+		next(w, r)
+	}
+}
+
 func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_pages.DB, emojisDB *emojis.DB, mcpDB *mcp.DB, pngIconsDB *png_icons.DB, cheatsheetsDB *cheatsheets.DB, tldrDB *tldr.DB, installerpediaDB *installerpedia.DB, toolsConfig *tools.Config, fdtPgDB *bookmarks.DB) {
 	// Main index page
 	mux.HandleFunc(basePath+"/", func(w http.ResponseWriter, r *http.Request) {
@@ -228,17 +291,20 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 	setupEmojisPagesRoutes(mux, emojisDB)
 
 	// Installerpedia Routes
-	setupInstallerpediaRoutes(mux, installerpediaDB)
+	setupInstallerpediaRoutes(mux, installerpediaDB, fdtPgDB)
 	setupInstallerpediaPagesRoutes(mux, installerpediaDB)
 
 	writeDB, _ := installerpedia.GetWriteDB() 
-	setupInstallerpediaApiRoutes(mux, writeDB) 
+	setupInstallerpediaApiRoutes(mux, writeDB, fdtPgDB) 
 
 	// TLDR routes
 	setupTldrRoutes(mux, tldrDB)
 
 	// Bookmark routes
 	setupBookmarkRoutes(mux, fdtPgDB)
+
+	// Admin routes
+	setupAdminRoutes(mux, fdtPgDB)
 
 	// Temporary Sitemap
 	setupTemporarySitemapRoutes(mux)

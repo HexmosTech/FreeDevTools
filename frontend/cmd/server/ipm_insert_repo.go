@@ -13,6 +13,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"fdt-templ/internal/db/bookmarks"
+
 	"strings"
 	"time"
 
@@ -139,7 +141,7 @@ func LogIPMQuery(query string, args ...interface{}) {
 	}
 }
 
-func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
+func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdtPgDB *bookmarks.DB) {
 	base := GetBasePath() + "/api/installerpedia"
 
 	// Clean routing table
@@ -152,9 +154,9 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
 	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
 	// Metrics & analytics
-	mux.HandleFunc(base+"/metrics/summary", handleMetricsSummary())
-	mux.HandleFunc(base+"/metrics/errors", handleMetricsErrors())
-	mux.HandleFunc(base+"/metrics/cancels", handleMetricsCancels())
+	mux.HandleFunc(base+"/metrics/summary", requireAdminOrSlugAccess(fdtPgDB, handleMetricsSummary()))
+	mux.HandleFunc(base+"/metrics/errors", requireAdminOrSlugAccess(fdtPgDB, handleMetricsErrors()))
+	mux.HandleFunc(base+"/metrics/cancels", requireAdminOrSlugAccess(fdtPgDB, handleMetricsCancels()))
 
 }
 

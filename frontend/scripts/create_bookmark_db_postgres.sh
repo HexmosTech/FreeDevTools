@@ -40,6 +40,27 @@ CREATE TABLE IF NOT EXISTS bookmarks (
 CREATE INDEX IF NOT EXISTS idx_bookmarks_uid ON bookmarks(uId_hash_id);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_category ON bookmarks(category_hash_id);
 CREATE INDEX IF NOT EXISTS idx_bookmarks_url ON bookmarks(url);
+
+CREATE TABLE IF NOT EXISTS user_role (
+    uid TEXT PRIMARY KEY,
+    role VARCHAR(50) NOT NULL
+);
+
+-- 1. Main Table for IPM Dashboard
+CREATE TABLE IF NOT EXISTS ipm_dashboard (
+    uid TEXT PRIMARY KEY, 
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 2. Mapping Table (The Many-to-Many Bridge)
+CREATE TABLE IF NOT EXISTS ipm_dashboard_slugs (
+    dashboard_uid TEXT REFERENCES ipm_dashboard(uid) ON DELETE CASCADE,
+    slug TEXT NOT NULL,
+    PRIMARY KEY (dashboard_uid, slug) 
+);
+
+-- Index for high-speed reverse lookups (finding UIDs by slug)
+CREATE INDEX IF NOT EXISTS idx_ipm_slug_search ON ipm_dashboard_slugs(slug);
 EOF
 
 echo "✅ Created bookmark database and table in PostgreSQL: $DB_NAME.bookmarks"

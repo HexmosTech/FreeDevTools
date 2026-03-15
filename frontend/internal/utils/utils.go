@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"net/http"
 	"net/url"
 	"strconv"
 	"strings"
@@ -99,4 +100,13 @@ func IsExceptionPath(path string) bool {
 		"games/puzzle-and-logic-games/2048": true,
 	}
 	return exceptionPaths[path]
+}
+
+// GetUserIDFromCookie extracts the user ID from the "hexmos-one-id" cookie
+func GetUserIDFromCookie(r *http.Request) (string, error) {
+	cookie, err := r.Cookie("hexmos-one-id")
+	if err != nil {
+		return "", err
+	}
+	return cookie.Value, nil
 }

@@ -29,7 +29,9 @@ import (
 	"fdt-templ/components/layouts"
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
 	"fdt-templ/internal/config"
+	"fdt-templ/internal/db/bookmarks"
 	"fdt-templ/internal/db/installerpedia"
+	"fdt-templ/internal/utils"
 
 	"github.com/a-h/templ"
 )
@@ -264,7 +266,33 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 
 // HandleMetrics renders the per-repo metrics dashboard page
 // at /installerpedia/{category}/{slug}/metrics/.
-func HandleMetrics(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, category string, slug string, hashID int64) {
+func HandleMetrics(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, fdtPgDB *bookmarks.DB, category string, slug string, hashID int64) {
+	// auth check
+	userID, err := utils.GetUserIDFromCookie(r)
+	if err != nil || userID == "" {
+		http.Redirect(w, r, config.GetBasePath()+"/", http.StatusFound)
+		return
+	}
+
+	isAdmin, err := fdtPgDB.CheckUserAdmin(userID)
+	if err != nil {
+		log.Printf("[Metrics] DB Error checking admin for %s: %v", userID, err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	
+	hasSlugAccess, err := fdtPgDB.HasIPMDashboardAccess(userID, category+"/"+slug)
+	if err != nil {
+		log.Printf("[Metrics] DB Error checking slug access for %s/%s: %v", userID, category+"/"+slug, err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	
+	if !isAdmin && !hasSlugAccess {
+		http.Redirect(w, r, config.GetBasePath()+"/", http.StatusFound)
+		return
+	}
+
 	repo, err := db.GetRepo(hashID)
 	if err != nil || repo == nil {
 		if err != nil {
