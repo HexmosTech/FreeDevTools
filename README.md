@@ -100,16 +100,18 @@ report-bugs = false
 
 ## Related Projects
 
-[git-lrc](https://github.com/HexmosTech/git-lrc): a Git hook for Checking AI generated code.*
+[git-lrc](https://github.com/HexmosTech/git-lrc): Free, Unlimited AI Code Reviews That Run on Commit.
  
 
 [![git-lrc](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/vbgm2bg20v4egt4x3p6m.png)](https://hexmos.com/livereview/git-lrc/)
 
 *AI agents write code fast. They also silently remove logic, change behavior, and introduce bugs -- without telling you. You often find out in production.
-git-lrc fixes this. It hooks into git commit and reviews every diff before it lands. 60-second setup. Completely free.*
+git-lrc fixes this. It hooks into git commit and reviews every diff before it lands. 60-second setup.*
 
 👉 Check out: [git-lrc](https://github.com/HexmosTech/git-lrc) 
-Any feedback or contributors are welcome! It’s online, source-available, and ready for anyone to use. 
+Any feedback or contributors are welcome! It’s online, source-available, and ready for anyone to use. Star us on GitHub.
+
+
 ---
 
 ## Contributing
