@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/pprof"
@@ -184,7 +185,7 @@ func requireAdmin(fdtPgDB *bookmarks.DB, next http.HandlerFunc) http.HandlerFunc
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return
 		}
-		
+
 		if !isAdmin {
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
@@ -207,7 +208,7 @@ func requireAdminOrSlugAccess(fdtPgDB *bookmarks.DB, next http.HandlerFunc) http
 		if err != nil {
 			log.Printf("[Admin] DB CheckUserAdmin error for uid=%s: %v", uid, err)
 		}
-		
+
 		repoName := r.URL.Query().Get("repo")
 		if repoName == "" {
 			log.Printf("[Admin] repo parameter is missing for UID: %s", uid)
@@ -294,8 +295,8 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 	setupInstallerpediaRoutes(mux, installerpediaDB, fdtPgDB)
 	setupInstallerpediaPagesRoutes(mux, installerpediaDB)
 
-	writeDB, _ := installerpedia.GetWriteDB() 
-	setupInstallerpediaApiRoutes(mux, writeDB, fdtPgDB) 
+	writeDB, _ := installerpedia.GetWriteDB()
+	setupInstallerpediaApiRoutes(mux, writeDB, fdtPgDB)
 
 	// TLDR routes
 	setupTldrRoutes(mux, tldrDB)

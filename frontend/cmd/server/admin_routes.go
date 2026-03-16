@@ -19,7 +19,17 @@ func setupAdminRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
 
 	mux.HandleFunc(basePath+"/admin/", requireAdmin(fdtPgDB, func(w http.ResponseWriter, r *http.Request) {
 		// User is admin, render the admin page
-		handler := templ.Handler(admin.AdminPage())
+		
+		// Fetch existing users for IPM dashboard
+		users, err := fdtPgDB.GetIPMDashboardUsers()
+		if err != nil {
+			log.Printf("[Admin] Error fetching IPM dashboard users: %v", err)
+			// Continue rendering the page but with empty users list, 
+			// so the rest of the page still works
+			users = []bookmarks.IPMDashboardUser{}
+		}
+		
+		handler := templ.Handler(admin.AdminPage(users))
 		handler.ServeHTTP(w, r)
 	}))
 
@@ -95,7 +105,7 @@ func setupAdminRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
 		uid := parseResult.Results[0].ObjectId
 
 		// Add user to IPM Dashboard
-		if err := fdtPgDB.AddIPMDashboardUser(uid, payload.Slugs); err != nil {
+		if err := fdtPgDB.AddIPMDashboardUser(uid, payload.Email, payload.Slugs); err != nil {
 			log.Printf("[Admin] Error adding IPM dashboard user for uid=%s: %v", uid, err)
 			http.Error(w, "Internal server error", http.StatusInternalServerError)
 			return

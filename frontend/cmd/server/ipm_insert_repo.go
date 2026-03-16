@@ -154,9 +154,9 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdt
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
 	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
 	// Metrics & analytics
-	mux.HandleFunc(base+"/metrics/summary", requireAdminOrSlugAccess(fdtPgDB, handleMetricsSummary()))
-	mux.HandleFunc(base+"/metrics/errors", requireAdminOrSlugAccess(fdtPgDB, handleMetricsErrors()))
-	mux.HandleFunc(base+"/metrics/cancels", requireAdminOrSlugAccess(fdtPgDB, handleMetricsCancels()))
+	mux.HandleFunc(base+"/metrics/summary",handleMetricsSummary())
+	mux.HandleFunc(base+"/metrics/errors",  handleMetricsErrors())
+	mux.HandleFunc(base+"/metrics/cancels", handleMetricsCancels())
 
 }
 

@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS user_role (
 -- 1. Main Table for IPM Dashboard
 CREATE TABLE IF NOT EXISTS ipm_dashboard (
     uid TEXT PRIMARY KEY, 
+    email TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
