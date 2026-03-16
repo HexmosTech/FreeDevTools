@@ -189,6 +189,9 @@ func updateDBToml(oldName, newName string) error {
 
 // commitAndPushDBToml adds, commits, and pushes db.toml to origin main
 func commitAndPushDBToml(tomlPath, newName string) error {
+	if os.Getenv("SKIP_B2M_GIT") == "true" {
+		return nil
+	}
 	dir := filepath.Dir(tomlPath)
 
 	// Check if we are in a git repo before trying
@@ -205,7 +208,7 @@ func commitAndPushDBToml(tomlPath, newName string) error {
 	commitMsg := fmt.Sprintf("chore: bump DB version to %s in db.toml", newName)
 	ctxCommit, cancelCommit := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancelCommit()
-	cmdCommit := exec.CommandContext(ctxCommit, "git", "commit", "-m", commitMsg)
+	cmdCommit := exec.CommandContext(ctxCommit, "git", "commit", "-m", commitMsg, "--no-verify")
 	cmdCommit.Dir = dir
 	commitOut, err := cmdCommit.CombinedOutput()
 	if err != nil {

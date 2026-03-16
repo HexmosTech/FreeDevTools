@@ -108,11 +108,19 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 	return all, nil
 }
 func SendDiscord(ctx context.Context, content string) {
+	// Use a tight timeout for Discord notifications
+	dCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	payload := map[string]string{"content": content}
 	data, _ := json.Marshal(payload)
-	err := exec.CommandContext(ctx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
+	err := exec.CommandContext(dCtx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
 	if err != nil {
-		LogError("Failed to send discord notification: %v", err)
+		if dCtx.Err() == context.DeadlineExceeded {
+			LogError("Discord notification timed out after 5s")
+		} else {
+			LogError("Failed to send discord notification: %v", err)
+		}
 	}
 }
 

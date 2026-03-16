@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"b2m/core"
 	"b2m/model"
@@ -275,18 +276,14 @@ func WalCheckpointTruncate(dbName string) error {
 		return fmt.Errorf("database file not found at %s", dbPath)
 	}
 
-	cmd := exec.Command("sqlite3", dbPath)
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return fmt.Errorf("failed to create stdin pipe: %w", err)
-	}
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-	go func() {
-		defer stdin.Close()
-		stdin.Write([]byte("PRAGMA wal_checkpoint(TRUNCATE);\n.quit\n"))
-	}()
-
+	cmd := exec.CommandContext(ctx, "sqlite3", dbPath, "PRAGMA wal_checkpoint(TRUNCATE);")
 	if err := cmd.Run(); err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("sqlite3 WAL checkpoint timed out")
+		}
 		return fmt.Errorf("failed to execute sqlite3 WAL checkpoint: %w", err)
 	}
 

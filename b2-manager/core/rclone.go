@@ -7,6 +7,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"b2m/model"
 )
@@ -144,8 +145,14 @@ func RcloneCopy(ctx context.Context, cmdName, src, dst, description string, quie
 
 // RcloneDeleteFile deletes a single file using rclone deletefile
 func RcloneDeleteFile(ctx context.Context, filePath string) error {
-	cmd := exec.CommandContext(ctx, "rclone", "deletefile", filePath)
+	delCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	defer cancel()
+
+	cmd := exec.CommandContext(delCtx, "rclone", "deletefile", filePath)
 	if err := cmd.Run(); err != nil {
+		if delCtx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("deletefile timed out for %s", filePath)
+		}
 		LogError("RcloneDeleteFile: Failed to delete %s: %v", filePath, err)
 		return err
 	}
@@ -154,10 +161,16 @@ func RcloneDeleteFile(ctx context.Context, filePath string) error {
 
 // LsfRclone lists all files recursively from RootBucket to get DBs and Locks in one go
 func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error) {
-	// recursive list of root bucket
-	cmd := exec.CommandContext(ctx, "rclone", "lsf", "-R", model.AppConfig.RootBucket)
+	// recursive list of root bucket with timeout
+	lsfCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+	defer cancel()
+
+	cmd := exec.CommandContext(lsfCtx, "rclone", "lsf", "-R", model.AppConfig.RootBucket)
 	out, err := cmd.Output()
 	if err != nil {
+		if lsfCtx.Err() == context.DeadlineExceeded {
+			return nil, nil, fmt.Errorf("listing remote files timed out")
+		}
 		LogError("LsfRclone input failed: %v", err)
 		return nil, nil, fmt.Errorf("failed to list remote files: %w", err)
 	}
@@ -215,7 +228,10 @@ func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error
 
 // FetchLocks lists all files in LockDir and parses them
 func FetchLocks(ctx context.Context) (map[string]model.LockEntry, error) {
-	cmd := exec.CommandContext(ctx, "rclone", "lsf", model.AppConfig.LockDir)
+	fetchCtx, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	defer cancel()
+
+	cmd := exec.CommandContext(fetchCtx, "rclone", "lsf", model.AppConfig.LockDir)
 	out, err := cmd.Output()
 	if err != nil {
 		return make(map[string]model.LockEntry), nil
