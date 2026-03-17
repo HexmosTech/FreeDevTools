@@ -49,17 +49,17 @@ func NewApp() *cli.App {
 						return exitError(cCtx, fmt.Sprintf("Error: %v", err), 1)
 					}
 
-					core.LogInfo("\nWARNING: This operation regenerates all metadata from local files.")
-					core.LogInfo("Ensure your local databases are synced with remote to avoid data loss.")
-					core.LogInfo("This should ONLY be done when changing hashing algorithms or recovering from corruption.")
-					core.LogInfo("\nAre you sure you want to proceed? (y/N): ")
+					fmt.Println("\nWARNING: This operation regenerates all metadata from local files.")
+					fmt.Println("Ensure your local databases are synced with remote to avoid data loss.")
+					fmt.Println("This should ONLY be done when changing hashing algorithms or recovering from corruption.")
+					fmt.Print("\nAre you sure you want to proceed? (y/N): ")
 
 					// Interaction like Scanln is still needed if not in JSON mode,
 					// but let's at least log the prompt.
 					var confirmation string
 					fmt.Scanln(&confirmation)
 					if confirmation != "y" && confirmation != "Y" {
-						core.LogInfo("Operation cancelled.")
+						fmt.Println("Operation cancelled.")
 						return nil
 					}
 
@@ -482,7 +482,7 @@ func NewApp() *cli.App {
 }
 
 // HandleCLI processes command line arguments using urfave/cli.
-// If a command is handled, it may exit the program.
+// If a command is handled, it will exit the program.
 func HandleCLI() {
 	if len(os.Args) <= 1 {
 		return // Let the main func proceed to TUI
@@ -505,13 +505,13 @@ func HandleCLI() {
 		if useJSON {
 			msgEscaped, _ := json.Marshal(err.Error())
 			fmt.Fprintf(os.Stdout, `{"status":"failed","message":%s}`+"\n", string(msgEscaped))
-			return
+		} else {
+			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		}
-
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
 	}
 
 	// Because app.Run succeeded (or printed help/version), and it's a CLI command,
-	// we want to return so we don't drop down into the TUI.
-	return
+	// we exit so we don't drop down into the TUI.
+	os.Exit(0)
 }

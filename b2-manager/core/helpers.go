@@ -366,3 +366,24 @@ func getLocalDBs() ([]string, error) {
 	}
 	return names, nil
 }
+
+// WalCheckpointTruncate attempts to run PRAGMA wal_checkpoint(TRUNCATE) on a specific database file
+func WalCheckpointTruncate(dbName string) error {
+	dbPath := filepath.Join(model.AppConfig.Frontend.LocalDB, dbName)
+	if _, err := os.Stat(dbPath); err != nil {
+		return fmt.Errorf("database file not found at %s", dbPath)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutDefault)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "sqlite3", dbPath, "PRAGMA wal_checkpoint(TRUNCATE);")
+	if err := cmd.Run(); err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("sqlite3 WAL checkpoint timed out")
+		}
+		return fmt.Errorf("failed to execute sqlite3 WAL checkpoint: %w", err)
+	}
+
+	return nil
+}

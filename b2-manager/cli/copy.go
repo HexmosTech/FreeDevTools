@@ -72,7 +72,7 @@ func RunCLICopy(srcName, dst, fileType, scriptName string, useJSON bool) error {
 	}
 
 	if fileType == "db" {
-		if err := WalCheckpointTruncate(filename); err != nil {
+		if err := core.WalCheckpointTruncate(filename); err != nil {
 			if !useJSON {
 				core.LogInfo("Wal truncation skipped or failed in copy: %v", err)
 			}

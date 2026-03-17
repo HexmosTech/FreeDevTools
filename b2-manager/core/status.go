@@ -195,6 +195,13 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	}
 	LogInfo("FetchDBStatusData: Found %d local DBs", len(localDBs))
 
+	// Truncate WAL for all local databases to ensure accurate hashing
+	for _, dbName := range localDBs {
+		if err := WalCheckpointTruncate(dbName); err != nil {
+			LogInfo("FetchDBStatusData: WAL truncation skipped or failed for %s: %v", dbName, err)
+		}
+	}
+
 	select {
 	case <-ctx.Done():
 		return nil, fmt.Errorf("cancelled")

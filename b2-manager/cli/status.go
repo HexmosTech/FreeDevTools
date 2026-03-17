@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -32,7 +31,7 @@ func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 	ctx := context.Background()
 
 	// Truncate WAL for matching DBs before fetching status
-	if err := WalCheckpointTruncate(dbName); err != nil {
+	if err := core.WalCheckpointTruncate(dbName); err != nil {
 		core.LogInfo("WAL truncation skipped or failed: %v", err)
 	}
 
@@ -260,25 +259,4 @@ func calculateVersionRoles(dbs []model.DBInfo) map[string]string {
 	}
 
 	return roles
-}
-
-// WalCheckpointTruncate attempts to run PRAGMA wal_checkpoint(TRUNCATE) on a specific database file
-func WalCheckpointTruncate(dbName string) error {
-	dbPath := filepath.Join(model.AppConfig.Frontend.LocalDB, dbName)
-	if _, err := os.Stat(dbPath); err != nil {
-		return fmt.Errorf("database file not found at %s", dbPath)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutDefault)
-	defer cancel()
-
-	cmd := exec.CommandContext(ctx, "sqlite3", dbPath, "PRAGMA wal_checkpoint(TRUNCATE);")
-	if err := cmd.Run(); err != nil {
-		if ctx.Err() == context.DeadlineExceeded {
-			return fmt.Errorf("sqlite3 WAL checkpoint timed out")
-		}
-		return fmt.Errorf("failed to execute sqlite3 WAL checkpoint: %w", err)
-	}
-
-	return nil
 }

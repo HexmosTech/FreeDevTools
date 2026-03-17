@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 
 ## Import Common Functions
 try:
-    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copy, handle_query, get_latest_db, get_local_db
+    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copy, handle_query, get_latest_db, get_local_db, download_latest_db
 except ImportError as e:
     print(f"Error importing changeset: {e}")
     sys.exit(1)
@@ -43,12 +43,14 @@ def main():
 
     # If status is outdated_version, then download db from b2.
     elif status == "outdated_version":
-        latest_db_name = get_latest_db(DB_NAME, "cron")
-        db_download(latest_db_name, "cron")
+        latest_db_path, err = download_latest_db(DB_SHORT_NAME, "cron")
+        if err:
+            print(f"Error: {err}")
+            return
         copy(DB_NAME, "changeset", "sql")
-        inserted_queries(DB_NAME, latest_db_name)
+        inserted_queries(DB_NAME, latest_db_path)
         stop_server()
-        new_db_name = bump_db_version(latest_db_name, "cron")
+        new_db_name = bump_db_version(latest_db_path, "cron")
         copy(new_db_name, "all_dbs", "db")
         start_server()
         db_upload(new_db_name, "cron")
