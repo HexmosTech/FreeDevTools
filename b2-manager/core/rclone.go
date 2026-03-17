@@ -7,7 +7,6 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
-	"time"
 
 	"b2m/model"
 )
@@ -69,7 +68,7 @@ func checkFileChanged(ctx context.Context, dbName string) (bool, error) {
 	LogInfo("checkFileChanged [%s]: Running command: %v", dbName, cmd.Args)
 	if err := cmd.Run(); err != nil {
 		if exitError, ok := err.(*exec.ExitError); ok {
-			if exitError.ExitCode() == 1 {
+			if exitError.ExitCode() == model.ExitCodeFileChanged {
 				return true, nil // Changed
 			}
 		}
@@ -84,9 +83,9 @@ func RcloneCopy(ctx context.Context, cmdName, src, dst, description string, quie
 		src,
 		dst,
 		"--checksum",
-		"--retries", "20",
-		"--low-level-retries", "30",
-		"--retries-sleep", "10s",
+		"--retries", "10",
+		"--low-level-retries", "10",
+		"--retries-sleep", "5s",
 	}
 
 	if !quiet || onProgress != nil {
@@ -132,12 +131,13 @@ func RcloneCopy(ctx context.Context, cmdName, src, dst, description string, quie
 			return fmt.Errorf("rclone copy failed: %w", err)
 		}
 	} else {
-		if err := cmd.Run(); err != nil {
+		out, err := cmd.CombinedOutput()
+		if err != nil {
 			if ctx.Err() != nil {
 				return fmt.Errorf("cancelled")
 			}
-			LogError("RcloneCopy: Run failed: %v", err)
-			return fmt.Errorf("rclone copy failed: %w", err)
+			LogError("RcloneCopy (quiet) failed: %v\nOutput: %s", err, string(out))
+			return fmt.Errorf("rclone %s failed: %w", cmdName, err)
 		}
 	}
 	return nil
@@ -145,7 +145,7 @@ func RcloneCopy(ctx context.Context, cmdName, src, dst, description string, quie
 
 // RcloneDeleteFile deletes a single file using rclone deletefile
 func RcloneDeleteFile(ctx context.Context, filePath string) error {
-	delCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+	delCtx, cancel := context.WithTimeout(ctx, model.TimeoutRcloneDelete)
 	defer cancel()
 
 	cmd := exec.CommandContext(delCtx, "rclone", "deletefile", filePath)
@@ -162,7 +162,7 @@ func RcloneDeleteFile(ctx context.Context, filePath string) error {
 // LsfRclone lists all files recursively from RootBucket to get DBs and Locks in one go
 func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error) {
 	// recursive list of root bucket with timeout
-	lsfCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+	lsfCtx, cancel := context.WithTimeout(ctx, model.TimeoutLsfRclone)
 	defer cancel()
 
 	cmd := exec.CommandContext(lsfCtx, "rclone", "lsf", "-R", model.AppConfig.RootBucket)
@@ -228,7 +228,7 @@ func LsfRclone(ctx context.Context) ([]string, map[string]model.LockEntry, error
 
 // FetchLocks lists all files in LockDir and parses them
 func FetchLocks(ctx context.Context) (map[string]model.LockEntry, error) {
-	fetchCtx, cancel := context.WithTimeout(ctx, 1*time.Minute)
+	fetchCtx, cancel := context.WithTimeout(ctx, model.TimeoutFetchLocks)
 	defer cancel()
 
 	cmd := exec.CommandContext(fetchCtx, "rclone", "lsf", model.AppConfig.LockDir)

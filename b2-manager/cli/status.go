@@ -10,7 +10,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"b2m/core"
 	"b2m/model"
@@ -113,13 +112,13 @@ func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 	return "unidentified", nil
 }
 
-// RunCLIGetLatest finds the "Latest" version of a database given its base name or current name, and prints it natively for python
-func RunCLIGetLatest(dbName string, useJSON bool) error {
+// RunCLIGetLatest finds the "Latest" version of a database given its base name or current name, and returns it
+func RunCLIGetLatest(dbName string, useJSON bool) (string, error) {
 	ctx := context.Background()
 
 	statusData, err := core.FetchDBStatusData(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("failed to fetch status data: %w", err)
+		return "", fmt.Errorf("failed to fetch status data: %w", err)
 	}
 
 	reqBaseName := strings.TrimSuffix(dbName, filepath.Ext(dbName))
@@ -149,11 +148,9 @@ func RunCLIGetLatest(dbName string, useJSON bool) error {
 						BaseName     string `json:"base_name"`
 					}{info.DB.Name, baseName}
 					b, _ := json.MarshalIndent(resp, "", "  ")
-					fmt.Println(string(b))
-				} else {
-					fmt.Println(info.DB.Name)
+					return string(b), nil
 				}
-				return nil
+				return info.DB.Name, nil
 			}
 		}
 	}
@@ -165,23 +162,21 @@ func RunCLIGetLatest(dbName string, useJSON bool) error {
 			BaseName     string `json:"base_name"`
 		}{dbName, reqBaseName}
 		b, _ := json.MarshalIndent(resp, "", "  ")
-		fmt.Println(string(b))
-	} else {
-		fmt.Println(dbName)
+		return string(b), nil
 	}
-	return nil
+	return dbName, nil
 }
 
-// RunCLIGetVersion reads db.toml to find the full filename for a given short name and prints it natively for python
-func RunCLIGetVersion(shortName string, useJSON bool) error {
+// RunCLIGetVersion reads db.toml to find the full filename for a given short name and returns it
+func RunCLIGetVersion(shortName string, useJSON bool) (string, error) {
 	tomlPath := model.AppConfig.FrontendTomlPath
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
+		return "", fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
 	}
 
 	data, err := os.ReadFile(tomlPath)
 	if err != nil {
-		return fmt.Errorf("failed to read db.toml: %w", err)
+		return "", fmt.Errorf("failed to read db.toml: %w", err)
 	}
 
 	// Since we want to dynamically lookup the shortName, we can unmarshal the
@@ -191,17 +186,17 @@ func RunCLIGetVersion(shortName string, useJSON bool) error {
 	}
 
 	if err := toml.Unmarshal(data, &file); err != nil {
-		return fmt.Errorf("failed to parse db.toml: %w", err)
+		return "", fmt.Errorf("failed to parse db.toml: %w", err)
 	}
 
 	valInterface, ok := file.DB[shortName]
 	if !ok {
-		return fmt.Errorf("short name '%s' not found in db.toml mapping", shortName)
+		return "", fmt.Errorf("short name '%s' not found in db.toml mapping", shortName)
 	}
 
 	val, ok := valInterface.(string)
 	if !ok || val == "" {
-		return fmt.Errorf("short name '%s' is empty or invalid in db.toml", shortName)
+		return "", fmt.Errorf("short name '%s' is empty or invalid in db.toml", shortName)
 	}
 
 	if useJSON {
@@ -210,11 +205,9 @@ func RunCLIGetVersion(shortName string, useJSON bool) error {
 			ShortName     string `json:"short_name"`
 		}{val, shortName}
 		b, _ := json.MarshalIndent(resp, "", "  ")
-		fmt.Println(string(b))
-	} else {
-		fmt.Println(val)
+		return string(b), nil
 	}
-	return nil
+	return val, nil
 }
 
 func calculateVersionRoles(dbs []model.DBInfo) map[string]string {
@@ -276,7 +269,7 @@ func WalCheckpointTruncate(dbName string) error {
 		return fmt.Errorf("database file not found at %s", dbPath)
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutDefault)
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, "sqlite3", dbPath, "PRAGMA wal_checkpoint(TRUNCATE);")

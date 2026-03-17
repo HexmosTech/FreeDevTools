@@ -9,7 +9,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"time"
 
 	"b2m/core"
 	"b2m/model"
@@ -88,9 +87,9 @@ func RunCLIBumpAndUpload(dbName string, useJSON bool) (string, error) {
 		return "", fmt.Errorf("failed to bump db version: %w", err)
 	}
 
-	// 2. Upload new version
-	if err := RunCLIUpload(newDBName); err != nil {
-		return newDBName, fmt.Errorf("failed to upload bumped db: %w", err)
+	// 6. Upload bumped db
+	if err := RunCLIUpload(newDBName, useJSON); err != nil {
+		return "", fmt.Errorf("failed to upload bumped database: %v", err)
 	}
 
 	return newDBName, nil
@@ -199,14 +198,14 @@ func commitAndPushDBToml(tomlPath, newName string) error {
 		return nil
 	}
 
-	ctxAdd, cancelAdd := context.WithTimeout(context.Background(), 10*time.Second)
+	ctxAdd, cancelAdd := context.WithTimeout(context.Background(), model.TimeoutDefault)
 	defer cancelAdd()
 	cmdAdd := exec.CommandContext(ctxAdd, "git", "add", filepath.Base(tomlPath))
 	cmdAdd.Dir = dir
 	_ = cmdAdd.Run() // Ignore errors if not a git repo or timeout
 
 	commitMsg := fmt.Sprintf("chore: bump DB version to %s in db.toml", newName)
-	ctxCommit, cancelCommit := context.WithTimeout(context.Background(), 15*time.Second)
+	ctxCommit, cancelCommit := context.WithTimeout(context.Background(), model.TimeoutCommit)
 	defer cancelCommit()
 	cmdCommit := exec.CommandContext(ctxCommit, "git", "commit", "-m", commitMsg, "--no-verify")
 	cmdCommit.Dir = dir
@@ -233,7 +232,7 @@ func commitAndPushDBToml(tomlPath, newName string) error {
 	}
 
 	// Try push with a short-ish timeout
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutCommit)
 	defer cancel()
 	cmdPush := exec.CommandContext(ctx, "git", "push")
 	cmdPush.Dir = dir

@@ -103,7 +103,7 @@ func RunCLINotify(message string) error {
 }
 
 // RunCLIHandleQuery executes a specific SQL file against a target database
-func RunCLIHandleQuery(sqlName string, dbName string) error {
+func RunCLIHandleQuery(sqlName string, dbName string, useJSON bool) error {
 	// The files are expected to be in the changeset backup directory due to previous steps
 	dbPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, dbName)
 	sqlPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, sqlName)
@@ -115,7 +115,9 @@ func RunCLIHandleQuery(sqlName string, dbName string) error {
 		return fmt.Errorf("SQL file not found at %s", sqlPath)
 	}
 
-	fmt.Printf("Executing queries from %s into %s...\n", sqlName, dbName)
+	if !useJSON {
+		fmt.Printf("Executing queries from %s into %s...\n", sqlName, dbName)
+	}
 
 	// Read SQL file content
 	sqlContent, err := os.ReadFile(sqlPath)
@@ -145,6 +147,8 @@ func RunCLIHandleQuery(sqlName string, dbName string) error {
 		return fmt.Errorf("sqlite3 execution failed: %w", err)
 	}
 
-	fmt.Printf("Successfully applied %s to %s\n", sqlName, dbName)
+	if !useJSON {
+		fmt.Printf("Successfully applied %s to %s\n", sqlName, dbName)
+	}
 	return nil
 }

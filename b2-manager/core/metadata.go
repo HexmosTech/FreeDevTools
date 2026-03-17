@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"time"
 
 	"b2m/model"
 )
@@ -71,7 +70,7 @@ func DownloadAndLoadMetadata(ctx context.Context) (map[string]*model.Metadata, e
 
 	// Use RcloneSync helper with timeout
 	// 5 minute timeout for sync operations should be sufficient for metadata
-	syncCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
+	syncCtx, cancel := context.WithTimeout(ctx, model.TimeoutSync)
 	defer cancel()
 
 	if err := RcloneSync(syncCtx, model.AppConfig.VersionDir, model.AppConfig.Frontend.B2m.Version); err != nil {
@@ -259,7 +258,6 @@ func AppendEventToMetadata(ctx context.Context, dbName string, newMeta *model.Me
 
 func HandleBatchMetadataGeneration() {
 	LogInfo("Starting batch metadata generation")
-	fmt.Println("🔍 Scanning local databases for metadata generation...")
 	LogInfo("🔍 Scanning local databases for metadata generation...")
 
 	local, err := getLocalDBs()
@@ -270,12 +268,10 @@ func HandleBatchMetadataGeneration() {
 	}
 
 	if len(local) == 0 {
-		fmt.Println("⚠️  No local databases found.")
 		LogInfo("BatchMetadata: No local databases found")
 		return
 	}
 
-	fmt.Printf("Found %d local databases. Starting generation...\n", len(local))
 	LogInfo("Found %d local databases. Starting generation...", len(local))
 
 	maxLen := 0
@@ -289,13 +285,11 @@ func HandleBatchMetadataGeneration() {
 	ctx := context.Background()
 
 	for _, dbName := range local {
-		fmt.Printf("Processing %s...", dbName)
 		LogInfo("Processing %s...", dbName)
 
 		// 1. Generate fresh metadata from local file
 		newMeta, err := GenerateLocalMetadata(dbName, 0, "success")
 		if err != nil {
-			fmt.Printf("❌ Failed to generate: %v\n", err)
 			LogError("BatchMetadata: Failed to generate metadata for %s: %v", dbName, err)
 			continue
 		}
@@ -313,7 +307,6 @@ func HandleBatchMetadataGeneration() {
 
 		// 3. Save to local version dir (Staging for sync)
 		if err := SaveToLocalVersionDir(dbName, newMeta); err != nil {
-			fmt.Printf("❌ Failed to save local: %v\n", err)
 			LogError("BatchMetadata: Failed to save to local version dir for %s: %v", dbName, err)
 			continue
 		}
@@ -325,25 +318,20 @@ func HandleBatchMetadataGeneration() {
 			LogInfo("BatchMetadata: Local anchor updated for %s", dbName)
 		}
 
-		fmt.Println("✅ Done")
 		LogInfo("✅ Done for %s", dbName)
 		successCount++
 	}
 
 	// 5. Perform Batch Sync (Local Version Dir -> Remote Version Dir)
-	fmt.Println("🔄 Syncing metadata to remote...")
 	LogInfo("BatchMetadata: Syncing %s to %s", model.AppConfig.Frontend.B2m.Version, model.AppConfig.VersionDir)
 
 	if err := RcloneSync(ctx, model.AppConfig.Frontend.B2m.Version, model.AppConfig.VersionDir); err != nil {
-		fmt.Printf("❌ Batch sync failed: %v\n", err)
 		LogError("BatchMetadata: RcloneSync failed: %v", err)
 	} else {
-		fmt.Println("✅ Batch sync completed successfully.")
 		LogInfo("BatchMetadata: Batch sync completed successfully")
 	}
 
-	fmt.Printf("\n✨ Completed! Successfully generated and uploaded metadata for %d/%d databases.\n", successCount, len(local))
-	LogInfo("Batch metadata generation completed. Success: %d", successCount)
+	LogInfo("Batch metadata generation completed. Success: %d/%d", successCount, len(local))
 }
 
 // SaveToLocalVersionDir writes the metadata file to the local version directory (.b2m/version)

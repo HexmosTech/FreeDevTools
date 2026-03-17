@@ -14,7 +14,7 @@ import (
 )
 
 // RunCLIDownload runs a database download without UI components
-func RunCLIDownload(dbName string) error {
+func RunCLIDownload(dbName string, useJSON bool) error {
 	ctx := context.Background()
 	return core.DownloadDatabase(ctx, dbName, true, nil)
 }
@@ -36,7 +36,7 @@ func RunCLIFetchDBToml() error {
 		return fmt.Errorf("failed to fetch db.toml: %w", err)
 	}
 
-	fmt.Printf("db.toml downloaded to %s\n", localPath)
+	core.LogInfo("db.toml downloaded to %s", localPath)
 	return nil
 }
 

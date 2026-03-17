@@ -1,25 +1,22 @@
 package config
 
 import (
-	"fmt"
-	"os"
-
 	"b2m/core"
 	"b2m/model"
 )
 
 // InitSystem initializes the system, handles CLI commands, and returns the signal handler.
 // The caller is responsible for calling Cleanup() when done.
-func InitSystem() *core.SignalHandler {
+func InitSystem() (*core.SignalHandler, error) {
 	// Initialize Config
 	if err := InitializeConfig(); err != nil {
-		fmt.Printf("Error: %v\n", err)
-		os.Exit(1)
+		core.LogError("Error: %v", err)
+		return nil, err
 	}
 
 	// Initialize Logger explicit early to capture startup issues
 	if err := core.InitLogger(); err != nil {
-		fmt.Printf("Warning: Failed to initialize logger: %v\n", err)
+		core.LogError("Warning: Failed to initialize logger: %v", err)
 	}
 
 	// Load hash cache
@@ -34,9 +31,5 @@ func InitSystem() *core.SignalHandler {
 	// Setup cancellation handling
 	sigHandler := core.NewSignalHandler()
 
-	if err := core.BootstrapSystem(sigHandler.Context()); err != nil {
-		core.LogError("Startup Warning: %v", err)
-	}
-
-	return sigHandler
+	return sigHandler, nil
 }

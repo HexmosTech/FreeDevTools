@@ -18,20 +18,15 @@ import (
 func exitError(cCtx *cli.Context, msg string, code int) error {
 	if cCtx.Bool("json") {
 		msgEscaped, _ := json.Marshal(msg)
-		fmt.Printf(`{"status":"failed","message":%s}`+"\n", string(msgEscaped))
+		fmt.Fprintf(cCtx.App.Writer, `{"status":"failed","message":%s}`+"\n", string(msgEscaped))
 		return cli.Exit("", code)
 	}
 	return cli.Exit(msg, code)
 }
 
-// HandleCLI processes command line arguments using urfave/cli.
-// If a command is handled, it may exit the program.
-func HandleCLI() {
-	if len(os.Args) <= 1 {
-		return // Let the main func proceed to TUI
-	}
-
-	app := &cli.App{
+// NewApp creates the urfave/cli application instance
+func NewApp() *cli.App {
+	return &cli.App{
 		Name:    "b2m",
 		Usage:   "Backblaze B2 Database Manager",
 		Version: model.AppConfig.ToolVersion,
@@ -40,6 +35,9 @@ func HandleCLI() {
 				Name:  "json",
 				Usage: "Output command results in JSON format",
 			},
+		},
+		ExitErrHandler: func(cCtx *cli.Context, err error) {
+			// Disable default os.Exit behavior to allow tests to capture errors
 		},
 		Commands: []*cli.Command{
 			{
@@ -51,15 +49,17 @@ func HandleCLI() {
 						return exitError(cCtx, fmt.Sprintf("Error: %v", err), 1)
 					}
 
-					fmt.Println("\nWARNING: This operation regenerates all metadata from local files.")
-					fmt.Println("Ensure your local databases are synced with remote to avoid data loss.")
-					fmt.Println("This should ONLY be done when changing hashing algorithms or recovering from corruption.")
-					fmt.Print("\nAre you sure you want to proceed? (y/N): ")
+					core.LogInfo("\nWARNING: This operation regenerates all metadata from local files.")
+					core.LogInfo("Ensure your local databases are synced with remote to avoid data loss.")
+					core.LogInfo("This should ONLY be done when changing hashing algorithms or recovering from corruption.")
+					core.LogInfo("\nAre you sure you want to proceed? (y/N): ")
 
+					// Interaction like Scanln is still needed if not in JSON mode,
+					// but let's at least log the prompt.
 					var confirmation string
 					fmt.Scanln(&confirmation)
 					if confirmation != "y" && confirmation != "Y" {
-						fmt.Println("Operation cancelled.")
+						core.LogInfo("Operation cancelled.")
 						return nil
 					}
 
@@ -83,14 +83,14 @@ func HandleCLI() {
 				Category: "User Commands",
 				Usage:    "Remove local metadata caches and start fresh UI session",
 				Action: func(cCtx *cli.Context) error {
-					fmt.Println("Resetting system state...")
+					core.LogInfo("Resetting system state...")
 					if err := core.CleanupLocalMetadata(); err != nil {
 						core.LogError("Reset: Failed to cleanup metadata: %v", err)
 						return exitError(cCtx, fmt.Sprintf("Error: failed to cleanup metadata: %v", err), 1)
 					}
 					core.ClearHashCache()
 					config.Cleanup()
-					fmt.Println("Reset complete. Please restart the application.")
+					core.LogInfo("Reset complete. Please restart the application.")
 					return nil
 				},
 			},
@@ -178,7 +178,7 @@ func HandleCLI() {
 					if err != nil {
 						return exitError(cCtx, err.Error(), 1)
 					}
-					fmt.Println(statusStr)
+					fmt.Fprintln(cCtx.App.Writer, statusStr)
 					return nil
 				},
 			},
@@ -203,12 +203,12 @@ func HandleCLI() {
 						config.UpdateForScript(changesetDir)
 					}
 
-					if err := RunCLICopy(srcName, dst, fileType, changesetDir); err != nil {
+					if err := RunCLICopy(srcName, dst, fileType, changesetDir, cCtx.Bool("json")); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error in copy: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"copy"}`)
+						fmt.Fprintln(cCtx.App.Writer, `{"status":"success","action":"copy"}`)
 					}
 					return nil
 				},
@@ -229,7 +229,7 @@ func HandleCLI() {
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"notify"}`)
+						fmt.Fprintln(cCtx.App.Writer, `{"status":"success","action":"notify"}`)
 					}
 					return nil
 				},
@@ -251,12 +251,12 @@ func HandleCLI() {
 						config.UpdateForScript(changesetDir)
 					}
 
-					if err := RunCLIUpload(dbName); err != nil {
+					if err := RunCLIUpload(dbName, cCtx.Bool("json")); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error uploading database: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"upload"}`)
+						fmt.Fprintln(cCtx.App.Writer, `{"status":"success","action":"upload"}`)
 					}
 					return nil
 				},
@@ -277,12 +277,12 @@ func HandleCLI() {
 						}
 						config.UpdateForScript(changesetDir)
 					}
-					if err := RunCLIDownload(dbName); err != nil {
+					if err := RunCLIDownload(dbName, cCtx.Bool("json")); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error downloading database: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"download"}`)
+						fmt.Fprintln(cCtx.App.Writer, `{"status":"success","action":"download"}`)
 					}
 					return nil
 				},
@@ -318,9 +318,9 @@ func HandleCLI() {
 							DBPath string `json:"db_path"`
 						}{"success", "download-latest-db", dbName, dbPath}
 						b, _ := json.MarshalIndent(resp, "", "  ")
-						fmt.Println(string(b))
+						fmt.Fprintln(cCtx.App.Writer, string(b))
 					} else {
-						fmt.Println(dbName)
+						fmt.Fprintln(cCtx.App.Writer, dbName)
 					}
 					return nil
 				},
@@ -355,9 +355,9 @@ func HandleCLI() {
 							BaseDBName   string `json:"base_db_name"`
 						}{newDBName, dbName}
 						b, _ := json.MarshalIndent(resp, "", "  ")
-						fmt.Println(string(b))
+						fmt.Fprintln(cCtx.App.Writer, string(b))
 					} else {
-						fmt.Println(newDBName)
+						fmt.Fprintln(cCtx.App.Writer, newDBName)
 					}
 					return nil
 				},
@@ -392,9 +392,9 @@ func HandleCLI() {
 							Status       string `json:"status"`
 						}{newDBName, dbName, "success"}
 						b, _ := json.MarshalIndent(resp, "", "  ")
-						fmt.Println(string(b))
+						fmt.Fprintln(cCtx.App.Writer, string(b))
 					} else {
-						fmt.Println(newDBName)
+						fmt.Fprintln(cCtx.App.Writer, newDBName)
 					}
 					return nil
 				},
@@ -417,12 +417,12 @@ func HandleCLI() {
 						config.UpdateForScript(changesetDir)
 					}
 
-					if err := RunCLIHandleQuery(sqlName, dbName); err != nil {
+					if err := RunCLIHandleQuery(sqlName, dbName, cCtx.Bool("json")); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error executing queries: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")
 					if useJSON {
-						fmt.Println(`{"status":"success","action":"handle-query"}`)
+						fmt.Fprintln(cCtx.App.Writer, `{"status":"success","action":"handle-query"}`)
 					}
 					return nil
 				},
@@ -444,9 +444,11 @@ func HandleCLI() {
 						config.UpdateForScript(changesetDir)
 					}
 					useJSON := cCtx.Bool("json")
-					if err := RunCLIGetVersion(shortName, useJSON); err != nil {
+					res, err := RunCLIGetVersion(shortName, useJSON)
+					if err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error getting version: %v", err), 1)
 					}
+					fmt.Fprintln(cCtx.App.Writer, res)
 					return nil
 				},
 			},
@@ -467,14 +469,26 @@ func HandleCLI() {
 						config.UpdateForScript(changesetDir)
 					}
 					useJSON := cCtx.Bool("json")
-					if err := RunCLIGetLatest(dbName, useJSON); err != nil {
+					res, err := RunCLIGetLatest(dbName, useJSON)
+					if err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error getting latest DB version: %v", err), 1)
 					}
+					fmt.Fprintln(cCtx.App.Writer, res)
 					return nil
 				},
 			},
 		},
 	}
+}
+
+// HandleCLI processes command line arguments using urfave/cli.
+// If a command is handled, it may exit the program.
+func HandleCLI() {
+	if len(os.Args) <= 1 {
+		return // Let the main func proceed to TUI
+	}
+
+	app := NewApp()
 
 	if err := app.Run(os.Args); err != nil {
 		// Use a temporary context to check for --json flag
@@ -490,15 +504,14 @@ func HandleCLI() {
 
 		if useJSON {
 			msgEscaped, _ := json.Marshal(err.Error())
-			fmt.Printf(`{"status":"failed","message":%s}`+"\n", string(msgEscaped))
-			os.Exit(1)
+			fmt.Fprintf(os.Stdout, `{"status":"failed","message":%s}`+"\n", string(msgEscaped))
+			return
 		}
 
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
 	}
 
 	// Because app.Run succeeded (or printed help/version), and it's a CLI command,
-	// we want to exit so we don't drop down into the TUI.
-	os.Exit(0)
+	// we want to return so we don't drop down into the TUI.
+	return
 }

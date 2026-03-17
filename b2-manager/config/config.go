@@ -16,10 +16,15 @@ import (
 func InitializeConfig() error {
 	var err error
 
-	model.AppConfig.ProjectRoot, err = findProjectRoot()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
-		model.AppConfig.ProjectRoot, _ = os.Getwd()
+	// Check for B2M_PROJECT_ROOT env var first
+	if envRoot := os.Getenv("B2M_PROJECT_ROOT"); envRoot != "" {
+		model.AppConfig.ProjectRoot = envRoot
+	} else {
+		model.AppConfig.ProjectRoot, err = findProjectRoot()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
+			model.AppConfig.ProjectRoot, _ = os.Getwd()
+		}
 	}
 
 	// Load config from fdt-dev.toml
@@ -59,9 +64,17 @@ func findProjectRoot() (string, error) {
 		return "", err
 	}
 	for {
+		// Priority 1: Check for direct 'db' directory
 		if info, err := os.Stat(filepath.Join(dir, "db")); err == nil && info.IsDir() {
 			return dir, nil
 		}
+
+		// Priority 2: Check for 'frontend/db' (useful when running from repo root)
+		frontendDB := filepath.Join(dir, "frontend", "db")
+		if info, err := os.Stat(frontendDB); err == nil && info.IsDir() {
+			return filepath.Join(dir, "frontend"), nil
+		}
+
 		parent := filepath.Dir(dir)
 		if parent == dir {
 			return "", fmt.Errorf("root not found 'db' dir")

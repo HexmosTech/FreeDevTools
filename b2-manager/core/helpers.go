@@ -109,7 +109,7 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 }
 func SendDiscord(ctx context.Context, content string) {
 	// Use a tight timeout for Discord notifications
-	dCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	dCtx, cancel := context.WithTimeout(ctx, model.TimeoutShort)
 	defer cancel()
 
 	payload := map[string]string{"content": content}

@@ -62,7 +62,7 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	// We use "b3sum" directly. Note: The user asked for "time command", but wrapping with /usr/bin/time
 	// complicates output parsing. Go's time.Since is precise for wall-clock time.
 	// Use a timeout for hashing to prevent hangs
-	ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutHash)
 	defer cancel()
 
 	cmd := exec.CommandContext(ctx, "b3sum", filePath)
