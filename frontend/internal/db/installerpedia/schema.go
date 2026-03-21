@@ -37,8 +37,9 @@ type InstallMethod struct {
 }
 
 type InstallInstruction struct {
-	Command string `json:"command"`
-	Meaning string `json:"meaning"`
+	Command  string `json:"command"`
+	Meaning  string `json:"meaning,omitempty"`
+	Optional bool   `json:"optional,omitempty"`
 }
 
 type Resource struct {

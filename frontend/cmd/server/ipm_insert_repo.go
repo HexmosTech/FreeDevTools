@@ -47,8 +47,9 @@ type InstallMethod struct {
 }
 
 type Instruction struct {
-	Command string `json:"command"`
-	Meaning string `json:"meaning"`
+	Command  string `json:"command"`
+	Meaning  string `json:"meaning,omitempty"`
+	Optional bool   `json:"optional,omitempty"`
 }
 
 var IPM_DB_NAME = "ipm-db-v6.db"

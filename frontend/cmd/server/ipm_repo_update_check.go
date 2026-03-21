@@ -85,6 +85,8 @@ func refineInstallationWithGemini(existing EntryPayload, repoName string) (Entry
 								"type": "object",
 								"properties": map[string]interface{}{
 									"command": map[string]interface{}{"type": "string"},
+									"meaning": map[string]interface{}{"type": "string"},
+									"optional": map[string]interface{}{"type": "boolean"},
 								},
 								"required": []string{"command"},
 							},
@@ -121,6 +123,7 @@ func refineInstallationWithGemini(existing EntryPayload, repoName string) (Entry
 		- **NO HALLUCINATION:** Never output commands for local files (./setup.sh, make) unless explicitly found in the latest context.
 		- **NO COMMENTARY:** Output ONLY raw JSON. No markdown fences, no backticks.
 		- **NO DANGLING COMMANDS:** Never reference a file (like 'python main.py') without a preceding command that fetches or creates it.
+		- **MEANING:** For commands marked as 'optional', provide or retain a concise explanation in the 'meaning' field. Leave empty for mandatory commands.
 
 		### OUTPUT FORMAT:
 		Return ONLY a JSON object containing the "installation_methods" array.
