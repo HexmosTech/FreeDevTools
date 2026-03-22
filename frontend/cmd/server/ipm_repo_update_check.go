@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
@@ -52,106 +53,112 @@ func getReadmeLastModified(repoName string) (time.Time, error) {
 
 
 func refineInstallationWithGemini(existing EntryPayload, repoName string) (EntryPayload, error) {
-	log.Printf("[Installerpedia API] Refining installation steps for %s...", repoName)
+    log.Printf("[Installerpedia API] Analyzing updates for %s...", repoName)
 
-	// 1. Fetch Fresh Context
-	readmeBody, _ := fetchReadme(repoName)
-	release, _ := fetchLatestRelease(repoName)
+    // 1. Fetch Fresh Context
+    readmeBody, _ := fetchReadme(repoName)
+    release, _ := fetchLatestRelease(repoName)
+    
+    // Format Release Info for Gemini
+    releaseText := "No release assets found."
+    if release != nil {
+        releaseText = fmt.Sprintf("Tag: %s, Assets: ", release.TagName)
+        for _, a := range release.Assets {
+            releaseText += fmt.Sprintf("[%s : %s] ", a.Name, a.BrowseUrl)
+        }
+    }
 
-	releaseText := "No release assets found."
-	if release != nil {
-		releaseText = fmt.Sprintf("Tag: %s, Assets: ", release.TagName)
-		for _, a := range release.Assets {
-			releaseText += fmt.Sprintf("[%s : %s] ", a.Name, a.BrowseUrl)
-		}
-	}
+    existingMethodsJSON, _ := json.MarshalIndent(existing.InstallationMethods, "", "  ")
 
-	// 2. Prepare Existing Methods for Comparison
-	existingMethodsJSON, _ := json.MarshalIndent(existing.InstallationMethods, "", "  ")
+    // 2. Define Schema with the 'no_change' flag
+    schema := map[string]interface{}{
+        "type": "object",
+        "properties": map[string]interface{}{
+            "no_change": map[string]interface{}{"type": "boolean"},
+            "installation_methods": map[string]interface{}{
+                "type": "array",
+                "items": map[string]interface{}{
+                    "type": "object",
+                    "properties": map[string]interface{}{
+                        "title": map[string]interface{}{"type": "string"},
+                        "instructions": map[string]interface{}{
+                            "type": "array",
+                            "items": map[string]interface{}{
+                                "type": "object",
+                                "properties": map[string]interface{}{
+                                    "command":  map[string]interface{}{"type": "string"},
+                                    "meaning":  map[string]interface{}{"type": "string"},
+                                    "optional": map[string]interface{}{"type": "boolean"},
+                                },
+                                "required": []string{"command"},
+                            },
+                        },
+                    },
+                    "required": []string{"title", "instructions"},
+                },
+            },
+        },
+    }
 
-	// 3. Strict Schema (Outputting ONLY the refined array)
-	schema := map[string]interface{}{
-		"type": "object",
-		"properties": map[string]interface{}{
-			"installation_methods": map[string]interface{}{
-				"type": "array",
-				"items": map[string]interface{}{
-					"type": "object",
-					"properties": map[string]interface{}{
-						"title": map[string]interface{}{"type": "string"},
-						"instructions": map[string]interface{}{
-							"type": "array",
-							"items": map[string]interface{}{
-								"type": "object",
-								"properties": map[string]interface{}{
-									"command": map[string]interface{}{"type": "string"},
-									"meaning": map[string]interface{}{"type": "string"},
-									"optional": map[string]interface{}{"type": "boolean"},
-								},
-								"required": []string{"command"},
-							},
-						},
-					},
-					"required": []string{"title", "instructions"},
-				},
-			},
-		},
-		"required": []string{"installation_methods"},
-	}
 
-	// 4. Enhanced Prompt with Safeguards and Negative Constraints
-	prompt := fmt.Sprintf(`
-		You are an Expert DevOps Engineer. Update the installation instructions for '%s' by comparing the EXISTING_METHODS against the LATEST_SOURCE_MATERIAL.
+    prompt := fmt.Sprintf(`
+        You are a cautious DevOps Update Bot for '%s'. 
+        Your goal: Merge NEW information from README/Releases into EXISTING_METHODS without destroying what already works.
 
-		### EXISTING_METHODS (Current Database):
-		%s
+        ### INPUT DATA:
+        - EXISTING_METHODS: %s
+        - NEW_README: %s
+        - LATEST_RELEASE_INFO: %s
 
-		### LATEST_SOURCE_MATERIAL:
-		- **README CONTENT:** %s
-		- **RELEASE INFO:** %s
+        ### LOGIC STEPS:
+        1. SENSITIVITY CHECK: Compare the installation commands in NEW_README against the commands in EXISTING_METHODS.
+        - IF the actual command strings, version tags, or architectural paths have not changed: 
+            RETURN {"no_change": true} immediately.
+        - Ignore changes to README descriptions, emojis, or non-functional text.
+        
+        2. IF there are changes:
+           - KEEP all methods from EXISTING_METHODS that are still valid.
+           - UPDATE specific commands (like URLs or version tags) ONLY if the new source material explicitly contradicts the old ones.
+           - ADD new methods only if they are unique and not already covered.
+           - RETURN the full combined array in "installation_methods".
 
-		### MANDATORY REFINEMENT RULES:
-		1. **COMPARE & SYNC:** Identify if the LATEST_SOURCE_MATERIAL contains newer versions, updated URLs, or new methods (Docker, Homebrew, etc.) not present in EXISTING_METHODS.
-		2. **RETAIN VALIDITY:** If EXISTING_METHODS are more detailed or contain valid methods not mentioned in the new README, retain them.
-		3. **ATOMICITY:** Every method must be a complete, "zero-to-running" sequence.
-		4. **STRICT SOURCE REQUIREMENT:** Every 'Source' method MUST begin with 'git clone <url>' and 'cd <folder_name>'. Do not use placeholders like <folder>.
-		5. **NON-INTERACTIVE:** Every command MUST be non-interactive (e.g., append -y, --noconfirm, or --non-interactive). Include 'sudo ' where necessary.
-		6. **WORST-CASE FALLBACK:** If the README is empty or provides no clear build steps, and the existing methods are also invalid, output ONLY the "Safe Default": git clone followed by cd.
+        ### CRITICAL CONSTRAINTS:
+        - IGNORE any installation methods involving "IPM" or "Installerpedia" found in the README.
+        - DO NOT delete valid "Source" or "Manual" methods just because they aren't mentioned in the new README. 
+        - DO NOT use placeholders like <folder> or [version]. Use the actual repo name: %s.
+        - Ensure every command is non-interactive (add -y, etc.).
+    `, repoName, string(existingMethodsJSON), readmeBody, releaseText, repoName)
 
-		### NEGATIVE CONSTRAINTS (CRITICAL):
-		- **NO PLACEHOLDERS:** Never output generic folder placeholders like <folder>, [repo], or your-repo-name.
-		- **NO HALLUCINATION:** Never output commands for local files (./setup.sh, make) unless explicitly found in the latest context.
-		- **NO COMMENTARY:** Output ONLY raw JSON. No markdown fences, no backticks.
-		- **NO DANGLING COMMANDS:** Never reference a file (like 'python main.py') without a preceding command that fetches or creates it.
-		- **MEANING:** For commands marked as 'optional', provide or retain a concise explanation in the 'meaning' field. Leave empty for mandatory commands.
+    rawResult, err := QueryGemini(prompt, schema)
+    if err != nil {
+        return existing, err
+    }
 
-		### OUTPUT FORMAT:
-		Return ONLY a JSON object containing the "installation_methods" array.
-	`, repoName, string(existingMethodsJSON), readmeBody, releaseText)
+    var result struct {
+        NoChange bool        `json:"no_change"`
+        Methods  interface{} `json:"installation_methods"`
+    }
+    
+    if err := json.Unmarshal([]byte(rawResult), &result); err != nil {
+        return existing, err
+    }
 
-	// 5. Query Gemini
-	rawResult, err := QueryGemini(prompt, schema)
-	if err != nil {
-		return existing, fmt.Errorf("gemini refinement failed: %w", err)
-	}
+    // 4. Return existing if no meaningful change was detected
+    if result.NoChange || result.Methods == nil {
+        log.Printf("[Installerpedia API] ✅ No-op: Gemini confirmed existing data is sufficient for %s.", repoName)
+        return existing, errors.New("NO_CHANGE_REQUIRED")
+    }
 
-	// 6. Parse Result and Merge
-	var refinedData struct {
-		Methods interface{} `json:"installation_methods"`
-	}
-	if err := json.Unmarshal([]byte(rawResult), &refinedData); err != nil {
-		return existing, fmt.Errorf("failed to parse refined JSON: %w", err)
-	}
+    updated := existing
+    updated.InstallationMethods = result.Methods
+    updated.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
 
-	updated := existing
-	updated.InstallationMethods = refinedData.Methods
-	updated.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
-
-	log.Printf("[Installerpedia API] Successfully refined %s based on README/Release changes.", repoName)
-	return updated, nil
+    log.Printf("[Installerpedia API] ✨ Successfully merged updates for %s.", repoName)
+    return updated, nil
 }
 
 func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
+    force_update := false
     return func(w http.ResponseWriter, r *http.Request) {
         if r.Method != http.MethodPost {
             http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -175,34 +182,35 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
             json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
             return
         }
+        if !force_update {
+            // 2. Compare Timestamps
+            ghTime, err := getReadmeLastModified(req.Repo)
+            if err != nil {
+                log.Printf("[Installerpedia API]⚠️ Could not fetch GH metadata for %s: %v", req.Repo, err)
+                json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
+                return
+            }
 
-        // 2. Compare Timestamps
-        ghTime, err := getReadmeLastModified(req.Repo)
-        if err != nil {
-            log.Printf("[Installerpedia API]⚠️ Could not fetch GH metadata for %s: %v", req.Repo, err)
-            json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
-            return
-        }
+            // Parse local DB time
+            dbTime, err := time.Parse(time.RFC3339, existingEntry.UpdatedAt)
+            if err != nil {
+                log.Printf("[Installerpedia API] ⚠️ Error parsing DB timestamp '%s' for %s: %v", existingEntry.UpdatedAt, req.Repo, err)
+                // If we can't parse the DB time, we should probably assume we need an update to be safe
+                dbTime = time.Time{} 
+            }
 
-        // Parse local DB time
-        dbTime, err := time.Parse(time.RFC3339, existingEntry.UpdatedAt)
-        if err != nil {
-            log.Printf("[Installerpedia API] ⚠️ Error parsing DB timestamp '%s' for %s: %v", existingEntry.UpdatedAt, req.Repo, err)
-            // If we can't parse the DB time, we should probably assume we need an update to be safe
-            dbTime = time.Time{} 
-        }
+            // Detailed Comparison Log
+            diff := ghTime.Sub(dbTime)
+            log.Printf("[Installerpedia API] 🕒 Timestamp Comparison for %s:", req.Repo)
+            log.Printf("      - GitHub README: %v", ghTime.Format(time.RFC1123))
+            log.Printf("      - Local DB:      %v", dbTime.Format(time.RFC1123))
+            log.Printf("      - Difference:    %v (Positive means GH is newer)", diff)
 
-        // Detailed Comparison Log
-        diff := ghTime.Sub(dbTime)
-        log.Printf("[Installerpedia API] 🕒 Timestamp Comparison for %s:", req.Repo)
-        log.Printf("      - GitHub README: %v", ghTime.Format(time.RFC1123))
-        log.Printf("      - Local DB:      %v", dbTime.Format(time.RFC1123))
-        log.Printf("      - Difference:    %v (Positive means GH is newer)", diff)
-
-        if !ghTime.After(dbTime) {
-            log.Printf("[Installerpedia API] ✅ %s is up to date. No action needed.", req.Repo)
-            json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
-            return
+            if !ghTime.After(dbTime) {
+                log.Printf("[Installerpedia API] ✅ %s is up to date. No action needed.", req.Repo)
+                json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false})
+                return
+            }
         }
 
         // 3. README is newer! Trigger Refinement
@@ -210,6 +218,12 @@ func handleCheckRepoUpdates(db *installerpedia.DB) http.HandlerFunc {
         
         updatedPayload, err := refineInstallationWithGemini(existingEntry, req.Repo)
         if err != nil {
+            if err.Error() == "NO_CHANGE_REQUIRED" {
+                log.Printf("[Installerpedia API] ✅ No significant changes found in README for %s.", req.Repo)
+                w.Header().Set("Content-Type", "application/json")
+                json.NewEncoder(w).Encode(map[string]interface{}{"has_update": false, "no_change": true})
+                return
+            }
             log.Printf("[Installerpedia API] ❌ Refinement failed for %s: %v", req.Repo, err)
             http.Error(w, "Refinement failed", http.StatusInternalServerError)
             return
