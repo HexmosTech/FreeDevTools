@@ -248,6 +248,8 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 								"type": "object",
 								"properties": map[string]interface{}{
 									"command": map[string]interface{}{"type": "string"},
+									"meaning": map[string]interface{}{"type": "string"},
+									"optional": map[string]interface{}{"type": "boolean"},
 								},
 								"required": []string{"command"},
 							},
@@ -357,6 +359,11 @@ func generateIPMJson(repoName, readme, releaseInfo string, sourceType string) (s
 		- Identify relevant links such as Official Docs, Wiki, or specific Release pages found in the README.
 		- For 'url_or_path', use absolute URLs.
       
+      8. **OPTIONAL COMMANDS:**
+         - If the README mentions optional cleanup, verification, or non-essential extra steps, include them in the same 'instructions' array but set 'optional' to true.
+         - For example: 'npm run test', 'rm -rf tmp_build_files', or optional config examples.
+         - **MEANING:** ONLY for optional commands, provide a concise explanation in the 'meaning' field (e.g., "Verify installation", "Cleanup build artifacts"). Leave empty for mandatory commands.
+      
       ### OUTPUT FORMAT
       Output ONLY valid JSON matching the provided schema.`
 
@@ -407,6 +414,8 @@ func generateSingleMethodJson(repoName, readme, releaseInfo, osFamily, sourceTyp
                                 "type": "object",
                                 "properties": map[string]interface{}{
                                     "command": map[string]interface{}{"type": "string"},
+                                    "meaning": map[string]interface{}{"type": "string"},
+                                    "optional": map[string]interface{}{"type": "boolean"},
                                 },
                                 "required": []string{"command"},
                             },
@@ -446,7 +455,9 @@ func generateSingleMethodJson(repoName, readme, releaseInfo, osFamily, sourceTyp
       2. **PREFERENCE:** Package Manager > Binary > Source.
       3. **NON-INTERACTIVE:** Include -y, --noconfirm, etc.
       4. **ATOMICITY:** Each command object is a single step (git clone then cd).
-      5. **OUTPUT:** Raw JSON only.`, osFamily)
+      5. **OPTIONAL:** If there are optional verification or cleanup steps, include them in 'instructions' with 'optional': true.
+      6. **MEANING:** ONLY for optional commands, provide a concise explanation in the 'meaning' field.
+      7. **OUTPUT:** Raw JSON only.`, osFamily)
 
     return QueryGemini(promptHeader+"\n"+repologyContext+"\n"+extractionRules, schema)
 }
