@@ -65,7 +65,9 @@ def main():
         return
     
     # 3. Upload DB
-    db_upload(db_path)
+    if not db_upload(db_path):
+        print("Upload failed.")
+        return
     
     print("\nChangeset execution completed successfully.")
 

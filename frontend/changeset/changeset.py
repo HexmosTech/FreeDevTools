@@ -35,7 +35,10 @@ def _parse_or_bool(result_stdout):
     if not result_stdout:
         return True
     try:
-        return json.loads(result_stdout)
+        data = json.loads(result_stdout)
+        if isinstance(data, dict) and data.get("status") == "failed":
+            return False
+        return data
     except json.JSONDecodeError:
         return True
 
@@ -94,14 +97,17 @@ def db_status(db_path, changeset_dir=None):
         cmd = [b2m_bin, "--json", "status", db_name]
         
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         data = json.loads(result.stdout)
-        return data.get("status", "unidentified")
-    except subprocess.CalledProcessError as e:
+        status = data.get("status", "unidentified")
+        if status == "failed":
+            return False
+        return status
+    except (subprocess.CalledProcessError, json.JSONDecodeError) as e:
         print(f"Caught error: {e}")
-        return None
+        return False
 
 def db_upload(db_path, changeset_dir=None):
     """
@@ -121,7 +127,7 @@ def db_upload(db_path, changeset_dir=None):
         
         cmd = [b2m_bin, "--json", "upload", db_name]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         return _parse_or_bool(result.stdout)
@@ -144,9 +150,9 @@ def db_download(db_name, changeset_dir=None):
     try:
         b2m_bin = get_b2m_bin()
         
-        cmd = [b2m_bin, "--json", "download", db_name]
+        cmd = [b2m_bin, "--json", "download", os.path.basename(db_name)]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         return _parse_or_bool(result.stdout)
@@ -167,7 +173,7 @@ def fetch_db_toml(changeset_dir=None):
         b2m_bin = get_b2m_bin()
         cmd = [b2m_bin, "--json", "fetch-db-toml"]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         return _parse_or_bool(result.stdout)
@@ -261,10 +267,15 @@ def copy(src_name, dst, file_type):
     """
     try:
         b2m_bin = get_b2m_bin()
-        cmd = [b2m_bin, "--json", "copy", src_name, dst, file_type, f"changset_dir={get_script_name()}"]
+        cmd = [b2m_bin, "--json", "copy", src_name, dst, file_type, f"changeset_dir={get_script_name()}"]
             
         result = run_command(cmd)
-        return _parse_or_bool(result.stdout)
+        data = json.loads(result.stdout.strip())
+        
+        status = data.get("status")
+        if status == "success":
+            return True
+        return False
     except subprocess.CalledProcessError as e:
         print(f"Caught error: {e}")
         return False
@@ -295,7 +306,7 @@ def handle_query(sql_path, db_path, changeset_dir=None):
         cmd = [b2m_bin, "--json", "handle-query", sql_name, db_name]
         
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
         
         result = run_command(cmd)
         return _parse_or_bool(result.stdout)
@@ -348,7 +359,7 @@ def get_local_db(short_name, changeset_dir=None):
         b2m_bin = get_b2m_bin()
         cmd = [b2m_bin, "--json", "get-version", short_name]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         data = json.loads(result.stdout.strip())
@@ -356,14 +367,11 @@ def get_local_db(short_name, changeset_dir=None):
         db_name = data.get("version_db_name")
         if not db_name:
             return None
-            
-        # Try to get db_path if available in newer b2m versions, else build it
-        db_path = data.get("db_path") or f"db/all_dbs/{db_name}"
-        return _resolve_db_path(db_path, b2m_bin)
+        return db_name
         
     except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         print(f"Caught error in get_local_db: {e}")
-        return None
+        return False
 
 def get_latest_db(db_name, changeset_dir=None):
     """
@@ -381,15 +389,17 @@ def get_latest_db(db_name, changeset_dir=None):
         b2m_bin = get_b2m_bin()
         cmd = [b2m_bin, "--json", "get-latest", db_name]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         
         data = json.loads(result.stdout.strip())
+        if data.get("status") == "failed":
+            return False
         return data.get("latest_db_name", db_name)
-    except (subprocess.CalledProcessError, ValueError) as e:
+    except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         print(f"Caught error: {e}")
-        return db_name
+        return False
 
 def bump_db_version(db_name, changeset_dir=None):
     """
@@ -405,17 +415,19 @@ def bump_db_version(db_name, changeset_dir=None):
         if not db_name.endswith('.db'):
             db_name += '.db'
         b2m_bin = get_b2m_bin()
-        cmd = [b2m_bin, "--json", "bump-db-version", db_name]
+        cmd = [b2m_bin, "--json", "bump-db-version", os.path.basename(db_name)]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         
         data = json.loads(result.stdout.strip())
+        if data.get("status") == "failed":
+            return False
         return data.get("bumped_db_name", db_name)
-    except (subprocess.CalledProcessError, ValueError) as e:
+    except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         print(f"Caught error: {e}")
-        return db_name
+        return False
 
 def download_latest_db(short_name, changeset_dir=None):
     """
@@ -432,14 +444,14 @@ def download_latest_db(short_name, changeset_dir=None):
         b2m_bin = get_b2m_bin()
         cmd = [b2m_bin, "--json", "download-latest-db", short_name]
         if changeset_dir == "cron":
-            cmd.append(f"changset_dir={get_script_name()}")
+            cmd.append(f"changeset_dir={get_script_name()}")
             
         result = run_command(cmd)
         
         data = json.loads(result.stdout.strip())
         
-        if data.get("status") == "error":
-            err_msg = data.get("message", "Unknown backend error")
+        if data.get("status") == "failed":
+            err_msg = data.get("msg", "Unknown backend error")
             return None, err_msg
             
         db_path = data.get("db_path")

@@ -27,17 +27,6 @@ func PerformUpload(ctx context.Context, dbName string, force bool, onProgress fu
 		onStatusUpdate("Safety Check...")
 	}
 
-	// -------------------------------------------------------------------------
-	// PHASE 0: PRE-UPLOAD SAFETY CHECK
-	// Check if the remote file is newer than our local version to prevent data loss.
-	// -------------------------------------------------------------------------
-	if !force {
-		if err := CheckUploadSafety(ctx, dbName); err != nil {
-			LogError("PerformUpload: Safety check failed for %s: %v", dbName, err)
-			return fmt.Errorf("safety check failed: %w", err)
-		}
-	}
-
 	if onStatusUpdate != nil {
 		onStatusUpdate("Locking...")
 	}

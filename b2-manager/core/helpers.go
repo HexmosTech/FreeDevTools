@@ -158,7 +158,9 @@ func ParseRcloneOutput(r io.Reader, onUpdate func(p model.RcloneProgress)) error
 		// Parse JSON line
 		var p model.RcloneProgress
 		if err := json.Unmarshal([]byte(line), &p); err != nil {
-			// If not JSON, ignore (might be other logs)
+			// If not JSON, it's a standard rclone log line (e.g. INFO or ERROR).
+			// We should capture it so we know if rclone is struggling with network issues.
+			LogInfo("rclone: %s", line)
 			continue
 		}
 

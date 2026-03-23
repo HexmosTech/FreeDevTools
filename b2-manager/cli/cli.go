@@ -18,7 +18,7 @@ import (
 func exitError(cCtx *cli.Context, msg string, code int) error {
 	if cCtx.Bool("json") {
 		msgEscaped, _ := json.Marshal(msg)
-		fmt.Fprintf(cCtx.App.Writer, `{"status":"failed","message":%s}`+"\n", string(msgEscaped))
+		fmt.Fprintf(cCtx.App.Writer, `{"status":"failed","msg":%s}`+"\n", string(msgEscaped))
 		return cli.Exit("", code)
 	}
 	return cli.Exit(msg, code)
@@ -200,7 +200,6 @@ func NewApp() *cli.App {
 						if strings.HasPrefix(changesetDir, "changeset_dir=") {
 							changesetDir = strings.TrimPrefix(changesetDir, "changeset_dir=")
 						}
-						config.UpdateForScript(changesetDir)
 					}
 
 					if err := RunCLICopy(srcName, dst, fileType, changesetDir, cCtx.Bool("json")); err != nil {
@@ -351,9 +350,10 @@ func NewApp() *cli.App {
 					useJSON := cCtx.Bool("json")
 					if useJSON {
 						resp := struct {
+							Status       string `json:"status"`
 							BumpedDBName string `json:"bumped_db_name"`
 							BaseDBName   string `json:"base_db_name"`
-						}{newDBName, dbName}
+						}{"success", newDBName, dbName}
 						b, _ := json.MarshalIndent(resp, "", "  ")
 						fmt.Fprintln(cCtx.App.Writer, string(b))
 					} else {
@@ -504,7 +504,7 @@ func HandleCLI() {
 
 		if useJSON {
 			msgEscaped, _ := json.Marshal(err.Error())
-			fmt.Fprintf(os.Stdout, `{"status":"failed","message":%s}`+"\n", string(msgEscaped))
+			fmt.Fprintf(os.Stdout, `{"status":"failed","msg":%s}`+"\n", string(msgEscaped))
 		} else {
 			fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		}

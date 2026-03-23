@@ -91,7 +91,7 @@ func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 					DBName      string `json:"db_name"`
 					StatusCode  string `json:"status_code"`
 					VersionRole string `json:"version_role"`
-				}{statusStr, info.DB.Name, info.StatusCode, versionRole}
+				}{statusStr, info.DB.Name, string(info.StatusCode), versionRole}
 				b, _ := json.MarshalIndent(resp, "", "  ")
 				return string(b), nil
 			}
@@ -143,9 +143,10 @@ func RunCLIGetLatest(dbName string, useJSON bool) (string, error) {
 			if roles[info.DB.Name] == "Latest" {
 				if useJSON {
 					resp := struct {
+						Status       string `json:"status"`
 						LatestDBName string `json:"latest_db_name"`
 						BaseName     string `json:"base_name"`
-					}{info.DB.Name, baseName}
+					}{"success", info.DB.Name, baseName}
 					b, _ := json.MarshalIndent(resp, "", "  ")
 					return string(b), nil
 				}
@@ -157,9 +158,10 @@ func RunCLIGetLatest(dbName string, useJSON bool) (string, error) {
 	// Fallback to original dbName if latest not found
 	if useJSON {
 		resp := struct {
+			Status       string `json:"status"`
 			LatestDBName string `json:"latest_db_name"`
 			BaseName     string `json:"base_name"`
-		}{dbName, reqBaseName}
+		}{"success", dbName, reqBaseName}
 		b, _ := json.MarshalIndent(resp, "", "  ")
 		return string(b), nil
 	}
@@ -200,9 +202,10 @@ func RunCLIGetVersion(shortName string, useJSON bool) (string, error) {
 
 	if useJSON {
 		resp := struct {
+			Status        string `json:"status"`
 			VersionDBName string `json:"version_db_name"`
 			ShortName     string `json:"short_name"`
-		}{val, shortName}
+		}{"success", val, shortName}
 		b, _ := json.MarshalIndent(resp, "", "  ")
 		return string(b), nil
 	}
