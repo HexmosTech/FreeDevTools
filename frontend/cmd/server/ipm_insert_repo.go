@@ -52,8 +52,12 @@ type Instruction struct {
 	Optional bool   `json:"optional,omitempty"`
 }
 
-var IPM_DB_NAME = "ipm-db-v6.db"
-var IPM_DB_PATH = filepath.Join(".", "db", "all_dbs", IPM_DB_NAME)
+
+
+// posthogResponse represents the subset of the PostHog query API response we care about.
+type posthogResponse struct {
+	Results [][]interface{} `json:"results"`
+}
 
 // PostHog analytics configuration (used for Installerpedia metrics dashboard).
 // These mirror the settings used by the standalone analytics scripts.
@@ -61,11 +65,6 @@ const (
 	posthogBaseURL   = "https://us.i.posthog.com"
 	posthogProjectID = "148275"
 )
-
-// posthogResponse represents the subset of the PostHog query API response we care about.
-type posthogResponse struct {
-	Results [][]interface{} `json:"results"`
-}
 
 type metricsSummary struct {
 	Searches      int `json:"searches"`
@@ -114,9 +113,13 @@ type cancelLogEntry struct {
 
 // LogIPMQuery writes the executed SQL query to a .sql file matching the DB name.
 func LogIPMQuery(query string, args ...interface{}) {
-	// 1. Determine the .sql filename (ipm-db-v6.db -> ipm-db-v6.sql)
-	ext := filepath.Ext(IPM_DB_PATH)
-	sqlPath := strings.TrimSuffix(IPM_DB_PATH, ext) + ".sql"
+	// 1. Determine the .sql filename from config
+	ipmDbPath := config.DBConfig.IpmDB
+	// Remove "file:" prefix if present
+	ipmDbPath = strings.TrimPrefix(ipmDbPath, "file:")
+
+	ext := filepath.Ext(ipmDbPath)
+	sqlPath := strings.TrimSuffix(ipmDbPath, ext) + ".sql"
 
 	// 2. Format the query with arguments (Basic representation)
 	formattedQuery := query
@@ -876,9 +879,9 @@ func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
 	}
 }
 func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
-    repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
-    slugHash := hashStringToInt64(repoSlug)
-    updatedAt := time.Now().UTC().Format(time.RFC3339)
+	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+	slugHash := hashStringToInt64(repoSlug)
+	updatedAt := time.Now().UTC().Format(time.RFC3339)
 
 	tx, err := db.GetConn().Begin()
 	if err != nil {

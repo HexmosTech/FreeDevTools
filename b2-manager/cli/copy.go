@@ -6,13 +6,17 @@ import (
 	"path/filepath"
 	"strings"
 
+	"b2m/core"
 	"b2m/model"
 )
 
 // RunCLICopy handles moving db and sql files between the standard all_dbs and changeset backups dir
-func RunCLICopy(srcName, dst, fileType, scriptName string) error {
+func RunCLICopy(srcName, dst, fileType, scriptName string, useJSON bool) error {
 	allDbsDir := filepath.Join(model.AppConfig.ProjectRoot, "db", "all_dbs")
-	changesetDir := model.AppConfig.ChangesetDBsDir // This is updated by UpdateForScript
+	changesetDir := model.AppConfig.Frontend.Changeset.Dbs
+	if scriptName != "" {
+		changesetDir = filepath.Join(changesetDir, scriptName)
+	}
 
 	filename := srcName
 	if fileType == "db" {
@@ -66,11 +70,15 @@ func RunCLICopy(srcName, dst, fileType, scriptName string) error {
 	}
 
 	destPath := filepath.Join(destDir, filename)
-	fmt.Printf("Copying %s to %s\n", srcPath, destPath)
+	if !useJSON {
+		core.LogInfo("Copying %s to %s", srcPath, destPath)
+	}
 
 	if fileType == "db" {
-		if err := WalCheckpointTruncate(filename); err != nil {
-			fmt.Printf("Wal truncation skipped or failed in copy: %v\n", err)
+		if err := core.WalCheckpointTruncate(filename); err != nil {
+			if !useJSON {
+				core.LogInfo("Wal truncation skipped or failed in copy: %v", err)
+			}
 		}
 	}
 

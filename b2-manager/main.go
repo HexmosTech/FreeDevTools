@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"os"
 
 	"b2m/cli"
@@ -14,7 +13,11 @@ import (
 func main() {
 	model.AppConfig.ToolVersion = "2.0"
 	// Initialize system configuration and signal handling
-	sigHandler := config.InitSystem()
+	sigHandler, err := config.InitSystem()
+	if err != nil {
+		// InitSystem already logs the error, we just exit here
+		os.Exit(1)
+	}
 	// Ensure proper cleanup of resources on exit
 	defer config.Cleanup()
 
@@ -24,8 +27,11 @@ func main() {
 	// Startup checks for TUI
 	if err := config.CheckDependencies(); err != nil {
 		core.LogError("Startup Error: %v", err)
-		fmt.Printf("Startup Error: %v\n", err)
 		os.Exit(1)
+	}
+
+	if err := core.BootstrapSystem(sigHandler.Context()); err != nil {
+		core.LogError("Startup Warning: %v", err)
 	}
 
 	// Start the Terminal User Interface

@@ -1,77 +1,93 @@
-# Template Version: v1
+# Template Version: v2
 # script_name : {{.Timestamp}}_{{.Phrase}}
-# phrase : {{.Phrase}}
+# phrase      : {{.Phrase}}
+# Execute manually : make exe-changeset {{.Timestamp}}_{{.Phrase}}
+# Execute via cron : b2m exe-changeset {{.Timestamp}}_{{.Phrase}} cron
 
-## Predifned Imports and Functions 
+## ── Predefined Imports and Setup ─────────────────────────────────────────────
 import os
-
-DB_SHORT_NAME = "ipmdb"
 import sys
+import subprocess
 
-# Add the parent directory (frontend/changeset) to sys.path
+# Shortname of the db — must match the key in db.toml.
+# Available short names:
+#   bannerdb | cheatsheetsdb | emojidb | ipmdb | manpagesdb
+#   mcpdb    | pngiconsdb   | svgiconsdb | tldrdb
+DB_SHORT_NAME = "add db short name here"
+
+# Add parent directory (frontend/changeset) so changeset.py can be imported.
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-## Import Common Functions
+## ── Import Common Functions ───────────────────────────────────────────────────
 try:
-    from changeset import db_status, db_download, db_upload, start_server, stop_server, bump_db_version, copy, handle_query, get_latest_db, get_local_db
+    from changeset import db_upload, download_latest_db
 except ImportError as e:
     print(f"Error importing changeset: {e}")
     sys.exit(1)
 
-def inserted_queries(sql_name, target_db_name):
+## ── Stage 2: Data Mutation ────────────────────────────────────────────────────
+def update_db(db_path):
     """
-    This function should insert the new data in the db.
-    """
-    handle_query(sql_name, target_db_name)
-    return None
+    Apply the intended SQL change to the local database file.
 
+    Safety contract:
+      - Return True  → mutation succeeded, safe to upload.
+      - Return False → mutation failed; caller MUST NOT upload.
+
+    Edit the `query` variable below with your actual SQL.
+    For multi-statement changes, use a .sql file and call handle_query() instead.
+    """
+    # ── Define your SQL here ─────────────────────────────────────────────────
+    query = "Define query here"
+    # ─────────────────────────────────────────────────────────────────────────
+
+    print(f"[update_db] Applying query to: {db_path}")
+    try:
+        result = subprocess.run(
+            ["sqlite3", db_path, query],
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        if result.stdout:
+            print(f"[sqlite3 stdout] {result.stdout.strip()}")
+        if result.stderr:
+            print(f"[sqlite3 stderr] {result.stderr.strip()}")
+        print("[update_db] Query executed successfully.")
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"[update_db] FAILED — sqlite3 exit code {e.returncode}")
+        print(f"[update_db] stderr: {e.stderr.strip()}")
+        return False
+    except FileNotFoundError:
+        print("[update_db] FAILED — 'sqlite3' binary not found in PATH.")
+        return False
+
+## ── Main Orchestration ────────────────────────────────────────────────────────
 def main():
-    global DB_NAME
-    DB_NAME = get_local_db(DB_SHORT_NAME)
-    if not DB_NAME:
-        print(f"Could not find local database for {DB_SHORT_NAME}")
+    # Stage 1 — Download the latest DB from B2
+    print("[Stage 1] Downloading latest DB...")
+    db_path, err = download_latest_db(DB_SHORT_NAME)
+    if err:
+        print(f"[Stage 1] FAILED: {err}")
         return
+    print(f"[Stage 1] DB ready at: {db_path}")
 
-    # Check status of db.
-    status = db_status(DB_NAME)
-    print(status)
-    
-    # If status is up_to_date, then do nothing.
-    if status == "up_to_date":
-        print(f"Info: {DB_NAME} is up to date, skipping changeset.")
+    # Stage 2 — Apply changes locally
+    print("[Stage 2] Applying updates...")
+    if not update_db(db_path):
+        print("[Stage 2] FAILED — aborting. DB not uploaded to protect data integrity.")
         return
+    print("[Stage 2] Updates applied successfully.")
 
-    # If status is outdated_version, then download db from b2.
-    elif status == "outdated_version":
-        latest_db_name = get_latest_db(DB_NAME)
-        db_download(latest_db_name)
-        copy(DB_NAME, "changeset", "sql")
-        inserted_queries(DB_NAME, new_db_name)
-        stop_server()
-        new_db_name = bump_db_version(latest_db_name)
-        db_upload(new_db_name)
-        start_server()
-        
-    # If status is bump_and_upload, then bump and upload db to b2.
-    elif status == "bump_and_upload":
-        stop_server()
-        copy(DB_NAME, "changeset", "db")
-        new_db_name = bump_db_version(DB_NAME)
-        print(new_db_name)
-        start_server()
-        db_upload(new_db_name)
+    # Stage 3 — Upload mutated DB back to B2
+    print("[Stage 3] Uploading DB to B2...")
+    if not db_upload(db_path):
+        print("[Stage 3] FAILED — upload did not complete.")
+        return
+    print("[Stage 3] Upload complete.")
 
-    # If status is unidentified, then warn the user.
-    elif status == "unidentified":
-        print(f"Warning: {DB_NAME} has an unidentified status, skipping changeset.")
-
-    # If status is ready_to_upload, then upload db to b2.
-    elif status == "ready_to_upload":
-        stop_server()
-        copy(DB_NAME, "changeset", "db")
-        print(DB_NAME)
-        start_server()
-        db_upload(DB_NAME)
+    print("\nChangeset execution completed successfully.")
 
 if __name__ == "__main__":
     main()

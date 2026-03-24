@@ -20,8 +20,13 @@ import (
 // 1. Lock Check: Verify that no one else is currently uploading this database.
 // 2. Download: Execute `rclone copy` to pull the file from B2.
 // 3. Anchor: Construct a local "Verified Anchor" (LocalVersion) to mark this state as synced.
-func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress)) error {
+func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress func(model.RcloneProgress), destLocation ...string) error {
 	LogInfo("Downloading database %s", dbName)
+
+	localDir := model.AppConfig.Frontend.LocalDB
+	if len(destLocation) > 0 && destLocation[0] != "" {
+		localDir = destLocation[0]
+	}
 
 	// -------------------------------------------------------------------------
 	// PHASE 1: LOCK CHECK & SAFETY
@@ -40,14 +45,13 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 		}
 	}
 
-	if err := os.MkdirAll(model.AppConfig.LocalDBDir, 0755); err != nil {
+	if err := os.MkdirAll(localDir, 0755); err != nil {
 		LogError("Failed to create local directory: %v", err)
 		return fmt.Errorf("failed to create local directory: %w", err)
 	}
 
 	remotePath := path.Join(model.AppConfig.RootBucket, dbName)
 	// Use directory as destination for 'copy'
-	localDir := model.AppConfig.LocalDBDir
 	destPath := localDir
 	cmdName := "copy"
 
@@ -74,10 +78,10 @@ func DownloadDatabase(ctx context.Context, dbName string, quiet bool, onProgress
 
 	fileID := strings.TrimSuffix(dbName, ".db")
 	metadataFilename := fileID + ".metadata.json"
-	mirrorMetadataPath := filepath.Join(model.AppConfig.LocalVersionDir, metadataFilename)
+	mirrorMetadataPath := filepath.Join(model.AppConfig.Frontend.B2m.Version, metadataFilename)
 
 	// 3.1. Calculate Local Hash of the newly downloaded file
-	localDBPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
+	localDBPath := filepath.Join(localDir, dbName)
 	localHash, err := CalculateHash(localDBPath, nil)
 	if err != nil {
 		LogError("DownloadDatabase: Failed to calculate hash of downloaded file %s: %v", dbName, err)

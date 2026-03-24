@@ -2,9 +2,9 @@ package cli
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strconv"
@@ -27,11 +27,11 @@ import (
 // | Any           | Up To Date        | up_to_date         |
 // | Any           | Ready to Upload   | unidentified    |
 // | Any           | Unknown/Other     | unidentified       |
-func RunCLIStatus(dbName string) (string, error) {
+func RunCLIStatus(dbName string, useJSON bool) (string, error) {
 	ctx := context.Background()
 
 	// Truncate WAL for matching DBs before fetching status
-	if err := WalCheckpointTruncate(dbName); err != nil {
+	if err := core.WalCheckpointTruncate(dbName); err != nil {
 		core.LogInfo("WAL truncation skipped or failed: %v", err)
 	}
 
@@ -51,12 +51,13 @@ func RunCLIStatus(dbName string) (string, error) {
 	core.LogInfo("DEBUG: calculateVersionRoles returned: %+v", roles)
 
 	found := false
+	reqBaseName := strings.TrimSuffix(filepath.Base(dbName), filepath.Ext(dbName))
+
 	for _, info := range statusData {
 		// handle both exact match and extension-less
 		baseName := strings.TrimSuffix(info.DB.Name, filepath.Ext(info.DB.Name))
-		reqBaseName := strings.TrimSuffix(dbName, filepath.Ext(dbName))
 
-		if baseName == reqBaseName || info.DB.Name == dbName {
+		if baseName == reqBaseName || info.DB.Name == filepath.Base(dbName) {
 			found = true
 			isReadyToUpload := info.StatusCode == model.StatusCodeLocalNewer || info.StatusCode == model.StatusCodeNewLocal || info.StatusCode == model.StatusCodeLockedByYou
 			isOutdated := info.StatusCode == model.StatusCodeRemoteNewer || info.StatusCode == model.StatusCodeRemoteOnly || info.StatusCode == model.StatusCodeErrorReadLocal || info.StatusCode == model.StatusCodeUnknown
@@ -69,41 +70,54 @@ func RunCLIStatus(dbName string) (string, error) {
 			core.LogInfo("DEBUG: isOutdated=%v", isOutdated)
 			core.LogInfo("DEBUG: versionRole=%s", versionRole)
 
+			var statusStr string
 			if versionRole == "New Bump" && isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'New Bump' && isReadyToUpload")
-				return "ready_to_upload", nil
+				statusStr = "ready_to_upload"
 			} else if versionRole == "Latest" && isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'Latest' && isReadyToUpload")
-				return "bump_and_upload", nil
+				statusStr = "bump_and_upload"
 			} else if versionRole == "Old Version" {
-				core.LogInfo("DEBUG: Hit branch -> versionRole == 'Old Version'")
-				return "outdated_version", nil
+				statusStr = "outdated_version"
 			} else if info.StatusCode == model.StatusCodeUpToDate {
-				core.LogInfo("DEBUG: Hit branch -> info.StatusCode == model.StatusCodeUpToDate")
-				return "up_to_date", nil
+				statusStr = "up_to_date"
 			} else if isReadyToUpload {
-				core.LogInfo("DEBUG: Hit branch -> isReadyToUpload fallback")
-				return "unidentified", nil
+				statusStr = "unidentified"
 			} else {
-				core.LogInfo("DEBUG: Hit branch -> unidentified fallback")
-				return "unidentified", nil // fallback for safety
+				statusStr = "unidentified" // fallback for safety
 			}
+
+			if useJSON {
+				resp := struct {
+					Status      string `json:"status"`
+					DBName      string `json:"db_name"`
+					StatusCode  string `json:"status_code"`
+					VersionRole string `json:"version_role"`
+				}{statusStr, info.DB.Name, string(info.StatusCode), versionRole}
+				b, _ := json.MarshalIndent(resp, "", "  ")
+				return string(b), nil
+			}
+			return statusStr, nil
 		}
 	}
 
 	if !found {
+		if useJSON {
+			return `{"status":"unidentified"}`, nil
+		}
 		return "unidentified", nil
+	}
+	if useJSON {
+		return `{"status":"unidentified"}`, nil
 	}
 	return "unidentified", nil
 }
 
-// RunCLIGetLatest finds the "Latest" version of a database given its base name or current name, and prints it natively for python
-func RunCLIGetLatest(dbName string) error {
+// RunCLIGetLatest finds the "Latest" version of a database given its base name or current name, and returns it
+func RunCLIGetLatest(dbName string, useJSON bool) (string, error) {
 	ctx := context.Background()
 
 	statusData, err := core.FetchDBStatusData(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("failed to fetch status data: %w", err)
+		return "", fmt.Errorf("failed to fetch status data: %w", err)
 	}
 
 	reqBaseName := strings.TrimSuffix(dbName, filepath.Ext(dbName))
@@ -127,27 +141,43 @@ func RunCLIGetLatest(dbName string) error {
 
 		if baseName == reqBaseName {
 			if roles[info.DB.Name] == "Latest" {
-				fmt.Println(info.DB.Name)
-				return nil
+				if useJSON {
+					resp := struct {
+						Status       string `json:"status"`
+						LatestDBName string `json:"latest_db_name"`
+						BaseName     string `json:"base_name"`
+					}{"success", info.DB.Name, baseName}
+					b, _ := json.MarshalIndent(resp, "", "  ")
+					return string(b), nil
+				}
+				return info.DB.Name, nil
 			}
 		}
 	}
 
 	// Fallback to original dbName if latest not found
-	fmt.Println(dbName)
-	return nil
+	if useJSON {
+		resp := struct {
+			Status       string `json:"status"`
+			LatestDBName string `json:"latest_db_name"`
+			BaseName     string `json:"base_name"`
+		}{"success", dbName, reqBaseName}
+		b, _ := json.MarshalIndent(resp, "", "  ")
+		return string(b), nil
+	}
+	return dbName, nil
 }
 
-// RunCLIGetVersion reads db.toml to find the full filename for a given short name and prints it natively for python
-func RunCLIGetVersion(shortName string) error {
+// RunCLIGetVersion reads db.toml to find the full filename for a given short name and returns it
+func RunCLIGetVersion(shortName string, useJSON bool) (string, error) {
 	tomlPath := model.AppConfig.FrontendTomlPath
 	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
-		return fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
+		return "", fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
 	}
 
 	data, err := os.ReadFile(tomlPath)
 	if err != nil {
-		return fmt.Errorf("failed to read db.toml: %w", err)
+		return "", fmt.Errorf("failed to read db.toml: %w", err)
 	}
 
 	// Since we want to dynamically lookup the shortName, we can unmarshal the
@@ -157,21 +187,29 @@ func RunCLIGetVersion(shortName string) error {
 	}
 
 	if err := toml.Unmarshal(data, &file); err != nil {
-		return fmt.Errorf("failed to parse db.toml: %w", err)
+		return "", fmt.Errorf("failed to parse db.toml: %w", err)
 	}
 
 	valInterface, ok := file.DB[shortName]
 	if !ok {
-		return fmt.Errorf("short name '%s' not found in db.toml mapping", shortName)
+		return "", fmt.Errorf("short name '%s' not found in db.toml mapping", shortName)
 	}
 
 	val, ok := valInterface.(string)
 	if !ok || val == "" {
-		return fmt.Errorf("short name '%s' is empty or invalid in db.toml", shortName)
+		return "", fmt.Errorf("short name '%s' is empty or invalid in db.toml", shortName)
 	}
 
-	fmt.Println(val)
-	return nil
+	if useJSON {
+		resp := struct {
+			Status        string `json:"status"`
+			VersionDBName string `json:"version_db_name"`
+			ShortName     string `json:"short_name"`
+		}{"success", val, shortName}
+		b, _ := json.MarshalIndent(resp, "", "  ")
+		return string(b), nil
+	}
+	return val, nil
 }
 
 func calculateVersionRoles(dbs []model.DBInfo) map[string]string {
@@ -224,29 +262,4 @@ func calculateVersionRoles(dbs []model.DBInfo) map[string]string {
 	}
 
 	return roles
-}
-
-// WalCheckpointTruncate attempts to run PRAGMA wal_checkpoint(TRUNCATE) on a specific database file
-func WalCheckpointTruncate(dbName string) error {
-	dbPath := filepath.Join(model.AppConfig.LocalDBDir, dbName)
-	if _, err := os.Stat(dbPath); err != nil {
-		return fmt.Errorf("database file not found at %s", dbPath)
-	}
-
-	cmd := exec.Command("sqlite3", dbPath)
-	stdin, err := cmd.StdinPipe()
-	if err != nil {
-		return fmt.Errorf("failed to create stdin pipe: %w", err)
-	}
-
-	go func() {
-		defer stdin.Close()
-		stdin.Write([]byte("PRAGMA wal_checkpoint(TRUNCATE);\n.quit\n"))
-	}()
-
-	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to execute sqlite3 WAL checkpoint: %w", err)
-	}
-
-	return nil
 }

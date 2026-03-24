@@ -16,10 +16,15 @@ import (
 func InitializeConfig() error {
 	var err error
 
-	model.AppConfig.ProjectRoot, err = findProjectRoot()
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
-		model.AppConfig.ProjectRoot, _ = os.Getwd()
+	// Check for B2M_PROJECT_ROOT env var first
+	if envRoot := os.Getenv("B2M_PROJECT_ROOT"); envRoot != "" {
+		model.AppConfig.ProjectRoot = envRoot
+	} else {
+		model.AppConfig.ProjectRoot, err = findProjectRoot()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "⚠️  Could not determine project root: %v. Using CWD.\n", err)
+			model.AppConfig.ProjectRoot, _ = os.Getwd()
+		}
 	}
 
 	// Load config from fdt-dev.toml
@@ -35,19 +40,18 @@ func InitializeConfig() error {
 	// Fetch user details
 	fetchUserDetails()
 
-	if model.AppConfig.LocalDBDir == "" {
+	if model.AppConfig.Frontend.LocalDB == "" {
 		return fmt.Errorf("LocalDBDir not configured. Please set b2m_db_dir in your config file")
 	}
-	model.AppConfig.LocalB2MDir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
-	model.AppConfig.LocalVersionDir = filepath.Join(model.AppConfig.LocalB2MDir, "version")
-	model.AppConfig.LocalAnchorDir = filepath.Join(model.AppConfig.LocalB2MDir, "local-version")
-	model.AppConfig.MigrationsDir = filepath.Join(model.AppConfig.ProjectRoot, "b2m-migration")
+	model.AppConfig.Frontend.B2m.Dir = filepath.Join(model.AppConfig.ProjectRoot, ".b2m")
+	model.AppConfig.Frontend.B2m.Version = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "version")
+	model.AppConfig.Frontend.B2m.LocalMetadata = filepath.Join(model.AppConfig.Frontend.B2m.Dir, "local-version")
+	model.AppConfig.Frontend.Log = filepath.Join(model.AppConfig.ProjectRoot, "b2m.log")
 
 	// Changeset Paths
-	model.AppConfig.ChangesetDir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
-	model.AppConfig.ChangesetScriptsDir = filepath.Join(model.AppConfig.ChangesetDir, "scripts")
-	model.AppConfig.ChangesetLogsDir = filepath.Join(model.AppConfig.ChangesetDir, "logs")
-	model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs")
+	model.AppConfig.Frontend.Changeset.Dir = filepath.Join(model.AppConfig.ProjectRoot, "changeset")
+	model.AppConfig.Frontend.Changeset.Script = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "scripts")
+	model.AppConfig.Frontend.Changeset.Dbs = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "dbs")
 
 	model.AppConfig.FrontendTomlPath = filepath.Join(model.AppConfig.ProjectRoot, "db.toml")
 
@@ -60,9 +64,17 @@ func findProjectRoot() (string, error) {
 		return "", err
 	}
 	for {
+		// Priority 1: Check for direct 'db' directory
 		if info, err := os.Stat(filepath.Join(dir, "db")); err == nil && info.IsDir() {
 			return dir, nil
 		}
+
+		// Priority 2: Check for 'frontend/db' (useful when running from repo root)
+		frontendDB := filepath.Join(dir, "frontend", "db")
+		if info, err := os.Stat(frontendDB); err == nil && info.IsDir() {
+			return filepath.Join(dir, "frontend"), nil
+		}
+
 		parent := filepath.Dir(dir)
 		if parent == dir {
 			return "", fmt.Errorf("root not found 'db' dir")
@@ -151,7 +163,7 @@ func CheckDependencies() error {
 // UpdateForScript updates the global configuration paths given a script name
 func UpdateForScript(scriptName string) {
 	if scriptName != "" {
-		model.AppConfig.ChangesetDBsDir = filepath.Join(model.AppConfig.ChangesetDir, "dbs", scriptName, "backup")
-		model.AppConfig.LocalDBDir = model.AppConfig.ChangesetDBsDir
+		model.AppConfig.Frontend.Changeset.Dbs = filepath.Join(model.AppConfig.Frontend.Changeset.Dir, "dbs", scriptName)
+		model.AppConfig.Frontend.LocalDB = model.AppConfig.Frontend.Changeset.Dbs
 	}
 }

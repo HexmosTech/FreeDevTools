@@ -88,7 +88,7 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 		dbMap[name].ExistsLocal = true
 
 		// Get local file stats
-		info, err := os.Stat(filepath.Join(model.AppConfig.LocalDBDir, name))
+		info, err := os.Stat(filepath.Join(model.AppConfig.Frontend.LocalDB, name))
 		if err == nil {
 			dbMap[name].ModifiedAt = info.ModTime()
 			dbMap[name].CreatedAt = info.ModTime()
@@ -108,11 +108,19 @@ func AggregateDBs(local []string, remote []string) ([]model.DBInfo, error) {
 	return all, nil
 }
 func SendDiscord(ctx context.Context, content string) {
+	// Use a tight timeout for Discord notifications
+	dCtx, cancel := context.WithTimeout(ctx, model.TimeoutShort)
+	defer cancel()
+
 	payload := map[string]string{"content": content}
 	data, _ := json.Marshal(payload)
-	err := exec.CommandContext(ctx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
+	err := exec.CommandContext(dCtx, "curl", "-H", "Content-Type: application/json", "-d", string(data), model.AppConfig.DiscordWebhookURL, "-s", "-o", "/dev/null").Run()
 	if err != nil {
-		LogError("Failed to send discord notification: %v", err)
+		if dCtx.Err() == context.DeadlineExceeded {
+			LogError("Discord notification timed out after 5s")
+		} else {
+			LogError("Failed to send discord notification: %v", err)
+		}
 	}
 }
 
@@ -150,7 +158,9 @@ func ParseRcloneOutput(r io.Reader, onUpdate func(p model.RcloneProgress)) error
 		// Parse JSON line
 		var p model.RcloneProgress
 		if err := json.Unmarshal([]byte(line), &p); err != nil {
-			// If not JSON, ignore (might be other logs)
+			// If not JSON, it's a standard rclone log line (e.g. INFO or ERROR).
+			// We should capture it so we know if rclone is struggling with network issues.
+			LogInfo("rclone: %s", line)
 			continue
 		}
 
@@ -344,7 +354,7 @@ func UnlockDatabase(ctx context.Context, dbName, owner string, force bool) error
 
 // getLocalDBs lists all .db files in the local directory
 func getLocalDBs() ([]string, error) {
-	matches, err := filepath.Glob(filepath.Join(model.AppConfig.LocalDBDir, "*.db"))
+	matches, err := filepath.Glob(filepath.Join(model.AppConfig.Frontend.LocalDB, "*.db"))
 	if err != nil {
 		LogError("filepath.Glob failed in getLocalDBs: %v", err)
 		return nil, err
@@ -357,4 +367,25 @@ func getLocalDBs() ([]string, error) {
 		}
 	}
 	return names, nil
+}
+
+// WalCheckpointTruncate attempts to run PRAGMA wal_checkpoint(TRUNCATE) on a specific database file
+func WalCheckpointTruncate(dbName string) error {
+	dbPath := filepath.Join(model.AppConfig.Frontend.LocalDB, dbName)
+	if _, err := os.Stat(dbPath); err != nil {
+		return fmt.Errorf("database file not found at %s", dbPath)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutDefault)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "sqlite3", dbPath, "PRAGMA wal_checkpoint(TRUNCATE);")
+	if err := cmd.Run(); err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("sqlite3 WAL checkpoint timed out")
+		}
+		return fmt.Errorf("failed to execute sqlite3 WAL checkpoint: %w", err)
+	}
+
+	return nil
 }

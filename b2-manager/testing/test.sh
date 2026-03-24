@@ -1,41 +1,34 @@
 #!/bin/bash
 
 # Configuration
-# Path to the test database (relative to frontend/ directory where this script is called)
-DB_PATH="db/all_dbs/test-db-v3.db"
-SQL_FILE="db/all_dbs/test-db-v3.sql"
+# Path to the test database directory (relative to project root)
+DB_DIR="frontend/db/all_dbs"
+SRC_DB="$DB_DIR/test-db-back.db"
+DB_PATH="$DB_DIR/ipm-db-v6.db"
+SQL_FILE="$DB_DIR/test-db.sql"
+DST_SQL="$DB_DIR/ipm-db-v6.sql"
 
-# Ensure the database file exists
-if [ ! -f "$DB_PATH" ]; then
-    echo "❌ Error: Database file not found at $DB_PATH"
+# Ensure the source database file exists
+if [ ! -f "$SRC_DB" ]; then
+    echo "❌ Error: Source database file not found at $SRC_DB"
     echo "Current directory: $(pwd)"
     exit 1
 fi
 
-# Generate random word/name
-RANDOM_NAME="Test_$(date +%s)_$RANDOM"
-TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%S.%3NZ")
+# Ensure the SQL file exists
+if [ ! -f "$SQL_FILE" ]; then
+    echo "❌ Error: SQL file not found at $SQL_FILE"
+    exit 1
+fi
 
-echo "Using Database: $DB_PATH"
-echo "Changing 'aggregators' name to: $RANDOM_NAME"
+echo "Copying $SRC_DB to $DB_PATH..."
+cp "$SRC_DB" "$DB_PATH"
 
-# Create the SQL content
-SQL_CONTENT="INSERT INTO category (slug, name, description, count, updated_at) 
-VALUES ('aggregators', '$RANDOM_NAME', 'Servers for accessing many apps and tools through a single MCP server.', 19, '$TIMESTAMP')
-ON CONFLICT(slug) DO UPDATE SET
-    name = excluded.name,
-    updated_at = excluded.updated_at;
-"
+echo "Copying $SQL_FILE to $DST_SQL..."
+cp "$SQL_FILE" "$DST_SQL"
 
-# Write to test-db.sql
-echo "$SQL_CONTENT" > "$SQL_FILE"
-echo "Created SQL file: $SQL_FILE"
-
-# Update (or Insert) the row
+echo "Executing $DST_SQL against $DB_PATH..."
 # We use SQLite to perform the update
-sqlite3 "$DB_PATH" <<EOF
-$SQL_CONTENT
-SELECT c.* FROM category AS c WHERE c.slug = 'aggregators';
-EOF
+sqlite3 "$DB_PATH" < "$DST_SQL"
 
 echo "✅ Database updated."

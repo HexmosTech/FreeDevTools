@@ -1,6 +1,7 @@
 package core
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -60,9 +61,16 @@ func CalculateHash(filePath string, onProgress func(string)) (string, error) {
 	// than piping data through Go.
 	// We use "b3sum" directly. Note: The user asked for "time command", but wrapping with /usr/bin/time
 	// complicates output parsing. Go's time.Since is precise for wall-clock time.
-	cmd := exec.Command("b3sum", filePath)
+	// Use a timeout for hashing to prevent hangs
+	ctx, cancel := context.WithTimeout(context.Background(), model.TimeoutHash)
+	defer cancel()
+
+	cmd := exec.CommandContext(ctx, "b3sum", filePath)
 	output, err := cmd.Output()
 	if err != nil {
+		if ctx.Err() == context.DeadlineExceeded {
+			return "", fmt.Errorf("hashing timed out for %s", filePath)
+		}
 		LogError("CalculateHash: Failed to calculate hash for %s: %v", filePath, err)
 		return "", err
 	}
@@ -123,7 +131,7 @@ func pruneHashCache() {
 
 // LoadHashCache loads the hash cache from disk
 func LoadHashCache() error {
-	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.Frontend.B2m.LocalMetadata, "hash.json")
 	if _, err := os.Stat(cachePath); os.IsNotExist(err) {
 		return nil // No cache exists yet
 	}
@@ -151,10 +159,10 @@ func SaveHashCache() error {
 	// Prune before saving
 	pruneHashCache()
 
-	cachePath := filepath.Join(model.AppConfig.LocalAnchorDir, "hash.json")
+	cachePath := filepath.Join(model.AppConfig.Frontend.B2m.LocalMetadata, "hash.json")
 
 	// Ensure directory exists
-	if err := os.MkdirAll(model.AppConfig.LocalAnchorDir, 0755); err != nil {
+	if err := os.MkdirAll(model.AppConfig.Frontend.B2m.LocalMetadata, 0755); err != nil {
 		LogError("SaveHashCache: Failed to create directory: %v", err)
 		return err
 	}

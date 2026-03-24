@@ -31,11 +31,32 @@ func loadTOMLConfig() error {
 	localDBDir := k.String("b2m.b2m_db_dir")
 	if localDBDir != "" {
 		if filepath.IsAbs(localDBDir) {
-			model.AppConfig.LocalDBDir = localDBDir
+			model.AppConfig.Frontend.LocalDB = localDBDir
 		} else {
-			model.AppConfig.LocalDBDir = filepath.Join(model.AppConfig.ProjectRoot, localDBDir)
+			model.AppConfig.Frontend.LocalDB = filepath.Join(model.AppConfig.ProjectRoot, localDBDir)
 		}
 	}
 
 	return nil
+}
+
+// GetDBNameFromToml reads db.toml and returns the filename mapped to shortName
+func GetDBNameFromToml(shortName string) (string, error) {
+	tomlPath := model.AppConfig.FrontendTomlPath
+	if _, err := os.Stat(tomlPath); os.IsNotExist(err) {
+		return "", fmt.Errorf("db.toml doesn't exist at %s", tomlPath)
+	}
+
+	dbK := koanf.New(".")
+	if err := dbK.Load(file.Provider(tomlPath), toml.Parser()); err != nil {
+		return "", fmt.Errorf("failed to load db.toml: %w", err)
+	}
+
+	// Assuming db.toml has a [db] section
+	dbName := dbK.String("db." + shortName)
+	if dbName == "" {
+		return "", fmt.Errorf("short name '%s' not found or invalid in db.toml", shortName)
+	}
+
+	return dbName, nil
 }

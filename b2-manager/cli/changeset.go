@@ -18,7 +18,7 @@ func CreateChangeset(phrase string) error {
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_%s.py", timestamp, phrase)
 
-	scriptDir := model.AppConfig.ChangesetScriptsDir
+	scriptDir := model.AppConfig.Frontend.Changeset.Script
 	if err := os.MkdirAll(scriptDir, 0755); err != nil {
 		return fmt.Errorf("failed to create scripts directory: %w", err)
 	}
@@ -57,9 +57,11 @@ func CreateChangeset(phrase string) error {
 	return nil
 }
 
-// ExecuteChangeset runs the specified python script securely
-func ExecuteChangeset(scriptName string) error {
-	scriptDir := model.AppConfig.ChangesetScriptsDir
+// ExecuteChangeset runs the specified python script securely.
+// When cronMode is true, Discord notifications are sent only on failure.
+// Start and success messages are always suppressed to avoid alert fatigue.
+func ExecuteChangeset(scriptName string, cronMode bool) error {
+	scriptDir := model.AppConfig.Frontend.Changeset.Script
 
 	// Ensure ".py" extension is present if not provided
 	if filepath.Ext(scriptName) != ".py" {
@@ -74,24 +76,21 @@ func ExecuteChangeset(scriptName string) error {
 		return fmt.Errorf("script %s not found in %s", scriptName, scriptDir)
 	}
 
-	// Since b2m runs from frontend, changeset.py should be at frontend/changeset/changeset.py
-	// But it's better to make it relative to the scripts dir (which is frontend/changeset/scripts).
-	// So the wrapper will be at: [scriptDir]/../changeset.py
 	fmt.Printf("Executing Changeset Script: %s\n", scriptPath)
-
-	ctx := context.Background()
-	core.SendDiscord(ctx, fmt.Sprintf("🚀 **Starting Changeset Execution:** `%s`", scriptName))
 
 	cmd := exec.Command("python3", scriptPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		core.SendDiscord(ctx, fmt.Sprintf("❌ **Changeset Execution Failed:** `%s`\nError: %v", scriptName, err))
+		// Only send Discord alert on failure, and only when running as a cron job
+		if cronMode {
+			ctx := context.Background()
+			core.SendDiscord(ctx, fmt.Sprintf("❌ **Changeset Failed (cron):** `%s`\nError: %v", scriptName, err))
+		}
 		return fmt.Errorf("script execution failed: %w", err)
 	}
 
-	core.SendDiscord(ctx, fmt.Sprintf("✅ **Changeset Execution Completed Successfully:** `%s`", scriptName))
 	return nil
 }
 
@@ -103,10 +102,10 @@ func RunCLINotify(message string) error {
 }
 
 // RunCLIHandleQuery executes a specific SQL file against a target database
-func RunCLIHandleQuery(sqlName string, dbName string) error {
+func RunCLIHandleQuery(sqlName string, dbName string, useJSON bool) error {
 	// The files are expected to be in the changeset backup directory due to previous steps
-	dbPath := filepath.Join(model.AppConfig.ChangesetDBsDir, dbName)
-	sqlPath := filepath.Join(model.AppConfig.ChangesetDBsDir, sqlName)
+	dbPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, dbName)
+	sqlPath := filepath.Join(model.AppConfig.Frontend.Changeset.Dbs, sqlName)
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
 		return fmt.Errorf("database file not found at %s", dbPath)
@@ -115,7 +114,9 @@ func RunCLIHandleQuery(sqlName string, dbName string) error {
 		return fmt.Errorf("SQL file not found at %s", sqlPath)
 	}
 
-	fmt.Printf("Executing queries from %s into %s...\n", sqlName, dbName)
+	if !useJSON {
+		fmt.Printf("Executing queries from %s into %s...\n", sqlName, dbName)
+	}
 
 	// Read SQL file content
 	sqlContent, err := os.ReadFile(sqlPath)
@@ -145,6 +146,8 @@ func RunCLIHandleQuery(sqlName string, dbName string) error {
 		return fmt.Errorf("sqlite3 execution failed: %w", err)
 	}
 
-	fmt.Printf("Successfully applied %s to %s\n", sqlName, dbName)
+	if !useJSON {
+		fmt.Printf("Successfully applied %s to %s\n", sqlName, dbName)
+	}
 	return nil
 }

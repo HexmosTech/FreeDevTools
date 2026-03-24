@@ -117,7 +117,7 @@ func CalculateDBStatus(db model.DBInfo, locks map[string]model.LockEntry, remote
 	// -------------------------------------------------------------------------
 	// -------------------------------------------------------------------------
 	if db.ExistsLocal && hasRemoteMeta {
-		localPath := filepath.Join(model.AppConfig.LocalDBDir, db.Name)
+		localPath := filepath.Join(model.AppConfig.Frontend.LocalDB, db.Name)
 		localHash, err := CalculateHash(localPath, onProgress)
 		if err != nil {
 			LogError("Status Check: Failed to verify %s: %v", db.Name, err)
@@ -195,6 +195,13 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	}
 	LogInfo("FetchDBStatusData: Found %d local DBs", len(localDBs))
 
+	// Truncate WAL for all local databases to ensure accurate hashing
+	for _, dbName := range localDBs {
+		if err := WalCheckpointTruncate(dbName); err != nil {
+			LogInfo("FetchDBStatusData: WAL truncation skipped or failed for %s: %v", dbName, err)
+		}
+	}
+
 	select {
 	case <-ctx.Done():
 		return nil, fmt.Errorf("cancelled")
@@ -239,7 +246,7 @@ func FetchDBStatusData(ctx context.Context, onProgress func(string)) ([]model.DB
 	var errLocalVersions error
 
 	// We scan the local-version directory directly.
-	entries, err := os.ReadDir(model.AppConfig.LocalAnchorDir)
+	entries, err := os.ReadDir(model.AppConfig.Frontend.B2m.LocalMetadata)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			errLocalVersions = err
