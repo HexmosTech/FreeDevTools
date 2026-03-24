@@ -29,7 +29,9 @@ import (
 	"fdt-templ/components/layouts"
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
 	"fdt-templ/internal/config"
+	"fdt-templ/internal/db/bookmarks"
 	"fdt-templ/internal/db/installerpedia"
+	"fdt-templ/internal/utils"
 
 	"github.com/a-h/templ"
 )
@@ -260,4 +262,93 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 
 	handler := templ.Handler(installerpedia_pages.Page(pageData))
 	handler.ServeHTTP(w, r)
+}
+
+// HandleMetrics renders the per-repo metrics dashboard page
+// at /installerpedia/{category}/{slug}/metrics/.
+func HandleMetrics(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, fdtPgDB *bookmarks.DB, category string, slug string, hashID int64) {
+	// auth check
+	userID, err := utils.GetUserIDFromCookie(r)
+	if err != nil || userID == "" {
+		http.Redirect(w, r, config.GetBasePath()+"/", http.StatusFound)
+		return
+	}
+
+	isAdmin, err := fdtPgDB.CheckUserAdmin(userID)
+	if err != nil {
+		log.Printf("[Metrics] DB Error checking admin for %s: %v", userID, err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	
+	hasSlugAccess, err := fdtPgDB.HasIPMDashboardAccess(userID, category+"/"+slug)
+	if err != nil {
+		log.Printf("[Metrics] DB Error checking slug access for %s/%s: %v", userID, category+"/"+slug, err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+	
+	if !isAdmin && !hasSlugAccess {
+		http.Redirect(w, r, config.GetBasePath()+"/", http.StatusFound)
+		return
+	}
+
+	repo, err := db.GetRepo(hashID)
+	if err != nil || repo == nil {
+		if err != nil {
+			log.Printf("Error fetching Installerpedia repo for metrics (slug: %s): %v", slug, err)
+		}
+		http.NotFound(w, r)
+		return
+	}
+
+	if repo.IsDeleted {
+		parentURL := config.GetBasePath() + "/installerpedia/" + category + "/"
+		http.Redirect(w, r, parentURL, http.StatusMovedPermanently)
+		return
+	}
+
+	basePath := config.GetBasePath()
+
+	breadcrumbs := []components.BreadcrumbItem{
+		{Label: "Free DevTools", Href: basePath + "/"},
+		{Label: "Installerpedia", Href: basePath + "/installerpedia/"},
+		{Label: category, Href: basePath + "/installerpedia/" + category + "/"},
+		{Label: repo.Repo, Href: basePath + "/installerpedia/" + category + "/" + slug + "/"},
+		{Label: "Metrics"},
+	}
+
+	title := repo.Repo + " Install Metrics Dashboard | Installerpedia"
+
+	keywords := []string{
+		"installerpedia",
+		"installation metrics",
+		"install success rate",
+		"ipm analytics",
+		category,
+		repo.Repo,
+	}
+
+	canonicalPath := "/installerpedia/" + category + "/" + slug + "/metrics/"
+
+	apiBase := config.GetBasePath() + "/api/installerpedia/metrics"
+
+	pageData := installerpedia_pages.MetricsPageData{
+		Repo:            repo,
+		Category:        category,
+		BreadcrumbItems: breadcrumbs,
+		LayoutProps: layouts.BaseLayoutProps{
+			Title:        title,
+			Description:  "Install performance analytics and error diagnostics for " + repo.Repo + " based on anonymous ipm usage.",
+			Canonical:    installerpediaCanonical(canonicalPath),
+			Keywords:     keywords,
+			OgImage:      defaultOgImage,
+			TwitterImage: defaultOgImage,
+			ShowHeader:   true,
+		},
+		Keywords: keywords,
+		APIBase:  apiBase,
+	}
+
+	templ.Handler(installerpedia_pages.Metrics(pageData)).ServeHTTP(w, r)
 }

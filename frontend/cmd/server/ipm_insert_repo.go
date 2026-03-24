@@ -13,6 +13,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"fdt-templ/internal/db/bookmarks"
+
 	"strings"
 	"time"
 
@@ -45,8 +47,68 @@ type InstallMethod struct {
 }
 
 type Instruction struct {
-	Command string `json:"command"`
-	Meaning string `json:"meaning"`
+	Command  string `json:"command"`
+	Meaning  string `json:"meaning,omitempty"`
+	Optional bool   `json:"optional,omitempty"`
+}
+
+
+
+// posthogResponse represents the subset of the PostHog query API response we care about.
+type posthogResponse struct {
+	Results [][]interface{} `json:"results"`
+}
+
+// PostHog analytics configuration (used for Installerpedia metrics dashboard).
+// These mirror the settings used by the standalone analytics scripts.
+const (
+	posthogBaseURL   = "https://us.i.posthog.com"
+	posthogProjectID = "148275"
+)
+
+type metricsSummary struct {
+	Searches      int `json:"searches"`
+	TotalAttempts int `json:"total_attempts"`
+	Success       int `json:"success"`
+	Failures      int `json:"failures"`
+	Cancelled     int `json:"cancelled"`
+	TotalUsers    int `json:"total_users"`
+}
+
+type methodStats struct {
+	InstallMethod string  `json:"install_method"`
+	Success       int     `json:"success"`
+	Failures      int     `json:"failures"`
+	Cancelled     int     `json:"cancelled"`
+	Total         int     `json:"total"`
+	SuccessRate   float64 `json:"success_rate"`
+}
+
+type osDistribution struct {
+	OS    string `json:"os"`
+	Arch  string `json:"arch"`
+	Total int    `json:"total"`
+}
+
+type countryDistribution struct {
+	Country string `json:"country"`
+	Total   int    `json:"total"`
+}
+
+type errorLogEntry struct {
+	Error     string `json:"error"`
+	Arch      string `json:"arch"`
+	OS        string `json:"os"`
+	Command   string `json:"command,omitempty"`
+	Timestamp string `json:"timestamp"`
+}
+
+type cancelLogEntry struct {
+	Error     string `json:"error"`
+	Arch      string `json:"arch"`
+	OS        string `json:"os"`
+	Command   string `json:"command,omitempty"`
+	Timestamp string `json:"timestamp"`
 }
 
 // LogIPMQuery writes the executed SQL query to a .sql file matching the DB name.
@@ -83,7 +145,7 @@ func LogIPMQuery(query string, args ...interface{}) {
 	}
 }
 
-func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
+func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdtPgDB *bookmarks.DB) {
 	base := GetBasePath() + "/api/installerpedia"
 
 	// Clean routing table
@@ -95,6 +157,10 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB) {
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
 	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
+	// Metrics & analytics
+	mux.HandleFunc(base+"/metrics/summary",handleMetricsSummary())
+	mux.HandleFunc(base+"/metrics/errors",  handleMetricsErrors())
+	mux.HandleFunc(base+"/metrics/cancels", handleMetricsCancels())
 
 }
 
@@ -166,6 +232,414 @@ func handleAddEntry(db *installerpedia.DB) http.HandlerFunc {
 		log.Printf("✅ [Installerpedia API] Added: %s", payload.Repo)
 		w.WriteHeader(http.StatusCreated)
 		fmt.Fprintf(w, `{"success": true, "repo": "%s"}`, payload.Repo)
+	}
+}
+
+// escapeHogQLString performs minimal escaping for embedding Go strings into HogQL.
+// It currently escapes single quotes by prefixing them with a backslash.
+func escapeHogQLString(s string) string {
+	return strings.ReplaceAll(s, "'", "\\'")
+}
+
+// runPosthogQuery executes a HogQL query against PostHog's /query endpoint.
+func runPosthogQuery(query string) ([][]interface{}, error) {
+	cfg := config.GetConfig()
+	apiKey := cfg.PostHogKey
+	if apiKey == "" {
+		return nil, fmt.Errorf("POSTHOG_PERSONAL_API_KEY not set")
+	}
+
+	endpoint := fmt.Sprintf("%s/api/projects/%s/query/", posthogBaseURL, posthogProjectID)
+
+	payload := map[string]interface{}{
+		"query": map[string]interface{}{
+			"kind":  "HogQLQuery",
+			"query": query,
+		},
+	}
+
+	body, err := json.Marshal(payload)
+	if err != nil {
+		return nil, fmt.Errorf("failed to marshal PostHog payload: %w", err)
+	}
+
+	req, err := http.NewRequest("POST", endpoint, bytes.NewReader(body))
+	if err != nil {
+		return nil, fmt.Errorf("failed to create PostHog request: %w", err)
+	}
+	req.Header.Set("Authorization", "Bearer "+apiKey)
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{Timeout: 10 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("PostHog request failed: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("PostHog returned status %d", resp.StatusCode)
+	}
+
+	var pr posthogResponse
+	if err := json.NewDecoder(resp.Body).Decode(&pr); err != nil {
+		return nil, fmt.Errorf("failed to decode PostHog response: %w", err)
+	}
+
+	return pr.Results, nil
+}
+
+// helpers to safely convert interface{} from PostHog into useful types.
+func ifaceToInt(v interface{}) int {
+	switch n := v.(type) {
+	case float64:
+		return int(n)
+	case int:
+		return n
+	case int64:
+		return int(n)
+	default:
+		return 0
+	}
+}
+
+func ifaceToString(v interface{}) string {
+	if v == nil {
+		return ""
+	}
+	switch s := v.(type) {
+	case string:
+		return s
+	default:
+		return fmt.Sprintf("%v", v)
+	}
+}
+
+// buildTimeFilter returns a HogQL timestamp filter snippet based on a friendly range key.
+// It always returns either an empty string or a string starting with "AND ".
+func buildTimeFilter(rangeKey string) string {
+	switch rangeKey {
+	case "24h":
+		return "AND timestamp > now() - INTERVAL 24 HOUR"
+	case "7d":
+		return "AND timestamp > now() - INTERVAL 7 DAY"
+	case "30d", "1m":
+		return "AND timestamp > now() - INTERVAL 30 DAY"
+	case "180d", "6m":
+		return "AND timestamp > now() - INTERVAL 180 DAY"
+	case "365d", "1y":
+		return "AND timestamp > now() - INTERVAL 365 DAY"
+	case "all", "lifetime":
+		return ""
+	case "90d", "3m", "":
+		fallthrough
+	default:
+		return "AND timestamp > now() - INTERVAL 90 DAY"
+	}
+}
+
+// --- Metrics & Analytics Handlers (PostHog-backed) ---
+
+// handleMetricsSummary returns aggregate stats + per-method stats + OS distribution
+// for a given repo, mirroring the behaviour of the repo_level_info.py script.
+func handleMetricsSummary() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		repoName := r.URL.Query().Get("repo")
+		if repoName == "" {
+			http.Error(w, "Missing repo parameter", http.StatusBadRequest)
+			return
+		}
+
+		rangeKey := r.URL.Query().Get("range")
+		timeFilter := buildTimeFilter(rangeKey)
+
+		repoEsc := escapeHogQLString(repoName)
+
+		// 1. Define Queries
+		summaryQuery := fmt.Sprintf(`
+        SELECT 
+            countIf(event == 'ipm_repo_search_event') as searches,
+            countIf(event IN ('ipm_install_repo_success', 'ipm_install_repo_failed', 'ipm_install_repo_cancelled')) as total_attempts,
+            countIf(event == 'ipm_install_repo_success') as success,
+            countIf(event == 'ipm_install_repo_failed') as failures,
+            countIf(event == 'ipm_install_repo_cancelled') as cancelled,
+            countIf(length(distinct_id) == 64 AND distinct_id NOT LIKE '%%-%%') as users
+        FROM events
+        WHERE (properties.reponame = '%s' OR properties.query = '%s')
+        %s
+        `, repoEsc, repoEsc, timeFilter)
+
+		methodQuery := fmt.Sprintf(`
+        SELECT 
+            properties.method as install_method,
+            countIf(event == 'ipm_install_repo_success') as success,
+            countIf(event == 'ipm_install_repo_failed') as failures,
+            countIf(event == 'ipm_install_repo_cancelled') as cancelled,
+            count() as total
+        FROM events
+        WHERE properties.reponame = '%s'
+        AND event IN ('ipm_install_repo_success', 'ipm_install_repo_failed', 'ipm_install_repo_cancelled')
+        %s
+        GROUP BY install_method
+        `, repoEsc, timeFilter)
+
+		osQuery := fmt.Sprintf(`
+        SELECT 
+            properties.os as os,
+            properties.arch as arch,
+            count() as total
+        FROM events
+        WHERE properties.reponame = '%s'
+        AND event IN ('ipm_install_repo_success', 'ipm_install_repo_failed', 'ipm_install_repo_cancelled')
+        %s
+        GROUP BY os, arch
+        ORDER BY total DESC
+        LIMIT 15
+        `, repoEsc, timeFilter)
+
+		countryQuery := fmt.Sprintf(`
+        SELECT 
+            properties.$geoip_country_name as country,
+            count() as total
+        FROM events
+        WHERE properties.reponame = '%s'
+        AND event IN ('ipm_install_repo_success', 'ipm_install_repo_failed', 'ipm_install_repo_cancelled')
+        %s
+        GROUP BY country
+        ORDER BY total DESC
+        LIMIT 15
+        `, repoEsc, timeFilter)
+
+		// 2. Execute Queries in Parallel
+		type queryResult struct {
+			data [][]interface{}
+			err  error
+			id   string
+		}
+		resultsChan := make(chan queryResult, 4)
+
+		go func() {
+			res, err := runPosthogQuery(summaryQuery)
+			resultsChan <- queryResult{res, err, "summary"}
+		}()
+		go func() {
+			res, err := runPosthogQuery(methodQuery)
+			resultsChan <- queryResult{res, err, "method"}
+		}()
+		go func() {
+			res, err := runPosthogQuery(osQuery)
+			resultsChan <- queryResult{res, err, "os"}
+		}()
+		go func() {
+			res, err := runPosthogQuery(countryQuery)
+			resultsChan <- queryResult{res, err, "country"}
+		}()
+
+		// 3. Collect Results
+		var summaryResults [][]interface{}
+		var methodResults [][]interface{}
+		var osResults [][]interface{}
+		var countryResults [][]interface{}
+
+		for i := 0; i < 4; i++ {
+			res := <-resultsChan
+			if res.err != nil {
+				log.Printf("[Installerpedia Metrics] %s query error for %s: %v", res.id, repoName, res.err)
+				http.Error(w, fmt.Sprintf("Failed to fetch %s metrics", res.id), http.StatusInternalServerError)
+				return
+			}
+			switch res.id {
+			case "summary":
+				summaryResults = res.data
+			case "method":
+				methodResults = res.data
+			case "os":
+				osResults = res.data
+			case "country":
+				countryResults = res.data
+			}
+		}
+
+		// 4. Parse Results
+		var summary metricsSummary
+		if len(summaryResults) > 0 {
+			row := summaryResults[0]
+			if len(row) >= 6 {
+				summary.Searches = ifaceToInt(row[0])
+				summary.TotalAttempts = ifaceToInt(row[1])
+				summary.Success = ifaceToInt(row[2])
+				summary.Failures = ifaceToInt(row[3])
+				summary.Cancelled = ifaceToInt(row[4])
+				summary.TotalUsers = ifaceToInt(row[5])
+			}
+		}
+
+		methods := make([]methodStats, 0, len(methodResults))
+		for _, row := range methodResults {
+			if len(row) < 5 {
+				continue
+			}
+			ms := methodStats{
+				InstallMethod: ifaceToString(row[0]),
+				Success:       ifaceToInt(row[1]),
+				Failures:      ifaceToInt(row[2]),
+				Cancelled:     ifaceToInt(row[3]),
+				Total:         ifaceToInt(row[4]),
+			}
+			if ms.Total > 0 {
+				ms.SuccessRate = float64(ms.Success) / float64(ms.Total) * 100.0
+			}
+			methods = append(methods, ms)
+		}
+
+		osDist := make([]osDistribution, 0, len(osResults))
+		for _, row := range osResults {
+			if len(row) < 3 {
+				continue
+			}
+			osDist = append(osDist, osDistribution{
+				OS:    ifaceToString(row[0]),
+				Arch:  ifaceToString(row[1]),
+				Total: ifaceToInt(row[2]),
+			})
+		}
+
+		countryDist := make([]countryDistribution, 0, len(countryResults))
+		for _, row := range countryResults {
+			if len(row) < 2 {
+				continue
+			}
+			countryDist = append(countryDist, countryDistribution{
+				Country: ifaceToString(row[0]),
+				Total:   ifaceToInt(row[1]),
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"summary":              summary,
+			"methods":              methods,
+			"os_distribution":      osDist,
+			"country_distribution": countryDist,
+		})
+	}
+}
+
+// handleMetricsErrors returns recent failure logs for a given repo + install method.
+func handleMetricsErrors() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		repoName := r.URL.Query().Get("repo")
+		method := r.URL.Query().Get("method")
+		if repoName == "" || method == "" {
+			http.Error(w, "Missing repo or method parameter", http.StatusBadRequest)
+			return
+		}
+
+		repoEsc := escapeHogQLString(repoName)
+		methodEsc := escapeHogQLString(method)
+
+		rangeKey := r.URL.Query().Get("range")
+		timeFilter := buildTimeFilter(rangeKey)
+
+		query := fmt.Sprintf(`
+        SELECT 
+            properties.error, 
+            properties.arch, 
+            properties.os, 
+            properties.command,
+            timestamp
+        FROM events
+        WHERE event == 'ipm_install_repo_failed'
+          AND properties.reponame == '%s'
+          AND properties.method == '%s'
+          %s
+        ORDER BY timestamp DESC LIMIT 10
+        `, repoEsc, methodEsc, timeFilter)
+
+		results, err := runPosthogQuery(query)
+		if err != nil {
+			log.Printf("[Installerpedia Metrics] error logs query error for %s / %s: %v", repoName, method, err)
+			http.Error(w, "Failed to fetch error logs", http.StatusInternalServerError)
+			return
+		}
+
+		logs := make([]errorLogEntry, 0, len(results))
+		for _, row := range results {
+			if len(row) < 5 {
+				continue
+			}
+			logs = append(logs, errorLogEntry{
+				Error:     ifaceToString(row[0]),
+				Arch:      ifaceToString(row[1]),
+				OS:        ifaceToString(row[2]),
+				Command:   ifaceToString(row[3]),
+				Timestamp: ifaceToString(row[4]),
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{"logs": logs}); err != nil {
+			log.Printf("[Installerpedia Metrics] encode error logs error for %s / %s: %v", repoName, method, err)
+		}
+	}
+}
+
+// handleMetricsCancels returns recent cancellation logs for a given repo + install method.
+func handleMetricsCancels() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		repoName := r.URL.Query().Get("repo")
+		method := r.URL.Query().Get("method")
+		if repoName == "" || method == "" {
+			http.Error(w, "Missing repo or method parameter", http.StatusBadRequest)
+			return
+		}
+
+		repoEsc := escapeHogQLString(repoName)
+		methodEsc := escapeHogQLString(method)
+
+		rangeKey := r.URL.Query().Get("range")
+		timeFilter := buildTimeFilter(rangeKey)
+
+		query := fmt.Sprintf(`
+        SELECT 
+            properties.error, 
+            properties.arch, 
+            properties.os, 
+            properties.command,
+            timestamp
+        FROM events
+        WHERE event == 'ipm_install_repo_cancelled'
+          AND properties.reponame == '%s'
+          AND properties.method == '%s'
+          %s
+        ORDER BY timestamp DESC LIMIT 10
+        `, repoEsc, methodEsc, timeFilter)
+
+		results, err := runPosthogQuery(query)
+		if err != nil {
+			log.Printf("[Installerpedia Metrics] cancel logs query error for %s / %s: %v", repoName, method, err)
+			http.Error(w, "Failed to fetch cancel logs", http.StatusInternalServerError)
+			return
+		}
+
+		logs := make([]cancelLogEntry, 0, len(results))
+		for _, row := range results {
+			if len(row) < 5 {
+				continue
+			}
+			logs = append(logs, cancelLogEntry{
+				Error:     ifaceToString(row[0]),
+				Arch:      ifaceToString(row[1]),
+				OS:        ifaceToString(row[2]),
+				Command:   ifaceToString(row[3]),
+				Timestamp: ifaceToString(row[4]),
+			})
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		if err := json.NewEncoder(w).Encode(map[string]interface{}{"logs": logs}); err != nil {
+			log.Printf("[Installerpedia Metrics] encode cancel logs error for %s / %s: %v", repoName, method, err)
+		}
 	}
 }
 

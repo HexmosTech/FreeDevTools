@@ -10,11 +10,19 @@ import (
 const oneDaySeconds = 86400
 const oneYearSeconds = 31536000
 
-// noCachePath returns true if path is /pro/* or /api/*.
+// noCachePath returns true if path is /pro/* or /api/* or /metrics.
 func noCachePath(path string) bool {
-	return strings.Contains(path, "/pro/") || strings.Contains(path, "/api/")
-}
+	if strings.Contains(path, "/pro/") || strings.Contains(path, "/api/") {
+		return true
+	}
 
+	if isInstallerpediaMetrics(path) {
+		return true
+	}
+
+
+	return false
+}
 // oneDayCachePath returns true for index.js and output.css (versioned in URL; 1-day cache).
 func oneDayCachePath(path string) bool {
 	return strings.Contains(path, "/freedevtools/static/js/index.js") ||
@@ -26,6 +34,11 @@ func oneDayCachePath(path string) bool {
 func CacheHeaders(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		path := r.URL.Path
+
+		if isInstallerpediaMetrics(path) {
+			w.Header().Set("X-Robots-Tag", "noindex, nofollow")
+		}
+		
 		if noCachePath(path) {
 			now := time.Now().UTC().Format(http.TimeFormat)
 			w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0")
@@ -41,4 +54,9 @@ func CacheHeaders(next http.Handler) http.Handler {
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 		next.ServeHTTP(w, r)
 	})
+}
+
+func isInstallerpediaMetrics(path string) bool {
+	return strings.HasPrefix(path, "/freedevtools/installerpedia/") &&
+		(strings.HasSuffix(path, "/metrics") || strings.HasSuffix(path, "/metrics/"))
 }

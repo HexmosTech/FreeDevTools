@@ -22,12 +22,14 @@ type Config struct {
 	B2ApplicationKey string              `toml:"b2_application_key"`
 	MeiliWriteKey    string              `toml:"meili_write_key"`
 	MeiliSearchKey   string              `toml:"meili_search_key"`
-	GeminiKeys		 string              `toml:"gemini_keys"`
-	GithubToken      string              `toml:"github_token"`
-	EnableAds        bool                `toml:"enable_ads"`
-	EnableStaticCache bool               `toml:"enable_static_cache"`
-	Ads              map[string][]string `toml:"ads"`
-	FdtPgDB       FdtPgDBConfig    `toml:"fdt_pg_db"`
+	GeminiKeys         string              `toml:"gemini_keys"`
+	PostHogKey         string              `toml:"posthog_key"`
+	ParseAppID         string              `toml:"parse_app_id"`
+	GithubToken        string              `toml:"github_token"`
+	EnableAds          bool                `toml:"enable_ads"`
+	EnableStaticCache  bool                `toml:"enable_static_cache"`
+	Ads                map[string][]string `toml:"ads"`
+	FdtPgDB            FdtPgDBConfig       `toml:"fdt_pg_db"`
 }
 
 // FdtPgDBConfig holds PostgreSQL database configuration for Free DevTools
@@ -110,6 +112,7 @@ func LoadConfig() (*Config, error) {
 			B2ApplicationKey: "",
 			MeiliWriteKey: "",
 			GeminiKeys: "",
+			PostHogKey: "",
 			EnableAds:        false,
 			Ads:              make(map[string][]string),
 		FdtPgDB: FdtPgDBConfig{
@@ -168,6 +171,7 @@ func GetConfig() *Config {
 				B2ApplicationKey: "",
 				MeiliWriteKey: "",
 				GeminiKeys: "",
+				PostHogKey: "",
 				EnableAds:        false,
 			}
 		} else {
@@ -366,4 +370,19 @@ func LoadConfigFromPath(path string) (*Config, error) {
 	}
 
 	return &config, nil
+}
+
+// GetParseAppID returns the Parse Application ID from config.
+// Defaults to the public freedevtools app ID if not configured.
+func GetParseAppID() string {
+	cfg := GetConfig()
+	if cfg.ParseAppID != "" {
+		return cfg.ParseAppID
+	}
+	// Fallback to Env
+	if envID := os.Getenv("PARSE_APP_ID"); envID != "" {
+		return envID
+	}
+	// Default known generic ID (can be overridden securely by env/config)
+	return "GQIJtnbPZq"
 }
