@@ -61,12 +61,12 @@ def main():
         if not new_db_name:
             print("Error: Failed to bump database version.")
             return
-        # stop_server()  
+        stop_server()  
         if not copy(new_db_name, "all_dbs", "db"):
             print("Error: Failed to copy bumped database.")
             return
             
-        # start_server()
+        start_server()
         if not db_upload(new_db_name, "cron"):
             print("Error: Failed to upload database.")
             return
