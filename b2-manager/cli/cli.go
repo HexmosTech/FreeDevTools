@@ -143,15 +143,19 @@ func NewApp() *cli.App {
 				},
 			},
 			{
-				Name:     "exe-changeset",
-				Category: "User Commands",
-				Usage:    "Execute a given changeset script",
+				Name:      "exe-changeset",
+				Category:  "User Commands",
+				Usage:     "Execute a given changeset script",
+				ArgsUsage: "<changeset_dir> [cron]",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return exitError(cCtx, "Usage: b2m exe-changeset <changeset_dir>", 1)
+						return exitError(cCtx, "Usage: b2m exe-changeset <changeset_dir> [cron]", 1)
 					}
 					changesetDir := cCtx.Args().First()
-					if err := ExecuteChangeset(changesetDir); err != nil {
+					// cronMode: pass "cron" as a second positional arg to enable cron behaviour.
+					// In cron mode, Discord alerts are sent only on failure (no start/success noise).
+					cronMode := cCtx.NArg() > 1 && cCtx.Args().Get(1) == "cron"
+					if err := ExecuteChangeset(changesetDir, cronMode); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error executing changeset: %v", err), 1)
 					}
 					return nil
@@ -353,7 +357,8 @@ func NewApp() *cli.App {
 							Status       string `json:"status"`
 							BumpedDBName string `json:"bumped_db_name"`
 							BaseDBName   string `json:"base_db_name"`
-						}{"success", newDBName, dbName}
+							Msg          string `json:"msg"`
+						}{"success", newDBName, dbName, "Push this db.toml to remote branch"}
 						b, _ := json.MarshalIndent(resp, "", "  ")
 						fmt.Fprintln(cCtx.App.Writer, string(b))
 					} else {

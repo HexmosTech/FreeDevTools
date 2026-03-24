@@ -216,7 +216,7 @@ func commitAndPushDBToml(tomlPath, newName string) error {
 			return fmt.Errorf("git commit skipped: %s", strings.TrimSpace(outStr))
 		}
 		// If it's just "nothing to commit", we can ignore it
-		if strings.Contains(outStr, "nothing to commit") {
+		if strings.Contains(outStr, "nothing to commit") || strings.Contains(outStr, "LiveReview: review attestation missing") {
 			return nil
 		}
 		if ctxCommit.Err() == context.DeadlineExceeded {

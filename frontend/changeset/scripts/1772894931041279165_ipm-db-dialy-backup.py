@@ -56,12 +56,12 @@ def main():
             print("Error: Failed to copy database.")
             return
         inserted_queries(DB_NAME, latest_db_path, "cron")
-        # stop_server()
-        new_db_name = bump_db_version(latest_db_path,"cron")
+        
+        new_db_name, msg = bump_db_version(latest_db_path,"cron")
         if not new_db_name:
             print("Error: Failed to bump database version.")
             return
-            
+        # stop_server()  
         if not copy(new_db_name, "all_dbs", "db"):
             print("Error: Failed to copy bumped database.")
             return
@@ -70,6 +70,7 @@ def main():
         if not db_upload(new_db_name, "cron"):
             print("Error: Failed to upload database.")
             return
+        print(msg)
         
     # # If status is bump_and_upload, then bump and upload db to b2.
     elif status == "bump_and_upload":
@@ -79,7 +80,7 @@ def main():
             start_server()
             return
             
-        new_db_name = bump_db_version(DB_NAME, "cron")
+        new_db_name, msg = bump_db_version(DB_NAME, "cron")
         if not new_db_name:
             print("Error: Failed to bump database version.")
             start_server()
@@ -95,6 +96,7 @@ def main():
         if not db_upload(new_db_name, "cron"):
             print("Error: Failed to upload database.")
             return
+        print(msg)
 
     # # If status is unidentified, then warn the user.
     elif status == "unidentified":

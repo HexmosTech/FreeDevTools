@@ -48,20 +48,22 @@ def main():
         copy(DB_NAME, "changeset", "sql")
         inserted_queries(DB_NAME, latest_db_name)
         stop_server()
-        new_db_name = bump_db_version(latest_db_name, "cron")
+        new_db_name, msg = bump_db_version(latest_db_name, "cron")
         copy(new_db_name, "all_dbs", "db")
         start_server()
         db_upload(new_db_name, "cron")
+        print(msg)
         
     # If status is bump_and_upload, then bump and upload db to b2.
     elif status == "bump_and_upload":
         stop_server()
         copy(DB_NAME, "changeset", "db")
-        new_db_name = bump_db_version(DB_NAME, "cron")
+        new_db_name, msg = bump_db_version(DB_NAME, "cron")
         copy(new_db_name, "all_dbs", "db")
         print(new_db_name)
         start_server()
         db_upload(new_db_name, "cron")
+        print(msg)
 
     # If status is unidentified, then warn the user.
     elif status == "unidentified":

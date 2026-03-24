@@ -423,11 +423,11 @@ def bump_db_version(db_name, changeset_dir=None):
         
         data = json.loads(result.stdout.strip())
         if data.get("status") == "failed":
-            return False
-        return data.get("bumped_db_name", db_name)
+            return False, None
+        return data.get("bumped_db_name", db_name), data.get("msg", "")
     except (subprocess.CalledProcessError, ValueError, json.JSONDecodeError) as e:
         print(f"Caught error: {e}")
-        return False
+        return False, None
 
 def download_latest_db(short_name, changeset_dir=None):
     """

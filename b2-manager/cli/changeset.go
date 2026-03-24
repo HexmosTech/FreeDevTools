@@ -57,8 +57,10 @@ func CreateChangeset(phrase string) error {
 	return nil
 }
 
-// ExecuteChangeset runs the specified python script securely
-func ExecuteChangeset(scriptName string) error {
+// ExecuteChangeset runs the specified python script securely.
+// When cronMode is true, Discord notifications are sent only on failure.
+// Start and success messages are always suppressed to avoid alert fatigue.
+func ExecuteChangeset(scriptName string, cronMode bool) error {
 	scriptDir := model.AppConfig.Frontend.Changeset.Script
 
 	// Ensure ".py" extension is present if not provided
@@ -74,24 +76,21 @@ func ExecuteChangeset(scriptName string) error {
 		return fmt.Errorf("script %s not found in %s", scriptName, scriptDir)
 	}
 
-	// Since b2m runs from frontend, changeset.py should be at frontend/changeset/changeset.py
-	// But it's better to make it relative to the scripts dir (which is frontend/changeset/scripts).
-	// So the wrapper will be at: [scriptDir]/../changeset.py
 	fmt.Printf("Executing Changeset Script: %s\n", scriptPath)
-
-	ctx := context.Background()
-	core.SendDiscord(ctx, fmt.Sprintf("🚀 **Starting Changeset Execution:** `%s`", scriptName))
 
 	cmd := exec.Command("python3", scriptPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
 	if err := cmd.Run(); err != nil {
-		core.SendDiscord(ctx, fmt.Sprintf("❌ **Changeset Execution Failed:** `%s`\nError: %v", scriptName, err))
+		// Only send Discord alert on failure, and only when running as a cron job
+		if cronMode {
+			ctx := context.Background()
+			core.SendDiscord(ctx, fmt.Sprintf("❌ **Changeset Failed (cron):** `%s`\nError: %v", scriptName, err))
+		}
 		return fmt.Errorf("script execution failed: %w", err)
 	}
 
-	core.SendDiscord(ctx, fmt.Sprintf("✅ **Changeset Execution Completed Successfully:** `%s`", scriptName))
 	return nil
 }
 
