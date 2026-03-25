@@ -60,3 +60,17 @@ func GetDBNameFromToml(shortName string) (string, error) {
 
 	return dbName, nil
 }
+
+// GetDBDiscordWebhook returns the Discord webhook URL for a specific DB short name.
+// It reads b2m.<shortname>_discord_webhook from fdt-dev.toml.
+// Falls back to the global b2m.b2m_discord_webhook if the DB-specific key is not set.
+func GetDBDiscordWebhook(shortName string) string {
+	if shortName == "" {
+		return model.AppConfig.DiscordWebhookURL
+	}
+	url := k.String("b2m." + shortName + "_discord_webhook")
+	if url == "" {
+		return model.AppConfig.DiscordWebhookURL
+	}
+	return url
+}

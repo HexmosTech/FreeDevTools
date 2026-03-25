@@ -314,18 +314,25 @@ def handle_query(sql_path, db_path, changeset_dir=None):
         print(f"Caught error: {e}")
         return False
 
-def notify(msg):
+def notify(msg, db_shortname=None):
     """
     Sends a custom notification message (e.g., via Discord) using b2m.
     
     Inputs:
         msg (str): The notification message to send.
+        db_shortname (str, optional): If provided, routes to the DB-specific Discord
+            webhook configured as b2m.<db_shortname>_discord_webhook in fdt-dev.toml.
+            Falls back to the global webhook if not configured.
     Returns:
         bool/dict: Parsed json response or a boolean status.
     """
     try:
         b2m_bin = get_b2m_bin()
-        result = run_command([b2m_bin, "--json", "notify", msg])
+        if db_shortname:
+            cmd = [b2m_bin, "--json", "notify", db_shortname, msg]
+        else:
+            cmd = [b2m_bin, "--json", "notify", msg]
+        result = run_command(cmd)
         return _parse_or_bool(result.stdout)
     except subprocess.CalledProcessError as e:
         print(f"Caught error: {e}")

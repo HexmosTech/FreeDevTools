@@ -13,8 +13,8 @@ import (
 	"b2m/model"
 )
 
-// CreateChangeset generates a new changeset python script from a template
-func CreateChangeset(phrase string) error {
+// CreateChangeset generates a new changeset python script from a template.
+func CreateChangeset(phrase string, dbShortNames []string) error {
 	timestamp := time.Now().UnixNano()
 	filename := fmt.Sprintf("%d_%s.py", timestamp, phrase)
 
@@ -25,9 +25,6 @@ func CreateChangeset(phrase string) error {
 
 	scriptPath := filepath.Join(scriptDir, filename)
 
-	// Get template path
-	// Assuming b2m runs from frontend, the templates dir would be in ../b2-manager/templates/
-	// We should probably rely on ProjectRoot
 	templatePath := filepath.Join(model.AppConfig.ProjectRoot, "..", "b2-manager", "templates", "changeset_template.py")
 
 	tmpl, err := template.ParseFiles(templatePath)
@@ -42,18 +39,20 @@ func CreateChangeset(phrase string) error {
 	defer f.Close()
 
 	data := struct {
-		Timestamp int64
-		Phrase    string
+		Timestamp    int64
+		Phrase       string
+		DBShortNames []string
 	}{
-		Timestamp: timestamp,
-		Phrase:    phrase,
+		Timestamp:    timestamp,
+		Phrase:       phrase,
+		DBShortNames: dbShortNames,
 	}
 
 	if err := tmpl.Execute(f, data); err != nil {
 		return fmt.Errorf("failed to execute template: %w", err)
 	}
 
-	fmt.Printf("Changeset script created at: %s\n", scriptPath)
+	fmt.Printf("✅ Changeset script created: %s\n", scriptPath)
 	return nil
 }
 
@@ -94,10 +93,15 @@ func ExecuteChangeset(scriptName string, cronMode bool) error {
 	return nil
 }
 
-// RunCLINotify sends a custom notification to Discord from the script
-func RunCLINotify(message string) error {
+// RunCLINotify sends a custom notification to a specific Discord webhook URL.
+// If webhookURL is empty it falls back to the global config webhook.
+func RunCLINotify(message, webhookURL string) error {
 	ctx := context.Background()
-	core.SendDiscord(ctx, message)
+	if webhookURL == "" {
+		core.SendDiscord(ctx, message)
+	} else {
+		core.SendDiscordToURL(ctx, webhookURL, message)
+	}
 	return nil
 }
 
