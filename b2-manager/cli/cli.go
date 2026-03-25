@@ -130,13 +130,9 @@ func NewApp() *cli.App {
 			{
 				Name:     "create-changeset",
 				Category: "User Commands",
-				Usage:    "Create a new changeset python script",
+				Usage:    "Create a new changeset python script (interactive)",
 				Action: func(cCtx *cli.Context) error {
-					if cCtx.NArg() == 0 {
-						return exitError(cCtx, "Usage: b2m create-changeset <phrase>", 1)
-					}
-					phrase := cCtx.Args().First()
-					if err := CreateChangeset(phrase); err != nil {
+					if err := RunInteractiveCreateChangeset(); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error creating changeset: %v", err), 1)
 					}
 					return nil
@@ -218,16 +214,26 @@ func NewApp() *cli.App {
 			},
 
 			{
-				Name:     "notify",
-				Category: "Changeset Commands",
-				Usage:    "Send a custom notification to Discord (for scripting)",
+				Name:      "notify",
+				Category:  "Changeset Commands",
+				Usage:     "Send a custom notification to Discord (for scripting)",
+				ArgsUsage: "[db_shortname] <message>",
 				Action: func(cCtx *cli.Context) error {
 					if cCtx.NArg() == 0 {
-						return exitError(cCtx, "Usage: b2m notify <message>", 1)
+						return exitError(cCtx, "Usage: b2m notify [db_shortname] <message>", 1)
 					}
-					// Join all arguments as the message
-					msg := strings.Join(cCtx.Args().Slice(), " ")
-					if err := RunCLINotify(msg); err != nil {
+					var msg, webhookURL string
+					if cCtx.NArg() >= 2 {
+						// First arg is a db_shortname; rest is the message
+						dbShortName := cCtx.Args().First()
+						msg = strings.Join(cCtx.Args().Slice()[1:], " ")
+						webhookURL = config.GetDBDiscordWebhook(dbShortName)
+					} else {
+						// Single arg — plain message, use global webhook
+						msg = cCtx.Args().First()
+						webhookURL = ""
+					}
+					if err := RunCLINotify(msg, webhookURL); err != nil {
 						return exitError(cCtx, fmt.Sprintf("Error sending notification: %v", err), 1)
 					}
 					useJSON := cCtx.Bool("json")

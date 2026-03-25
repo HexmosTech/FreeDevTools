@@ -184,23 +184,23 @@ build-b2m: ## Build b2m CLI
 	cd ../b2-manager && $(GO_CMD) build -o ../b2m .
 	cp ../b2m ./b2m
 
-create-changeset: build-b2m ## Create a changeset script
-	@PHRASE=$$([ -n "$(phrase)" ] && echo "$(phrase)" || echo "$(filter-out create-changeset,$(MAKECMDGOALS))" | head -n1); \
-	if [ -z "$$PHRASE" ]; then \
-		echo "❌ Error: Phrase is required"; \
-		echo "Usage: make create-changeset <phrase>"; \
-		exit 1; \
-	fi; \
-	./b2m create-changeset "$$PHRASE"
+create-changeset: build-b2m ## Create a changeset script (interactive)
+	@./b2m create-changeset
 
 exe-changeset: build-b2m ## Execute a changeset script
-	@SCRIPT_NAME=$$([ -n "$(script)" ] && echo "$(script)" || echo "$(filter-out exe-changeset,$(MAKECMDGOALS))" | head -n1); \
+	@GOALS="$(filter-out exe-changeset,$(MAKECMDGOALS))"; \
+	SCRIPT_NAME=$$([ -n "$(script)" ] && echo "$(script)" || echo "$$GOALS" | tr ' ' '\n' | grep -v '^cron$$' | head -n1); \
+	CRON_ARG=$$(echo "$$GOALS" | tr ' ' '\n' | grep -q '^cron$$' && echo "cron" || echo ""); \
 	if [ -z "$$SCRIPT_NAME" ]; then \
 		echo "❌ Error: Script name is required"; \
-		echo "Usage: make exe-changeset <script_name>"; \
+		echo "Usage: make exe-changeset <script_name> [cron]"; \
 		exit 1; \
 	fi; \
-	./b2m exe-changeset "$$SCRIPT_NAME"
+	if [ -n "$$CRON_ARG" ]; then \
+		./b2m exe-changeset "$$SCRIPT_NAME" cron; \
+	else \
+		./b2m exe-changeset "$$SCRIPT_NAME"; \
+	fi
 
 # Catch-all target to prevent make from complaining about the script name being a missing rule
 %:

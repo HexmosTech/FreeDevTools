@@ -124,6 +124,28 @@ func SendDiscord(ctx context.Context, content string) {
 	}
 }
 
+// SendDiscordToURL sends a Discord notification to a specific webhook URL.
+// Use this when a DB-specific channel is configured (b2m.<shortname>_discord_webhook).
+func SendDiscordToURL(ctx context.Context, webhookURL, content string) {
+	if webhookURL == "" {
+		LogError("SendDiscordToURL: empty webhook URL, skipping notification")
+		return
+	}
+	dCtx, cancel := context.WithTimeout(ctx, model.TimeoutShort)
+	defer cancel()
+
+	payload := map[string]string{"content": content}
+	data, _ := json.Marshal(payload)
+	err := exec.CommandContext(dCtx, "curl", "-H", "Content-Type: application/json", "-d", string(data), webhookURL, "-s", "-o", "/dev/null").Run()
+	if err != nil {
+		if dCtx.Err() == context.DeadlineExceeded {
+			LogError("Discord notification timed out after 5s")
+		} else {
+			LogError("Failed to send discord notification: %v", err)
+		}
+	}
+}
+
 // ValidateAction checks if an action (upload/download) is allowed given the DB status.
 func ValidateAction(dbInfo model.DBStatusInfo, action string) error {
 	switch action {
