@@ -156,6 +156,7 @@ def main():
         print(err)
         db_label = DB_NAME if 'DB_NAME' in globals() and DB_NAME else DB_SHORT_NAME
         _send_summary(operation, db_label, started_at, datetime.datetime.now(), str(e))
+        # Re-raise to ensure cron receives a non-zero exit code
         raise  # re-raise so cron gets a non-zero exit code
 
 
