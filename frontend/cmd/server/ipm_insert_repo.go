@@ -363,7 +363,7 @@ func handleMetricsSummary() http.HandlerFunc {
             countIf(event == 'ipm_install_repo_success') as success,
             countIf(event == 'ipm_install_repo_failed') as failures,
             countIf(event == 'ipm_install_repo_cancelled') as cancelled,
-            countIf(length(distinct_id) == 64 AND distinct_id NOT LIKE '%%-%%') as users
+            count(DISTINCT if(length(distinct_id) == 64 AND distinct_id NOT LIKE '%%-%%', distinct_id, NULL)) as users
         FROM events
         WHERE (properties.reponame = '%s' OR properties.query = '%s')
         %s
