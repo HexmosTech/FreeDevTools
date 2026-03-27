@@ -219,35 +219,75 @@ def setup_logging():
     sys.stderr = TeeLogger(sys.stderr, f)
 
 
-def stop_server():
+def stop_server(db_shortname=None):
     """
     Stops the production server using the 'make stop-prod' command.
     
     Inputs:
-        None
+        db_shortname (str, optional): The short name of the database.
     Returns:
         bool: True on success, False on failure.
     """
     try:
         frontend_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-        run_command(["make", "-C", frontend_dir, "stop-prod"])
+        cmd = ["make", "-C", frontend_dir, "stop-prod"]
+        
+        # Mapping or stripping 'db' suffix
+        mapping = {
+            "ipmdb": "installerpedia",
+            "manpagesdb": "man-pages",
+            "svgiconsdb": "svg-icons",
+            "pngiconsdb": "png-icons",
+            "emojidb": "emojis",
+            "cheatsheetsdb": "cheatsheets",
+            "tldrdb": "tldr",
+            "mcpdb": "mcp",
+        }
+        
+        if db_shortname:
+            target = mapping.get(db_shortname)
+            if not target:
+                target = db_shortname[:-2] if db_shortname.endswith("db") else db_shortname
+            cmd.append(f"STATIC_SECTION={target}")
+
+        run_command(cmd)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Caught error: {e}")
         return False
 
-def start_server():
+def start_server(db_shortname=None):
     """
     Starts the production server using the 'make start-prod' command.
     
     Inputs:
-        None
+        db_shortname (str, optional): The short name of the database.
     Returns:
         bool: True on success, False on failure.
     """
     try:
         frontend_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
-        run_command(["make", "-C", frontend_dir, "start-prod"])
+        cmd = ["make", "-C", frontend_dir, "start-prod"]
+        
+        # Mapping or stripping 'db' suffix
+        mapping = {
+            "ipmdb": "installerpedia",
+            "manpagesdb": "man-pages",
+            "svgiconsdb": "svg-icons",
+            "pngiconsdb": "png-icons",
+            "emojidb": "emojis",
+            "cheatsheetsdb": "cheatsheets",
+            "tldrdb": "tldr",
+            "mcpdb": "mcp",
+        }
+        
+        if db_shortname:
+            target = mapping.get(db_shortname)
+            if not target:
+                target = db_shortname[:-2] if db_shortname.endswith("db") else db_shortname
+            cmd.append(f"STATIC_SECTION={target}")
+
+        run_command(cmd)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Caught error: {e}")

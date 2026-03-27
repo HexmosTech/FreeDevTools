@@ -47,21 +47,21 @@ def main():
         db_download(latest_db_name, "cron")
         copy(DB_NAME, "changeset", "sql")
         inserted_queries(DB_NAME, latest_db_name)
-        stop_server()
+        stop_server(DB_SHORT_NAME)
         new_db_name, msg = bump_db_version(latest_db_name, "cron")
         copy(new_db_name, "all_dbs", "db")
-        start_server()
+        start_server(DB_SHORT_NAME)
         db_upload(new_db_name, "cron")
         print(msg)
         
     # If status is bump_and_upload, then bump and upload db to b2.
     elif status == "bump_and_upload":
-        stop_server()
+        stop_server(DB_SHORT_NAME)
         copy(DB_NAME, "changeset", "db")
         new_db_name, msg = bump_db_version(DB_NAME, "cron")
         copy(new_db_name, "all_dbs", "db")
         print(new_db_name)
-        start_server()
+        start_server(DB_SHORT_NAME)
         db_upload(new_db_name, "cron")
         print(msg)
 
@@ -71,10 +71,10 @@ def main():
 
     # If status is ready_to_upload, then upload db to b2.
     elif status == "ready_to_upload":
-        stop_server()
+        stop_server(DB_SHORT_NAME)
         copy(DB_NAME, "changeset", "db")
         print(DB_NAME)
-        start_server()
+        start_server(DB_SHORT_NAME)
         db_upload(DB_NAME, "cron")
 
 if __name__ == "__main__":
