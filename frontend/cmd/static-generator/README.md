@@ -19,38 +19,60 @@ The easiest way to execute the generation is via the `Makefile` scripts. You can
 
 ### Core Commands
 
-| Command | Description |
-| :--- | :--- |
-| `make static-generation-all` | Clears and regenerates the static cache for **ALL** tools and pages. |
-| `make static-generation-cheatsheets` | Regenerates only the cheatsheets cache. |
-| `make static-generation-installerpedia` | Regenerates only the installerpedia cache. |
-| `make static-generation-emojis` | Regenerates only the emojis cache. |
-| `make static-generation-man-pages` | Regenerates only the man-pages cache. |
-| `make clear-static-cache` | Deletes the entire `static/freedevtools/` directory. |
+| Command                                 | Description                                                          |
+| :-------------------------------------- | :------------------------------------------------------------------- |
+| `make static-generation-all`            | Clears and regenerates the static cache for **ALL** tools and pages. |
+| `make static-generation-cheatsheets`    | Regenerates only the cheatsheets cache.                              |
+| `make static-generation-installerpedia` | Regenerates only the installerpedia cache.                           |
+| `make static-generation-emojis`         | Regenerates only the emojis cache.                                   |
+| `make static-generation-man-pages`      | Regenerates only the man-pages cache.                                |
+| `make clear-static-cache`               | Deletes the entire `static/freedevtools/` directory.                 |
 
 ### Production Startup Command
 
-When deploying or starting the production server, the `Makefile` automatically queues a background generation job without blocking the server startup. 
+The production site generation is now **non-destructive and targeted**. Starting the server no longer wipes your entire static cache.
 
 By default, it will generate **everything**:
+
 ```bash
 make start-prod
+### To update only a specific section (e.g., installerpedia):
+make start-prod STATIC_SECTION=installerpedia
 ```
 
-You can limit the background rendering job to only a specific section by passing the `STATIC_SECTION` argument:
+_(This will only clear and regenerate the `static/freedevtools/installerpedia/` folder, leaving other sections like Cheatsheets or Icons completely untouched.)_
+
+### Targeted Cache Clearing
+
+If you need to manually clear the cache for a specific section before regenerating:
+
 ```bash
-make start-prod STATIC_SECTION=cheatsheets
+make clear-static-cache SECTION=installerpedia
 ```
 
-*(This argument is directly passed down to `./scripts/background_static_indexing.sh --section=cheatsheets`, which in turn executes `make static-generation-cheatsheets`)*
+### Risk & Best Practices
 
-To completely skip the background static HTML generation entirely when starting production (useful for rapid restarts when the cache is already warm):
+> [!IMPORTANT]
+> **Stale Content Risk**: Targeted updates (using `STATIC_SECTION`) only refresh the specified folder. If your changes affect global components (Header, Footer, Navigation) or cross-section links, you **MUST** run a full rebuild to avoid stale content:
+>
+> ```bash
+> # A normal start-prod will also perform a full static rebuild by default
+> make start-prod
+>
+> # Or be explicit to ensure full deployment:
+> make start-prod STATIC_SECTION=all
+> ```
+
+To skip the background static HTML generation entirely (useful for rapid restarts):
+
 ```bash
 make start-prod SKIP_STATIC_DEPLOY=1
 ```
 
 ## Environment Configuration
+
 Static site caching must be explicitly enabled in the production configuration via the TOML config file:
+
 ```toml
 # fdt-prod.toml
 enable_static_cache = true

@@ -73,9 +73,16 @@ generate: ## Generate templ files
 		$(GO_CMD) run github.com/a-h/templ/cmd/templ@latest generate; \
 	fi
 
+VALID_SECTIONS := all tools tldr cheatsheets svg-icons png-icons mcp man-pages installerpedia emojis
 generate-sitemaps: ## Generate static sitemaps
-	@echo "Generating sitemaps..."
-	@$(LOAD_ENV) $(GO_CMD) run scripts/sitemap-generator/main.go -section all
+	@SECTION_VAL="$(if $(SECTION),$(SECTION),all)"; \
+	if echo "$(VALID_SECTIONS)" | grep -qw "$$SECTION_VAL"; then \
+		echo "Generating sitemaps for $$SECTION_VAL..."; \
+		$(LOAD_ENV) $(GO_CMD) run scripts/sitemap-generator/main.go -section "$$SECTION_VAL"; \
+	else \
+		echo "❌ Error: Invalid section '$$SECTION_VAL'. Valid sections: $(VALID_SECTIONS)"; \
+		exit 1; \
+	fi
 
 build-css: ## Build Tailwind CSS
 	@echo "Building CSS..."
@@ -275,7 +282,8 @@ start-prod: ## Start production server on port 4321 using pmdaemon
 	@echo "View logs: pmdaemon --config pmd.config.json logs"
 	@if [ "$(SKIP_SITEMAP)" != "1" ] && [ "$(SKIP_SITEMAP)" != "true" ]; then \
 		echo "Generating sitemaps in background..."; \
-		$(MAKE) generate-sitemaps > sitemap-generation.log 2>&1 & \
+		SECTION="$(if $(STATIC_SECTION),$(STATIC_SECTION),all)"; \
+		$(MAKE) generate-sitemaps SECTION="$$SECTION" > sitemap-generation.log 2>&1 & \
 	else \
 		echo "Skipping sitemap generation."; \
 	fi
@@ -979,9 +987,18 @@ ready-search: ## Setup local searchsync & meilisearch, generate JSON files, and 
  
 
 clear-static-cache: ## Clear the generated static/ directory
-	@echo "Clearing static/ directory..."
-	@rm -rf static/
-	@echo "✅ static/ directory cleared!"
+	@SECTION_VAL="$(if $(SECTION),$(SECTION),all)"; \
+	if [ "$$SECTION_VAL" = "all" ]; then \
+		echo "Clearing all static files..."; \
+		rm -rf static/freedevtools/*; \
+	elif echo "$(VALID_SECTIONS)" | grep -qw "$$SECTION_VAL"; then \
+		echo "Clearing static/freedevtools/$$SECTION_VAL/ directory..."; \
+		rm -rf "static/freedevtools/$$SECTION_VAL/"; \
+	else \
+		echo "❌ Error: Invalid section '$$SECTION_VAL' for clearing cache."; \
+		exit 1; \
+	fi
+	@echo "✅ Cache cleared!"
 
 static-generation-mcp: generate ## Generate static pages for the MCP section
 	@echo "Building static generator..."
