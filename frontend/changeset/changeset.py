@@ -219,12 +219,10 @@ def setup_logging():
     sys.stderr = TeeLogger(sys.stderr, f)
 
 
-def stop_server(db_shortname=None):
+def stop_server():
     """
     Stops the production server using the 'make stop-prod' command.
     
-    Inputs:
-        db_shortname (str, optional): The short name of the database.
     Returns:
         bool: True on success, False on failure.
     """
@@ -232,24 +230,6 @@ def stop_server(db_shortname=None):
         frontend_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
         cmd = ["make", "-C", frontend_dir, "stop-prod"]
         
-        # Mapping or stripping 'db' suffix
-        mapping = {
-            "ipmdb": "installerpedia",
-            "manpagesdb": "man-pages",
-            "svgiconsdb": "svg-icons",
-            "pngiconsdb": "png-icons",
-            "emojidb": "emojis",
-            "cheatsheetsdb": "cheatsheets",
-            "tldrdb": "tldr",
-            "mcpdb": "mcp",
-        }
-        
-        if db_shortname:
-            target = mapping.get(db_shortname)
-            if not target:
-                target = db_shortname[:-2] if db_shortname.endswith("db") else db_shortname
-            cmd.append(f"STATIC_SECTION={target}")
-
         run_command(cmd)
         return True
     except subprocess.CalledProcessError as e:
@@ -291,6 +271,7 @@ def start_server(db_shortname=None):
         return True
     except subprocess.CalledProcessError as e:
         print(f"Caught error: {e}")
+        # Explicitly mention the tool that failed
         return False
 
 def copy(src_name, dst, file_type):

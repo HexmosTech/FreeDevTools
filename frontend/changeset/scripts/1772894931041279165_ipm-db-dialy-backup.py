@@ -58,18 +58,21 @@ def handle_outdated_version(db_name):
     new_db_name, msg = bump_db_version(latest_db_path, "cron")
     if not new_db_name:
         return db_name, "Failed to bump database version"
-    stop_server(DB_SHORT_NAME)
+    if not stop_server():
+        return db_name, "Failed to stop production server"
     if not copy(new_db_name, "all_dbs", "db"):
         start_server(DB_SHORT_NAME)
         return new_db_name, "Failed to copy bumped database to all_dbs"
-    start_server(DB_SHORT_NAME)
+    if not start_server(DB_SHORT_NAME):
+        return new_db_name, "Failed to start production server"
     if not db_upload(new_db_name, "cron"):
         return new_db_name, "Failed to upload database to B2"
     print(msg)
     return new_db_name, None
 
 def handle_bump_and_upload(db_name):
-    stop_server(DB_SHORT_NAME)
+    if not stop_server():
+        return db_name, "Failed to stop production server"
     if not copy(db_name, "changeset", "db"):
         start_server(DB_SHORT_NAME)
         return db_name, "Failed to copy database to changeset dir"
@@ -81,19 +84,22 @@ def handle_bump_and_upload(db_name):
         start_server(DB_SHORT_NAME)
         return new_db_name, "Failed to copy bumped database to all_dbs"
     print(new_db_name)
-    start_server(DB_SHORT_NAME)
+    if not start_server(DB_SHORT_NAME):
+        return new_db_name, "Failed to start production server"
     if not db_upload(new_db_name, "cron"):
         return new_db_name, "Failed to upload database to B2"
     print(msg)
     return new_db_name, None
 
 def handle_ready_to_upload(db_name):
-    stop_server(DB_SHORT_NAME)
+    if not stop_server():
+        return db_name, "Failed to stop production server"
     if not copy(db_name, "changeset", "db"):
         start_server(DB_SHORT_NAME)
         return db_name, "Failed to copy database to changeset dir"
     print(db_name)
-    start_server(DB_SHORT_NAME)
+    if not start_server(DB_SHORT_NAME):
+        return db_name, "Failed to start production server"
     if not db_upload(db_name, "cron"):
         return db_name, "Failed to upload database to B2"
     return db_name, None
@@ -124,7 +130,8 @@ def main():
 
         if status == "up_to_date":
             print(f"Info: {DB_NAME} is up to date, skipping changeset.")
-            return  # silent — no action taken, no notification needed
+            _send_summary(operation, DB_NAME, started_at, datetime.datetime.now())
+            return
 
         elif status == "outdated_version":
             operation += " / outdated_version"
