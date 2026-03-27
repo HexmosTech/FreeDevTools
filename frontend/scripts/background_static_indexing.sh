@@ -26,9 +26,20 @@ if [ "$ENABLE_STATIC_CACHE" = "true" ]; then
         curl -s -H "Content-Type: application/json" -d "{\"content\": \"$MSG_START\"}" "$DISCORD_WEBHOOK" > /dev/null
     fi
     
-    if [ "$SECTION" = "all" ]; then
-        make clear-static-cache
+    # Validate section against whitelist to prevent shell injection
+    VALID_SECTIONS="all tools tldr cheatsheets svg-icons png-icons mcp man-pages installerpedia emojis"
+    if ! echo "$VALID_SECTIONS" | grep -qw "$SECTION"; then
+        MSG_ERROR="❌ **Static Deployment Rejected**\n**Reason:** Invalid section name: \`$SECTION\`\n**Time:** $(date)"
+        if [ -n "$DISCORD_WEBHOOK" ]; then 
+            curl -s -H "Content-Type: application/json" -d "{\"content\": \"$MSG_ERROR\"}" "$DISCORD_WEBHOOK" > /dev/null
+        fi
+        echo "$MSG_ERROR"
+        exit 1
     fi
+
+    # Clear cache for this section (or all if SECTION=all)
+    make clear-static-cache SECTION="$SECTION"
+    
     make "static-generation-$SECTION"
     
     END_TIME=$(date +%s)
