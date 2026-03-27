@@ -29,9 +29,9 @@ def inserted_queries(sql_name, target_db_name, *args):
 def _fmt_time(dt):
     return dt.strftime("%Y-%m-%d %H:%M:%S")
 
-def _send_summary(operation, db_name, started_at, completed_at, err=None):
+def _send_summary(operation, db_name, started_at, completed_at, err=None, status_msg=None):
     """Send a single summary Discord notification to the ipmdb channel."""
-    status = "failed" if err else "success"
+    status = status_msg if status_msg else ("failed" if err else "success")
     status_icon = "✅" if not err else "❌"
     lines = [
         f"🗄️ **{operation}**",
@@ -130,7 +130,7 @@ def main():
 
         if status == "up_to_date":
             print(f"Info: {DB_NAME} is up to date, skipping changeset.")
-            _send_summary(operation, DB_NAME, started_at, datetime.datetime.now())
+            _send_summary(operation, DB_NAME, started_at, datetime.datetime.now(), status_msg="up to date")
             return
 
         elif status == "outdated_version":
