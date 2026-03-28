@@ -66,12 +66,12 @@ function setJWT(jwt: string): void {
   const sameSite = isProduction ? 'None' : 'Lax';
 
   // Set hexmos-one cookie (for auto-login compatibility across all hexmos.com subdomains)
-  const hexmosCookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
+  const hexmosCookieOptions = `path=/; Max-Age=2592000; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
   document.cookie = `hexmos-one=${jwt}; ${hexmosCookieOptions}`;
 
   // Set hexmos-one-id cookie (for fast user ID lookup)
   if (userId) {
-    const pIdCookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
+    const pIdCookieOptions = `path=/; Max-Age=2592000; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
     document.cookie = `hexmos-one-id=${userId}; ${pIdCookieOptions}`;
   }
 

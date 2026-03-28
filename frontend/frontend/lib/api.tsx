@@ -95,7 +95,7 @@ function setProStatusCookie(isPro: boolean): void {
 
   if (isPro) {
     // Set cookie
-    const cookieOptions = `path=/; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
+    const cookieOptions = `path=/; Max-Age=2592000; SameSite=${sameSite}${isSecure ? '; Secure' : ''}${domain ? `; domain=${domain}` : ''}`;
     document.cookie = `hexmos-one-fdt-p-status=true; ${cookieOptions}`;
     // Set LocalStorage
     localStorage.setItem('hexmos-one-fdt-p-status', 'true');
