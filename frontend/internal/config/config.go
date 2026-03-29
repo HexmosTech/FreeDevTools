@@ -24,6 +24,7 @@ type Config struct {
 	MeiliSearchKey   string              `toml:"meili_search_key"`
 	GeminiKeys         string              `toml:"gemini_keys"`
 	PostHogKey         string              `toml:"posthog_key"`
+	PosthogTriggerSecret string            `toml:"posthog_trigger_secret"`
 	ParseAppID         string              `toml:"parse_app_id"`
 	GithubToken        string              `toml:"github_token"`
 	EnableAds          bool                `toml:"enable_ads"`
@@ -385,4 +386,12 @@ func GetParseAppID() string {
 	}
 	// Default known generic ID (can be overridden securely by env/config)
 	return "GQIJtnbPZq"
+}
+// GetPosthogTriggerSecret returns the secret required to trigger notifications.
+func GetPosthogTriggerSecret() string {
+	cfg := GetConfig()
+	if cfg.PosthogTriggerSecret != "" {
+		return cfg.PosthogTriggerSecret
+	}
+	return os.Getenv("POSTHOG_TRIGGER_SECRET")
 }
