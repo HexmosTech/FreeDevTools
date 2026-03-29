@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -103,10 +106,50 @@ func IsExceptionPath(path string) bool {
 }
 
 // GetUserIDFromCookie extracts the user ID from the "hexmos-one-id" cookie
+// or falls back to decoding the "hexmos-one" JWT cookie.
 func GetUserIDFromCookie(r *http.Request) (string, error) {
+	// First, try to get user ID from hexmos-one-id cookie (fast path)
 	cookie, err := r.Cookie("hexmos-one-id")
-	if err != nil {
-		return "", err
+	if err == nil && cookie.Value != "" {
+		return cookie.Value, nil
 	}
-	return cookie.Value, nil
+
+	// Fallback: get JWT from hexmos-one cookie and decode to get user ID
+	jwtCookie, err := r.Cookie("hexmos-one")
+	if err == nil && jwtCookie.Value != "" {
+		uId, err := extractUserIdFromJWT(jwtCookie.Value)
+		if err == nil && uId != "" {
+			return uId, nil
+		}
+	}
+
+	return "", fmt.Errorf("user ID not found in cookies")
+}
+
+// extractUserIdFromJWT extracts the uId from JWT payload without verification.
+// Logic based on hexmos-one JWT structure.
+func extractUserIdFromJWT(jwt string) (string, error) {
+	parts := strings.Split(jwt, ".")
+	if len(parts) != 3 {
+		return "", fmt.Errorf("invalid JWT format")
+	}
+
+	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil {
+		return "", fmt.Errorf("failed to decode JWT payload")
+	}
+
+	var claims map[string]interface{}
+	if err := json.Unmarshal(payload, &claims); err != nil {
+		return "", fmt.Errorf("failed to parse JWT payload")
+	}
+
+	// Check multiple possible field names for user identity
+	for _, key := range []string{"uId", "parseUserId", "userId", "sub"} {
+		if val, ok := claims[key].(string); ok && val != "" {
+			return val, nil
+		}
+	}
+
+	return "", fmt.Errorf("user ID not found in JWT payload")
 }

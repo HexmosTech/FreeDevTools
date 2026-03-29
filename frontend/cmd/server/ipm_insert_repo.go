@@ -25,6 +25,7 @@ import (
 	"github.com/clipperhouse/jargon/filters/contractions"
 	"github.com/clipperhouse/jargon/filters/stemmer"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/containrrr/shoutrrr"
 )
 
 type EntryPayload struct {
@@ -50,6 +51,28 @@ type Instruction struct {
 	Command  string `json:"command"`
 	Meaning  string `json:"meaning,omitempty"`
 	Optional bool   `json:"optional,omitempty"`
+}
+
+type NotificationSavePayload struct {
+	Repo       string `json:"repo"`
+	Event      string `json:"event"`
+	Service    string `json:"service"`
+	WebhookURL string `json:"webhook_url"`
+}
+
+type NotificationDeletePayload struct {
+	ID int `json:"id"`
+}
+
+type NotificationUpdatePayload struct {
+	ID         int    `json:"id"`
+	WebhookURL string `json:"webhook_url"`
+}
+
+type PosthogTriggerPayload struct {
+	Event   string      `json:"event"`
+	Repo    string      `json:"repo"`
+	Payload interface{} `json:"payload"`
 }
 
 
@@ -158,10 +181,16 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdt
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
 	mux.HandleFunc(base+"/check_ipm_repo_updates", handleCheckRepoUpdates(db))
 	// Metrics & analytics
-	mux.HandleFunc(base+"/metrics/summary",handleMetricsSummary())
-	mux.HandleFunc(base+"/metrics/errors",  handleMetricsErrors())
-	mux.HandleFunc(base+"/metrics/cancels", handleMetricsCancels())
+	mux.HandleFunc(base+"/metrics/summary", requireAdminOrSlugAccess(fdtPgDB, handleMetricsSummary()))
+	mux.HandleFunc(base+"/metrics/errors",  requireAdminOrSlugAccess(fdtPgDB, handleMetricsErrors()))
+	mux.HandleFunc(base+"/metrics/cancels", requireAdminOrSlugAccess(fdtPgDB, handleMetricsCancels()))
 
+	// Notifications
+	mux.HandleFunc(base+"/metrics/notifications/save", requireAdminOrSlugAccess(fdtPgDB, handleSaveNotification(fdtPgDB)))
+	mux.HandleFunc(base+"/metrics/notifications/list", requireAdminOrSlugAccess(fdtPgDB, handleGetNotifications(fdtPgDB)))
+	mux.HandleFunc(base+"/metrics/notifications/delete", requireAdminOrSlugAccess(fdtPgDB, handleDeleteNotification(fdtPgDB)))
+	mux.HandleFunc(base+"/metrics/notifications/update", requireAdminOrSlugAccess(fdtPgDB, handleUpdateNotification(fdtPgDB)))
+	mux.HandleFunc(base+"/metrics/notifications/trigger", handlePosthogTrigger(fdtPgDB))
 }
 
 func handleGetFeatured() http.HandlerFunc {
@@ -996,5 +1025,255 @@ func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
 			"data":   entry,
 		}
 		json.NewEncoder(w).Encode(resp)
+	}
+}
+
+func handleSaveNotification(db *bookmarks.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		var payload NotificationSavePayload
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.SaveIPMNotification(payload.Repo, payload.Event, payload.Service, payload.WebhookURL); err != nil {
+			log.Printf("❌ [Notifications API] Error saving: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.WriteHeader(http.StatusCreated)
+		fmt.Fprintf(w, `{"success": true}`)
+	}
+}
+
+func handleGetNotifications(db *bookmarks.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		repo := r.URL.Query().Get("repo")
+		if repo == "" {
+			http.Error(w, "Missing repo parameter", http.StatusBadRequest)
+			return
+		}
+
+		notifications, err := db.GetAllIPMNotifications(repo)
+		if err != nil {
+			log.Printf("❌ [Notifications API] Error fetching: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{"notifications": notifications})
+	}
+}
+
+func handleDeleteNotification(db *bookmarks.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		var payload NotificationDeletePayload
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.DeleteIPMNotification(payload.ID); err != nil {
+			log.Printf("❌ [Notifications API] Error deleting: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"success": true}`)
+	}
+}
+
+func handleUpdateNotification(db *bookmarks.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+		var payload NotificationUpdatePayload
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		if err := db.UpdateIPMNotificationWebhook(payload.ID, payload.WebhookURL); err != nil {
+			log.Printf("❌ [Notifications API] Error updating: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		fmt.Fprintf(w, `{"success": true}`)
+	}
+}
+
+func toShoutrrrURI(service, webhookURL string) (string, error) {
+	switch strings.ToLower(service) {
+	case "discord":
+		// https://discord.com/api/webhooks/ID/TOKEN -> discord://TOKEN@ID
+		parts := strings.Split(strings.TrimSuffix(webhookURL, "/"), "/")
+		if len(parts) < 2 {
+			return "", fmt.Errorf("invalid discord webhook url")
+		}
+		token := parts[len(parts)-1]
+		id := parts[len(parts)-2]
+		return fmt.Sprintf("discord://%s@%s", token, id), nil
+	case "slack":
+		// https://hooks.slack.com/services/T/B/TOKEN -> slack://hook:T-B-TOKEN@webhook
+		parts := strings.Split(strings.TrimSuffix(webhookURL, "/"), "/")
+		if len(parts) < 3 {
+			return "", fmt.Errorf("invalid slack webhook url")
+		}
+		token := parts[len(parts)-1]
+		b := parts[len(parts)-2]
+		t := parts[len(parts)-3]
+		return fmt.Sprintf("slack://hook:%s-%s-%s@webhook", t, b, token), nil
+	default:
+		return "", fmt.Errorf("unsupported service: %s", service)
+	}
+}
+func formatPosthogMessage(event string, payload interface{}) string {
+	// If the payload is already a string (rich text), use it directly
+	if str, ok := payload.(string); ok && str != "" {
+		return str
+	}
+
+	m, ok := payload.(map[string]interface{})
+	if !ok {
+		return fmt.Sprintf("IPM Notification: %s\n\n%v", event, payload)
+	}
+
+	// Try to extract properties if it's a standard PostHog event structure
+	props, _ := m["properties"].(map[string]interface{})
+	if props == nil {
+		// Fallback to top level if it's already flattened
+		props = m
+	}
+
+	distinctID, _ := m["distinct_id"].(string)
+	repo, _ := props["reponame"].(string)
+	os, _ := props["os"].(string)
+	arch, _ := props["arch"].(string)
+	method, _ := props["method"].(string)
+	city, _ := props["$geoip_city_name"].(string)
+	subdivision, _ := props["$geoip_subdivision_1_name"].(string)
+	country, _ := props["$geoip_country_name"].(string)
+	command, _ := props["command"].(string)
+
+	var sb strings.Builder
+	eventLower := strings.ToLower(event)
+	if strings.Contains(eventLower, "success") || strings.Contains(eventLower, "succeeded") {
+		sb.WriteString("✅ **IPM Repo Installation Succeeded!**\n\n")
+	} else if strings.Contains(eventLower, "fail") || strings.Contains(eventLower, "error") {
+		sb.WriteString("❌ **IPM Repo Installation Failed!**\n\n")
+	} else {
+		sb.WriteString(fmt.Sprintf("🔔 **IPM Event: %s**\n\n", event))
+	}
+
+	if distinctID != "" {
+		sb.WriteString(fmt.Sprintf("• **ID:** %s\n", distinctID))
+	}
+	if repo != "" {
+		sb.WriteString(fmt.Sprintf("• **Repo:** %s\n", repo))
+	}
+	if os != "" {
+		sb.WriteString(fmt.Sprintf("• **OS:** %s\n", os))
+	}
+	if arch != "" {
+		sb.WriteString(fmt.Sprintf("• **Arch:** %s\n", arch))
+	}
+	if method != "" {
+		sb.WriteString(fmt.Sprintf("• **Method:** %s\n", method))
+	}
+	
+	locationParts := []string{}
+	if city != "" { locationParts = append(locationParts, city) }
+	if subdivision != "" { locationParts = append(locationParts, subdivision) }
+	if country != "" { locationParts = append(locationParts, country) }
+	if len(locationParts) > 0 {
+		sb.WriteString(fmt.Sprintf("• **Location:** %s\n", strings.Join(locationParts, ", ")))
+	}
+
+	if command != "" {
+		sb.WriteString("\n**Command Executed**\n")
+		sb.WriteString(fmt.Sprintf("```\n%s\n```", command))
+	}
+
+	return sb.String()
+}
+
+func handlePosthogTrigger(db *bookmarks.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Security check: verify the secret passcode in header
+		secret := r.Header.Get("X-IPM-Secret")
+		expectedSecret := config.GetPosthogTriggerSecret()
+		if expectedSecret != "" && secret != expectedSecret {
+			log.Printf("⚠️ [Notifications API] Unauthorized trigger attempt from %s", r.RemoteAddr)
+			http.Error(w, "Forbidden: Invalid Secret", http.StatusForbidden)
+			return
+		}
+
+		var payload PosthogTriggerPayload
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		log.Printf("🔍 [Notifications API] Trigger received: repo=%s, event=%s", payload.Repo, payload.Event)
+		notifications, err := db.GetIPMNotifications(payload.Repo, payload.Event)
+		if err != nil {
+			log.Printf("❌ [Notifications API] Error fetching for trigger: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		if len(notifications) == 0 {
+			log.Printf("⚠️ [Notifications API] No notifications found for repo=%s, event=%s", payload.Repo, payload.Event)
+			w.WriteHeader(http.StatusOK)
+			fmt.Fprintf(w, `{"success": true, "message": "No notifications configured"}`)
+			return
+		}
+		log.Printf("✅ [Notifications API] Found %d notifications for repo=%s", len(notifications), payload.Repo)
+
+		go func() {
+			log.Printf("🚀 [Notifications API] Starting to send %d notifications for %s via Shoutrrr", len(notifications), payload.Repo)
+			
+			// Format the message nicely for Discord/Slack
+			message := formatPosthogMessage(payload.Event, payload.Payload)
+
+			for _, n := range notifications {
+				uri, err := toShoutrrrURI(n.Service, n.WebhookURL)
+				if err != nil {
+					log.Printf("❌ [Notifications API] Error converting to Shoutrrr URI for %s: %v", n.Service, err)
+					continue
+				}
+
+				if err := shoutrrr.Send(uri, message); err != nil {
+					log.Printf("❌ [Notifications API] Failed to send via Shoutrrr to %s: %v", n.Service, err)
+				} else {
+					log.Printf("✅ [Notifications API] Successfully sent via Shoutrrr to %s", n.Service)
+				}
+			}
+		}()
+
+
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, `{"success": true}`)
 	}
 }
