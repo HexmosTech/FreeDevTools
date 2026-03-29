@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"html"
 
 	"fdt-templ/internal/db/bookmarks"
 
@@ -1117,7 +1118,7 @@ func handleUpdateNotification(db *bookmarks.DB) http.HandlerFunc {
 	}
 }
 
-func toShoutrrrURI(service, webhookURL string) (string, error) {
+func toShoutrrrURI(service, webhookURL, event string) (string, error) {
 	switch strings.ToLower(service) {
 	case "discord":
 		// https://discord.com/api/webhooks/ID/TOKEN -> discord://TOKEN@ID
@@ -1127,7 +1128,7 @@ func toShoutrrrURI(service, webhookURL string) (string, error) {
 		}
 		token := parts[len(parts)-1]
 		id := parts[len(parts)-2]
-		return fmt.Sprintf("discord://%s@%s", token, id), nil
+		return fmt.Sprintf("discord://%s@%s?splitlines=no", token, id), nil
 	case "slack":
 		// https://hooks.slack.com/services/T/B/TOKEN -> slack://hook:T-B-TOKEN@webhook
 		parts := strings.Split(strings.TrimSuffix(webhookURL, "/"), "/")
@@ -1137,76 +1138,110 @@ func toShoutrrrURI(service, webhookURL string) (string, error) {
 		token := parts[len(parts)-1]
 		b := parts[len(parts)-2]
 		t := parts[len(parts)-3]
+
 		return fmt.Sprintf("slack://hook:%s-%s-%s@webhook", t, b, token), nil
 	default:
 		return "", fmt.Errorf("unsupported service: %s", service)
 	}
 }
-func formatPosthogMessage(event string, payload interface{}) string {
-	// If the payload is already a string (rich text), use it directly
-	if str, ok := payload.(string); ok && str != "" {
-		return str
-	}
-
+func formatPosthogMessage(event string, payload interface{}, service string) string {
 	m, ok := payload.(map[string]interface{})
 	if !ok {
-		return fmt.Sprintf("IPM Notification: %s\n\n%v", event, payload)
+		return fmt.Sprintf("🔔 **IPM Event: %s**\n\n`%v`", event, payload)
 	}
 
-	// Try to extract properties if it's a standard PostHog event structure
+	isSlack := strings.ToLower(service) == "slack"
+	bold := "**"
+	quote := "> "
+	
+	// Native Slack Emojis
+	successEmoji := "✅"
+	failEmoji := "❌"
+	warnEmoji := "⚠️"
+	eventEmoji := "🔔"
+
+	if isSlack {
+		bold = "*"
+		successEmoji = ":white_check_mark:"
+		failEmoji = ":x:"
+		warnEmoji = ":warning:"
+		eventEmoji = ":bell:"
+	}
+
+	// For Slack, we must HTML-escape the values
+	f := func(v interface{}) string {
+		s := ifaceToString(v)
+		if isSlack {
+			return html.EscapeString(s)
+		}
+		return s
+	}
+
+	distinctID := f(m["distinct_id"])
 	props, _ := m["properties"].(map[string]interface{})
 	if props == nil {
-		// Fallback to top level if it's already flattened
 		props = m
 	}
 
-	distinctID, _ := m["distinct_id"].(string)
-	repo, _ := props["reponame"].(string)
-	os, _ := props["os"].(string)
-	arch, _ := props["arch"].(string)
-	method, _ := props["method"].(string)
-	city, _ := props["$geoip_city_name"].(string)
-	subdivision, _ := props["$geoip_subdivision_1_name"].(string)
-	country, _ := props["$geoip_country_name"].(string)
-	command, _ := props["command"].(string)
+	repo := f(props["reponame"])
+	os := f(props["os"])
+	arch := f(props["arch"])
+	method := f(props["method"])
+	command := f(props["command"])
+	errVal := f(props["error"])
+
+	city := f(props["$geoip_city_name"])
+	subdivision := f(props["$geoip_subdivision_1_name"])
+	country := f(props["$geoip_country_name"])
 
 	var sb strings.Builder
+
+	// 1. Header & Metadata (Inside Blockquote/Attachment)
 	eventLower := strings.ToLower(event)
 	if strings.Contains(eventLower, "success") || strings.Contains(eventLower, "succeeded") {
-		sb.WriteString("✅ **IPM Repo Installation Succeeded!**\n\n")
+		sb.WriteString(fmt.Sprintf("%s%s %sIPM Repo Installation Succeeded!%s\n", quote, successEmoji, bold, bold))
+	} else if strings.Contains(eventLower, "cancelled") {
+		sb.WriteString(fmt.Sprintf("%s%s %sIPM Installation Cancelled!%s\n", quote, warnEmoji, bold, bold))
 	} else if strings.Contains(eventLower, "fail") || strings.Contains(eventLower, "error") {
-		sb.WriteString("❌ **IPM Repo Installation Failed!**\n\n")
+		sb.WriteString(fmt.Sprintf("%s%s %sIPM Installation Failed!%s\n", quote, failEmoji, bold, bold))
 	} else {
-		sb.WriteString(fmt.Sprintf("🔔 **IPM Event: %s**\n\n", event))
+		sb.WriteString(fmt.Sprintf("%s%s %sIPM Event: %s%s\n", quote, eventEmoji, bold, event, bold))
 	}
 
-	if distinctID != "" {
-		sb.WriteString(fmt.Sprintf("• **ID:** %s\n", distinctID))
-	}
-	if repo != "" {
-		sb.WriteString(fmt.Sprintf("• **Repo:** %s\n", repo))
-	}
-	if os != "" {
-		sb.WriteString(fmt.Sprintf("• **OS:** %s\n", os))
-	}
-	if arch != "" {
-		sb.WriteString(fmt.Sprintf("• **Arch:** %s\n", arch))
-	}
-	if method != "" {
-		sb.WriteString(fmt.Sprintf("• **Method:** %s\n", method))
-	}
-	
-	locationParts := []string{}
-	if city != "" { locationParts = append(locationParts, city) }
-	if subdivision != "" { locationParts = append(locationParts, subdivision) }
-	if country != "" { locationParts = append(locationParts, country) }
-	if len(locationParts) > 0 {
-		sb.WriteString(fmt.Sprintf("• **Location:** %s\n", strings.Join(locationParts, ", ")))
-	}
+	sb.WriteString(fmt.Sprintf("%s \n", quote)) // Padding line
+	sb.WriteString(fmt.Sprintf("%s• %sID:%s %s\n", quote, bold, bold, distinctID))
+	sb.WriteString(fmt.Sprintf("%s• %sRepo:%s %s\n", quote, bold, bold, repo))
+	sb.WriteString(fmt.Sprintf("%s• %sOS:%s %s\n", quote, bold, bold, os))
+	sb.WriteString(fmt.Sprintf("%s• %sArch:%s %s\n", quote, bold, bold, arch))
+	sb.WriteString(fmt.Sprintf("%s• %sMethod:%s %s\n", quote, bold, bold, method))
 
+	// Format Location
+	var loc []string
+	if city != "" {
+		loc = append(loc, city)
+	}
+	if subdivision != "" {
+		loc = append(loc, subdivision)
+	}
+	if country != "" {
+		loc = append(loc, country)
+	}
+	locationStr := strings.Join(loc, ", ")
+	sb.WriteString(fmt.Sprintf("%s• %sLocation:%s %s\n", quote, bold, bold, locationStr))
+
+	// 2. Command Executed (Outside Blockquote)
 	if command != "" {
-		sb.WriteString("\n**Command Executed**\n")
+		if len(command) > 1000 {
+			command = command[:1000] + "... (truncated)"
+		}
+		sb.WriteString(fmt.Sprintf("\n%sCommand Executed%s\n", bold, bold))
 		sb.WriteString(fmt.Sprintf("```\n%s\n```", command))
+	}
+
+	// 3. Error Section (Outside Blockquote)
+	if errVal != "" {
+		sb.WriteString(fmt.Sprintf("\n%sError:%s\n", bold, bold))
+		sb.WriteString(fmt.Sprintf("```\n%s\n```", errVal))
 	}
 
 	return sb.String()
@@ -1253,11 +1288,11 @@ func handlePosthogTrigger(db *bookmarks.DB) http.HandlerFunc {
 		go func() {
 			log.Printf("🚀 [Notifications API] Starting to send %d notifications for %s via Shoutrrr", len(notifications), payload.Repo)
 			
-			// Format the message nicely for Discord/Slack
-			message := formatPosthogMessage(payload.Event, payload.Payload)
-
 			for _, n := range notifications {
-				uri, err := toShoutrrrURI(n.Service, n.WebhookURL)
+				// Format the message specifically for this service
+				message := formatPosthogMessage(payload.Event, payload.Payload, n.Service)
+
+				uri, err := toShoutrrrURI(n.Service, n.WebhookURL, payload.Event)
 				if err != nil {
 					log.Printf("❌ [Notifications API] Error converting to Shoutrrr URI for %s: %v", n.Service, err)
 					continue
