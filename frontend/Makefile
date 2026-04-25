@@ -1,4 +1,4 @@
-.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item
+.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item refresh-installerpedia-item
 
 # Variables
 PORT ?= 4321
@@ -1044,7 +1044,7 @@ static-generation-installerpedia: generate ## Generate static pages for the Inst
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@./static-gen --section installerpedia
 
-static-generation-installerpedia-item: generate ## Generate a single static page for Installerpedia (usage: make static-generation-installerpedia-item ITEM=airflow)
+static-generation-installerpedia-item: ## Generate a single static page for Installerpedia (usage: make static-generation-installerpedia-item ITEM=airflow)
 	@if [ -z "$(ITEM)" ]; then \
 		echo "❌ Error: ITEM variable is required (e.g., make static-generation-installerpedia-item ITEM=airflow)"; \
 		exit 1; \
@@ -1053,6 +1053,15 @@ static-generation-installerpedia-item: generate ## Generate a single static page
 	$(GO_CMD) build -o static-gen cmd/static-generator/*.go
 	@echo "Generating static page for Installerpedia item: $(ITEM)..."
 	@./static-gen --section installerpedia --item $(ITEM)
+
+refresh-installerpedia-item: ## Instant refresh for an Installerpedia item by clearing its cache (usage: make refresh-installerpedia-item ITEM=airflow)
+	@if [ -z "$(ITEM)" ]; then \
+		echo "❌ Error: ITEM variable is required (e.g., make refresh-installerpedia-item ITEM=airflow)"; \
+		exit 1; \
+	fi
+	@echo "Refreshing Installerpedia item: $(ITEM)..."
+	@find static/freedevtools/installerpedia -type d -name "$(ITEM)" -exec rm -rf {} +
+	@echo "✅ Cache cleared for $(ITEM). Refresh your browser to see changes via SSR."
 
 static-generation-all: generate ## Generate all static pages for all sections
 	@echo "Building static generator..."
