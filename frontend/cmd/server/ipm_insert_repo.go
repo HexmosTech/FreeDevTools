@@ -177,6 +177,7 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdt
 	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
 	mux.HandleFunc(base+"/generate_ipm_repo_method", handleGenerateRepoMethod())
 	mux.HandleFunc(base+"/update-entry", handleUpdateRepoMethods(db))
+	mux.HandleFunc(base+"/replace-methods", handleReplaceRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
 	mux.HandleFunc(base+"/featured", handleGetFeatured())
 	mux.HandleFunc(base+"/check_ipm_repo", handleCheckRepoExists(db))
@@ -907,6 +908,92 @@ func handleUpdateRepoMethods(db *installerpedia.DB) http.HandlerFunc {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprintf(w, "Successfully updated and synced full record for %s", payload.Repo)
 	}
+}
+
+func handleReplaceRepoMethods(db *installerpedia.DB) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		var payload struct {
+			Repo       string          `json:"repo"`
+			NewMethods []InstallMethod `json:"new_methods"`
+		}
+
+		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
+			http.Error(w, "Invalid JSON", http.StatusBadRequest)
+			return
+		}
+
+		// 1. Replace the methods in the Local SQLite DB
+		log.Printf("[Installerpedia API] Replacing DB methods for %s...", payload.Repo)
+		err := replaceInstallerpediaMethods(db, payload.Repo, payload.NewMethods)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] DB Replace error: %v", err)
+			http.Error(w, "Internal DB error", http.StatusInternalServerError)
+			return
+		}
+
+		// 2. Fetch the FULL, REFRESHED entry from the DB
+		updatedEntry, err := fetchFullEntryFromDB(db, payload.Repo)
+		if err != nil {
+			log.Printf("❌ [Installerpedia API] Post-replace fetch failed for %s: %v", payload.Repo, err)
+			http.Error(w, "Failed to retrieve updated record", http.StatusInternalServerError)
+			return
+		}
+
+		// 3. Perform a Full Rewrite to Meilisearch
+		go func() {
+			log.Printf("[Installerpedia API] Syncing full record to Meilisearch for %s...", payload.Repo)
+			if err := SyncSingleRepoToMeili(updatedEntry); err != nil {
+				log.Printf("⚠️ [Installerpedia API] Meili Sync failure: %v", err)
+			} else {
+				log.Printf("✅ [Installerpedia API] Meili fully restored/updated for %s", payload.Repo)
+			}
+		}()
+
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintf(w, "Successfully replaced and synced full record for %s", payload.Repo)
+	}
+}
+
+func replaceInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
+	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+	slugHash := hashStringToInt64(repoSlug)
+	updatedAt := time.Now().UTC().Format(time.RFC3339)
+
+	tx, err := db.GetConn().Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	// 1. Marshal new methods
+	updatedJson, err := json.Marshal(newMethods)
+	if err != nil {
+		return err
+	}
+
+	// 2. Update the DB
+	ipm_update_method_query := `
+        UPDATE ipm_data 
+        SET installation_methods = ?, 
+            updated_at = ?
+        WHERE slug_hash = ?
+    `
+	ipm_update_method_query_args := []interface{}{string(updatedJson), updatedAt, slugHash}
+
+	_, err = tx.Exec(ipm_update_method_query, ipm_update_method_query_args...)
+	if err != nil {
+		return err
+	}
+
+	// Log the update query
+	LogIPMQuery(ipm_update_method_query, ipm_update_method_query_args...)
+
+	return tx.Commit()
 }
 func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMethods []InstallMethod) error {
 	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
