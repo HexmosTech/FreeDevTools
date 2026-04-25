@@ -19,8 +19,8 @@ import (
 	"github.com/a-h/templ"
 )
 
-func GenerateInstallerpedia() {
-	log.Println("Starting static generation for Installerpedia...")
+func GenerateInstallerpedia(itemSlug string) {
+	log.Printf("Starting static generation for Installerpedia... (item: %s)", itemSlug)
 
 	// Load config
 	_, err := config.LoadConfig()
@@ -52,14 +52,19 @@ func GenerateInstallerpedia() {
 	const itemsPerPage = 30
 	
 	// Estimate total pages for tracker
-	totalPagesCount := 1 // index
-	for _, cat := range categories {
-		pages := (cat.Count + itemsPerPage - 1) / itemsPerPage
-		if pages == 0 {
-			pages = 1
+	totalPagesCount := 0
+	if itemSlug == "" {
+		totalPagesCount = 1 // index
+		for _, cat := range categories {
+			pages := (cat.Count + itemsPerPage - 1) / itemsPerPage
+			if pages == 0 {
+				pages = 1
+			}
+			totalPagesCount += pages // category pages
+			totalPagesCount += cat.Count // individual pages
 		}
-		totalPagesCount += pages // category pages
-		totalPagesCount += cat.Count // individual pages
+	} else {
+		totalPagesCount = 1 // just the single item
 	}
 
 	tracker := NewProgressTracker("Installerpedia", totalPagesCount)
@@ -99,119 +104,128 @@ func GenerateInstallerpedia() {
 	basePath := config.GetBasePath()
 	siteURL := config.GetSiteURL()
 
-	// Index Page
-	log.Println("Generating Installerpedia Index Page...")
-	indexKeywords := []string{
-		"installerpedia",
-		"installation guides",
-		"developer tools",
-		"open source",
-		"install software",
-		"install github repositories",
-		"github repository installation guide",
-	}
-	indexLayoutProps := layouts.BaseLayoutProps{
-		Title:        "Installerpedia – Open Source Install Guides | Free DevTools by Hexmos",
-		Description:  "Installerpedia provides installation guides for developer tools, languages, libraries, frameworks, servers, and CLI tools. Includes copy-paste commands, OS-specific steps, and automated installs using ipm.",
-		Canonical:    siteURL + "/installerpedia/",
-		ShowHeader:   true,
-		Keywords:     indexKeywords,
+	// Index Page - Only generate if no specific item is requested
+	if itemSlug == "" {
+		log.Println("Generating Installerpedia Index Page...")
+		indexKeywords := []string{
+			"installerpedia",
+			"installation guides",
+			"developer tools",
+			"open source",
+			"install software",
+			"install github repositories",
+			"github repository installation guide",
+		}
+		indexLayoutProps := layouts.BaseLayoutProps{
+			Title:        "Installerpedia – Open Source Install Guides | Free DevTools by Hexmos",
+			Description:  "Installerpedia provides installation guides for developer tools, languages, libraries, frameworks, servers, and CLI tools. Includes copy-paste commands, OS-specific steps, and automated installs using ipm.",
+			Canonical:    siteURL + "/installerpedia/",
+			ShowHeader:   true,
+			Keywords:     indexKeywords,
+		}
+
+		indexData := ip_page.IndexData{
+			Categories:      categories,
+			Overview:        &overview,
+			BreadcrumbItems: []components.BreadcrumbItem{
+				{Label: "Free DevTools", Href: basePath + "/"},
+				{Label: "InstallerPedia"},
+			},
+			LayoutProps: indexLayoutProps,
+			Keywords:    indexKeywords,
+		}
+
+		indexMeta := &static_cache.PageMetadata{
+			Title:       indexLayoutProps.Title,
+			Description: indexLayoutProps.Description,
+			Canonical:   indexLayoutProps.Canonical,
+			UpdatedAt:   overview.LastUpdatedAt,
+		}
+		renderToFile("", ip_page.IndexContent(indexData), indexMeta)
 	}
 
-	indexData := ip_page.IndexData{
-		Categories:      categories,
-		Overview:        &overview,
-		BreadcrumbItems: []components.BreadcrumbItem{
-			{Label: "Free DevTools", Href: basePath + "/"},
-			{Label: "InstallerPedia"},
-		},
-		LayoutProps: indexLayoutProps,
-		Keywords:    indexKeywords,
-	}
-
-	indexMeta := &static_cache.PageMetadata{
-		Title:       indexLayoutProps.Title,
-		Description: indexLayoutProps.Description,
-		Canonical:   indexLayoutProps.Canonical,
-		UpdatedAt:   overview.LastUpdatedAt,
-	}
-	renderToFile("", ip_page.IndexContent(indexData), indexMeta)
-
+	itemFound := false
 	// Category and Individual Pages
 	for _, cat := range categories {
-		log.Printf("Generating pages for category: %s", cat.Name)
+		if itemSlug != "" && itemFound {
+			break
+		}
 		
 		catPages := (cat.Count + itemsPerPage - 1) / itemsPerPage
 		if catPages == 0 {
 			catPages = 1
 		}
 
-		catKeywords := []string{
-			"install " + cat.Name + " repositories",
-			cat.Name + " installation guide",
-			"install " + cat.Name + " github repositories",
-			"installerpedia",
-		}
-
-		for p := 1; p <= catPages; p++ {
-			var relPath string
-			if p == 1 {
-				relPath = fmt.Sprintf("%s/", cat.Name)
-			} else {
-				relPath = fmt.Sprintf("%s/%d/", cat.Name, p)
+		// Only generate category pages if no specific item is requested
+		if itemSlug == "" {
+			log.Printf("Generating pages for category: %s", cat.Name)
+			catKeywords := []string{
+				"install " + cat.Name + " repositories",
+				cat.Name + " installation guide",
+				"install " + cat.Name + " github repositories",
+				"installerpedia",
 			}
 
-			offset := (p - 1) * itemsPerPage
-			repos, err := db.GetReposByTypePaginated(cat.Name, itemsPerPage, offset)
-			if err != nil {
-				log.Printf("Failed to fetch repos for %s page %d: %v", cat.Name, p, err)
-				continue
-			}
+			for p := 1; p <= catPages; p++ {
+				var relPath string
+				if p == 1 {
+					relPath = fmt.Sprintf("%s/", cat.Name)
+				} else {
+					relPath = fmt.Sprintf("%s/%d/", cat.Name, p)
+				}
 
-			title := cat.Name + " Install Guides | Installerpedia"
-			description := "Installation guides for " + cat.Name + ". Step-by-step setup instructions."
-			if p > 1 {
-				title = fmt.Sprintf("%s Install Guides – Page %d | Installerpedia", cat.Name, p)
-				description = fmt.Sprintf("Browse page %d of %s installation guides.", p, cat.Name)
-			}
+				offset := (p - 1) * itemsPerPage
+				repos, err := db.GetReposByTypePaginated(cat.Name, itemsPerPage, offset)
+				if err != nil {
+					log.Printf("Failed to fetch repos for %s page %d: %v", cat.Name, p, err)
+					continue
+				}
 
-			breadcrumbItems := []components.BreadcrumbItem{
-				{Label: "Free DevTools", Href: basePath + "/"},
-				{Label: "Installerpedia", Href: basePath + "/installerpedia/"},
-				{Label: cat.Name},
-			}
-			if p > 1 {
-				breadcrumbItems = append(breadcrumbItems, components.BreadcrumbItem{
-					Label: fmt.Sprintf("Page %d", p),
-				})
-			}
+				title := cat.Name + " Install Guides | Installerpedia"
+				description := "Installation guides for " + cat.Name + ". Step-by-step setup instructions."
+				if p > 1 {
+					title = fmt.Sprintf("%s Install Guides – Page %d | Installerpedia", cat.Name, p)
+					description = fmt.Sprintf("Browse page %d of %s installation guides.", p, cat.Name)
+				}
 
-			catLayoutProps := layouts.BaseLayoutProps{
-				Title:       title,
-				Description: description,
-				Canonical:   siteURL + "/installerpedia/" + relPath,
-				ShowHeader:  true,
-				Keywords:    catKeywords,
-			}
+				breadcrumbItems := []components.BreadcrumbItem{
+					{Label: "Free DevTools", Href: basePath + "/"},
+					{Label: "Installerpedia", Href: basePath + "/installerpedia/"},
+					{Label: cat.Name},
+				}
+				if p > 1 {
+					breadcrumbItems = append(breadcrumbItems, components.BreadcrumbItem{
+						Label: fmt.Sprintf("Page %d", p),
+					})
+				}
 
-			catData := ip_page.CategoryData{
-				Category:        cat.Name,
-				Repos:           repos,
-				RepoCount:       cat.Count,
-				CurrentPage:     p,
-				TotalPages:      catPages,
-				BreadcrumbItems: breadcrumbItems,
-				LayoutProps:     catLayoutProps,
-				Keywords:        catKeywords,
-			}
+				catLayoutProps := layouts.BaseLayoutProps{
+					Title:       title,
+					Description: description,
+					Canonical:   siteURL + "/installerpedia/" + relPath,
+					ShowHeader:  true,
+					Keywords:    catKeywords,
+				}
 
-			catMeta := &static_cache.PageMetadata{
-				Title:       catLayoutProps.Title,
-				Description: catLayoutProps.Description,
-				Canonical:   catLayoutProps.Canonical,
-				UpdatedAt:   cat.UpdatedAt,
+				catData := ip_page.CategoryData{
+					Category:        cat.Name,
+					Repos:           repos,
+					RepoCount:       cat.Count,
+					CurrentPage:     p,
+					TotalPages:      catPages,
+					BreadcrumbItems: breadcrumbItems,
+					LayoutProps:     catLayoutProps,
+					Keywords:        catKeywords,
+				}
+
+				catMeta := &static_cache.PageMetadata{
+					Title:       catLayoutProps.Title,
+					Description: catLayoutProps.Description,
+					Canonical:   catLayoutProps.Canonical,
+					UpdatedAt:   cat.UpdatedAt,
+				}
+				renderToFile(relPath, ip_page.CategoryContent(catData), catMeta)
 			}
-			renderToFile(relPath, ip_page.CategoryContent(catData), catMeta)
 		}
 
 		// Individual Pages for this category
@@ -228,6 +242,16 @@ func GenerateInstallerpedia() {
 
 				slug := ip_page.ToSlug(repo.Repo)
 				
+				// Filter by itemSlug if provided
+				if itemSlug != "" && slug != itemSlug {
+					continue
+				}
+
+				if itemSlug != "" {
+					log.Printf("Found item: %s in category: %s. Generating page...", itemSlug, cat.Name)
+					itemFound = true
+				}
+
 				repoKeywords := []string{
 					"installerpedia",
 					"installation",
@@ -275,13 +299,23 @@ func GenerateInstallerpedia() {
 					UpdatedAt:   repo.UpdatedAt,
 				}
 				renderToFile(fmt.Sprintf("%s/%s/", cat.Name, slug), ip_page.PageContent(repoData), repoMeta)
+				
+				if itemSlug != "" {
+					break
+				}
 			}
-			if ip*100 >= cat.Count {
+			if itemFound || ip*100 >= cat.Count {
 				break
 			}
 		}
 	}
 
+	if itemSlug != "" && !itemFound {
+		log.Printf("❌ Item with slug '%s' not found in any category.", itemSlug)
+		tracker.Increment() // Finish the tracker
+	}
+
 	log.Println("Static HTML generation for Installerpedia complete!")
 	tracker.Finish()
 }
+

@@ -16,9 +16,10 @@ func main() {
 	log.SetOutput(logFile)
 
 	section := flag.String("section", "", "Section to generate (e.g., mcp)")
+	item := flag.String("item", "", "Specific item (slug) to generate within a section")
 	flag.Parse()
 
-	log.Printf("Starting static generator for section: %s", *section)
+	log.Printf("Starting static generator for section: %s, item: %s", *section, *item)
 
 	if *section == "mcp" {
 		GenerateMCP()
@@ -35,7 +36,7 @@ func main() {
 	} else if *section == "cheatsheets" {
 		GenerateCheatsheets()
 	} else if *section == "installerpedia" {
-		GenerateInstallerpedia()
+		GenerateInstallerpedia(*item)
 	} else if *section == "all" {
 		log.Println("Starting generation for ALL sections...")
 		GenerateMCP()
@@ -45,9 +46,10 @@ func main() {
 		GenerateTLDR()
 		GenerateEmojis()
 		GenerateCheatsheets()
-		GenerateInstallerpedia()
+		GenerateInstallerpedia("")
 		log.Println("✅ Generation for ALL sections complete!")
 	} else {
-		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages|png-icons|svg-icons|tldr|emojis|cheatsheets|installerpedia|all]")
+		log.Fatalf("Unknown or missing section. Usage: go run cmd/static-generator/main.go --section [mcp|man-pages|png-icons|svg-icons|tldr|emojis|cheatsheets|installerpedia|all] [--item slug]")
 	}
+
 }
