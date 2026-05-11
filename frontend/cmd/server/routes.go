@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"fdt-templ/components/pages"
+	"fdt-templ/internal/version"
 	cheatsheets_pages "fdt-templ/components/pages/cheatsheets"
 	emojis_pages "fdt-templ/components/pages/emojis"
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
@@ -338,6 +339,13 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 	mux.HandleFunc(basePath+"/pro/search/", func(w http.ResponseWriter, r *http.Request) {
 		handler := templ.Handler(pro_pages.ProSearch())
 		handler.ServeHTTP(w, r)
+	})
+
+	// Health check endpoint (used by uptime monitors / pmdaemon watchdogs)
+	mux.HandleFunc(basePath+"/api/health", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte(`{"status":"ok","version":"` + version.Version + `"}`))
 	})
 
 	// Profiling routes

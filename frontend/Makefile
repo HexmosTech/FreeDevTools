@@ -2,8 +2,13 @@
 
 # Variables
 PORT ?= 4321
-# Try to find templ in PATH, GOPATH/bin, or use go run
-TEMPL_CMD := $(shell which templ 2>/dev/null || echo "go run github.com/a-h/templ/cmd/templ@latest")
+# Use the installed templ binary only if its version matches go.mod.
+# This prevents generator/library version drift (e.g. "undefined: templ.ResolveAttributeValue")
+# while avoiding the ~2 min compile overhead of `go run` on every build.
+# Rule: to upgrade templ, run: go get github.com/a-h/templ@vX.Y.Z && go mod tidy
+TEMPL_VERSION := $(shell grep 'github.com/a-h/templ' go.mod | awk '{print $$2}' | head -1)
+_TEMPL_INSTALLED_VER := $(shell templ version 2>/dev/null | grep -oE 'v[0-9]+\.[0-9]+\.[0-9]+')
+TEMPL_CMD := $(if $(filter $(_TEMPL_INSTALLED_VER),$(TEMPL_VERSION)),templ,go run github.com/a-h/templ/cmd/templ@$(TEMPL_VERSION))
 GO_CMD = go
 NPM_CMD = npm
 SLEEP_INTERVAL ?= 0.1
