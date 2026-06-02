@@ -15,24 +15,40 @@ type ListController struct {
 }
 
 func (lc *ListController) cursorDown(g *gocui.Gui, v *gocui.View) error {
-	if v != nil {
-		cx, cy := v.Cursor()
-		if cy < len(lc.app.dbs)+HeaderHeight-1 {
-			v.SetCursor(cx, cy+1)
-			lc.app.selected = cy + 1 - HeaderHeight
-		}
+	if v == nil {
+		return nil
 	}
+	cx, cy := v.Cursor()
+	ox, oy := v.Origin()
+	if oy+cy >= HeaderHeight-1+len(lc.app.dbs) {
+		return nil
+	}
+	if err := v.SetCursor(cx, cy+1); err != nil {
+		v.SetOrigin(ox, oy+1)
+	}
+	_, newCy := v.Cursor()
+	_, newOy := v.Origin()
+	lc.app.selected = newOy + newCy - HeaderHeight
 	return nil
 }
 
 func (lc *ListController) cursorUp(g *gocui.Gui, v *gocui.View) error {
-	if v != nil {
-		cx, cy := v.Cursor()
-		if cy > HeaderHeight {
-			v.SetCursor(cx, cy-1)
-			lc.app.selected = cy - 1 - HeaderHeight
+	if v == nil {
+		return nil
+	}
+	cx, cy := v.Cursor()
+	ox, oy := v.Origin()
+	if oy+cy <= HeaderHeight {
+		return nil
+	}
+	if err := v.SetCursor(cx, cy-1); err != nil {
+		if oy > 0 {
+			v.SetOrigin(ox, oy-1)
 		}
 	}
+	_, newCy := v.Cursor()
+	_, newOy := v.Origin()
+	lc.app.selected = newOy + newCy - HeaderHeight
 	return nil
 }
 
