@@ -679,7 +679,7 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bo
 	repoSlug := strings.ReplaceAll(strings.ToLower(p.Repo), "/", "-")
 	slugHash := hashStringToInt64(repoSlug)
 	categoryHash := hashStringToInt64(p.RepoType)
-	updatedAt := time.Now().UTC().Format(time.RFC3339) + "Z"
+	updatedAt := time.Now().UTC().Format(time.RFC3339)
 
 	m := func(v interface{}) string {
 		if v == nil {
