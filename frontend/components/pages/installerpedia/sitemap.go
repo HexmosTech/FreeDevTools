@@ -17,6 +17,21 @@ func escapeXML(s string) string {
 	return html.EscapeString(s)
 }
 
+// normalizeSitemapDate parses any date string from the DB and returns a clean RFC3339 UTC string.
+// Handles malformed variants like double-Z ("...ZZ") and microsecond precision.
+func normalizeSitemapDate(raw string) string {
+	// Fix double-Z before parsing
+	if len(raw) > 2 && raw[len(raw)-2:] == "ZZ" {
+		raw = raw[:len(raw)-1]
+	}
+	for _, layout := range []string{time.RFC3339Nano, time.RFC3339, "2006-01-02T15:04:05Z"} {
+		if t, err := time.Parse(layout, raw); err == nil {
+			return t.UTC().Format(time.RFC3339)
+		}
+	}
+	return time.Now().UTC().Format(time.RFC3339)
+}
+
 func getSiteURL() string {
 	return config.GetSiteURL()
 }
@@ -34,10 +49,7 @@ func GenerateSitemapXML(db *installerpedia_db.DB) (string, error) {
 	}
 
 	siteURL := getSiteURL()
-	lastModIndex := overview.LastUpdatedAt
-	if lastModIndex == "" {
-		lastModIndex = time.Now().UTC().Format(time.RFC3339)
-	}
+	lastModIndex := normalizeSitemapDate(overview.LastUpdatedAt)
 
 	// Start XML
 	xml := fmt.Sprintf(`<?xml version="1.0" encoding="UTF-8"?>
@@ -61,7 +73,7 @@ func GenerateSitemapXML(db *installerpedia_db.DB) (string, error) {
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-`, siteURL, escapedCategory, cat.UpdatedAt)
+`, siteURL, escapedCategory, normalizeSitemapDate(cat.UpdatedAt))
 
 		// Fetch repos for this category
 		repos, err := db.GetReposByCategoryForSitemap(cat.Slug)
@@ -78,7 +90,7 @@ func GenerateSitemapXML(db *installerpedia_db.DB) (string, error) {
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
-`, siteURL, escapedCategory, escapedSlug, repo.UpdatedAt)
+`, siteURL, escapedCategory, escapedSlug, normalizeSitemapDate(repo.UpdatedAt))
 		}
 	}
 
@@ -88,16 +100,7 @@ func GenerateSitemapXML(db *installerpedia_db.DB) (string, error) {
 
 // GeneratePaginationSitemapXML generates the sitemap XML for pagination pages
 func GeneratePaginationSitemapXML(db *installerpedia_db.DB) (string, error) {
-	overview, err := db.GetOverview()
-	if err != nil {
-		return "", err
-	}
-
 	siteURL := getSiteURL()
-	lastMod := overview.LastUpdatedAt
-	if lastMod == "" {
-		lastMod = time.Now().UTC().Format(time.RFC3339)
-	}
 
 	// Start XML
 	xml := `<?xml version="1.0" encoding="UTF-8"?>
@@ -125,7 +128,7 @@ func GeneratePaginationSitemapXML(db *installerpedia_db.DB) (string, error) {
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
-`, siteURL, cat.Slug, i, cat.UpdatedAt)
+`, siteURL, cat.Slug, i, normalizeSitemapDate(cat.UpdatedAt))
 				}
 			}
 		}
