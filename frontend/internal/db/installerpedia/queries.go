@@ -299,6 +299,20 @@ func (db *DB) GetReposCountByType(category string) (int, error) {
 	return count, err
 }
 
+// GetActiveReposCountByType returns the live count of non-deleted repos for a category.
+// Used by the sitemap so pagination doesn't generate URLs that 404.
+func (db *DB) GetActiveReposCountByType(category string) (int, error) {
+	categoryHash := HashStringToInt64(category)
+	var count int
+	err := db.conn.QueryRow(`
+		SELECT COUNT(*)
+		FROM ipm_data
+		WHERE category_hash = ?
+		  AND is_deleted = 0
+	`, categoryHash).Scan(&count)
+	return count, err
+}
+
 func (db *DB) GetTotalReposCount() (int, error) {
 	var count int
 	err := db.conn.QueryRow(`SELECT COUNT(*) FROM ipm_data`).Scan(&count)

@@ -112,7 +112,7 @@ func GeneratePaginationSitemapXML(db *installerpedia_db.DB) (string, error) {
 	catItems, err := db.GetRepoCategoriesForSitemap()
 	if err == nil {
 		for _, cat := range catItems {
-			total, err := db.GetReposCountByType(cat.Slug)
+			total, err := db.GetActiveReposCountByType(cat.Slug)
 			if err != nil {
 				continue
 			}
