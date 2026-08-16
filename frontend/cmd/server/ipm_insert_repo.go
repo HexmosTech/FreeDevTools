@@ -199,7 +199,7 @@ func handleGetFeatured() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// --- Configuration Variables (Change these anytime) ---
 		title := "Featured: Git-LRC"
-		tagline := "Free, unlimited AI code reviews that run on commit"
+		tagline := "Free, Micro AI Code Reviews That run on commit"
 		link := "https://www.producthunt.com/products/git-lrc"
 		cta := "Upvote and support us on Product Hunt!"
 		// ------------------------------------------------------
