@@ -152,7 +152,7 @@
     function trackPageVisit() {
         const hash = window.location.hash;
         const pathname = window.location.pathname;
-        if (hash.startsWith('#search') || pathname.includes('/pro/')) return 0;
+        if (hash.startsWith('#search') || pathname.includes('/pro/') || pathname.includes('/blog/')) return 0;
         const today = new Date().toISOString().split('T')[0];
         try {
             const lastPage = localStorage.getItem('fdt_pro_banner_last_page');
