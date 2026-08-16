@@ -749,6 +749,19 @@ update-blog-public-to-b2:
 		--progress
 	@echo "✅ Blog images uploaded successfully"
 
+sync-blog-public-to-local:
+	@echo "⬇️  Syncing public/blog images from Backblaze B2..."
+	@sudo mkdir -p $(SYNC_PUBLIC_DEST)blog
+	rclone sync \
+		b2-config:hexmos-private/freedevtools/content/public/blog/ \
+		$(SYNC_PUBLIC_DEST)blog \
+		--checksum \
+		--retries 20 \
+		--low-level-retries 30 \
+		--retries-sleep 10s \
+		--progress
+	@echo "✅ Blog images sync completed"
+
 update-public-file-to-b2: ## Upload a specific public file to B2 (usage: make update-public-file-to-b2 file=<path>)
 	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-public-file-to-b2,$(MAKECMDGOALS))" | head -n1); \
 	if [ -z "$$FILE_PATH" ]; then \
