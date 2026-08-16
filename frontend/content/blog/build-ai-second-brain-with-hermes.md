@@ -4,7 +4,7 @@ date: 2026-08-02
 description: "Learn how to create and host your own AI second brain with Hermes that remembers, automates tasks, and works for you 24/7."
 tags: [AI, AI-Agents]
 author: "Rijul Raj"
-feature_image: "./cover.png"
+feature_image: "./cover.webp"
 slug: "build-ai-second-brain-with-hermes"
 ---
 
@@ -75,7 +75,7 @@ You'll be able to:
 
 Here's a preview of the final result:
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/demo.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/demo.webp)
 
 
 
@@ -107,40 +107,40 @@ Once your account is ready, create a new virtual machine using the following ste
 
 Click **Compute** and then **Instances**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-1.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-1.webp)
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-2.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-2.webp)
 Click **Create Instance**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-3.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-3.webp)
 
 Click **Change Image**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-4.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-4.webp)
 
 Select **Ubuntu**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-5.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-5.webp)
 
 Choose **Canonical Ubuntu 24.04 LTS**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-6.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-6.webp)
 
 Select the **VM.Standard.E2.1.Micro** shape. This instance is included in Oracle Cloud's free tier and provides **1 OCPU** and **1 GB of RAM**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-7.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-7.webp)
 
 Under **Networking**, create a new VNIC.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-8.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-8.webp)
 
 Download and save the generated private SSH key. You'll need it later to connect to your server.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-9.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-9.webp)
 
 Increase the boot volume if you need additional storage. I'm using **200 GB** for this tutorial.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-10.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-10.webp)
 
 Once everything looks good, review the configuration and create the instance.
 
@@ -150,21 +150,21 @@ Once everything looks good, review the configuration and create the instance.
 
 After the instance has been created, you'll see it listed on the **Instances** page.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-11.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-11.webp)
 
 To make it accessible over the internet, we'll assign a public IP address.
 
 Open the instance, navigate to the **Networking** tab, and click the attached **VNIC**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-12.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-12.webp)
 
 Open the **IP Administration** tab, click the three-dot menu, and select **Edit**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-14.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-14.webp)
 
 Assign an **Ephemeral Public IP** and click **Update**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-15.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-15.webp)
 
 Your instance is now reachable over the internet, so we can SSH into it.
 
@@ -212,13 +212,13 @@ The installer will launch a setup wizard.
 
 Choose **Quick Login**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-16.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-16.webp)
 
 Select the **Free** plan.
 
 Next, you'll be asked to choose a language model.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-17.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-17.webp)
 
 For this tutorial, I'll use the free model:
 
@@ -226,23 +226,23 @@ For this tutorial, I'll use the free model:
 
 Enable the tools you want Hermes to have access to.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-18.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-18.webp)
 
 For the terminal provider, select **Local**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-19.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-19.webp)
 
 Next, you'll be asked to configure a messaging platform. Click **Set up messaging now**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-20.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-20.webp)
 
 Choose **Telegram**.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-21.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-21.webp)
 
 Follow the on-screen instructions to connect your Telegram account.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-22.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-22.webp)
 
 You'll receive either a QR code or a link. Open it on your phone and follow the prompts to create and connect your Telegram bot.
 
@@ -254,7 +254,7 @@ hermes gateway run
 
 Your bot should now be online.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-23.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-23.webp)
 
 That's it! Your personal AI agent is now running on the cloud and can be accessed directly from Telegram.
 
@@ -281,7 +281,7 @@ I can even ask it to summarize small parts of the article over time to encourage
 
 Here's an example:
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-24.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-24.webp)
 
 In this case, Hermes suggests reminding me every Monday and Thursday. Since it's a conversation, I can easily adjust the schedule or ask it to do something different.
 
@@ -295,9 +295,9 @@ Instead of manually checking GitHub Trending every day, I simply ask Hermes to d
 
 Every day, it finds a trending AI repository and sends it to me on Telegram, giving me something new to explore without me having to remember or repeat the task.
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-25.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-25.webp)
 
-![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-26.png)
+![alt text](/freedevtools/public/blog/build-ai-second-brain-with-hermes/image-26.webp)
 
 These are fairly simple examples, but they demonstrate the core idea behind an AI second brain. Whenever you notice yourself repeating the same task or trying to remember something for later, there's a good chance you can delegate it to your personal AI agent instead.
 

@@ -4,7 +4,7 @@ date: 2026-07-19
 description: "How a Chrome extension talking to a Google Sheet through an Apps Script Web App led to a 401 rabbit hole, a manifest gotcha, and finally clasp."
 tags: [google, apps-script]
 author: "Athreya"
-feature_image: "./cover.gif"
+feature_image: "./cover.webp"
 slug: "escaping-the-g-apps-script-copy-paste-guantlet"
 ---
 

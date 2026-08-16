@@ -51,10 +51,10 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, store *blog_content.Sto
 		})
 	}
 
-	title := "Blogs | Online Free DevTools by Hexmos"
+	title := "Free DevTools Blog | Online Free DevTools by Hexmos"
 	description := "Explore practical guides, tutorials, and insights on AI, developer tools, programming, and automation from FreeDevTools."
 	if page > 1 {
-		title = fmt.Sprintf("Blogs - Page %d | Online Free DevTools by Hexmos", page)
+		title = fmt.Sprintf("Free DevTools Blog - Page %d | Online Free DevTools by Hexmos", page)
 		description = fmt.Sprintf("Browse page %d of the FreeDevTools blog.", page)
 	}
 
@@ -71,6 +71,7 @@ func HandleIndex(w http.ResponseWriter, r *http.Request, store *blog_content.Sto
 			Keywords:    []string{"blog", "developer tools", "AI", "automation", "programming", "tutorials"},
 			PageType:    "CollectionPage",
 			ShowHeader:  true,
+			HideBanner:  true,
 		},
 	}
 
@@ -92,7 +93,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, store *blog_content.Stor
 		{Label: post.Title},
 	}
 
-	title := post.Title + " | FreeDevTools Blogs"
+	title := post.Title + " | Free DevTools Blog"
 	description := post.Description
 	if description == "" {
 		description = fmt.Sprintf("Read %s on the FreeDevTools blog.", post.Title)
@@ -112,6 +113,7 @@ func HandlePost(w http.ResponseWriter, r *http.Request, store *blog_content.Stor
 			ThumbnailUrl:  absoluteFeatureImage(post.FeatureImage),
 			PageType:      "BlogPosting",
 			ShowHeader:    true,
+			HideBanner:    true,
 		},
 	}
 

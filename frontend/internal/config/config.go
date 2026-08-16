@@ -335,6 +335,8 @@ func GetAdPageTypeFromPath(path string) string {
 		return "man-pages"
 	case "installerpedia":
 		return "installerpedia"
+	case "blog":
+		return "blog"
 	case "pro":
 		return "pro"
 	default:

@@ -4,7 +4,7 @@ date: 2026-06-14
 description: "If your team uses a mix of Cursor, Claude Code, and Copilot, things can get messy fast. Here's how to standardize your products, keep your design system consistent, and ensure every AI agent plays by the exact same rules."
 tags: [AI, agents, productivity, tools]
 author: "Lince Mathew"
-feature_image: "./cover.png"
+feature_image: "./cover.webp"
 slug: "agents-rules-standardize-your-products"
 ---
 
@@ -38,7 +38,7 @@ When an engineer triggers an AI agent, the IDE builds the model's instructions u
 [Lowest Priority]   Organization Level (Global company compliance)
 ```
 
-![structure](/freedevtools/public/blog/agents-rules-standardize-your-products/structure.png)
+![structure](/freedevtools/public/blog/agents-rules-standardize-your-products/structure.webp)
 
 ## What Belongs in a Repository Config and what to Omit
 
@@ -132,7 +132,7 @@ typography:
     letterSpacing: -0.5px
 ```
 
-![design](/freedevtools/public/blog/agents-rules-standardize-your-products/design.png)
+![design](/freedevtools/public/blog/agents-rules-standardize-your-products/design.webp)
 
 ## Deep Dive into Agent Skills
 
@@ -144,7 +144,7 @@ To prevent this context bloat, modern AI workflows rely on a pattern called **Pr
 
 The AI agent scans the metadata of these skills at startup and only evaluates the complete execution instructions when a developer runs a matching trigger phrase.
 
-![skills](/freedevtools/public/blog/agents-rules-standardize-your-products/skills.png)
+![skills](/freedevtools/public/blog/agents-rules-standardize-your-products/skills.webp)
 
 ## The Component Hierarchy of an Agent Skill
 
@@ -202,7 +202,7 @@ triggers:
 
 Instead of writing every single agent skill from scratch, you can browse [SkillsMP](https://skillsmp.com/) to find and audit over 1.2 million community-made skills. It indexes public GitHub repositories so you can easily search, review, and drop pre-built `SKILL.md` files right into your repository for tools like Claude Code or Codex.
 
-![skills-market](/freedevtools/public/blog/agents-rules-standardize-your-products/skills-market.png)
+![skills-market](/freedevtools/public/blog/agents-rules-standardize-your-products/skills-market.webp)
 
 ## Generating the Skeleton
 
@@ -210,7 +210,7 @@ Honestly, writing strict rules and modular skill files from scratch is a bit of 
 
 For example, [design.dev](https://design.dev/ai/agents-md-generator/) has a visual **AGENTS.md Generator** that does exactly this. It asks you a few simple questions about your tech stack, test runners, and build commands, then spits out a perfectly structured, error-free markdown file that your AI agents can read and follow instantly.
 
-![design-md-generator](/freedevtools/public/blog/agents-rules-standardize-your-products/design-md-generator.png)
+![design-md-generator](/freedevtools/public/blog/agents-rules-standardize-your-products/design-md-generator.webp)
 
 ## Visual Design Systems with the DESIGN.md Generator
 
@@ -218,7 +218,7 @@ AI agents often struggle to maintain visual consistency when building user inter
 
 You can visually edit color tokens, typography scales, and spacing directly in the browser and watch a live UI preview render in real-time. It even runs on-the-fly WCAG AA contrast linting to prevent accessibility issues before your code is ever generated. Once you are satisfied, the generator outputs clean Tailwind v4 `@theme` blocks, CSS custom properties, or DTCG JSON.
 
-![design-md-generator](/freedevtools/public/blog/agents-rules-standardize-your-products/design-md-generator-1.png)
+![design-md-generator](/freedevtools/public/blog/agents-rules-standardize-your-products/design-md-generator-1.webp)
 
 
 ## Keeping Things Valid: Google's CLI Linter

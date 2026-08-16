@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"os"
 	"path/filepath"
+	"regexp"
 	"sort"
 	"strings"
 	"sync"
@@ -35,6 +36,14 @@ func NewStore(contentDir string) *Store {
 func slugFromFilename(name string) string {
 	base := strings.TrimSuffix(filepath.Base(name), filepath.Ext(name))
 	return base
+}
+
+var imgTagPattern = regexp.MustCompile(`<img\s`)
+
+// lazyLoadImages adds loading/decoding hints to every inline article image
+// so below-the-fold screenshots don't block page render.
+func lazyLoadImages(html string) string {
+	return imgTagPattern.ReplaceAllString(html, `<img loading="lazy" decoding="async" `)
 }
 
 // resolveFeatureImage turns a frontmatter feature_image path (which may be a
@@ -76,7 +85,7 @@ func (s *Store) reload() error {
 		metaData := meta.Get(ctx)
 		post := &Post{
 			Slug:        slugFromFilename(e.Name()),
-			HTMLContent: buf.String(),
+			HTMLContent: lazyLoadImages(buf.String()),
 		}
 		if v, ok := metaData["slug"].(string); ok && v != "" {
 			post.Slug = v

@@ -111,10 +111,10 @@ func GenerateBlog() {
 		}
 		currentPosts := posts[start:end]
 
-		title := "Blogs | Online Free DevTools by Hexmos"
+		title := "Free DevTools Blog | Online Free DevTools by Hexmos"
 		description := "Explore practical guides, tutorials, and insights on AI, developer tools, programming, and automation from FreeDevTools."
 		if p > 1 {
-			title = fmt.Sprintf("Blogs - Page %d | Online Free DevTools by Hexmos", p)
+			title = fmt.Sprintf("Free DevTools Blog - Page %d | Online Free DevTools by Hexmos", p)
 			description = fmt.Sprintf("Browse page %d of the FreeDevTools blog.", p)
 		}
 
@@ -135,6 +135,7 @@ func GenerateBlog() {
 			Keywords:    []string{"blog", "developer tools", "AI", "automation", "programming", "tutorials"},
 			PageType:    "CollectionPage",
 			ShowHeader:  true,
+			HideBanner:  true,
 		}
 
 		indexData := blog_pages.BlogIndexData{
@@ -170,7 +171,7 @@ func GenerateBlog() {
 		}
 
 		layoutProps := layouts.BaseLayoutProps{
-			Title:         post.Title + " | FreeDevTools Blogs",
+			Title:         post.Title + " | Free DevTools Blog",
 			Description:   description,
 			Canonical:     fmt.Sprintf("%s/blog/%s/", siteURL, post.Slug),
 			Name:          post.Title,
@@ -180,6 +181,7 @@ func GenerateBlog() {
 			ThumbnailUrl:  absoluteFeatureImage(post.FeatureImage, siteURL, basePath),
 			PageType:      "BlogPosting",
 			ShowHeader:    true,
+			HideBanner:    true,
 		}
 
 		postData := blog_pages.BlogPostData{

@@ -4,7 +4,7 @@ date: 2026-01-25
 description: "Tokenization, context windows, pricing, temperature, top-p, and the other knobs and dials that shape how LLMs process information and generate responses."
 tags: [llm]
 author: "Athreya"
-feature_image: "./cover.png"
+feature_image: "./cover.webp"
 slug: "llm-fundamentals-how-large-language-models-work"
 ---
 
