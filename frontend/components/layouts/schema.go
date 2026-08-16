@@ -93,6 +93,14 @@ func (sg *SchemaGenerator) DeterminePageType() string {
 		return "CollectionPage"
 	}
 
+	// Blog pages
+	if strings.Contains(path, "/blog/") || strings.HasSuffix(path, "/blog") {
+		if matched, _ := matchPattern(path, `/blog/[^/]+$`); matched {
+			return "BlogPosting"
+		}
+		return "CollectionPage"
+	}
+
 	// MCP pages
 	if strings.Contains(path, "/mcp/") || strings.HasSuffix(path, "/mcp") {
 		if matched, _ := matchPattern(path, `/mcp/[^/]+/[^/]+$`); matched {
@@ -317,6 +325,27 @@ func (sg *SchemaGenerator) GenerateSchema() map[string]interface{} {
 			"price":         "0",
 			"priceCurrency": "USD",
 			"availability":  "https://schema.org/InStock",
+		}
+		return schema
+
+	case "BlogPosting":
+		schema := baseSchema
+		schema["@type"] = "BlogPosting"
+		name := sg.props.Name
+		if name == "" {
+			name = sg.props.Title
+		}
+		schema["headline"] = name
+		schema["description"] = sg.props.Description
+		schema["keywords"] = keywordsStr
+		if sg.props.Author != "" {
+			schema["author"] = map[string]interface{}{
+				"@type": "Person",
+				"name":  sg.props.Author,
+			}
+		}
+		if sg.props.ThumbnailUrl != "" {
+			schema["image"] = sg.props.ThumbnailUrl
 		}
 		return schema
 

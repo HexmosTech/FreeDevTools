@@ -14,12 +14,12 @@ import (
 	"time"
 
 	"fdt-templ/components/pages"
-	"fdt-templ/internal/version"
 	cheatsheets_pages "fdt-templ/components/pages/cheatsheets"
 	emojis_pages "fdt-templ/components/pages/emojis"
 	installerpedia_pages "fdt-templ/components/pages/installerpedia"
 	static_pages "fdt-templ/components/pages/static"
 	pro_pages "fdt-templ/components/pages/static/pro"
+	"fdt-templ/internal/blog"
 	"fdt-templ/internal/db/bookmarks"
 	"fdt-templ/internal/db/cheatsheets"
 	"fdt-templ/internal/db/emojis"
@@ -31,6 +31,7 @@ import (
 	"fdt-templ/internal/db/tldr"
 	"fdt-templ/internal/db/tools"
 	"fdt-templ/internal/utils"
+	"fdt-templ/internal/version"
 
 	"github.com/a-h/templ"
 )
@@ -232,7 +233,7 @@ func requireAdminOrSlugAccess(fdtPgDB *bookmarks.DB, next http.HandlerFunc) http
 	}
 }
 
-func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_pages.DB, emojisDB *emojis.DB, mcpDB *mcp.DB, pngIconsDB *png_icons.DB, cheatsheetsDB *cheatsheets.DB, tldrDB *tldr.DB, installerpediaDB *installerpedia.DB, toolsConfig *tools.Config, fdtPgDB *bookmarks.DB) {
+func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_pages.DB, emojisDB *emojis.DB, mcpDB *mcp.DB, pngIconsDB *png_icons.DB, cheatsheetsDB *cheatsheets.DB, tldrDB *tldr.DB, installerpediaDB *installerpedia.DB, toolsConfig *tools.Config, fdtPgDB *bookmarks.DB, blogStore *blog.Store) {
 	// Main index page
 	mux.HandleFunc(basePath+"/", func(w http.ResponseWriter, r *http.Request) {
 		if debugLog {
@@ -300,6 +301,7 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 
 	// TLDR routes
 	setupTldrRoutes(mux, tldrDB)
+	setupBlogRoutes(mux, blogStore)
 
 	// Bookmark routes
 	setupBookmarkRoutes(mux, fdtPgDB)

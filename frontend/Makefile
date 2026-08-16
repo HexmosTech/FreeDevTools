@@ -733,6 +733,22 @@ update-public-to-b2:
 		--progress
 	@echo "✅ Public directory uploaded successfully"
 
+update-blog-public-to-b2:
+	@echo "⬆️  Uploading public/blog images to Backblaze B2..."
+	@if [ ! -d "public/blog" ]; then \
+		echo "❌ Error: public/blog directory not found"; \
+		exit 1; \
+	fi; \
+	rclone copy \
+		public/blog/ \
+		b2-config:hexmos-private/freedevtools/content/public/blog/ \
+		--checksum \
+		--retries 20 \
+		--low-level-retries 30 \
+		--retries-sleep 10s \
+		--progress
+	@echo "✅ Blog images uploaded successfully"
+
 update-public-file-to-b2: ## Upload a specific public file to B2 (usage: make update-public-file-to-b2 file=<path>)
 	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-public-file-to-b2,$(MAKECMDGOALS))" | head -n1); \
 	if [ -z "$$FILE_PATH" ]; then \

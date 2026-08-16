@@ -24,6 +24,7 @@ import (
 	"fdt-templ/internal/db/svg_icons"
 
 	"fdt-templ/cmd/middleware"
+	"fdt-templ/internal/blog"
 	"fdt-templ/internal/db/tldr"
 	"fdt-templ/internal/db/tools"
 	"fdt-templ/internal/pro"
@@ -147,6 +148,13 @@ func main() {
 	}
 	defer toolsConfig.Close()
 
+	// Initialize Blog store (reads markdown files from content/blog, no DB)
+	blogContentPath, err := filepath.Abs("content/blog")
+	if err != nil {
+		log.Fatal(err)
+	}
+	blogStore := blog.NewStore(blogContentPath)
+
 	mux := http.NewServeMux()
 
 	// Serve static assets (CSS, XSL) - register FIRST before other routes
@@ -174,7 +182,7 @@ func main() {
 
 	// Setup all routes
 
-	setupRoutes(mux, svgIconsDB, manPagesDB, emojisDB, mcpDB, pngIconsDB, cheatsheetsDB, tldrDB, installerpediaDB, toolsConfig, fdtPgDB)
+	setupRoutes(mux, svgIconsDB, manPagesDB, emojisDB, mcpDB, pngIconsDB, cheatsheetsDB, tldrDB, installerpediaDB, toolsConfig, fdtPgDB, blogStore)
 
 	// Wrap mux with StaticCache (innermost), then cache headers, then pro middleware, then logging middleware
 	// Note: nginx handles compression, so gzip middleware is not needed
@@ -186,7 +194,6 @@ func main() {
 		log.Printf("Static caching is disabled via configuration.")
 	}
 	handler := middleware.Logging(pro.ProMiddleware(middleware.CacheHeaders(cachedMux)))
-
 
 	port := GetPort()
 	addr := ":" + port
