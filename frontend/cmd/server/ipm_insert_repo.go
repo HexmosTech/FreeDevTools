@@ -8,11 +8,11 @@ import (
 	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/installerpedia"
 	"fmt"
+	"html"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
-	"html"
 
 	"fdt-templ/internal/db/bookmarks"
 
@@ -25,8 +25,8 @@ import (
 	"github.com/clipperhouse/jargon/filters/ascii"
 	"github.com/clipperhouse/jargon/filters/contractions"
 	"github.com/clipperhouse/jargon/filters/stemmer"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/containrrr/shoutrrr"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type EntryPayload struct {
@@ -199,7 +199,7 @@ func handleGetFeatured() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// --- Configuration Variables (Change these anytime) ---
 		title := "Featured: Git-LRC"
-		tagline := "Free, Micro AI Code Reviews That run on commit"
+		tagline := "Free, Micro AI Code Reviews That Run on Git Commit"
 		link := "https://www.producthunt.com/products/git-lrc"
 		cta := "Upvote and support us on Product Hunt!"
 		// ------------------------------------------------------
