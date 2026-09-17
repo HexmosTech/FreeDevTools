@@ -80,7 +80,7 @@ Not "your code has a bug."
 
 Not "column not found."
 
-A flat, personality-free 401, straight from Google's infrastructure, before my code even ran.
+A flat, personality-free 401, straight from Google's infrastructure, before my code even ran. Failures like this show why [Error Tracking in Production](https://www.hud.io/blog/error-tracking-in-production-detect-critical-failures/) needs to capture more than application exceptions alone.
 
 I checked the deployment settings about four times. Right there, big as day: **Who has access: Anyone.**
 

@@ -142,7 +142,7 @@ As projects grow, stuffing every operational guideline, database schema pattern,
 
 To prevent this context bloat, modern AI workflows rely on a pattern called **Progressive Disclosure**. Instead of loading your entire documentation stack upfront, the repository hosts an index of modular capability folders inside a dedicated directory, such as `.claude/skills/` or `.github/skills/`. 
 
-The AI agent scans the metadata of these skills at startup and only evaluates the complete execution instructions when a developer runs a matching trigger phrase.
+The AI agent scans the metadata of these skills at startup and only evaluates the complete execution instructions when a developer runs a matching trigger phrase. As these modular capabilities expand, a [workspace security platform](https://www.hud.io/blog/error-tracking-in-production-detect-critical-failures/) can help security teams oversee the growing ecosystem of AI builders and workflows.
 
 ![skills](/freedevtools/public/blog/agents-rules-standardize-your-products/skills.webp)
 
