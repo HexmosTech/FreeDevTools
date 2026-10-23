@@ -20,9 +20,7 @@ import (
 func setupBlogRoutes(mux *http.ServeMux, store *blog_content.Store) {
 	pathPrefix := basePath + "/blog"
 
-	mux.HandleFunc(pathPrefix+"/", func(w http.ResponseWriter, r *http.Request) {
-		path := r.URL.Path
-
+	mux.Handl 
 		if strings.HasSuffix(path, "/sitemap.xml/") {
 			http.Redirect(w, r, strings.TrimSuffix(path, "/"), http.StatusMovedPermanently)
 			return
