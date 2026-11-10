@@ -32,8 +32,7 @@ func GetDB() (*DB, error) {
 		dbConfig.Password = os.Getenv("FREEDEVTOOLS_USER_PASSWORD")
 	}
 	if dbConfig.Password == "" {
-		return nil, fmt.Errorf("fdt_pg_db password is not configured (set in TOML or FREEDEVTOOLS_USER_PASSWORD env var)")
-	}
+		return nil, fm 
 	if dbConfig.DBName == "" {
 		dbConfig.DBName = "freedevtools"
 	}
