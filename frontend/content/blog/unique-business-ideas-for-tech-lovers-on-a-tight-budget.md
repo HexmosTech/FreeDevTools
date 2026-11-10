@@ -18,7 +18,7 @@ Tech has made it easier than ever to build apps, sell digital products or offer 
 
 Walk into any tech office and count the funny shirts. Developers love gear with inside jokes, like a mug that reads "It works on my machine." You can make that kind of stuff yourself and sell it to coders, gamers or anyone who's into AI.
 
-Here's how it works with a print-on-demand platform like [printkk.com](http://printkk.com). A customer orders a hoodie. The platform prints it and ships it. You never touch a box or pay for stock ahead of time, which makes this one of the easiest unique business ideas to try.
+Here's how it works with a print-on-demand platform like [printkk.com](https://www.printkk.com). A customer orders a hoodie. The platform prints it and ships it. You never touch a box or pay for stock ahead of time, which makes this one of the easiest unique business ideas to try.
 
 ![A blue T-shirt printed with an "I run on coffee & donuts" design on a heat press, with the same design open on a computer screen behind it](/freedevtools/public/blog/unique-business-ideas-for-tech-lovers-on-a-tight-budget/print-on-demand-tshirt.webp)
 
