@@ -307,7 +307,7 @@ func setupRoutes(mux *http.ServeMux, svgIconsDB *svg_icons.DB, manPagesDB *man_p
 	setupBookmarkRoutes(mux, fdtPgDB)
 
 	// Admin routes
-	setupAdminRoutes(mux, fdtPgDB)
+	setupAdminRoutes(mux, fdtPgDB, writeDB)
 
 	// Temporary Sitemap
 	setupTemporarySitemapRoutes(mux)

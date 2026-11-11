@@ -10,12 +10,16 @@ import (
 	"fdt-templ/components/pages/admin"
 	"fdt-templ/internal/config"
 	"fdt-templ/internal/db/bookmarks"
+	"fdt-templ/internal/db/installerpedia"
 
 	"github.com/a-h/templ"
 )
 
-func setupAdminRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB) {
+func setupAdminRoutes(mux *http.ServeMux, fdtPgDB *bookmarks.DB, ipmWriteDB *installerpedia.DB) {
 	basePath := GetBasePath()
+
+	// API endpoint to remove an Installerpedia page (soft delete, never regenerated)
+	mux.HandleFunc(basePath+"/api/admin/ipm/delete-repo", adminOrToken(fdtPgDB, handleAdminDeleteRepo(ipmWriteDB)))
 
 	mux.HandleFunc(basePath+"/admin/", requireAdmin(fdtPgDB, func(w http.ResponseWriter, r *http.Request) {
 		// User is admin, render the admin page

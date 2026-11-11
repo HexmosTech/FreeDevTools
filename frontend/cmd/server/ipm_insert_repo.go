@@ -692,6 +692,12 @@ func saveInstallerpediaEntry(db *installerpedia.DB, p EntryPayload, overwrite bo
 		return string(b)
 	}
 
+	// Removed (tombstoned) repos must never be regenerated, even with overwrite=true.
+	if isIPMRepoTombstoned(db, slugHash) {
+		log.Printf("🚫 [Installerpedia API] Skipping removed repo: %s", p.Repo)
+		return false, nil
+	}
+
 	verb := "INSERT OR IGNORE"
 	if overwrite {
 		verb = "INSERT OR REPLACE"

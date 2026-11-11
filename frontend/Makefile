@@ -1,4 +1,4 @@
-.PHONY: install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item refresh-installerpedia-item
+.PHONY: ipm-delete install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item refresh-installerpedia-item
 
 # Variables
 PORT ?= 4321
@@ -669,6 +669,10 @@ sync-db-to-local:
 	  --checksum \
 	  --one-way
 	@echo "✅ Database sync completed"
+
+ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; needs IPM_API_URL + IPM_ADMIN_TOKEN)
+	@REPO_ARG=$$([ -n "$(REPO)" ] && echo "$(REPO)" || echo "$(filter-out ipm-delete,$(MAKECMDGOALS))" | head -n1); \
+	IPM_REPO="$$REPO_ARG" python3 scripts/ipm_delete.py
 
 update-db-to-b2:
 	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-db-to-b2,$(MAKECMDGOALS))" | head -n1); \
