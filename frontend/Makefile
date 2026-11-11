@@ -1,4 +1,4 @@
-.PHONY: ipm-delete install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item refresh-installerpedia-item
+.PHONY: ipm-delete purge-cf-urls install run dev build generate build-css watch-css clean test kill start-prod start-dev stop-prod logs-prod show-404 show-301 show-other-logs show-nginx-error 404-filter-man read-profile read-profile-ui read-profile-cli help purge-cloudflare-cache analyze-search-404-urls analyze-man-pages-404 analyze-categories rca-man-pages-level2 test-man-pages-level2 add-see-also-column index-see-also ready-search bump-version static-generation-all static-generation-analysis static-generation-installerpedia-item refresh-installerpedia-item
 
 # Variables
 PORT ?= 4321
@@ -670,9 +670,12 @@ sync-db-to-local:
 	  --one-way
 	@echo "✅ Database sync completed"
 
-ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; needs IPM_API_URL + IPM_ADMIN_TOKEN)
-	@REPO_ARG=$$([ -n "$(REPO)" ] && echo "$(REPO)" || echo "$(filter-out ipm-delete,$(MAKECMDGOALS))" | head -n1); \
+ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; needs IPM_ADMIN_TOKEN; IPM_API_URL optional)
+	@$(LOAD_ENV) REPO_ARG=$$([ -n "$(REPO)" ] && echo "$(REPO)" || echo "$(filter-out ipm-delete,$(MAKECMDGOALS))" | head -n1); \
 	IPM_REPO="$$REPO_ARG" python3 scripts/ipm_delete.py
+
+purge-cf-urls: ## Purge specific URLs from Cloudflare (usage: make purge-cf-urls URLS="https://.../a/ https://.../b/")
+	@$(LOAD_ENV) python3 scripts/cf_purge.py $(if $(URLS),$(URLS),$(filter-out purge-cf-urls,$(MAKECMDGOALS)))
 
 update-db-to-b2:
 	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-db-to-b2,$(MAKECMDGOALS))" | head -n1); \

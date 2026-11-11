@@ -2,7 +2,7 @@
 """Remove an Installerpedia repo from the LIVE server.
 
 Usage (from frontend/):  make ipm-delete owner/name
-Needs env: IPM_API_URL (e.g. https://hexmos.com/freedevtools) and IPM_ADMIN_TOKEN.
+Needs env: IPM_ADMIN_TOKEN. IPM_API_URL is optional (default: https://hexmos.com/freedevtools).
 Shows the repo, asks for 'yes', then deletes it permanently (blocked from regeneration).
 """
 import json
@@ -11,6 +11,8 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+
+DEFAULT_API_URL = "https://hexmos.com/freedevtools"
 
 
 def call(method, url, token=None, body=None):
@@ -28,13 +30,13 @@ def call(method, url, token=None, body=None):
 
 def main():
     repo = os.environ.get("IPM_REPO", "").strip()
-    api = os.environ.get("IPM_API_URL", "").strip().rstrip("/")
+    api = (os.environ.get("IPM_API_URL", "").strip() or DEFAULT_API_URL).rstrip("/")
     token = os.environ.get("IPM_ADMIN_TOKEN", "").strip()
     if not repo:
         print("Usage: make ipm-delete owner/name")
         return 1
-    if not api or not token:
-        print("Set IPM_API_URL (e.g. https://hexmos.com/freedevtools) and IPM_ADMIN_TOKEN first.")
+    if not token:
+        print("Set IPM_ADMIN_TOKEN first (e.g. in frontend/.env).")
         return 1
 
     st, data = call("GET", f"{api}/api/installerpedia/check_ipm_repo?repo=" + urllib.parse.quote(repo))
@@ -62,7 +64,19 @@ def main():
     print(f"\nDone: {res}")
     if not res.get("meili_removed"):
         print("Warning: search index removal failed; check server logs.")
-    print("Sitemap and category listing refresh at the next 6pm run.")
+    page_url = f"{api}/installerpedia/{d.get('repo_type')}/{slug}/"
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import cf_purge
+        ok, msg = cf_purge.purge([page_url])
+    except Exception as e:
+        ok, msg = False, str(e)
+    if ok:
+        print(f"CDN: {msg} ({page_url})")
+    else:
+        print(f"CDN purge skipped: {msg}")
+        print(f'Purge it manually:  make purge-cf-urls URLS="{page_url}"')
+    print("Sitemap and category listing update on the next regeneration.")
     return 0
 
 
