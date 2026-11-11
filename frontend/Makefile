@@ -670,12 +670,14 @@ sync-db-to-local:
 	  --one-way
 	@echo "✅ Database sync completed"
 
+# Single-quote a value for safe use in a shell command (prevents injection from user input)
+shq = '$(subst ','\'',$(1))'
+
 ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; needs IPM_ADMIN_TOKEN; IPM_API_URL optional)
-	@$(LOAD_ENV) REPO_ARG=$$([ -n "$(REPO)" ] && echo "$(REPO)" || echo "$(filter-out ipm-delete,$(MAKECMDGOALS))" | head -n1); \
-	IPM_REPO="$$REPO_ARG" python3 scripts/ipm_delete.py
+	@$(LOAD_ENV) IPM_REPO=$(call shq,$(or $(REPO),$(firstword $(filter-out ipm-delete,$(MAKECMDGOALS))))) python3 scripts/ipm_delete.py
 
 purge-cf-urls: ## Purge specific URLs from Cloudflare (usage: make purge-cf-urls URLS="https://.../a/ https://.../b/")
-	@$(LOAD_ENV) python3 scripts/cf_purge.py $(if $(URLS),$(URLS),$(filter-out purge-cf-urls,$(MAKECMDGOALS)))
+	@$(LOAD_ENV) python3 scripts/cf_purge.py $(foreach u,$(or $(URLS),$(filter-out purge-cf-urls,$(MAKECMDGOALS))),$(call shq,$(u)))
 
 update-db-to-b2:
 	@FILE_PATH=$$([ -n "$(file)" ] && echo "$(file)" || echo "$(filter-out update-db-to-b2,$(MAKECMDGOALS))" | head -n1); \
