@@ -23,9 +23,7 @@ func GenerateCheatsheets() {
 	log.Println("Starting static generation for Cheatsheets...")
 
 	// Load config to get SiteURL and BasePath
-	_, err := config.LoadConfig()
-	if err != nil {
-		log.Printf("Config load error: %v", err)
+	_, err := config.LoadConfig() ror: %v", err)
 	}
 
 	db, err := cheatsheets_db.GetDB()
