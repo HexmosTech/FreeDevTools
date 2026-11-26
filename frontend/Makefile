@@ -673,8 +673,8 @@ sync-db-to-local:
 # Single-quote a value for safe use in a shell command (prevents injection from user input)
 shq = '$(subst ','\'',$(1))'
 
-ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; needs IPM_ADMIN_TOKEN; IPM_API_URL optional)
-	@$(LOAD_ENV) IPM_REPO=$(call shq,$(or $(REPO),$(firstword $(filter-out ipm-delete,$(MAKECMDGOALS))))) python3 scripts/ipm_delete.py
+ipm-delete: ## Remove an Installerpedia repo from the live server (usage: make ipm-delete owner/name; add TAKEDOWN=1 to answer 410; needs IPM_ADMIN_TOKEN; IPM_API_URL optional)
+	@$(LOAD_ENV) IPM_REPO=$(call shq,$(or $(REPO),$(firstword $(filter-out ipm-delete,$(MAKECMDGOALS))))) IPM_TAKEDOWN=$(call shq,$(TAKEDOWN)) python3 scripts/ipm_delete.py
 
 purge-cf-urls: ## Purge specific URLs from Cloudflare (usage: make purge-cf-urls URLS="https://.../a/ https://.../b/")
 	@$(LOAD_ENV) python3 scripts/cf_purge.py $(foreach u,$(or $(URLS),$(filter-out purge-cf-urls,$(MAKECMDGOALS))),$(call shq,$(u)))

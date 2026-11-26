@@ -512,7 +512,8 @@ func (db *DB) GetRepoUpdatedAt(hashID int64) (string, error) {
 
 	// Although ipm_data doesn't explicitly show updated_at in the struct scan earlier,
 	// the Sitemap query uses 'updated_at' from ipm_data, so it must exist.
-	query := `SELECT updated_at FROM ipm_data WHERE slug_hash = ?`
+	// Removed repos get no ETag, so a cached redirect is never confirmed with a 304.
+	query := `SELECT updated_at FROM ipm_data WHERE slug_hash = ? AND is_deleted = 0`
 	var updatedAt string
 	err := db.conn.QueryRow(query, hashID).Scan(&updatedAt)
 	if err != nil {

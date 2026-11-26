@@ -174,8 +174,8 @@ func setupInstallerpediaApiRoutes(mux *http.ServeMux, db *installerpedia.DB, fdt
 
 	// Clean routing table
 	mux.HandleFunc(base+"/add-entry", handleAddEntry(db))
-	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo())
-	mux.HandleFunc(base+"/generate_ipm_repo_method", handleGenerateRepoMethod())
+	mux.HandleFunc(base+"/generate_ipm_repo", handleGenerateRepo(db))
+	mux.HandleFunc(base+"/generate_ipm_repo_method", handleGenerateRepoMethod(db))
 	mux.HandleFunc(base+"/update-entry", handleUpdateRepoMethods(db))
 	mux.HandleFunc(base+"/replace-methods", handleReplaceRepoMethods(db))
 	mux.HandleFunc(base+"/auto_index", handleAutoIndex(db))
@@ -970,6 +970,10 @@ func replaceInstallerpediaMethods(db *installerpedia.DB, repoName string, newMet
 	slugHash := hashStringToInt64(repoSlug)
 	updatedAt := time.Now().UTC().Format(time.RFC3339)
 
+	if isIPMRepoTombstoned(db, slugHash) {
+		return fmt.Errorf("repo %q has been removed", repoName)
+	}
+
 	tx, err := db.GetConn().Begin()
 	if err != nil {
 		return err
@@ -1005,6 +1009,10 @@ func appendInstallerpediaMethods(db *installerpedia.DB, repoName string, newMeth
 	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
 	slugHash := hashStringToInt64(repoSlug)
 	updatedAt := time.Now().UTC().Format(time.RFC3339)
+
+	if isIPMRepoTombstoned(db, slugHash) {
+		return fmt.Errorf("repo %q has been removed", repoName)
+	}
 
 	tx, err := db.GetConn().Begin()
 	if err != nil {
@@ -1066,7 +1074,7 @@ func fetchFullEntryFromDB(db *installerpedia.DB, repoName string) (EntryPayload,
         SELECT repo, repo_type, has_installation, description, stars, 
                prerequisites, installation_methods, post_installation, 
                resources_of_interest, keywords, updated_at
-        FROM ipm_data WHERE slug_hash = ?
+        FROM ipm_data WHERE slug_hash = ? AND is_deleted = 0
     `, slugHash).Scan(
 		&p.Repo, &p.RepoType, &p.HasInstallation, &p.Description, &p.Stars,
 		&prereqJson, &methodsJson, &postJson, &resourceJson, &keywordsJson, &p.UpdatedAt, // <--- Scan it here
@@ -1086,6 +1094,22 @@ func fetchFullEntryFromDB(db *installerpedia.DB, repoName string) (EntryPayload,
 	return p, nil
 }
 
+// addRemovedRepoInfo marks a lookup response when the repo was removed. Only the
+// name, category and takedown state are exposed, never the stored content.
+func addRemovedRepoInfo(db *installerpedia.DB, repoName string, resp map[string]interface{}) {
+	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
+	var name, repoType string
+	err := db.GetConn().QueryRow(`SELECT repo, repo_type FROM ipm_data WHERE slug_hash = ? AND is_deleted = 1`,
+		hashStringToInt64(repoSlug)).Scan(&name, &repoType)
+	if err != nil {
+		return
+	}
+	resp["removed"] = true
+	resp["takedown"] = isIPMRepoTakedown(db, repoName)
+	resp["repo"] = name
+	resp["repo_type"] = repoType
+}
+
 func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		repoName := r.URL.Query().Get("repo")
@@ -1102,10 +1126,12 @@ func handleCheckRepoExists(db *installerpedia.DB) http.HandlerFunc {
 		if err != nil {
 			// If the error is "no rows", it just doesn't exist
 			if strings.Contains(err.Error(), "no rows in result set") {
-				json.NewEncoder(w).Encode(map[string]interface{}{
+				resp := map[string]interface{}{
 					"exists": false,
 					"repo":   repoName,
-				})
+				}
+				addRemovedRepoInfo(db, repoName, resp)
+				json.NewEncoder(w).Encode(resp)
 				return
 			}
 			log.Printf("❌ [Installerpedia API] DB Check Error: %v", err)

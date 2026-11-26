@@ -9,6 +9,8 @@ import (
 	"net/url"
 	"time"
 
+	"fdt-templ/internal/db/installerpedia"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -462,7 +464,7 @@ func generateSingleMethodJson(repoName, readme, releaseInfo, osFamily, sourceTyp
     return QueryGemini(promptHeader+"\n"+repologyContext+"\n"+extractionRules, schema)
 }
 
-func handleGenerateRepoMethod() http.HandlerFunc {
+func handleGenerateRepoMethod(db *installerpedia.DB) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         if r.Method != http.MethodPost {
             http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -477,6 +479,11 @@ func handleGenerateRepoMethod() http.HandlerFunc {
 
         if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
             http.Error(w, "Invalid JSON", http.StatusBadRequest)
+            return
+        }
+
+        if isIPMRepoTakedown(db, payload.Repo) {
+            http.Error(w, "410 Gone", http.StatusGone)
             return
         }
 
@@ -517,7 +524,7 @@ func handleGenerateRepoMethod() http.HandlerFunc {
     }
 }
 
-func handleGenerateRepo() http.HandlerFunc {
+func handleGenerateRepo(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
@@ -537,6 +544,11 @@ func handleGenerateRepo() http.HandlerFunc {
 
 		selectedRepo := payload.Repo
 		sourceType := payload.SourceType
+
+		if isIPMRepoTakedown(db, selectedRepo) {
+			http.Error(w, "410 Gone", http.StatusGone)
+			return
+		}
 
 		var contextData string
 		var releaseText string

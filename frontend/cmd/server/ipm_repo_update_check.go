@@ -267,6 +267,10 @@ func updateRepoMethodsOnly(db *installerpedia.DB, repoName string, methods inter
     slugHash := hashStringToInt64(repoSlug)
     updatedAt := time.Now().UTC().Format(time.RFC3339)
 
+    if isIPMRepoTombstoned(db, slugHash) {
+        return fmt.Errorf("repo %q has been removed", repoName)
+    }
+
     methodsJSON, err := json.Marshal(methods)
     if err != nil {
         return err

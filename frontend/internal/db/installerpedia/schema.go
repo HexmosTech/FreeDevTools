@@ -104,3 +104,12 @@ type Overview struct {
 	TotalCount    int
 	LastUpdatedAt string
 }
+
+// TakedownNote in the note column marks a removed repo whose page must answer
+// 410 Gone instead of redirecting to its category.
+const TakedownNote = "gone"
+
+// IsTakedown reports whether the repo was removed as a takedown.
+func (r *RepoData) IsTakedown() bool {
+	return r.IsDeleted && r.Note != nil && *r.Note == TakedownNote
+}

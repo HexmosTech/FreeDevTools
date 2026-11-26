@@ -22,14 +22,26 @@ import (
 // Removed rows are kept as tombstones so INSERT OR IGNORE / auto-index never
 // recreates them.
 func isIPMRepoTombstoned(db *installerpedia.DB, slugHash int64) bool {
-	var isDeleted int
-	err := db.GetConn().QueryRow(`SELECT is_deleted FROM ipm_data WHERE slug_hash = ?`, slugHash).Scan(&isDeleted)
-	return err == nil && isDeleted == 1
+	// Filter in SQL: is_deleted is BOOLEAN, so the driver cannot scan it into an int.
+	var found int
+	err := db.GetConn().QueryRow(`SELECT 1 FROM ipm_data WHERE slug_hash = ? AND is_deleted = 1`, slugHash).Scan(&found)
+	return err == nil
+}
+
+// isIPMRepoTakedown reports whether the repo was removed as a takedown.
+func isIPMRepoTakedown(db *installerpedia.DB, repoName string) bool {
+	repoSlug := strings.ReplaceAll(strings.ToLower(strings.TrimSpace(repoName)), "/", "-")
+	var found int
+	err := db.GetConn().QueryRow(`SELECT 1 FROM ipm_data WHERE slug_hash = ? AND is_deleted = 1 AND note = ?`,
+		hashStringToInt64(repoSlug), installerpedia.TakedownNote).Scan(&found)
+	return err == nil
 }
 
 // deleteInstallerpediaRepo soft-deletes a repo (tombstone) and refreshes the counters.
+// With takedown=true the row is also marked so its page answers 410; a normal
+// delete never removes that mark.
 // Returns repo_type and repo_slug, or sql.ErrNoRows if the repo does not exist.
-func deleteInstallerpediaRepo(db *installerpedia.DB, repoName string) (string, string, error) {
+func deleteInstallerpediaRepo(db *installerpedia.DB, repoName string, takedown bool) (string, string, error) {
 	repoSlug := strings.ReplaceAll(strings.ToLower(repoName), "/", "-")
 	slugHash := hashStringToInt64(repoSlug)
 	updatedAt := time.Now().UTC().Format(time.RFC3339)
@@ -62,7 +74,14 @@ func deleteInstallerpediaRepo(db *installerpedia.DB, repoName string) (string, s
 		return "", "", fmt.Errorf("failed to update overview: %w", err)
 	}
 
-	LogIPMQuery("UPDATE ipm_data SET is_deleted = 1 WHERE slug_hash = ?", slugHash)
+	if takedown {
+		if _, err := tx.Exec(`UPDATE ipm_data SET note = ? WHERE slug_hash = ?`, installerpedia.TakedownNote, slugHash); err != nil {
+			return "", "", fmt.Errorf("failed to mark takedown: %w", err)
+		}
+		LogIPMQuery("UPDATE ipm_data SET is_deleted = 1, note = ? WHERE slug_hash = ?", installerpedia.TakedownNote, slugHash)
+	} else {
+		LogIPMQuery("UPDATE ipm_data SET is_deleted = 1 WHERE slug_hash = ?", slugHash)
+	}
 	return repoType, storedSlug, tx.Commit()
 }
 
@@ -91,7 +110,7 @@ func removeRepoFromMeili(repoName string) error {
 	return nil
 }
 
-// handleAdminDeleteRepo: POST {"repo": "owner/name"} (admin only).
+// handleAdminDeleteRepo: POST {"repo": "owner/name", "takedown": false} (admin only).
 func handleAdminDeleteRepo(db *installerpedia.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
@@ -99,7 +118,8 @@ func handleAdminDeleteRepo(db *installerpedia.DB) http.HandlerFunc {
 			return
 		}
 		var payload struct {
-			Repo string `json:"repo"`
+			Repo     string `json:"repo"`
+			Takedown bool   `json:"takedown"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&payload); err != nil {
 			http.Error(w, "Invalid JSON", http.StatusBadRequest)
@@ -111,7 +131,7 @@ func handleAdminDeleteRepo(db *installerpedia.DB) http.HandlerFunc {
 			return
 		}
 
-		repoType, repoSlug, err := deleteInstallerpediaRepo(db, repo)
+		repoType, repoSlug, err := deleteInstallerpediaRepo(db, repo, payload.Takedown)
 		if err == sql.ErrNoRows {
 			http.Error(w, "repo not found in Installerpedia", http.StatusNotFound)
 			return
@@ -131,7 +151,8 @@ func handleAdminDeleteRepo(db *installerpedia.DB) http.HandlerFunc {
 		if staticErr != nil {
 			log.Printf("[Admin] ⚠️ Deleted %q from DB but static page removal failed: %v", repo, staticErr)
 		}
-		log.Printf("[Admin] 🗑️ Installerpedia repo removed: %s (type=%s, static_removed=%v)", repo, repoType, staticRemoved)
+		takedown := isIPMRepoTakedown(db, repo)
+		log.Printf("[Admin] 🗑️ Installerpedia repo removed: %s (type=%s, static_removed=%v, takedown=%v)", repo, repoType, staticRemoved, takedown)
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(map[string]interface{}{
@@ -140,6 +161,7 @@ func handleAdminDeleteRepo(db *installerpedia.DB) http.HandlerFunc {
 			"repo_type":      repoType,
 			"meili_removed":  meiliErr == nil,
 			"static_removed": staticRemoved,
+			"takedown":       takedown,
 		})
 	}
 }

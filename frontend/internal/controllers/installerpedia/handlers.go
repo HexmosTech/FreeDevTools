@@ -191,6 +191,19 @@ func HandleCategory(w http.ResponseWriter, r *http.Request, db *installerpedia.D
 	templ.Handler(installerpedia_pages.Category(catData)).ServeHTTP(w, r)
 }
 
+// serveRemovedRepo answers for a removed repo: 410 Gone for takedowns,
+// otherwise a permanent redirect to the category page.
+func serveRemovedRepo(w http.ResponseWriter, r *http.Request, repo *installerpedia.RepoData, category string) {
+	if repo.IsTakedown() {
+		// Shorter than the site-wide 1 year, so the state can still be changed.
+		w.Header().Set("Cache-Control", "public, max-age=86400")
+		http.Error(w, "410 Gone", http.StatusGone)
+		return
+	}
+	parentURL := config.GetBasePath() + "/installerpedia/" + category + "/"
+	http.Redirect(w, r, parentURL, http.StatusMovedPermanently)
+}
+
 func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, category string, slug string, hashID int64) {
 	// GetRepo should match dynamically computed hashID
 	repo, err := db.GetRepo(hashID)
@@ -202,11 +215,10 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 		return
 	}
 
-    if repo.IsDeleted {
-        parentURL := config.GetBasePath() + "/installerpedia/" + category + "/"
-        http.Redirect(w, r, parentURL, http.StatusMovedPermanently)
-        return
-    }
+	if repo.IsDeleted {
+		serveRemovedRepo(w, r, repo, category)
+		return
+	}
 
 	basePath := config.GetBasePath()
 
@@ -267,6 +279,12 @@ func HandleSlug(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, c
 // HandleMetrics renders the per-repo metrics dashboard page
 // at /installerpedia/{category}/{slug}/metrics/.
 func HandleMetrics(w http.ResponseWriter, r *http.Request, db *installerpedia.DB, fdtPgDB *bookmarks.DB, category string, slug string, hashID int64) {
+	// Takedowns answer 410 to everyone, so this runs before the auth check.
+	if removed, err := db.GetRepo(hashID); err == nil && removed != nil && removed.IsTakedown() {
+		serveRemovedRepo(w, r, removed, category)
+		return
+	}
+
 	// auth check
 	userID, err := utils.GetUserIDFromCookie(r)
 	if err != nil || userID == "" {
@@ -303,8 +321,7 @@ func HandleMetrics(w http.ResponseWriter, r *http.Request, db *installerpedia.DB
 	}
 
 	if repo.IsDeleted {
-		parentURL := config.GetBasePath() + "/installerpedia/" + category + "/"
-		http.Redirect(w, r, parentURL, http.StatusMovedPermanently)
+		serveRemovedRepo(w, r, repo, category)
 		return
 	}
 
